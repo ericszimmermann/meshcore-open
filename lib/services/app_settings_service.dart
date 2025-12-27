@@ -73,12 +73,31 @@ class AppSettingsService extends ChangeNotifier {
     await updateSettings(_settings.copyWith(mapShowMarkers: value));
   }
 
+  Future<void> setMapCacheBounds(Map<String, double>? value) async {
+    await updateSettings(_settings.copyWith(mapCacheBounds: value));
+  }
+
+  Future<void> setMapCacheZoomRange(int minZoom, int maxZoom) async {
+    final safeMin = minZoom <= maxZoom ? minZoom : maxZoom;
+    final safeMax = minZoom <= maxZoom ? maxZoom : minZoom;
+    await updateSettings(
+      _settings.copyWith(
+        mapCacheMinZoom: safeMin,
+        mapCacheMaxZoom: safeMax,
+      ),
+    );
+  }
+
   Future<void> setNotificationsEnabled(bool value) async {
     await updateSettings(_settings.copyWith(notificationsEnabled: value));
   }
 
   Future<void> setNotifyOnNewMessage(bool value) async {
     await updateSettings(_settings.copyWith(notifyOnNewMessage: value));
+  }
+
+  Future<void> setNotifyOnNewChannelMessage(bool value) async {
+    await updateSettings(_settings.copyWith(notifyOnNewChannelMessage: value));
   }
 
   Future<void> setNotifyOnNewAdvert(bool value) async {

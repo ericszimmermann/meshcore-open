@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:record/record.dart';
 
 import '../connector/meshcore_connector.dart';
 import '../connector/meshcore_protocol.dart';
@@ -12,12 +15,14 @@ import '../helpers/utf8_length_limiter.dart';
 import '../models/channel_message.dart';
 import '../models/contact.dart';
 import '../models/message.dart';
+import '../services/voice_message_service.dart';
 import '../services/path_history_service.dart';
 import 'channel_message_path_screen.dart';
 import 'map_screen.dart';
 import '../utils/emoji_utils.dart';
 import '../widgets/gif_message.dart';
 import '../widgets/gif_picker.dart';
+import '../widgets/voice_message.dart';
 
 class ChatScreen extends StatefulWidget {
   final Contact contact;
@@ -32,6 +37,16 @@ class _ChatScreenState extends State<ChatScreen> {
   final _textController = TextEditingController();
   final _scrollController = ScrollController();
   bool _forceFlood = false;
+  final AudioRecorder _voiceRecorder = AudioRecorder();
+  StreamSubscription<Uint8List>? _voiceStreamSubscription;
+  BytesBuilder _voiceBuffer = BytesBuilder(copy: false);
+  Timer? _voiceRecordTimer;
+  bool _isRecordingVoice = false;
+  Message? _pendingVoiceMessage;
+  Uint8List? _pendingVoiceCodec2Bytes;
+  int? _pendingVoiceTimestampSeconds;
+  int? _pendingVoiceDurationMs;
+  String? _pendingVoicePath;
 
   @override
   void initState() {
@@ -47,6 +62,11 @@ class _ChatScreenState extends State<ChatScreen> {
     context.read<MeshCoreConnector>().setActiveContact(null);
     _textController.dispose();
     _scrollController.dispose();
+    _voiceRecordTimer?.cancel();
+    _voiceStreamSubscription?.cancel();
+    unawaited(_voiceRecorder.stop());
+    _voiceRecorder.dispose();
+    unawaited(_clearPendingVoicePreview(deleteFile: true, notify: false));
     super.dispose();
   }
 
@@ -56,35 +76,29 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: Consumer2<PathHistoryService, MeshCoreConnector>(
           builder: (context, pathService, connector, _) {
-            final paths = pathService.getRecentPaths(widget.contact.publicKeyHex);
             final contact = _resolveContact(connector);
-            final showRecentPath = paths.isNotEmpty && contact.pathLength >= 0;
             final unreadCount = connector.getUnreadCountForContactKey(widget.contact.publicKeyHex);
             final unreadLabel = 'Unread: $unreadCount';
+            final pathLabel = _forceFlood ? 'Flood (forced)' : _currentPathLabel(contact);
+            final canShowPathDetails = !_forceFlood && contact.path.isNotEmpty;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(contact.name),
-                if (showRecentPath)
+                if (canShowPathDetails)
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onLongPress: () => _showFullPathDialog(context, paths.first.pathBytes),
+                    onLongPress: () => _showFullPathDialog(context, contact.path),
                     child: Text(
-                      '${paths.first.displayText} • $unreadLabel',
+                      '$pathLabel • $unreadLabel',
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
                     ),
                   )
-                else if (contact.pathLength >= 0)
-                  Text(
-                    '${contact.pathLength} ${contact.pathLength == 1 ? 'hop' : 'hops'} • $unreadLabel',
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
-                  )
                 else
                   Text(
-                    'No path • $unreadLabel',
+                    '$pathLabel • $unreadLabel',
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
                   ),
@@ -207,10 +221,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildInputBar(MeshCoreConnector connector) {
     final maxBytes = maxContactMessageBytes();
+    final isVoiceBusy = connector.isVoiceSending;
+    final voiceSupported = Platform.isAndroid || Platform.isIOS;
+    final hasPendingVoice = _pendingVoiceMessage != null;
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         border: Border(
           top: BorderSide(color: Theme.of(context).dividerColor),
         ),
@@ -218,59 +236,93 @@ class _ChatScreenState extends State<ChatScreen> {
       child: SafeArea(
         child: Row(
           children: [
+            if (voiceSupported)
+              IconButton(
+                icon: Icon(_isRecordingVoice ? Icons.stop_circle : Icons.mic),
+                onPressed: (isVoiceBusy || hasPendingVoice) ? null : () => _toggleVoiceRecording(connector),
+                tooltip: _isRecordingVoice ? 'Stop recording' : 'Record voice',
+              ),
             IconButton(
               icon: const Icon(Icons.gif_box),
-              onPressed: () => _showGifPicker(context),
+              onPressed: (_isRecordingVoice || isVoiceBusy || hasPendingVoice)
+                  ? null
+                  : () => _showGifPicker(context),
               tooltip: 'Send GIF',
             ),
             Expanded(
-              child: ValueListenableBuilder<TextEditingValue>(
-                valueListenable: _textController,
-                builder: (context, value, child) {
-                  final gifId = _parseGifId(value.text);
-                  if (gifId != null) {
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: GifMessage(
-                            url: 'https://media.giphy.com/media/$gifId/giphy.gif',
-                            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                            fallbackTextColor:
-                                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                            width: 160,
-                            height: 110,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => _textController.clear(),
-                        ),
-                      ],
-                    );
-                  }
+              child: hasPendingVoice
+                  ? _buildVoicePreview(colorScheme)
+                  : ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: _textController,
+                      builder: (context, value, child) {
+                        final gifId = _parseGifId(value.text);
+                        if (gifId != null) {
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: GifMessage(
+                                  url: 'https://media.giphy.com/media/$gifId/giphy.gif',
+                                  backgroundColor: colorScheme.surfaceContainerHighest,
+                                  fallbackTextColor:
+                                      colorScheme.onSurface.withValues(alpha: 0.6),
+                                  width: 160,
+                                  height: 110,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () => _textController.clear(),
+                              ),
+                            ],
+                          );
+                        }
 
-                  return TextField(
-                    controller: _textController,
-                    inputFormatters: [
-                      Utf8LengthLimitingTextInputFormatter(maxBytes),
-                    ],
-                    decoration: const InputDecoration(
-                      hintText: 'Type a message...',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        return TextField(
+                          controller: _textController,
+                          enabled: !_isRecordingVoice && !isVoiceBusy,
+                          inputFormatters: [
+                            Utf8LengthLimitingTextInputFormatter(maxBytes),
+                          ],
+                          decoration: const InputDecoration(
+                            hintText: 'Type a message...',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          ),
+                          textInputAction: TextInputAction.send,
+                          onSubmitted: (_isRecordingVoice || isVoiceBusy)
+                              ? null
+                              : (_) => _sendMessage(connector),
+                        );
+                      },
                     ),
-                    textInputAction: TextInputAction.send,
-                    onSubmitted: (_) => _sendMessage(connector),
-                  );
-                },
-              ),
             ),
             const SizedBox(width: 8),
-            IconButton.filled(
-              icon: const Icon(Icons.send),
-              onPressed: () => _sendMessage(connector),
-            ),
+            if (isVoiceBusy)
+              IconButton.filled(
+                icon: const Icon(Icons.stop_circle),
+                onPressed: () => _cancelVoiceSend(connector),
+                tooltip: 'Cancel voice send',
+              )
+            else if (hasPendingVoice) ...[
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => _clearPendingVoicePreview(deleteFile: true),
+                tooltip: 'Discard voice message',
+              ),
+              IconButton.filled(
+                icon: const Icon(Icons.send),
+                onPressed: () => _sendPendingVoice(connector),
+                tooltip: 'Send voice message',
+              ),
+            ]
+            else
+              IconButton.filled(
+                icon: const Icon(Icons.send),
+                onPressed: (_isRecordingVoice || isVoiceBusy)
+                    ? null
+                    : () => _sendMessage(connector),
+              ),
           ],
         ),
       ),
@@ -323,6 +375,209 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       }
     });
+  }
+
+  void _cancelVoiceSend(MeshCoreConnector connector) {
+    connector.cancelVoiceSend();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Voice send canceled')),
+    );
+  }
+
+  Future<void> _toggleVoiceRecording(MeshCoreConnector connector) async {
+    if (_isRecordingVoice) {
+      await _stopVoiceRecording(connector);
+    } else {
+      await _startVoiceRecording();
+    }
+  }
+
+  Future<void> _startVoiceRecording() async {
+    if (_isRecordingVoice) return;
+    final hasPermission = await _voiceRecorder.hasPermission();
+    if (!hasPermission) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Microphone permission denied')),
+      );
+      return;
+    }
+
+    _voiceBuffer = BytesBuilder(copy: false);
+    try {
+      final stream = await _voiceRecorder.startStream(
+        const RecordConfig(
+          encoder: AudioEncoder.pcm16bits,
+          sampleRate: VoiceMessageService.sampleRate,
+          numChannels: VoiceMessageService.channels,
+        ),
+      );
+      _voiceStreamSubscription = stream.listen((data) {
+        _voiceBuffer.add(data);
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to start recording: $e')),
+      );
+      return;
+    }
+    _voiceRecordTimer?.cancel();
+    _voiceRecordTimer = Timer(
+      const Duration(seconds: VoiceMessageService.maxRecordSeconds),
+      () => _stopVoiceRecording(context.read<MeshCoreConnector>()),
+    );
+    setState(() {
+      _isRecordingVoice = true;
+    });
+  }
+
+  Future<void> _stopVoiceRecording(MeshCoreConnector connector) async {
+    if (!_isRecordingVoice) return;
+    _voiceRecordTimer?.cancel();
+    await _voiceRecorder.stop();
+    await _voiceStreamSubscription?.cancel();
+    _voiceStreamSubscription = null;
+    final pcmBytes = _voiceBuffer.takeBytes();
+    setState(() {
+      _isRecordingVoice = false;
+    });
+    if (pcmBytes.isEmpty) return;
+    await _prepareVoicePreview(connector, pcmBytes);
+  }
+
+  Future<void> _prepareVoicePreview(MeshCoreConnector connector, Uint8List pcmBytes) async {
+    final voiceService = VoiceMessageService.instance;
+    try {
+      final codec2Bytes = voiceService.encodePcmToCodec2(pcmBytes);
+      if (codec2Bytes.isEmpty) return;
+      final timestampSeconds = connector.reserveVoiceTimestampSeconds();
+      final durationMs = voiceService.durationMsForCodec2Bytes(codec2Bytes);
+      final decodedPcm = voiceService.decodeCodec2ToPcm(codec2Bytes);
+      final fileName = voiceService.buildVoiceFileName(
+        senderKeyHex: widget.contact.publicKeyHex,
+        timestampSeconds: timestampSeconds,
+        outgoing: true,
+      );
+      final voicePath = await voiceService.writeWavFile(
+        pcmBytes: decodedPcm,
+        fileName: fileName,
+      );
+
+      final previewMessage = Message(
+        senderKey: widget.contact.publicKey,
+        text: 'Voice message',
+        timestamp: DateTime.fromMillisecondsSinceEpoch(timestampSeconds * 1000),
+        isOutgoing: true,
+        isCli: false,
+        status: MessageStatus.pending,
+        isVoice: true,
+        voicePath: voicePath,
+        voiceDurationMs: durationMs,
+        voiceCodec: VoiceMessageService.codecName,
+      );
+
+      if (!mounted) return;
+      setState(() {
+        _pendingVoiceMessage = previewMessage;
+        _pendingVoiceCodec2Bytes = codec2Bytes;
+        _pendingVoiceTimestampSeconds = timestampSeconds;
+        _pendingVoiceDurationMs = durationMs;
+        _pendingVoicePath = voicePath;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Voice message failed: $e')),
+      );
+    }
+  }
+
+  Widget _buildVoicePreview(ColorScheme colorScheme) {
+    final message = _pendingVoiceMessage;
+    if (message == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: VoiceMessageBubble(
+        message: message,
+        backgroundColor: colorScheme.surfaceContainerHighest,
+        textColor: colorScheme.onSurface,
+        metaColor: colorScheme.onSurface.withValues(alpha: 0.7),
+        isOutgoing: true,
+      ),
+    );
+  }
+
+  Future<void> _sendPendingVoice(MeshCoreConnector connector) async {
+    final codec2Bytes = _pendingVoiceCodec2Bytes;
+    final voicePath = _pendingVoicePath;
+    final durationMs = _pendingVoiceDurationMs;
+    final timestampSeconds = _pendingVoiceTimestampSeconds;
+
+    if (codec2Bytes == null ||
+        codec2Bytes.isEmpty ||
+        voicePath == null ||
+        voicePath.isEmpty ||
+        durationMs == null ||
+        timestampSeconds == null) {
+      return;
+    }
+    if (!connector.isConnected) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Not connected to a MeshCore device')),
+      );
+      return;
+    }
+    if (connector.isVoiceSending) {
+      return;
+    }
+
+    await connector.sendVoiceMessage(
+      contact: widget.contact,
+      codec2Bytes: codec2Bytes,
+      voicePath: voicePath,
+      durationMs: durationMs,
+      timestampSeconds: timestampSeconds,
+    );
+    unawaited(_clearPendingVoicePreview(deleteFile: false));
+  }
+
+  Future<void> _clearPendingVoicePreview({required bool deleteFile, bool notify = true}) async {
+    final path = _pendingVoicePath;
+    if (notify && mounted) {
+      setState(() {
+        _pendingVoiceMessage = null;
+        _pendingVoiceCodec2Bytes = null;
+        _pendingVoiceTimestampSeconds = null;
+        _pendingVoiceDurationMs = null;
+        _pendingVoicePath = null;
+      });
+    } else {
+      _pendingVoiceMessage = null;
+      _pendingVoiceCodec2Bytes = null;
+      _pendingVoiceTimestampSeconds = null;
+      _pendingVoiceDurationMs = null;
+      _pendingVoicePath = null;
+    }
+    if (deleteFile && path != null && path.isNotEmpty) {
+      try {
+        final file = File(path);
+        if (await file.exists()) {
+          await file.delete();
+        }
+      } catch (_) {
+        return;
+      }
+    }
   }
 
   void _showPathHistory(BuildContext context) {
@@ -1024,14 +1279,15 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.copy),
-              title: const Text('Copy'),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                _copyMessageText(message.text);
-              },
-            ),
+            if (!message.isVoice)
+              ListTile(
+                leading: const Icon(Icons.copy),
+                title: const Text('Copy'),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _copyMessageText(message.text);
+                },
+              ),
             ListTile(
               leading: const Icon(Icons.delete_outline),
               title: const Text('Delete'),
@@ -1040,7 +1296,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 await _deleteMessage(message);
               },
             ),
-            if (message.isOutgoing && message.status == MessageStatus.failed)
+            if (message.isOutgoing &&
+                message.status == MessageStatus.failed &&
+                !message.isVoice)
               ListTile(
                 leading: const Icon(Icons.refresh),
                 title: const Text('Retry'),
@@ -1154,7 +1412,15 @@ class _MessageBubble extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                     ],
-                    if (poi != null)
+                    if (message.isVoice)
+                      VoiceMessageBubble(
+                        message: message,
+                        backgroundColor: bubbleColor,
+                        textColor: textColor,
+                        metaColor: metaColor,
+                        isOutgoing: isOutgoing,
+                      )
+                    else if (poi != null)
                       _buildPoiMessage(context, poi, textColor, metaColor)
                     else if (gifId != null)
                       GifMessage(

@@ -32,6 +32,7 @@ class ChannelMessage {
   final int repeatCount;
   final int? pathLength;
   final Uint8List pathBytes;
+  final List<Uint8List> pathVariants;
   final int? channelIndex;
 
   ChannelMessage({
@@ -45,8 +46,13 @@ class ChannelMessage {
     this.repeatCount = 0,
     this.pathLength,
     Uint8List? pathBytes,
+    List<Uint8List>? pathVariants,
     this.channelIndex,
-  }) : pathBytes = pathBytes ?? Uint8List(0);
+  })  : pathBytes = pathBytes ?? Uint8List(0),
+        pathVariants = _mergePathVariants(
+          pathBytes ?? Uint8List(0),
+          pathVariants,
+        );
 
   String? get senderKeyHex => senderKey != null ? pubKeyToHex(senderKey!) : null;
 
@@ -56,6 +62,7 @@ class ChannelMessage {
     int? repeatCount,
     int? pathLength,
     Uint8List? pathBytes,
+    List<Uint8List>? pathVariants,
   }) {
     return ChannelMessage(
       senderKey: senderKey,
@@ -68,6 +75,7 @@ class ChannelMessage {
       repeatCount: repeatCount ?? this.repeatCount,
       pathLength: pathLength ?? this.pathLength,
       pathBytes: pathBytes ?? this.pathBytes,
+      pathVariants: pathVariants ?? this.pathVariants,
       channelIndex: channelIndex,
     );
   }
@@ -164,7 +172,39 @@ class ChannelMessage {
       status: ChannelMessageStatus.pending,
       pathLength: null,
       pathBytes: Uint8List(0),
+      pathVariants: const [],
       channelIndex: channelIndex,
     );
+  }
+
+  static List<Uint8List> _mergePathVariants(
+    Uint8List pathBytes,
+    List<Uint8List>? pathVariants,
+  ) {
+    final merged = <Uint8List>[];
+
+    void addPath(Uint8List bytes) {
+      if (bytes.isEmpty) return;
+      for (final existing in merged) {
+        if (_pathsEqual(existing, bytes)) return;
+      }
+      merged.add(bytes);
+    }
+
+    if (pathVariants != null) {
+      for (final variant in pathVariants) {
+        addPath(variant);
+      }
+    }
+    addPath(pathBytes);
+    return merged;
+  }
+
+  static bool _pathsEqual(Uint8List a, Uint8List b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 }

@@ -139,6 +139,55 @@ class NotificationService {
     );
   }
 
+  Future<void> showChannelMessageNotification({
+    required String channelName,
+    required String message,
+    int? channelIndex,
+  }) async {
+    if (!_isInitialized) {
+      await initialize();
+    }
+
+    const androidDetails = AndroidNotificationDetails(
+      'channel_messages',
+      'Channel Messages',
+      channelDescription: 'New channel message notifications',
+      importance: Importance.high,
+      priority: Priority.high,
+      icon: '@mipmap/ic_launcher',
+    );
+
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    const notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    final preview = _truncateMessage(message, 30);
+    final body = preview.isEmpty
+        ? 'Received new message'
+        : 'Received new message: $preview';
+
+    await _notifications.show(
+      channelIndex?.hashCode ?? DateTime.now().millisecondsSinceEpoch,
+      channelName,
+      body,
+      notificationDetails,
+      payload: 'channel:$channelIndex',
+    );
+  }
+
+  String _truncateMessage(String message, int maxLength) {
+    final trimmed = message.trim();
+    if (trimmed.length <= maxLength) return trimmed;
+    return '${trimmed.substring(0, maxLength)}...';
+  }
+
   void _onNotificationTapped(NotificationResponse response) {
     final payload = response.payload;
     if (payload != null) {

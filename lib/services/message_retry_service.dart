@@ -103,6 +103,7 @@ class MessageRetryService extends ChangeNotifier {
         latitude: contact.latitude,
         longitude: contact.longitude,
         lastSeen: contact.lastSeen,
+        lastMessageAt: contact.lastMessageAt,
       );
     }
 

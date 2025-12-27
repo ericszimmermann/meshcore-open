@@ -9,18 +9,27 @@ import '../models/channel.dart';
 import '../models/contact.dart';
 import '../services/app_settings_service.dart';
 import '../services/map_marker_service.dart';
+import '../services/map_tile_cache_service.dart';
+import '../utils/contact_search.dart';
+import '../utils/route_transitions.dart';
+import '../widgets/quick_switch_bar.dart';
+import 'channels_screen.dart';
 import 'chat_screen.dart';
+import 'contacts_screen.dart';
+import 'settings_screen.dart';
 
 class MapScreen extends StatefulWidget {
   final LatLng? highlightPosition;
   final String? highlightLabel;
   final double highlightZoom;
+  final bool hideBackButton;
 
   const MapScreen({
     super.key,
     this.highlightPosition,
     this.highlightLabel,
     this.highlightZoom = 15.0,
+    this.hideBackButton = false,
   });
 
   @override
@@ -60,6 +69,7 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Consumer2<MeshCoreConnector, AppSettingsService>(
       builder: (context, connector, settingsService, child) {
+        final tileCache = context.read<MapTileCacheService>();
         final settings = settingsService.settings;
         final contacts = connector.contacts;
         final highlightPosition = widget.highlightPosition;
@@ -124,6 +134,22 @@ class _MapScreenState extends State<MapScreen> {
           appBar: AppBar(
             title: const Text('Node Map'),
             centerTitle: true,
+            automaticallyImplyLeading: !widget.hideBackButton,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.tune),
+                tooltip: 'Settings',
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.bluetooth_disabled),
+                tooltip: 'Disconnect',
+                onPressed: () => _disconnect(context, connector),
+              ),
+            ],
           ),
           body: !hasMapContent
               ? _buildEmptyState()
@@ -173,8 +199,10 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                       children: [
                         TileLayer(
-                          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                          userAgentPackageName: 'com.meshcore.open',
+                          urlTemplate: kMapTileUrlTemplate,
+                          tileProvider: tileCache.tileProvider,
+                          userAgentPackageName:
+                              MapTileCacheService.userAgentPackageName,
                           maxZoom: 19,
                         ),
                         MarkerLayer(
@@ -199,6 +227,13 @@ class _MapScreenState extends State<MapScreen> {
                     _buildLegend(contactsWithLocation.length, sharedMarkers.length),
                   ],
                 ),
+          bottomNavigationBar: SafeArea(
+            top: false,
+            child: QuickSwitchBar(
+              selectedIndex: 2,
+              onDestinationSelected: (index) => _handleQuickSwitch(index, context),
+            ),
+          ),
           floatingActionButton: FloatingActionButton(
             onPressed: () => _showFilterDialog(context, settingsService),
             child: const Icon(Icons.filter_list),
@@ -556,6 +591,55 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  void _handleQuickSwitch(int index, BuildContext context) {
+    if (index == 2) return;
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          buildQuickSwitchRoute(
+            const ContactsScreen(hideBackButton: true),
+          ),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          buildQuickSwitchRoute(
+            const ChannelsScreen(hideBackButton: true),
+          ),
+        );
+        break;
+    }
+  }
+
+  Future<void> _disconnect(
+    BuildContext context,
+    MeshCoreConnector connector,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Disconnect'),
+        content: const Text('Are you sure you want to disconnect from this device?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Disconnect'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await connector.disconnect();
+    }
+  }
+
   void _showMarkerInfo(_SharedMarker marker) {
     showDialog(
       context: context,
@@ -792,8 +876,7 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                       ...allContacts
                           .where((contact) =>
-                              query.isEmpty ||
-                              contact.name.toLowerCase().contains(query))
+                              query.isEmpty || matchesContactQuery(contact, query))
                           .map((contact) {
                         return ListTile(
                           leading: const Icon(Icons.person),

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../connector/meshcore_connector.dart';
 import '../services/app_settings_service.dart';
 import '../services/notification_service.dart';
+import 'map_cache_screen.dart';
 
 class AppSettingsScreen extends StatelessWidget {
   const AppSettingsScreen({super.key});
@@ -129,6 +130,31 @@ class AppSettingsScreen extends StatelessWidget {
             onChanged: settingsService.settings.notificationsEnabled
                 ? (value) {
                     settingsService.setNotifyOnNewMessage(value);
+                  }
+                : null,
+          ),
+          const Divider(height: 1),
+          SwitchListTile(
+            secondary: Icon(
+              Icons.forum_outlined,
+              color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+            ),
+            title: Text(
+              'Channel Message Notifications',
+              style: TextStyle(
+                color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+              ),
+            ),
+            subtitle: Text(
+              'Show notification when receiving channel messages',
+              style: TextStyle(
+                color: settingsService.settings.notificationsEnabled ? null : Colors.grey,
+              ),
+            ),
+            value: settingsService.settings.notifyOnNewChannelMessage,
+            onChanged: settingsService.settings.notificationsEnabled
+                ? (value) {
+                    settingsService.setNotifyOnNewChannelMessage(value);
                   }
                 : null,
           ),
@@ -266,6 +292,24 @@ class AppSettingsScreen extends StatelessWidget {
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showTimeFilterDialog(context, settingsService),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.download_outlined),
+            title: const Text('Offline Map Cache'),
+            subtitle: Text(
+              settingsService.settings.mapCacheBounds == null
+                  ? 'No area selected'
+                  : 'Area selected (zoom ${settingsService.settings.mapCacheMinZoom}'
+                      '-${settingsService.settings.mapCacheMaxZoom})',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MapCacheScreen()),
+              );
+            },
           ),
         ],
       ),

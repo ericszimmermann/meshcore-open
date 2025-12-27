@@ -12,11 +12,22 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!-- Notification permission (required for Android 13+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Foreground service permission for background BLE -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- Microphone permission (required for voice messages) -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application
         android:label="meshcore_open"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <service
+            android:name="com.pravera.flutter_foreground_task.service.ForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice"
+            android:stopWithTask="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

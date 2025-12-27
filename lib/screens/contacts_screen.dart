@@ -6,11 +6,17 @@ import '../connector/meshcore_protocol.dart';
 import '../models/contact.dart';
 import '../models/contact_group.dart';
 import '../storage/contact_group_store.dart';
+import '../utils/contact_search.dart';
+import '../utils/emoji_utils.dart';
+import '../utils/route_transitions.dart';
+import '../widgets/quick_switch_bar.dart';
 import '../widgets/repeater_login_dialog.dart';
 import '../widgets/unread_badge.dart';
-import '../utils/emoji_utils.dart';
+import 'channels_screen.dart';
 import 'chat_screen.dart';
+import 'map_screen.dart';
 import 'repeater_hub_screen.dart';
+import 'settings_screen.dart';
 
 enum ContactSortOption {
   lastSeen,
@@ -19,8 +25,22 @@ enum ContactSortOption {
   type,
 }
 
+enum _ContactMenuAction {
+  sortRecentMessages,
+  sortName,
+  sortType,
+  toggleLastSeenFilter,
+  toggleUnreadOnly,
+  newGroup,
+}
+
 class ContactsScreen extends StatefulWidget {
-  const ContactsScreen({super.key});
+  final bool hideBackButton;
+
+  const ContactsScreen({
+    super.key,
+    this.hideBackButton = false,
+  });
 
   @override
   State<ContactsScreen> createState() => _ContactsScreenState();
@@ -30,6 +50,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   ContactSortOption _sortOption = ContactSortOption.lastSeen;
+  bool _forceLastSeenSort = true;
   bool _showUnreadOnly = false;
   final ContactGroupStore _groupStore = ContactGroupStore();
   List<ContactGroup> _groups = [];
@@ -60,275 +81,309 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final connector = context.watch<MeshCoreConnector>();
+
+    if (!connector.isConnected) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          Navigator.popUntil(context, (route) => route.isFirst);
+        }
+      });
+    }
+
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contacts'),
-        centerTitle: true,
-        actions: [
-          PopupMenuButton<ContactSortOption>(
-            icon: const Icon(Icons.sort),
-            tooltip: 'Sort by',
-            onSelected: (option) {
-              setState(() {
-                _sortOption = option;
-              });
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: ContactSortOption.lastSeen,
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 20,
-                      color: _sortOption == ContactSortOption.lastSeen
-                          ? Theme.of(context).primaryColor
-                          : null,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Last Seen',
-                      style: TextStyle(
-                        fontWeight: _sortOption == ContactSortOption.lastSeen
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
+        titleSpacing: 16,
+        centerTitle: false,
+        automaticallyImplyLeading: !widget.hideBackButton,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Contacts'),
+            Text(
+              '${connector.contacts.length} contacts',
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
               ),
-              PopupMenuItem(
-                value: ContactSortOption.recentMessages,
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.chat_bubble,
-                      size: 20,
-                      color: _sortOption == ContactSortOption.recentMessages
-                          ? Theme.of(context).primaryColor
-                          : null,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Recent Messages',
-                      style: TextStyle(
-                        fontWeight: _sortOption == ContactSortOption.recentMessages
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: ContactSortOption.name,
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.sort_by_alpha,
-                      size: 20,
-                      color: _sortOption == ContactSortOption.name
-                          ? Theme.of(context).primaryColor
-                          : null,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Name',
-                      style: TextStyle(
-                        fontWeight: _sortOption == ContactSortOption.name
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: ContactSortOption.type,
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.category,
-                      size: 20,
-                      color: _sortOption == ContactSortOption.type
-                          ? Theme.of(context).primaryColor
-                          : null,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Type',
-                      style: TextStyle(
-                        fontWeight: _sortOption == ContactSortOption.type
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.mark_chat_unread_outlined,
-              color: _showUnreadOnly ? Theme.of(context).primaryColor : null,
             ),
-            tooltip: _showUnreadOnly ? 'Showing unread only' : 'Show unread only',
-            onPressed: () {
-              setState(() {
-                _showUnreadOnly = !_showUnreadOnly;
-              });
-            },
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: connector.isLoadingContacts
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.refresh),
+            tooltip: 'Refresh',
+            onPressed: connector.isLoadingContacts ? null : () => connector.getContacts(),
           ),
           IconButton(
-            icon: const Icon(Icons.group_add),
-            tooltip: 'New group',
-            onPressed: () {
-              final contacts = context.read<MeshCoreConnector>().contacts;
-              _showGroupEditor(context, contacts);
-            },
+            icon: const Icon(Icons.bluetooth_disabled),
+            tooltip: 'Disconnect',
+            onPressed: () => _disconnect(context, connector),
           ),
-          Consumer<MeshCoreConnector>(
-            builder: (context, connector, child) {
-              return IconButton(
-                icon: connector.isLoadingContacts
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.refresh),
-                onPressed: connector.isLoadingContacts
-                    ? null
-                    : () => connector.getContacts(),
+          IconButton(
+            icon: const Icon(Icons.tune),
+            tooltip: 'Settings',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsScreen()),
+            ),
+          ),
+          PopupMenuButton<_ContactMenuAction>(
+            tooltip: 'Contacts options',
+            onSelected: (action) {
+              switch (action) {
+                case _ContactMenuAction.sortRecentMessages:
+                  setState(() {
+                    _sortOption = ContactSortOption.recentMessages;
+                    _forceLastSeenSort = false;
+                  });
+                  break;
+                case _ContactMenuAction.sortName:
+                  setState(() {
+                    _sortOption = ContactSortOption.name;
+                    _forceLastSeenSort = false;
+                  });
+                  break;
+                case _ContactMenuAction.sortType:
+                  setState(() {
+                    _sortOption = ContactSortOption.type;
+                    _forceLastSeenSort = false;
+                  });
+                  break;
+                case _ContactMenuAction.toggleLastSeenFilter:
+                  setState(() {
+                    _forceLastSeenSort = !_forceLastSeenSort;
+                    if (_forceLastSeenSort) {
+                      _sortOption = ContactSortOption.lastSeen;
+                    }
+                  });
+                  break;
+                case _ContactMenuAction.toggleUnreadOnly:
+                  setState(() {
+                    _showUnreadOnly = !_showUnreadOnly;
+                  });
+                  break;
+                case _ContactMenuAction.newGroup:
+                  _showGroupEditor(context, connector.contacts);
+                  break;
+              }
+            },
+            itemBuilder: (context) {
+              final labelStyle = theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
               );
+              return [
+                PopupMenuItem<_ContactMenuAction>(
+                  enabled: false,
+                  child: Text('Sort by', style: labelStyle),
+                ),
+                CheckedPopupMenuItem<_ContactMenuAction>(
+                  value: _ContactMenuAction.sortRecentMessages,
+                  checked: _sortOption == ContactSortOption.recentMessages,
+                  child: const Text('Recent messages'),
+                ),
+                CheckedPopupMenuItem<_ContactMenuAction>(
+                  value: _ContactMenuAction.sortName,
+                  checked: _sortOption == ContactSortOption.name,
+                  child: const Text('Name'),
+                ),
+                CheckedPopupMenuItem<_ContactMenuAction>(
+                  value: _ContactMenuAction.sortType,
+                  checked: _sortOption == ContactSortOption.type,
+                  child: const Text('Type'),
+                ),
+                const PopupMenuDivider(),
+                PopupMenuItem<_ContactMenuAction>(
+                  enabled: false,
+                  child: Text('Filters', style: labelStyle),
+                ),
+                CheckedPopupMenuItem<_ContactMenuAction>(
+                  value: _ContactMenuAction.toggleLastSeenFilter,
+                  checked: _forceLastSeenSort,
+                  child: const Text('Last seen'),
+                ),
+                CheckedPopupMenuItem<_ContactMenuAction>(
+                  value: _ContactMenuAction.toggleUnreadOnly,
+                  checked: _showUnreadOnly,
+                  child: const Text('Unread only'),
+                ),
+                PopupMenuItem<_ContactMenuAction>(
+                  value: _ContactMenuAction.newGroup,
+                  child: const Text('New group'),
+                ),
+              ];
             },
           ),
         ],
       ),
-      body: Consumer<MeshCoreConnector>(
-        builder: (context, connector, child) {
-          final contacts = connector.contacts;
-
-          if (contacts.isEmpty && connector.isLoadingContacts && _groups.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (contacts.isEmpty && _groups.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.people_outline, size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No contacts yet',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Contacts will appear when devices advertise',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[500]),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          final filteredAndSorted = _filterAndSortContacts(contacts, connector);
-          final filteredGroups =
-              _showUnreadOnly ? const <ContactGroup>[] : _filterAndSortGroups(_groups, contacts);
-
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search contacts...',
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() {
-                                _searchQuery = '';
-                              });
-                            },
-                          )
-                        : null,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value.toLowerCase();
-                    });
-                  },
-                ),
-              ),
-              Expanded(
-                child: filteredAndSorted.isEmpty && filteredGroups.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
-                            const SizedBox(height: 16),
-                            Text(
-                              _showUnreadOnly
-                                  ? 'No unread contacts'
-                                  : 'No contacts or groups found',
-                              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                            ),
-                          ],
-                        ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: () => connector.getContacts(),
-                        child: ListView.builder(
-                          itemCount: filteredGroups.length + filteredAndSorted.length,
-                          itemBuilder: (context, index) {
-                            if (index < filteredGroups.length) {
-                              final group = filteredGroups[index];
-                              return _buildGroupTile(context, group, contacts);
-                            }
-                            final contact = filteredAndSorted[index - filteredGroups.length];
-                            final unreadCount = connector.getUnreadCountForContact(contact);
-                            return _ContactTile(
-                              contact: contact,
-                              unreadCount: unreadCount,
-                              onTap: () => _openChat(context, contact),
-                              onLongPress: () => _showContactOptions(context, connector, contact),
-                            );
-                          },
-                        ),
-                      ),
-              ),
-            ],
-          );
-        },
+      body: _buildContactsBody(context, connector),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: QuickSwitchBar(
+          selectedIndex: 0,
+          onDestinationSelected: (index) => _handleQuickSwitch(index, context),
+        ),
       ),
+    );
+  }
+
+  Future<void> _disconnect(
+    BuildContext context,
+    MeshCoreConnector connector,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Disconnect'),
+        content: const Text('Are you sure you want to disconnect from this device?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Disconnect'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await connector.disconnect();
+    }
+  }
+
+  Widget _buildContactsBody(BuildContext context, MeshCoreConnector connector) {
+    final contacts = connector.contacts;
+
+    if (contacts.isEmpty && connector.isLoadingContacts && _groups.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (contacts.isEmpty && _groups.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.people_outline, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              'No contacts yet',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Contacts will appear when devices advertise',
+              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final filteredAndSorted = _filterAndSortContacts(contacts, connector);
+    final filteredGroups =
+        _showUnreadOnly ? const <ContactGroup>[] : _filterAndSortGroups(_groups, contacts);
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search contacts...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {
+                          _searchQuery = '';
+                        });
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value.toLowerCase();
+              });
+            },
+          ),
+        ),
+        Expanded(
+          child: filteredAndSorted.isEmpty && filteredGroups.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+                      const SizedBox(height: 16),
+                      Text(
+                        _showUnreadOnly
+                            ? 'No unread contacts'
+                            : 'No contacts or groups found',
+                        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                )
+              : RefreshIndicator(
+                  onRefresh: () => connector.getContacts(),
+                  child: ListView.builder(
+                    itemCount: filteredGroups.length + filteredAndSorted.length,
+                    itemBuilder: (context, index) {
+                      if (index < filteredGroups.length) {
+                        final group = filteredGroups[index];
+                        return _buildGroupTile(context, group, contacts);
+                      }
+                      final contact = filteredAndSorted[index - filteredGroups.length];
+                      final unreadCount = connector.getUnreadCountForContact(contact);
+                      return _ContactTile(
+                        contact: contact,
+                        lastSeen: _resolveLastSeen(contact),
+                        unreadCount: unreadCount,
+                        onTap: () => _openChat(context, contact),
+                        onLongPress: () => _showContactOptions(context, connector, contact),
+                      );
+                    },
+                  ),
+                ),
+        ),
+      ],
     );
   }
 
   List<ContactGroup> _filterAndSortGroups(List<ContactGroup> groups, List<Contact> contacts) {
     final query = _searchQuery.trim().toLowerCase();
-    final contactNames = <String, String>{};
+    final contactsByKey = <String, Contact>{};
     for (final contact in contacts) {
-      contactNames[contact.publicKeyHex] = contact.name.toLowerCase();
+      contactsByKey[contact.publicKeyHex] = contact;
     }
 
     final filtered = groups.where((group) {
       if (query.isEmpty) return true;
       if (group.name.toLowerCase().contains(query)) return true;
       for (final key in group.memberKeys) {
-        final name = contactNames[key];
-        if (name != null && name.contains(query)) return true;
+        final contact = contactsByKey[key];
+        if (contact != null && matchesContactQuery(contact, query)) return true;
       }
       return false;
     }).toList();
@@ -340,7 +395,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
   List<Contact> _filterAndSortContacts(List<Contact> contacts, MeshCoreConnector connector) {
     var filtered = contacts.where((contact) {
       if (_searchQuery.isEmpty) return true;
-      return contact.name.toLowerCase().contains(_searchQuery);
+      return matchesContactQuery(contact, _searchQuery);
     }).toList();
 
     if (_showUnreadOnly) {
@@ -349,9 +404,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
       }).toList();
     }
 
-    switch (_sortOption) {
+    final sortOption = _forceLastSeenSort ? ContactSortOption.lastSeen : _sortOption;
+    switch (sortOption) {
       case ContactSortOption.lastSeen:
-        filtered.sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
+        filtered.sort((a, b) => _resolveLastSeen(b).compareTo(_resolveLastSeen(a)));
         break;
       case ContactSortOption.recentMessages:
         filtered.sort((a, b) {
@@ -375,6 +431,13 @@ class _ContactsScreenState extends State<ContactsScreen> {
     }
 
     return filtered;
+  }
+
+  DateTime _resolveLastSeen(Contact contact) {
+    if (contact.type != advTypeChat) return contact.lastSeen;
+    return contact.lastMessageAt.isAfter(contact.lastSeen)
+        ? contact.lastMessageAt
+        : contact.lastSeen;
   }
 
   Widget _buildGroupTile(BuildContext context, ContactGroup group, List<Contact> contacts) {
@@ -429,6 +492,28 @@ class _ContactsScreenState extends State<ContactsScreen> {
         context,
         MaterialPageRoute(builder: (context) => ChatScreen(contact: contact)),
       );
+    }
+  }
+
+  void _handleQuickSwitch(int index, BuildContext context) {
+    if (index == 0) return;
+    switch (index) {
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          buildQuickSwitchRoute(
+            const ChannelsScreen(hideBackButton: true),
+          ),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          buildQuickSwitchRoute(
+            const MapScreen(hideBackButton: true),
+          ),
+        );
+        break;
     }
   }
 
@@ -542,7 +627,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
           final filteredContacts = filterQuery.isEmpty
               ? sortedContacts
               : sortedContacts
-                  .where((contact) => contact.name.toLowerCase().contains(filterQuery))
+                  .where((contact) => matchesContactQuery(contact, filterQuery))
                   .toList();
           return AlertDialog(
             title: Text(isEditing ? 'Edit Group' : 'New Group'),
@@ -728,12 +813,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
 class _ContactTile extends StatelessWidget {
   final Contact contact;
+  final DateTime lastSeen;
   final int unreadCount;
   final VoidCallback onTap;
   final VoidCallback onLongPress;
 
   const _ContactTile({
     required this.contact,
+    required this.lastSeen,
     required this.unreadCount,
     required this.onTap,
     required this.onLongPress,
@@ -757,7 +844,7 @@ class _ContactTile extends StatelessWidget {
             const SizedBox(height: 4),
           ],
           Text(
-            _formatLastSeen(contact.lastSeen),
+            _formatLastSeen(lastSeen),
             style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
           if (contact.hasLocation)
@@ -814,10 +901,13 @@ class _ContactTile extends StatelessWidget {
     final now = DateTime.now();
     final diff = now.difference(lastSeen);
 
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    if (diff.inDays < 7) return '${diff.inDays}d ago';
-    return '${lastSeen.month}/${lastSeen.day}';
+    if (diff.isNegative || diff.inMinutes < 5) return 'Last seen now';
+    if (diff.inMinutes < 60) return 'Last seen ${diff.inMinutes} mins ago';
+    if (diff.inHours < 24) {
+      final hours = diff.inHours;
+      return hours == 1 ? 'Last seen 1 hour ago' : 'Last seen $hours hours ago';
+    }
+    final days = diff.inDays;
+    return days == 1 ? 'Last seen 1 day ago' : 'Last seen $days days ago';
   }
 }

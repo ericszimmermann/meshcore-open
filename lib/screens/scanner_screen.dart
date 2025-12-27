@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../connector/meshcore_connector.dart';
 import '../widgets/device_tile.dart';
-import 'device_screen.dart';
+import 'contacts_screen.dart';
 
 /// Screen for scanning and connecting to MeshCore devices
 class ScannerScreen extends StatelessWidget {
@@ -161,7 +161,7 @@ class ScannerScreen extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const DeviceScreen(),
+            builder: (context) => const ContactsScreen(),
           ),
         );
       }

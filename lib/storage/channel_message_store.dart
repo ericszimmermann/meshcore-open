@@ -65,6 +65,7 @@ class ChannelMessageStore {
       'repeatCount': msg.repeatCount,
       'pathLength': msg.pathLength,
       'pathBytes': base64Encode(msg.pathBytes),
+      'pathVariants': msg.pathVariants.map(base64Encode).toList(),
       'repeats': msg.repeats.map(_repeatToJson).toList(),
     };
   }
@@ -87,6 +88,9 @@ class ChannelMessageStore {
       pathBytes: json['pathBytes'] != null
           ? Uint8List.fromList(base64Decode(json['pathBytes'] as String))
           : Uint8List(0),
+      pathVariants: (json['pathVariants'] as List<dynamic>?)
+          ?.map((entry) => Uint8List.fromList(base64Decode(entry as String)))
+          .toList(),
       repeats: (json['repeats'] as List<dynamic>?)
               ?.map((entry) => _repeatFromJson(entry as Map<String, dynamic>))
               .toList() ??

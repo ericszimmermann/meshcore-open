@@ -168,6 +168,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     final isOutgoing = message.isOutgoing;
     final gifId = _parseGifId(message.text);
     final poi = _parsePoiMessage(message.text);
+    final displayPath = message.pathBytes.isNotEmpty
+        ? message.pathBytes
+        : (message.pathVariants.isNotEmpty ? message.pathVariants.first : Uint8List(0));
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -223,10 +226,10 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                         message.text,
                         style: const TextStyle(fontSize: 14),
                       ),
-                    if (message.pathBytes.isNotEmpty) ...[
+                    if (displayPath.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
-                        'via ${_formatPathPrefixes(message.pathBytes)}',
+                        'via ${_formatPathPrefixes(displayPath)}',
                         style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                       ),
                     ],

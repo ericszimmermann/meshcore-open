@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -6,11 +7,21 @@ import 'package:provider/provider.dart';
 
 import '../connector/meshcore_connector.dart';
 import '../models/channel.dart';
+import '../utils/route_transitions.dart';
+import '../widgets/quick_switch_bar.dart';
 import '../widgets/unread_badge.dart';
 import 'channel_chat_screen.dart';
+import 'contacts_screen.dart';
+import 'map_screen.dart';
+import 'settings_screen.dart';
 
 class ChannelsScreen extends StatefulWidget {
-  const ChannelsScreen({super.key});
+  final bool hideBackButton;
+
+  const ChannelsScreen({
+    super.key,
+    this.hideBackButton = false,
+  });
 
   @override
   State<ChannelsScreen> createState() => _ChannelsScreenState();
@@ -31,7 +42,21 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
       appBar: AppBar(
         title: const Text('Channels'),
         centerTitle: true,
+        automaticallyImplyLeading: !widget.hideBackButton,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.tune),
+            tooltip: 'Settings',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsScreen()),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.bluetooth_disabled),
+            tooltip: 'Disconnect',
+            onPressed: () => _disconnect(context),
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => context.read<MeshCoreConnector>().getChannels(),
@@ -69,20 +94,23 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
           }
 
           return ReorderableListView.builder(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
+            buildDefaultDragHandles: false,
             itemCount: channels.length,
-            onReorder: (oldIndex, newIndex) async {
+            onReorder: (oldIndex, newIndex) {
               if (newIndex > oldIndex) newIndex -= 1;
               final reordered = List<Channel>.from(channels);
               final item = reordered.removeAt(oldIndex);
               reordered.insert(newIndex, item);
-              await connector.setChannelOrder(
-                reordered.map((c) => c.index).toList(),
+              unawaited(
+                connector.setChannelOrder(
+                  reordered.map((c) => c.index).toList(),
+                ),
               );
             },
             itemBuilder: (context, index) {
               final channel = channels[index];
-              return _buildChannelTile(context, connector, channel);
+              return _buildChannelTile(context, connector, channel, index);
             },
           );
         },
@@ -91,6 +119,13 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
         onPressed: () => _showAddChannelDialog(context),
         child: const Icon(Icons.add),
       ),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: QuickSwitchBar(
+          selectedIndex: 1,
+          onDestinationSelected: (index) => _handleQuickSwitch(index, context),
+        ),
+      ),
     );
   }
 
@@ -98,11 +133,17 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
     BuildContext context,
     MeshCoreConnector connector,
     Channel channel,
+    int index,
   ) {
     final unreadCount = connector.getUnreadCountForChannel(channel);
     return Card(
       key: ValueKey('channel_${channel.index}'),
+      margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
+        dense: true,
+        minVerticalPadding: 0,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        visualDensity: const VisualDensity(vertical: -2),
         leading: CircleAvatar(
           backgroundColor: channel.isPublicChannel
               ? Colors.green.withValues(alpha: 0.2)
@@ -120,36 +161,26 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
           channel.name.isEmpty ? 'Channel ${channel.index}' : channel.name,
           style: const TextStyle(fontWeight: FontWeight.w500),
         ),
-          subtitle: Text(
-            channel.name.startsWith('#')
-                ? 'Hashtag channel'
-                : channel.isPublicChannel
-                    ? 'Public channel'
-                    : 'Private channel',
-          ),
+        subtitle: Text(
+          channel.name.startsWith('#')
+              ? 'Hashtag channel'
+              : channel.isPublicChannel
+                  ? 'Public channel'
+                  : 'Private channel',
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (unreadCount > 0) ...[
               UnreadBadge(count: unreadCount),
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
             ],
-            IconButton(
-              icon: const Icon(Icons.edit_outlined),
-              onPressed: () => _showEditChannelDialog(context, connector, channel),
-            ),
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'delete') {
-                  _confirmDeleteChannel(context, connector, channel);
-                }
-              },
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Text('Delete'),
-                ),
-              ],
+            ReorderableDelayedDragStartListener(
+              index: index,
+              child: Icon(
+                Icons.drag_handle,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -162,8 +193,89 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
             ),
           );
         },
+        onLongPress: () => _showChannelActions(context, connector, channel),
       ),
     );
+  }
+
+  void _showChannelActions(
+    BuildContext context,
+    MeshCoreConnector connector,
+    Channel channel,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Edit channel'),
+              onTap: () {
+                Navigator.pop(context);
+                _showEditChannelDialog(context, connector, channel);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: Colors.red),
+              title: const Text('Delete channel', style: TextStyle(color: Colors.red)),
+              onTap: () {
+                Navigator.pop(context);
+                _confirmDeleteChannel(context, connector, channel);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleQuickSwitch(int index, BuildContext context) {
+    if (index == 1) return;
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          buildQuickSwitchRoute(
+            const ContactsScreen(hideBackButton: true),
+          ),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          buildQuickSwitchRoute(
+            const MapScreen(hideBackButton: true),
+          ),
+        );
+        break;
+    }
+  }
+
+  Future<void> _disconnect(BuildContext context) async {
+    final connector = context.read<MeshCoreConnector>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Disconnect'),
+        content: const Text('Are you sure you want to disconnect from this device?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Disconnect'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await connector.disconnect();
+    }
   }
 
   void _showAddChannelDialog(BuildContext context) {

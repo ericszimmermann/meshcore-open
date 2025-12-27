@@ -10,6 +10,7 @@ class Contact {
   final double? latitude;
   final double? longitude;
   final DateTime lastSeen;
+  final DateTime lastMessageAt;
 
   Contact({
     required this.publicKey,
@@ -20,7 +21,8 @@ class Contact {
     this.latitude,
     this.longitude,
     required this.lastSeen,
-  });
+    DateTime? lastMessageAt,
+  }) : lastMessageAt = lastMessageAt ?? lastSeen;
 
   String get publicKeyHex => pubKeyToHex(publicKey);
 
@@ -46,6 +48,30 @@ class Contact {
   }
 
   bool get hasLocation => latitude != null && longitude != null;
+
+  Contact copyWith({
+    Uint8List? publicKey,
+    String? name,
+    int? type,
+    int? pathLength,
+    Uint8List? path,
+    double? latitude,
+    double? longitude,
+    DateTime? lastSeen,
+    DateTime? lastMessageAt,
+  }) {
+    return Contact(
+      publicKey: publicKey ?? this.publicKey,
+      name: name ?? this.name,
+      type: type ?? this.type,
+      pathLength: pathLength ?? this.pathLength,
+      path: path ?? this.path,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      lastSeen: lastSeen ?? this.lastSeen,
+      lastMessageAt: lastMessageAt ?? this.lastMessageAt,
+    );
+  }
 
   String get pathIdList {
     if (path.isEmpty) return '';

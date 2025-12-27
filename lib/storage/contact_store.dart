@@ -37,10 +37,13 @@ class ContactStore {
       'latitude': contact.latitude,
       'longitude': contact.longitude,
       'lastSeen': contact.lastSeen.millisecondsSinceEpoch,
+      'lastMessageAt': contact.lastMessageAt.millisecondsSinceEpoch,
     };
   }
 
   Contact _fromJson(Map<String, dynamic> json) {
+    final lastSeenMs = json['lastSeen'] as int? ?? 0;
+    final lastMessageMs = json['lastMessageAt'] as int?;
     return Contact(
       publicKey: Uint8List.fromList(base64Decode(json['publicKey'] as String)),
       name: json['name'] as String? ?? 'Unknown',
@@ -51,7 +54,8 @@ class ContactStore {
           : Uint8List(0),
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
-      lastSeen: DateTime.fromMillisecondsSinceEpoch(json['lastSeen'] as int? ?? 0),
+      lastSeen: DateTime.fromMillisecondsSinceEpoch(lastSeenMs),
+      lastMessageAt: DateTime.fromMillisecondsSinceEpoch(lastMessageMs ?? lastSeenMs),
     );
   }
 }

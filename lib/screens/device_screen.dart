@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../connector/meshcore_connector.dart';
+import '../utils/route_transitions.dart';
+import '../widgets/quick_switch_bar.dart';
 import 'channels_screen.dart';
 import 'contacts_screen.dart';
 import 'map_screen.dart';
@@ -17,6 +19,7 @@ class DeviceScreen extends StatefulWidget {
 
 class _DeviceScreenState extends State<DeviceScreen> {
   bool _showBatteryVoltage = false;
+  int _quickIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +34,26 @@ class _DeviceScreenState extends State<DeviceScreen> {
           });
         }
 
+        final theme = Theme.of(context);
+
         return PopScope(
           canPop: false,
           child: Scaffold(
             appBar: AppBar(
-              title: Text(connector.deviceDisplayName),
-              centerTitle: true,
-              automaticallyImplyLeading: false,
+              titleSpacing: 16,
+              centerTitle: false,
+              title: _buildAppBarTitle(connector, theme),
               actions: [
+                IconButton(
+                  icon: const Icon(Icons.tune),
+                  tooltip: 'Settings',
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsScreen(),
+                    ),
+                  ),
+                ),
                 IconButton(
                   icon: const Icon(Icons.bluetooth_disabled),
                   tooltip: 'Disconnect',
@@ -46,20 +61,15 @@ class _DeviceScreenState extends State<DeviceScreen> {
                 ),
               ],
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+            body: SafeArea(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                 children: [
-                  // Connection status card
-                  _buildStatusCard(connector, context),
-
-                  const SizedBox(height: 24),
-
-                  // Navigation grid
-                  Expanded(
-                    child: _buildNavigationGrid(context),
-                  ),
+                  _buildConnectionCard(connector, context),
+                  const SizedBox(height: 16),
+                  _buildSectionLabel(theme, 'Quick switch'),
+                  const SizedBox(height: 12),
+                  _buildQuickSwitchBar(context),
                 ],
               ),
             ),
@@ -69,54 +79,114 @@ class _DeviceScreenState extends State<DeviceScreen> {
     );
   }
 
-  Widget _buildStatusCard(MeshCoreConnector connector, BuildContext context) {
+  Widget _buildAppBarTitle(MeshCoreConnector connector, ThemeData theme) {
+    final colorScheme = theme.colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'MeshCore',
+          style: theme.textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.8,
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Text(
+          connector.deviceDisplayName,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionLabel(ThemeData theme, String text) {
+    return Text(
+      text,
+      style: theme.textTheme.titleSmall?.copyWith(
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.6,
+        color: theme.colorScheme.onSurfaceVariant,
+      ),
+    );
+  }
+
+  Widget _buildConnectionCard(
+    MeshCoreConnector connector,
+    BuildContext context,
+  ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Card(
+      elevation: 0,
+      color: colorScheme.surfaceVariant,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.bluetooth_connected, color: Colors.green, size: 32),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    connector.deviceDisplayName,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    connector.deviceIdLabel,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Text(
-                    'Connected',
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.w500,
-                    ),
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: colorScheme.primaryContainer,
+                  child: Icon(
+                    Icons.wifi_tethering_rounded,
+                    color: colorScheme.onPrimaryContainer,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        connector.deviceDisplayName,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        connector.deviceIdLabel,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Chip(
+                  avatar: Icon(
+                    Icons.check_circle,
+                    size: 18,
+                    color: colorScheme.onSecondaryContainer,
+                  ),
+                  label: const Text('Connected'),
+                  backgroundColor: colorScheme.secondaryContainer,
+                  labelStyle: theme.textTheme.labelMedium?.copyWith(
+                    color: colorScheme.onSecondaryContainer,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  visualDensity: VisualDensity.compact,
+                ),
                 _buildBatteryIndicator(connector, context),
               ],
             ),
@@ -126,7 +196,22 @@ class _DeviceScreenState extends State<DeviceScreen> {
     );
   }
 
-  Widget _buildBatteryIndicator(MeshCoreConnector connector, BuildContext context) {
+  Widget _buildQuickSwitchBar(BuildContext context) {
+    return QuickSwitchBar(
+      selectedIndex: _quickIndex,
+      onDestinationSelected: (index) {
+        _openQuickDestination(index, context);
+      },
+    );
+  }
+
+
+  Widget _buildBatteryIndicator(
+    MeshCoreConnector connector,
+    BuildContext context,
+  ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final percent = connector.batteryPercent;
     final millivolts = connector.batteryMillivolts;
     final percentLabel = percent != null ? '$percent%' : '--%';
@@ -136,31 +221,24 @@ class _DeviceScreenState extends State<DeviceScreen> {
     final displayLabel = _showBatteryVoltage ? voltageLabel : percentLabel;
     final icon = _batteryIcon(percent);
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(16),
-      onTap: () {
+    return ActionChip(
+      avatar: Icon(
+        icon,
+        size: 16,
+        color: colorScheme.onSecondaryContainer,
+      ),
+      label: Text(displayLabel),
+      labelStyle: theme.textTheme.labelMedium?.copyWith(
+        color: colorScheme.onSecondaryContainer,
+        fontWeight: FontWeight.w600,
+      ),
+      backgroundColor: colorScheme.secondaryContainer,
+      visualDensity: VisualDensity.compact,
+      onPressed: () {
         setState(() {
           _showBatteryVoltage = !_showBatteryVoltage;
         });
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 18, color: Colors.grey[700]),
-            const SizedBox(width: 4),
-            Text(
-              displayLabel,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[700],
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -170,89 +248,44 @@ class _DeviceScreenState extends State<DeviceScreen> {
     return Icons.battery_full;
   }
 
-  Widget _buildNavigationGrid(BuildContext context) {
-    final items = [
-      _NavItem(
-        icon: Icons.people_outline,
-        label: 'Contacts',
-        color: Colors.blue,
-        onTap: () => Navigator.push(
+  void _openQuickDestination(int index, BuildContext context) {
+    if (_quickIndex != index) {
+      setState(() {
+        _quickIndex = index;
+      });
+    }
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ContactsScreen()),
-        ),
-      ),
-      _NavItem(
-        icon: Icons.tag,
-        label: 'Channels',
-        color: Colors.green,
-        onTap: () => Navigator.push(
+          buildQuickSwitchRoute(
+            const ContactsScreen(hideBackButton: true),
+          ),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ChannelsScreen()),
-        ),
-      ),
-      _NavItem(
-        icon: Icons.map_outlined,
-        label: 'Map',
-        color: Colors.orange,
-        onTap: () => Navigator.push(
+          buildQuickSwitchRoute(
+            const ChannelsScreen(hideBackButton: true),
+          ),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MapScreen()),
-        ),
-      ),
-      _NavItem(
-        icon: Icons.settings_outlined,
-        label: 'Settings',
-        color: Colors.grey,
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SettingsScreen()),
-        ),
-      ),
-    ];
-
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 1.2,
-      ),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return _buildNavCard(item);
-      },
-    );
+          buildQuickSwitchRoute(
+            const MapScreen(hideBackButton: true),
+          ),
+        );
+        break;
+    }
   }
 
-  Widget _buildNavCard(_NavItem item) {
-    return Card(
-      child: InkWell(
-        onTap: item.onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              item.icon,
-              size: 48,
-              color: item.color,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              item.label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _disconnect(BuildContext context, MeshCoreConnector connector) async {
+  Future<void> _disconnect(
+    BuildContext context,
+    MeshCoreConnector connector,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -275,18 +308,4 @@ class _DeviceScreenState extends State<DeviceScreen> {
       await connector.disconnect();
     }
   }
-}
-
-class _NavItem {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  _NavItem({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.onTap,
-  });
 }

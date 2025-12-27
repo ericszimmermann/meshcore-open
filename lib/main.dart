@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:media_kit_fork/media_kit_fork.dart';
 
 import 'connector/meshcore_connector.dart';
 import 'screens/scanner_screen.dart';
@@ -9,9 +10,12 @@ import 'services/path_history_service.dart';
 import 'services/app_settings_service.dart';
 import 'services/notification_service.dart';
 import 'services/ble_debug_log_service.dart';
+import 'services/background_service.dart';
+import 'services/map_tile_cache_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized();
 
   // Initialize services
   final storage = StorageService();
@@ -20,6 +24,8 @@ void main() async {
   final retryService = MessageRetryService(storage);
   final appSettingsService = AppSettingsService();
   final bleDebugLogService = BleDebugLogService();
+  final backgroundService = BackgroundService();
+  final mapTileCacheService = MapTileCacheService();
 
   // Load settings
   await appSettingsService.loadSettings();
@@ -27,6 +33,7 @@ void main() async {
   // Initialize notification service
   final notificationService = NotificationService();
   await notificationService.initialize();
+  await backgroundService.initialize();
 
   // Wire up connector with services
   connector.initialize(
@@ -34,6 +41,7 @@ void main() async {
     pathHistoryService: pathHistoryService,
     appSettingsService: appSettingsService,
     bleDebugLogService: bleDebugLogService,
+    backgroundService: backgroundService,
   );
 
   await connector.loadContactCache();
@@ -50,6 +58,7 @@ void main() async {
     storage: storage,
     appSettingsService: appSettingsService,
     bleDebugLogService: bleDebugLogService,
+    mapTileCacheService: mapTileCacheService,
   ));
 }
 
@@ -60,6 +69,7 @@ class MeshCoreApp extends StatelessWidget {
   final StorageService storage;
   final AppSettingsService appSettingsService;
   final BleDebugLogService bleDebugLogService;
+  final MapTileCacheService mapTileCacheService;
 
   const MeshCoreApp({
     super.key,
@@ -69,6 +79,7 @@ class MeshCoreApp extends StatelessWidget {
     required this.storage,
     required this.appSettingsService,
     required this.bleDebugLogService,
+    required this.mapTileCacheService,
   });
 
   @override
@@ -81,6 +92,7 @@ class MeshCoreApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: appSettingsService),
         ChangeNotifierProvider.value(value: bleDebugLogService),
         Provider.value(value: storage),
+        Provider.value(value: mapTileCacheService),
       ],
       child: Consumer<AppSettingsService>(
         builder: (context, settingsService, child) {
