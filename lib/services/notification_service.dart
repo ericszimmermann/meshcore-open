@@ -18,10 +18,16 @@ class NotificationService {
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
+    const macSettings = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
 
     const initSettings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
+      macOS: macSettings,
     );
 
     try {
@@ -90,9 +96,17 @@ class NotificationService {
       badgeNumber: badgeCount,
     );
 
+    final macDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      badgeNumber: badgeCount,
+    );
+
     final notificationDetails = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
+      macOS: macDetails,
     );
 
     await _notifications.show(
@@ -128,9 +142,16 @@ class NotificationService {
       presentSound: true,
     );
 
+    const macDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
     const notificationDetails = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
+      macOS: macDetails,
     );
 
     await _notifications.show(
@@ -169,9 +190,17 @@ class NotificationService {
       badgeNumber: badgeCount,
     );
 
+    final macDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      badgeNumber: badgeCount,
+    );
+
     final notificationDetails = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
+      macOS: macDetails,
     );
 
     final preview = _truncateMessage(message, 30);
