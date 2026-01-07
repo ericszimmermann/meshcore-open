@@ -417,7 +417,7 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.info_outline, color: Theme.of(context).primaryColor),
+                Icon(Icons.info_outline, color: Theme.of(context).textTheme.headlineSmall?.color),
                 const SizedBox(width: 8),
                 const Text(
                   'System Information',
@@ -446,7 +446,7 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.radio, color: Theme.of(context).primaryColor),
+                Icon(Icons.radio, color: Theme.of(context).textTheme.headlineSmall?.color),
                 const SizedBox(width: 8),
                 const Text(
                   'Radio Statistics',
@@ -475,7 +475,7 @@ class _RepeaterStatusScreenState extends State<RepeaterStatusScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.analytics, color: Theme.of(context).primaryColor),
+                Icon(Icons.analytics, color: Theme.of(context).textTheme.headlineSmall?.color),
                 const SizedBox(width: 8),
                 const Text(
                   'Packet Statistics',

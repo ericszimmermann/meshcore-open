@@ -547,7 +547,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
   }) {
     return Row(
       children: [
-        Icon(icon, color: Theme.of(context).primaryColor),
+        Icon(icon, color: Theme.of(context).textTheme.headlineSmall?.color),
         const SizedBox(width: 8),
         Text(
           title,
