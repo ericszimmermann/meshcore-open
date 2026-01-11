@@ -18,6 +18,7 @@ import 'channels_screen.dart';
 import 'chat_screen.dart';
 import 'contacts_screen.dart';
 import '../widgets/repeater_login_dialog.dart';
+import '../widgets/room_login_dialog.dart';
 import 'repeater_hub_screen.dart';
 import 'settings_screen.dart';
 
@@ -572,6 +573,25 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  void _showRoomLogin(BuildContext context, Contact room) {
+    showDialog(
+      context: context,
+      builder: (context) => RoomLoginDialog(
+        room: room,
+        onLogin: (password) {
+          // Navigate to chat screen after successful login
+          context.read<MeshCoreConnector>().markContactRead(room.publicKeyHex);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatScreen(contact: room),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   void _showNodeInfo(BuildContext context, Contact contact) {
     showDialog(
       context: context,
@@ -623,6 +643,14 @@ class _MapScreenState extends State<MapScreen> {
                   _showRepeaterLogin(context, contact);
                 },
                 child: const Text('Manage Repeater'),
+              ),
+            if (contact.type == advTypeRoom)
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showRoomLogin(context, contact);
+                },
+                child: const Text('Join Room'),
               ),
         ],
       ),
