@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../connector/meshcore_connector.dart';
 import '../connector/meshcore_protocol.dart';
 import '../helpers/utf8_length_limiter.dart';
+import '../l10n/l10n.dart';
 import '../models/channel.dart';
 import '../models/channel_message.dart';
 import '../utils/emoji_utils.dart';
@@ -84,9 +85,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     final key = _messageKeys[messageId];
     if (key == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Original message not found'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(context.l10n.chat_originalMessageNotFound),
+          duration: const Duration(seconds: 2),
         ),
       );
       return;
@@ -120,7 +121,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                 children: [
                   Text(
                     widget.channel.name.isEmpty
-                        ? 'Channel ${widget.channel.index}'
+                        ? context.l10n.channels_channelIndex(widget.channel.index)
                         : widget.channel.name,
                     style: const TextStyle(fontSize: 16),
                   ),
@@ -128,9 +129,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                     builder: (context, connector, _) {
                       final unreadCount =
                           connector.getUnreadCountForChannelIndex(widget.channel.index);
-                      final privacy = widget.channel.isPublicChannel ? 'Public' : 'Private';
+                      final privacy = widget.channel.isPublicChannel ? context.l10n.channels_public : context.l10n.channels_private;
                       return Text(
-                        '$privacy • Unread: $unreadCount',
+                        '$privacy • ${context.l10n.chat_unread(unreadCount)}',
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontSize: 12),
                       );
@@ -170,7 +171,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No messages yet',
+                            context.l10n.chat_noMessages,
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey[600],
@@ -178,7 +179,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Send a message to get started',
+                            context.l10n.chat_sendMessageToStart,
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[500],
@@ -372,7 +373,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
         children: [
           Icon(Icons.location_on_outlined, size: 14, color: previewTextColor),
           const SizedBox(width: 4),
-          Text('Location', style: TextStyle(fontSize: 12, color: previewTextColor)),
+          Text(context.l10n.chat_location, style: TextStyle(fontSize: 12, color: previewTextColor)),
         ],
       );
     } else {
@@ -406,7 +407,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Reply to ${message.replyToSenderName}',
+              context.l10n.chat_replyTo(message.replyToSenderName ?? ''),
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
@@ -515,7 +516,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'POI Shared',
+                context.l10n.chat_poiShared,
                 style: TextStyle(
                   color: textColor,
                   fontWeight: FontWeight.w600,
@@ -623,7 +624,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Replying to ${message.senderName}',
+                  context.l10n.chat_replyingTo(message.senderName),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -678,7 +679,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
           IconButton(
             icon: const Icon(Icons.gif_box),
             onPressed: () => _showGifPicker(context),
-            tooltip: 'Send GIF',
+            tooltip: context.l10n.chat_sendGif,
           ),
           Expanded(
             child: ValueListenableBuilder<TextEditingValue>(
@@ -714,7 +715,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                     Utf8LengthLimitingTextInputFormatter(maxBytes),
                   ],
                   decoration: InputDecoration(
-                    hintText: 'Type a message...',
+                    hintText: context.l10n.chat_typeMessage,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),
@@ -757,7 +758,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     final maxBytes = maxChannelMessageBytes(connector.selfName);
     if (utf8.encode(messageText).length > maxBytes) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Message too long (max $maxBytes bytes).')),
+        SnackBar(content: Text(context.l10n.chat_messageTooLong(maxBytes))),
       );
       return;
     }
@@ -796,7 +797,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.reply),
-              title: const Text('Reply'),
+              title: Text(context.l10n.chat_reply),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _setReplyingTo(message);
@@ -804,7 +805,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.add_reaction_outlined),
-              title: const Text('Add Reaction'),
+              title: Text(context.l10n.chat_addReaction),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _showEmojiPicker(message);
@@ -812,7 +813,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.copy),
-              title: const Text('Copy'),
+              title: Text(context.l10n.common_copy),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _copyMessageText(message.text);
@@ -820,7 +821,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.delete_outline),
-              title: const Text('Delete'),
+              title: Text(context.l10n.common_delete),
               onTap: () async {
                 Navigator.pop(sheetContext);
                 await _deleteMessage(message);
@@ -828,7 +829,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.close),
-              title: const Text('Cancel'),
+              title: Text(context.l10n.common_cancel),
               onTap: () => Navigator.pop(sheetContext),
             ),
           ],
@@ -860,7 +861,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
   void _copyMessageText(String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Message copied')),
+      SnackBar(content: Text(context.l10n.chat_messageCopied)),
     );
   }
 
@@ -868,7 +869,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     await context.read<MeshCoreConnector>().deleteChannelMessage(message);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Message deleted')),
+      SnackBar(content: Text(context.l10n.chat_messageDeleted)),
     );
   }
 

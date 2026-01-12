@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../connector/meshcore_connector.dart';
+import '../l10n/l10n.dart';
 import '../connector/meshcore_protocol.dart';
 import '../models/contact.dart';
 import '../models/contact_group.dart';
@@ -89,18 +90,18 @@ class _ContactsScreenState extends State<ContactsScreen>
       child: Scaffold(
         appBar: AppBar(
           leading: BatteryIndicator(connector: connector),
-          title: const Text('Contacts'),
+          title: Text(context.l10n.contacts_title),
           centerTitle: true,
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
               icon: const Icon(Icons.bluetooth_disabled),
-              tooltip: 'Disconnect',
+              tooltip: context.l10n.common_disconnect,
               onPressed: () => _disconnect(context, connector),
             ),
             IconButton(
               icon: const Icon(Icons.tune),
-              tooltip: 'Settings',
+              tooltip: context.l10n.common_settings,
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
@@ -159,10 +160,10 @@ class _ContactsScreenState extends State<ContactsScreen>
     }
 
     if (contacts.isEmpty && _groups.isEmpty) {
-      return const EmptyState(
+      return EmptyState(
         icon: Icons.people_outline,
-        title: 'No contacts yet',
-        subtitle: 'Contacts will appear when devices advertise',
+        title: context.l10n.contacts_noContacts,
+        subtitle: context.l10n.contacts_contactsWillAppear,
       );
     }
 
@@ -177,7 +178,7 @@ class _ContactsScreenState extends State<ContactsScreen>
           child: TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: 'Search contacts...',
+              hintText: context.l10n.contacts_searchContacts,
               prefixIcon: const Icon(Icons.search),
               suffixIcon: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -221,8 +222,8 @@ class _ContactsScreenState extends State<ContactsScreen>
                       const SizedBox(height: 16),
                       Text(
                         _showUnreadOnly
-                            ? 'No unread contacts'
-                            : 'No contacts or groups found',
+                            ? context.l10n.contacts_noUnreadContacts
+                            : context.l10n.contacts_noContactsFound,
                         style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                       ),
                     ],
@@ -341,7 +342,7 @@ class _ContactsScreenState extends State<ContactsScreen>
 
   Widget _buildGroupTile(BuildContext context, ContactGroup group, List<Contact> contacts) {
     final memberContacts = _resolveGroupContacts(group, contacts);
-    final subtitle = _formatGroupMembers(memberContacts);
+    final subtitle = _formatGroupMembers(context, memberContacts);
     return ListTile(
       leading: const CircleAvatar(
         backgroundColor: Colors.teal,
@@ -374,8 +375,8 @@ class _ContactsScreenState extends State<ContactsScreen>
     return resolved;
   }
 
-  String _formatGroupMembers(List<Contact> members) {
-    if (members.isEmpty) return 'No members';
+  String _formatGroupMembers(BuildContext context, List<Contact> members) {
+    if (members.isEmpty) return context.l10n.contacts_noMembers;
     final names = members.map((c) => c.name).toList();
     if (names.length <= 2) return names.join(', ');
     return '${names.take(2).join(', ')} +${names.length - 2}';
@@ -469,7 +470,7 @@ class _ContactsScreenState extends State<ContactsScreen>
             children: [
               ListTile(
                 leading: const Icon(Icons.edit),
-                title: const Text('Edit Group'),
+                title: Text(context.l10n.contacts_editGroup),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   _showGroupEditor(context, contacts, group: group);
@@ -477,7 +478,7 @@ class _ContactsScreenState extends State<ContactsScreen>
               ),
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('Delete Group', style: TextStyle(color: Colors.red)),
+                title: Text(context.l10n.contacts_deleteGroup, style: const TextStyle(color: Colors.red)),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   _confirmDeleteGroup(context, group);
@@ -506,12 +507,12 @@ class _ContactsScreenState extends State<ContactsScreen>
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Delete Group'),
-        content: Text('Remove "${group.name}"?'),
+        title: Text(context.l10n.contacts_deleteGroup),
+        content: Text(context.l10n.contacts_deleteGroupConfirm(group.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.common_cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -521,7 +522,7 @@ class _ContactsScreenState extends State<ContactsScreen>
               });
               await _saveGroups();
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(context.l10n.common_delete, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -550,7 +551,7 @@ class _ContactsScreenState extends State<ContactsScreen>
                   .where((contact) => matchesContactQuery(contact, filterQuery))
                   .toList();
           return AlertDialog(
-            title: Text(isEditing ? 'Edit Group' : 'New Group'),
+            title: Text(isEditing ? context.l10n.contacts_editGroup : context.l10n.contacts_newGroup),
             content: SizedBox(
               width: double.maxFinite,
               child: Column(
@@ -558,17 +559,17 @@ class _ContactsScreenState extends State<ContactsScreen>
                 children: [
                   TextField(
                     controller: nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Group name',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: context.l10n.contacts_groupName,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 12),
                   TextField(
-                    decoration: const InputDecoration(
-                      hintText: 'Filter contacts...',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      hintText: context.l10n.contacts_filterContacts,
+                      prefixIcon: const Icon(Icons.search),
+                      border: const OutlineInputBorder(),
                       isDense: true,
                     ),
                     onChanged: (value) {
@@ -581,7 +582,7 @@ class _ContactsScreenState extends State<ContactsScreen>
                   SizedBox(
                     height: 240,
                     child: filteredContacts.isEmpty
-                        ? const Center(child: Text('No contacts match your filter'))
+                        ? Center(child: Text(context.l10n.contacts_noContactsMatchFilter))
                         : ListView.builder(
                             itemCount: filteredContacts.length,
                             itemBuilder: (context, index) {
@@ -610,14 +611,14 @@ class _ContactsScreenState extends State<ContactsScreen>
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Cancel'),
+                child: Text(context.l10n.common_cancel),
               ),
               TextButton(
                 onPressed: () async {
                   final name = nameController.text.trim();
                   if (name.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Group name is required')),
+                      SnackBar(content: Text(context.l10n.contacts_groupNameRequired)),
                     );
                     return;
                   }
@@ -627,7 +628,7 @@ class _ContactsScreenState extends State<ContactsScreen>
                   });
                   if (exists) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Group "$name" already exists')),
+                      SnackBar(content: Text(context.l10n.contacts_groupAlreadyExists(name))),
                     );
                     return;
                   }
@@ -649,7 +650,7 @@ class _ContactsScreenState extends State<ContactsScreen>
                     Navigator.pop(dialogContext);
                   }
                 },
-                child: Text(isEditing ? 'Save' : 'Create'),
+                child: Text(isEditing ? context.l10n.common_save : context.l10n.common_create),
               ),
             ],
           );
@@ -668,42 +669,42 @@ class _ContactsScreenState extends State<ContactsScreen>
 
     showModalBottomSheet(
       context: context,
-      builder: (context) => SafeArea(
+      builder: (sheetContext) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (isRepeater)
               ListTile(
                 leading: const Icon(Icons.cell_tower, color: Colors.orange),
-                title: const Text('Manage Repeater'),
+                title: Text(context.l10n.contacts_manageRepeater),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(sheetContext);
                   _showRepeaterLogin(context, contact);
                 },
               )
             else if (isRoom)
               ListTile(
                 leading: const Icon(Icons.room, color: Colors.blue),
-                title: const Text('Room Login'),
+                title: Text(context.l10n.contacts_roomLogin),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(sheetContext);
                   _showRoomLogin(context, contact);
                 },
               )
             else
               ListTile(
                 leading: const Icon(Icons.chat),
-                title: const Text('Open Chat'),
+                title: Text(context.l10n.contacts_openChat),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(sheetContext);
                   _openChat(context, contact);
                 },
               ),
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text('Delete Contact', style: TextStyle(color: Colors.red)),
+              title: Text(context.l10n.contacts_deleteContact, style: const TextStyle(color: Colors.red)),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(sheetContext);
                 _confirmDelete(context, connector, contact);
               },
             ),
@@ -720,20 +721,20 @@ class _ContactsScreenState extends State<ContactsScreen>
   ) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Contact'),
-        content: Text('Remove ${contact.name} from contacts?'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(context.l10n.contacts_deleteContact),
+        content: Text(context.l10n.contacts_removeConfirm(contact.name)),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(context.l10n.common_cancel),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
               connector.removeContact(contact);
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(context.l10n.common_delete, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -774,7 +775,7 @@ class _ContactTile extends StatelessWidget {
             const SizedBox(height: 4),
           ],
           Text(
-            _formatLastSeen(lastSeen),
+            _formatLastSeen(context, lastSeen),
             style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
           if (contact.hasLocation)
@@ -827,17 +828,17 @@ class _ContactTile extends StatelessWidget {
     }
   }
 
-  String _formatLastSeen(DateTime lastSeen) {
+  String _formatLastSeen(BuildContext context, DateTime lastSeen) {
     final now = DateTime.now();
     final diff = now.difference(lastSeen);
 
-    if (diff.isNegative || diff.inMinutes < 5) return 'Last seen now';
-    if (diff.inMinutes < 60) return 'Last seen ${diff.inMinutes} mins ago';
+    if (diff.isNegative || diff.inMinutes < 5) return context.l10n.contacts_lastSeenNow;
+    if (diff.inMinutes < 60) return context.l10n.contacts_lastSeenMinsAgo(diff.inMinutes);
     if (diff.inHours < 24) {
       final hours = diff.inHours;
-      return hours == 1 ? 'Last seen 1 hour ago' : 'Last seen $hours hours ago';
+      return hours == 1 ? context.l10n.contacts_lastSeenHourAgo : context.l10n.contacts_lastSeenHoursAgo(hours);
     }
     final days = diff.inDays;
-    return days == 1 ? 'Last seen 1 day ago' : 'Last seen $days days ago';
+    return days == 1 ? context.l10n.contacts_lastSeenDayAgo : context.l10n.contacts_lastSeenDaysAgo(days);
   }
 }

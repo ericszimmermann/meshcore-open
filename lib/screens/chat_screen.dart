@@ -23,6 +23,7 @@ import '../widgets/gif_message.dart';
 import '../widgets/gif_picker.dart';
 import '../widgets/path_selection_dialog.dart';
 import '../utils/app_logger.dart';
+import '../l10n/l10n.dart';
 
 class ChatScreen extends StatefulWidget {
   final Contact contact;
@@ -67,7 +68,7 @@ class _ChatScreenState extends State<ChatScreen> {
           builder: (context, pathService, connector, _) {
             final contact = _resolveContact(connector);
             final unreadCount = connector.getUnreadCountForContactKey(widget.contact.publicKeyHex);
-            final unreadLabel = 'Unread: $unreadCount';
+            final unreadLabel = context.l10n.chat_unread(unreadCount);
             final pathLabel = _currentPathLabel(contact);
 
             // Show path details if we have path data (from device or override)
@@ -106,7 +107,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
               return PopupMenuButton<String>(
                 icon: Icon(isFloodMode ? Icons.waves : Icons.route),
-                tooltip: 'Routing mode',
+                tooltip: context.l10n.chat_routingMode,
                 onSelected: (mode) async {
                   if (mode == 'flood') {
                     await connector.setPathOverride(contact, pathLen: -1);
@@ -122,7 +123,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         Icon(Icons.auto_mode, size: 20, color: !isFloodMode ? Theme.of(context).primaryColor : null),
                         const SizedBox(width: 8),
                         Text(
-                          'Auto (use saved path)',
+                          context.l10n.chat_autoUseSavedPath,
                           style: TextStyle(
                             fontWeight: !isFloodMode ? FontWeight.bold : FontWeight.normal,
                           ),
@@ -137,7 +138,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         Icon(Icons.waves, size: 20, color: isFloodMode ? Theme.of(context).primaryColor : null),
                         const SizedBox(width: 8),
                         Text(
-                          'Force Flood Mode',
+                          context.l10n.chat_forceFloodMode,
                           style: TextStyle(
                             fontWeight: isFloodMode ? FontWeight.bold : FontWeight.normal,
                           ),
@@ -151,7 +152,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.timeline),
-            tooltip: 'Path management',
+            tooltip: context.l10n.chat_pathManagement,
             onPressed: () => _showPathHistory(context),
           ),
           IconButton(
@@ -186,12 +187,12 @@ class _ChatScreenState extends State<ChatScreen> {
           Icon(Icons.chat_bubble_outline, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
-            'No messages yet',
+            context.l10n.chat_noMessages,
             style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
           const SizedBox(height: 8),
           Text(
-            'Send a message to ${widget.contact.name}',
+            context.l10n.chat_sendMessageTo(widget.contact.name),
             style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
         ],
@@ -244,7 +245,7 @@ class _ChatScreenState extends State<ChatScreen> {
             IconButton(
               icon: const Icon(Icons.gif_box),
               onPressed: () => _showGifPicker(context),
-              tooltip: 'Send GIF',
+              tooltip: context.l10n.chat_sendGif,
             ),
             Expanded(
               child: ValueListenableBuilder<TextEditingValue>(
@@ -278,10 +279,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     inputFormatters: [
                       Utf8LengthLimitingTextInputFormatter(maxBytes),
                     ],
-                    decoration: const InputDecoration(
-                      hintText: 'Type a message...',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: InputDecoration(
+                      hintText: context.l10n.chat_typeMessage,
+                      border: const OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
                     textInputAction: TextInputAction.send,
                     onSubmitted: (_) => _sendMessage(connector),
@@ -325,7 +326,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final maxBytes = maxContactMessageBytes();
     if (utf8.encode(text).length > maxBytes) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Message too long (max $maxBytes bytes).')),
+        SnackBar(content: Text(context.l10n.chat_messageTooLong(maxBytes))),
       );
       return;
     }
@@ -357,11 +358,11 @@ class _ChatScreenState extends State<ChatScreen> {
         builder: (context, pathService, _) {
           final paths = pathService.getRecentPaths(widget.contact.publicKeyHex);
           return AlertDialog(
-            title: const Row(
+            title: Row(
               children: [
-                Icon(Icons.timeline),
-                SizedBox(width: 8),
-                Text('Path Management'),
+                const Icon(Icons.timeline),
+                const SizedBox(width: 8),
+                Text(context.l10n.chat_pathManagement),
               ],
             ),
             content: SingleChildScrollView(
@@ -370,9 +371,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (paths.isNotEmpty) ...[
-                    const Text(
-                      'Recent ACK Paths (tap to use):',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    Text(
+                      context.l10n.chat_recentAckPaths,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                     ),
                     if (paths.length >= 100) ...[
                       const SizedBox(height: 8),
@@ -383,9 +384,9 @@ class _ChatScreenState extends State<ChatScreen> {
                           color: Colors.amber[100],
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Text(
-                          'Path history is full. Remove entries to add new ones.',
-                          style: TextStyle(fontSize: 12),
+                        child: Text(
+                          context.l10n.chat_pathHistoryFull,
+                          style: const TextStyle(fontSize: 12),
                         ),
                       ),
                     ],
@@ -404,11 +405,11 @@ class _ChatScreenState extends State<ChatScreen> {
                             ),
                           ),
                           title: Text(
-                            '${path.hopCount} ${path.hopCount == 1 ? 'hop' : 'hops'}',
+                            '${path.hopCount} ${path.hopCount == 1 ? context.l10n.chat_hopSingular : context.l10n.chat_hopPlural}',
                             style: const TextStyle(fontSize: 14),
                           ),
                           subtitle: Text(
-                            '${(path.tripTimeMs / 1000).toStringAsFixed(2)}s • ${_formatRelativeTime(path.timestamp)} • ${path.successCount} successes',
+                            '${(path.tripTimeMs / 1000).toStringAsFixed(2)}s • ${_formatRelativeTime(path.timestamp)} • ${path.successCount} ${context.l10n.chat_successes}',
                             style: const TextStyle(fontSize: 11),
                           ),
                           trailing: Row(
@@ -416,7 +417,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             children: [
                               IconButton(
                                 icon: const Icon(Icons.close, size: 16),
-                                tooltip: 'Remove path',
+                                tooltip: context.l10n.chat_removePath,
                                 onPressed: () async {
                                   await pathService.removePathRecord(
                                     widget.contact.publicKeyHex,
@@ -433,9 +434,9 @@ class _ChatScreenState extends State<ChatScreen> {
                           onTap: () async {
                             if (path.pathBytes.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Path details not available yet. Try sending a message to refresh.'),
-                                  duration: Duration(seconds: 2),
+                                SnackBar(
+                                  content: Text(context.l10n.chat_pathDetailsNotAvailable),
+                                  duration: const Duration(seconds: 2),
                                 ),
                               );
                               return;
@@ -465,13 +466,13 @@ class _ChatScreenState extends State<ChatScreen> {
                     }),
                     const Divider(),
                   ] else ...[
-                    const Text('No path history yet.\nSend a message to discover paths.'),
+                    Text(context.l10n.chat_noPathHistoryYet),
                     const Divider(),
                   ],
                   const SizedBox(height: 8),
-                  const Text(
-                    'Path Actions:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  Text(
+                    context.l10n.chat_pathActions,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                   ),
                   const SizedBox(height: 8),
                   ListTile(
@@ -481,8 +482,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       backgroundColor: Colors.purple,
                       child: Icon(Icons.edit_road, size: 16),
                     ),
-                    title: const Text('Set Custom Path', style: TextStyle(fontSize: 14)),
-                    subtitle: const Text('Manually specify routing path', style: TextStyle(fontSize: 11)),
+                    title: Text(context.l10n.chat_setCustomPath, style: const TextStyle(fontSize: 14)),
+                    subtitle: Text(context.l10n.chat_setCustomPathSubtitle, style: const TextStyle(fontSize: 11)),
                     onTap: () {
                       Navigator.pop(context);
                       _showCustomPathDialog(context);
@@ -495,15 +496,15 @@ class _ChatScreenState extends State<ChatScreen> {
                       backgroundColor: Colors.orange,
                       child: Icon(Icons.clear_all, size: 16),
                     ),
-                    title: const Text('Clear Path', style: TextStyle(fontSize: 14)),
-                    subtitle: const Text('Force rediscovery on next send', style: TextStyle(fontSize: 11)),
+                    title: Text(context.l10n.chat_clearPath, style: const TextStyle(fontSize: 14)),
+                    subtitle: Text(context.l10n.chat_clearPathSubtitle, style: const TextStyle(fontSize: 11)),
                     onTap: () async {
                       await connector.clearContactPath(widget.contact);
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Path cleared. Next message will rediscover route.'),
-                          duration: Duration(seconds: 2),
+                        SnackBar(
+                          content: Text(context.l10n.chat_pathCleared),
+                          duration: const Duration(seconds: 2),
                         ),
                       );
                       Navigator.pop(context);
@@ -516,15 +517,15 @@ class _ChatScreenState extends State<ChatScreen> {
                       backgroundColor: Colors.blue,
                       child: Icon(Icons.waves, size: 16),
                     ),
-                    title: const Text('Force Flood Mode', style: TextStyle(fontSize: 14)),
-                    subtitle: const Text('Use routing toggle in app bar', style: TextStyle(fontSize: 11)),
+                    title: Text(context.l10n.chat_forceFloodMode, style: const TextStyle(fontSize: 14)),
+                    subtitle: Text(context.l10n.chat_floodModeSubtitle, style: const TextStyle(fontSize: 11)),
                     onTap: () async {
                       await connector.setPathOverride(widget.contact, pathLen: -1);
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Flood mode enabled. Toggle back via routing icon in app bar.'),
-                          duration: Duration(seconds: 2),
+                        SnackBar(
+                          content: Text(context.l10n.chat_floodModeEnabled),
+                          duration: const Duration(seconds: 2),
                         ),
                       );
                       Navigator.pop(context);
@@ -536,7 +537,7 @@ class _ChatScreenState extends State<ChatScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
+                child: Text(context.l10n.common_close),
               ),
             ],
           );
@@ -547,18 +548,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
   String _formatRelativeTime(DateTime time) {
     final diff = DateTime.now().difference(time);
-    if (diff.inSeconds < 60) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
+    if (diff.inSeconds < 60) return context.l10n.time_justNow;
+    if (diff.inMinutes < 60) return context.l10n.time_minutesAgo(diff.inMinutes);
+    if (diff.inHours < 24) return context.l10n.time_hoursAgo(diff.inHours);
+    return context.l10n.time_daysAgo(diff.inDays);
   }
 
   void _showFullPathDialog(BuildContext context, List<int> pathBytes) {
     if (pathBytes.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Path details not available yet. Try sending a message to refresh.'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(context.l10n.chat_pathDetailsNotAvailable),
+          duration: const Duration(seconds: 2),
         ),
       );
       return;
@@ -571,12 +572,12 @@ class _ChatScreenState extends State<ChatScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Full Path'),
+        title: Text(context.l10n.chat_fullPath),
         content: SelectableText(formattedPath),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(context.l10n.common_close),
           ),
         ],
       ),
@@ -600,15 +601,15 @@ class _ChatScreenState extends State<ChatScreen> {
   String _currentPathLabel(Contact contact) {
     // Check if user has set a path override
     if (contact.pathOverride != null) {
-      if (contact.pathOverride! < 0) return 'Flood (forced)';
-      if (contact.pathOverride == 0) return 'Direct (forced)';
-      return '${contact.pathOverride} hops (forced)';
+      if (contact.pathOverride! < 0) return context.l10n.chat_floodForced;
+      if (contact.pathOverride == 0) return context.l10n.chat_directForced;
+      return context.l10n.chat_hopsForced(contact.pathOverride!);
     }
 
     // Use device's path
-    if (contact.pathLength < 0) return 'Flood (auto)';
-    if (contact.pathLength == 0) return 'Direct';
-    return '${contact.pathLength} hops';
+    if (contact.pathLength < 0) return context.l10n.chat_floodAuto;
+    if (contact.pathLength == 0) return context.l10n.chat_direct;
+    return context.l10n.chat_hopsCount(contact.pathLength);
   }
 
   Future<void> _notifyPathSet(
@@ -623,12 +624,12 @@ class _ChatScreenState extends State<ChatScreen> {
     if (!mounted) return;
 
     final status = !connector.isConnected
-        ? 'Saved locally. Connect to sync.'
-        : (verified ? 'Device confirmed.' : 'Device not confirmed yet.');
+        ? context.l10n.chat_pathSavedLocally
+        : (verified ? context.l10n.chat_pathDeviceConfirmed : context.l10n.chat_pathDeviceNotConfirmed);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Path set: $hopCount ${hopCount == 1 ? 'hop' : 'hops'} - $status',
+          context.l10n.chat_pathSetHops(hopCount, status),
         ),
         duration: const Duration(seconds: 3),
       ),
@@ -653,19 +654,19 @@ class _ChatScreenState extends State<ChatScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildInfoRow('Type', contact.typeLabel),
-                  _buildInfoRow('Path', contact.pathLabel),
+                  _buildInfoRow(context.l10n.chat_type, contact.typeLabel),
+                  _buildInfoRow(context.l10n.chat_path, contact.pathLabel),
                   if (contact.hasLocation)
                     _buildInfoRow(
-                      'Location',
+                      context.l10n.chat_location,
                       '${contact.latitude?.toStringAsFixed(4)}, ${contact.longitude?.toStringAsFixed(4)}',
                     ),
-                  _buildInfoRow('Public Key', '${contact.publicKeyHex.substring(0, 16)}...'),
+                  _buildInfoRow(context.l10n.chat_publicKey, '${contact.publicKeyHex.substring(0, 16)}...'),
                   const Divider(),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('SMAZ compression'),
-                    subtitle: const Text('Compress outgoing messages'),
+                    title: Text(context.l10n.channels_smazCompression),
+                    subtitle: Text(context.l10n.chat_compressOutgoingMessages),
                     value: smazEnabled,
                     onChanged: (value) {
                       connector.setContactSmazEnabled(contact.publicKeyHex, value);
@@ -677,7 +678,7 @@ class _ChatScreenState extends State<ChatScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
+                child: Text(context.l10n.common_close),
               ),
             ],
           );
@@ -731,7 +732,7 @@ class _ChatScreenState extends State<ChatScreen> {
       context,
       availableContacts: availableContacts,
       initialPath: pathForInput.isEmpty ? null : pathForInput,
-      title: 'Set Custom Path',
+      title: context.l10n.chat_setCustomPath,
       currentPathLabel: currentPathLabel,
       onRefresh: connector.isConnected ? connector.getContacts : null,
     );
@@ -769,7 +770,7 @@ class _ChatScreenState extends State<ChatScreen> {
         .toUpperCase();
     final String senderName;
     if (message.isOutgoing) {
-      senderName = connector.selfName ?? 'Me';
+      senderName = connector.selfName ?? context.l10n.chat_me;
     } else if (widget.contact.type == advTypeRoom) {
       senderName = "${contact.name} [$fourByteHex]";
     } else {
@@ -803,7 +804,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.add_reaction_outlined),
-              title: const Text('Add Reaction'),
+              title: Text(context.l10n.chat_addReaction),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _showEmojiPicker(message);
@@ -811,7 +812,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.copy),
-              title: const Text('Copy'),
+              title: Text(context.l10n.common_copy),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _copyMessageText(message.text);
@@ -819,7 +820,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.delete_outline),
-              title: const Text('Delete'),
+              title: Text(context.l10n.common_delete),
               onTap: () async {
                 Navigator.pop(sheetContext);
                 await _deleteMessage(message);
@@ -829,7 +830,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 message.status == MessageStatus.failed)
               ListTile(
                 leading: const Icon(Icons.refresh),
-                title: const Text('Retry'),
+                title: Text(context.l10n.common_retry),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   _retryMessage(message);
@@ -838,7 +839,7 @@ class _ChatScreenState extends State<ChatScreen> {
             if (widget.contact.type == advTypeRoom)
               ListTile(
                 leading: const Icon(Icons.chat),
-                title: const Text('Open Chat'),
+                title: Text(context.l10n.contacts_openChat),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   _openChat(context, contact);
@@ -846,7 +847,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ListTile(
               leading: const Icon(Icons.close),
-              title: const Text('Cancel'),
+              title: Text(context.l10n.common_cancel),
               onTap: () => Navigator.pop(sheetContext),
             ),
           ],
@@ -858,7 +859,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _copyMessageText(String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Message copied')),
+      SnackBar(content: Text(context.l10n.chat_messageCopied)),
     );
   }
 
@@ -866,7 +867,7 @@ class _ChatScreenState extends State<ChatScreen> {
     await context.read<MeshCoreConnector>().deleteMessage(message);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Message deleted')),
+      SnackBar(content: Text(context.l10n.chat_messageDeleted)),
     );
   }
 
@@ -878,7 +879,7 @@ class _ChatScreenState extends State<ChatScreen> {
       message.text,
     );
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Retrying message')),
+      SnackBar(content: Text(context.l10n.chat_retryingMessage)),
     );
   }
 
@@ -996,7 +997,7 @@ class _MessageBubble extends StatelessWidget {
                     if (isOutgoing && message.retryCount > 0) ...[
                       const SizedBox(height: 4),
                       Text(
-                        'Retry ${message.retryCount}/4',
+                        context.l10n.chat_retryCount(message.retryCount, 4),
                         style: TextStyle(
                           fontSize: 10,
                           color: metaColor,
@@ -1106,7 +1107,7 @@ class _MessageBubble extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'POI Shared',
+                context.l10n.chat_poiShared,
                 style: TextStyle(
                   color: textColor,
                   fontWeight: FontWeight.w600,

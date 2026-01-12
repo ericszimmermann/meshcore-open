@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
 import '../connector/meshcore_connector.dart';
+import '../l10n/l10n.dart';
 import '../connector/meshcore_protocol.dart';
 import '../models/channel.dart';
 import '../models/contact.dart';
@@ -141,18 +142,18 @@ class _MapScreenState extends State<MapScreen> {
           child: Scaffold(
             appBar: AppBar(
               leading: BatteryIndicator(connector: connector),
-              title: const Text('Node Map'),
+              title: Text(context.l10n.map_title),
               centerTitle: true,
               automaticallyImplyLeading: false,
               actions: [
                 IconButton(
                   icon: const Icon(Icons.bluetooth_disabled),
-                  tooltip: 'Disconnect',
+                  tooltip: context.l10n.common_disconnect,
                   onPressed: () => _disconnect(context, connector),
                 ),
                 IconButton(
                   icon: const Icon(Icons.tune),
-                  tooltip: 'Settings',
+                  tooltip: context.l10n.common_settings,
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const SettingsScreen()),
@@ -180,7 +181,7 @@ class _MapScreenState extends State<MapScreen> {
                                 context: context,
                                 connector: connector,
                                 position: latLng,
-                                defaultLabel: 'Point of interest',
+                                defaultLabel: context.l10n.map_pointOfInterest,
                                 flags: 'poi',
                               );
                             }
@@ -194,7 +195,7 @@ class _MapScreenState extends State<MapScreen> {
                                 context: context,
                                 connector: connector,
                                 position: latLng,
-                                defaultLabel: 'Point of interest',
+                                defaultLabel: context.l10n.map_pointOfInterest,
                                 flags: 'poi',
                               );
                               return;
@@ -265,7 +266,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No nodes with location data',
+            context.l10n.map_noNodesWithLocation,
             style: TextStyle(
               fontSize: 18,
               color: Colors.grey[600],
@@ -273,7 +274,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Nodes need to share their GPS coordinates\nto appear on the map',
+            context.l10n.map_nodesNeedGps,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
@@ -381,27 +382,27 @@ class _MapScreenState extends State<MapScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Nodes: $nodeCount',
+                context.l10n.map_nodesCount(nodeCount),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
               ),
               Text(
-                'Pins: $markerCount',
+                context.l10n.map_pinsCount(markerCount),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                 ),
               ),
               const SizedBox(height: 8),
-              _buildLegendItem(Icons.person, 'Chat', Colors.blue),
-              _buildLegendItem(Icons.router, 'Repeater', Colors.green),
-              _buildLegendItem(Icons.meeting_room, 'Room', Colors.purple),
-              _buildLegendItem(Icons.sensors, 'Sensor', Colors.orange),
-              _buildLegendItem(Icons.flag, 'Pin (DM)', Colors.blue),
-              _buildLegendItem(Icons.flag, 'Pin (Private)', Colors.purple),
-              _buildLegendItem(Icons.flag, 'Pin (Public)', Colors.orange),
+              _buildLegendItem(Icons.person, context.l10n.map_chat, Colors.blue),
+              _buildLegendItem(Icons.router, context.l10n.map_repeater, Colors.green),
+              _buildLegendItem(Icons.meeting_room, context.l10n.map_room, Colors.purple),
+              _buildLegendItem(Icons.sensors, context.l10n.map_sensor, Colors.orange),
+              _buildLegendItem(Icons.flag, context.l10n.map_pinDm, Colors.blue),
+              _buildLegendItem(Icons.flag, context.l10n.map_pinPrivate, Colors.purple),
+              _buildLegendItem(Icons.flag, context.l10n.map_pinPublic, Colors.orange),
             ],
           ),
         ),
@@ -501,7 +502,7 @@ class _MapScreenState extends State<MapScreen> {
     final flags = parts.length > 2 ? parts[2].trim() : '';
     return _MarkerPayload(
       position: LatLng(lat, lon),
-      label: label.isEmpty ? 'Shared pin' : label,
+      label: label.isEmpty ? context.l10n.map_sharedPin : label,
       flags: flags,
     );
   }
@@ -595,7 +596,7 @@ class _MapScreenState extends State<MapScreen> {
   void _showNodeInfo(BuildContext context, Contact contact) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Row(
           children: [
             Icon(
@@ -614,19 +615,19 @@ class _MapScreenState extends State<MapScreen> {
             _buildInfoRow('Path', contact.pathLabel),
             _buildInfoRow('Location',
               '${contact.latitude!.toStringAsFixed(6)}, ${contact.longitude!.toStringAsFixed(6)}'),
-            _buildInfoRow('Last Seen', _formatLastSeen(contact.lastSeen)),
+            _buildInfoRow(context.l10n.map_lastSeen, _formatLastSeen(contact.lastSeen)),
             _buildInfoRow('Public Key', contact.publicKeyHex),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(context.l10n.common_close),
           ),
           if (contact.type == advTypeChat) // Only show chat button for chat nodes
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -634,23 +635,23 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 );
               },
-              child: const Text('Open Chat'),
+              child: Text(context.l10n.contacts_openChat),
             ),
             if (contact.type == advTypeRepeater)
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(dialogContext);
                   _showRepeaterLogin(context, contact);
                 },
-                child: const Text('Manage Repeater'),
+                child: Text(context.l10n.map_manageRepeater),
               ),
             if (contact.type == advTypeRoom)
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(dialogContext);
                   _showRoomLogin(context, contact);
                 },
-                child: const Text('Join Room'),
+                child: Text(context.l10n.map_joinRoom),
               ),
         ],
       ),
@@ -685,17 +686,17 @@ class _MapScreenState extends State<MapScreen> {
   ) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Disconnect'),
-        content: const Text('Are you sure you want to disconnect from this device?'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(context.l10n.common_disconnect),
+        content: Text(context.l10n.map_disconnectConfirm),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(context.l10n.common_cancel),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Disconnect'),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(context.l10n.common_disconnect),
           ),
         ],
       ),
@@ -709,19 +710,19 @@ class _MapScreenState extends State<MapScreen> {
   void _showMarkerInfo(_SharedMarker marker) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text(marker.label),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildInfoRow('From', marker.fromName),
-            _buildInfoRow('Source', marker.sourceLabel),
+            _buildInfoRow(context.l10n.map_from, marker.fromName),
+            _buildInfoRow(context.l10n.map_source, marker.sourceLabel),
             _buildInfoRow(
               'Location',
               '${marker.position.latitude.toStringAsFixed(6)}, ${marker.position.longitude.toStringAsFixed(6)}',
             ),
-            if (marker.flags.isNotEmpty) _buildInfoRow('Flags', marker.flags),
+            if (marker.flags.isNotEmpty) _buildInfoRow(context.l10n.map_flags, marker.flags),
           ],
         ),
         actions: [
@@ -730,9 +731,9 @@ class _MapScreenState extends State<MapScreen> {
               setState(() {
                 _hiddenMarkerIds.add(marker.id);
               });
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
             },
-            child: const Text('Hide'),
+            child: Text(context.l10n.common_hide),
           ),
           TextButton(
             onPressed: () async {
@@ -741,15 +742,15 @@ class _MapScreenState extends State<MapScreen> {
                 _removedMarkerIds.add(marker.id);
               });
               await _markerService.saveRemovedIds(_removedMarkerIds);
-              if (context.mounted) {
-                Navigator.pop(context);
+              if (dialogContext.mounted) {
+                Navigator.pop(dialogContext);
               }
             },
-            child: const Text('Remove'),
+            child: Text(context.l10n.common_remove),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(context.l10n.common_close),
           ),
         ],
       ),
@@ -785,13 +786,13 @@ class _MapScreenState extends State<MapScreen> {
     final difference = now.difference(lastSeen);
 
     if (difference.inSeconds < 60) {
-      return 'Just now';
+      return context.l10n.time_justNow;
     } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
+      return context.l10n.time_minutesAgo(difference.inMinutes);
     } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
+      return context.l10n.time_hoursAgo(difference.inHours);
     } else {
-      return '${difference.inDays}d ago';
+      return context.l10n.time_daysAgo(difference.inDays);
     }
   }
 
@@ -808,21 +809,21 @@ class _MapScreenState extends State<MapScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.place),
-              title: const Text('Share marker here'),
+              title: Text(context.l10n.map_shareMarkerHere),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _shareMarker(
                   context: context,
                   connector: connector,
                   position: position,
-                  defaultLabel: 'Point of interest',
+                  defaultLabel: context.l10n.map_pointOfInterest,
                   flags: 'poi',
                 );
               },
             ),
             ListTile(
               leading: const Icon(Icons.close),
-              title: const Text('Cancel'),
+              title: Text(context.l10n.common_cancel),
               onTap: () => Navigator.pop(sheetContext),
             ),
           ],
@@ -840,7 +841,7 @@ class _MapScreenState extends State<MapScreen> {
   }) async {
     if (!connector.isConnected) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Connect to a device to share markers')),
+        SnackBar(content: Text(context.l10n.map_connectToShareMarkers)),
       );
       return;
     }
@@ -864,25 +865,25 @@ class _MapScreenState extends State<MapScreen> {
     return showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Pin label'),
+        title: Text(context.l10n.map_pinLabel),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Label',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            hintText: context.l10n.map_label,
+            border: const OutlineInputBorder(),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.common_cancel),
           ),
           TextButton(
             onPressed: () {
               final label = controller.text.trim().replaceAll('|', '/');
               Navigator.pop(dialogContext, label.isEmpty ? defaultLabel : label);
             },
-            child: const Text('Continue'),
+            child: Text(context.l10n.common_continue),
           ),
         ],
       ),
@@ -910,7 +911,7 @@ class _MapScreenState extends State<MapScreen> {
       builder: (sheetContext) => StatefulBuilder(
         builder: (sheetContext, setSheetState) {
           return Consumer<MeshCoreConnector>(
-            builder: (context, liveConnector, child) {
+            builder: (consumerContext, liveConnector, child) {
               final allContacts = liveConnector.contacts
                   .where((contact) =>
                       contact.type != advTypeRepeater && contact.type != advTypeRoom)
@@ -921,15 +922,15 @@ class _MapScreenState extends State<MapScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
-                        child: Text('Send to contact', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                        child: Text(context.l10n.map_sendToContact, style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: 'Search contacts...',
+                            hintText: context.l10n.contacts_searchContacts,
                             prefixIcon: const Icon(Icons.search),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -956,9 +957,9 @@ class _MapScreenState extends State<MapScreen> {
                           },
                         );
                       }),
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
-                        child: Text('Send to channel', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                        child: Text(context.l10n.map_sendToChannel, style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                       if (liveConnector.isLoadingChannels)
                         const Padding(
@@ -966,9 +967,9 @@ class _MapScreenState extends State<MapScreen> {
                           child: LinearProgressIndicator(),
                         )
                       else if (liveConnector.channels.where((c) => !c.isEmpty).isEmpty)
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Text('No channels available'),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          child: Text(context.l10n.map_noChannelsAvailable),
                         )
                       else
                         ...liveConnector.channels.where((c) => !c.isEmpty).map((channel) {
@@ -980,7 +981,7 @@ class _MapScreenState extends State<MapScreen> {
                               color: isPublic ? Colors.orange : Colors.blue,
                             ),
                             title: Text(label),
-                            subtitle: isPublic ? const Text('Public channel') : null,
+                            subtitle: isPublic ? Text(context.l10n.channels_publicChannel) : null,
                             onTap: () async {
                               Navigator.pop(sheetContext);
                               final canSend = isPublic
@@ -1011,19 +1012,16 @@ class _MapScreenState extends State<MapScreen> {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Public location share'),
-        content: Text(
-          'You are about to share a location in $channelLabel. '
-          'This channel is public and anyone with the PSK can see it.',
-        ),
+        title: Text(context.l10n.map_publicLocationShare),
+        content: Text(context.l10n.map_publicLocationShareConfirm(channelLabel)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.common_cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Share'),
+            child: Text(context.l10n.common_share),
           ),
         ],
       ),
@@ -1035,26 +1033,26 @@ class _MapScreenState extends State<MapScreen> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Filter Nodes'),
+        title: Text(context.l10n.map_filterNodes),
         contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
         content: SingleChildScrollView(
           child: Consumer<AppSettingsService>(
-            builder: (context, service, child) {
+            builder: (consumerContext, service, child) {
               final settings = service.settings;
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Node Types',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.map_nodeTypes,
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 8),
                   CheckboxListTile(
-                    title: const Text('Chat Nodes'),
+                    title: Text(context.l10n.map_chatNodes),
                     value: settings.mapShowChatNodes,
                     onChanged: (value) {
                       service.setMapShowChatNodes(value ?? true);
@@ -1062,7 +1060,7 @@ class _MapScreenState extends State<MapScreen> {
                     contentPadding: EdgeInsets.zero,
                   ),
                   CheckboxListTile(
-                    title: const Text('Repeaters'),
+                    title: Text(context.l10n.map_repeaters),
                     value: settings.mapShowRepeaters,
                     onChanged: (value) {
                       service.setMapShowRepeaters(value ?? true);
@@ -1070,7 +1068,7 @@ class _MapScreenState extends State<MapScreen> {
                     contentPadding: EdgeInsets.zero,
                   ),
                   CheckboxListTile(
-                    title: const Text('Other Nodes'),
+                    title: Text(context.l10n.map_otherNodes),
                     value: settings.mapShowOtherNodes,
                     onChanged: (value) {
                       service.setMapShowOtherNodes(value ?? true);
@@ -1078,16 +1076,16 @@ class _MapScreenState extends State<MapScreen> {
                     contentPadding: EdgeInsets.zero,
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Key Prefix',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.map_keyPrefix,
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 8),
                   CheckboxListTile(
-                    title: const Text('Filter by key prefix'),
+                    title: Text(context.l10n.map_filterByKeyPrefix),
                     value: settings.mapKeyPrefixEnabled,
                     onChanged: (value) {
                       service.setMapKeyPrefixEnabled(value ?? false);
@@ -1097,10 +1095,10 @@ class _MapScreenState extends State<MapScreen> {
                   TextFormField(
                     initialValue: settings.mapKeyPrefix,
                     enabled: settings.mapKeyPrefixEnabled,
-                    decoration: const InputDecoration(
-                      labelText: 'Public key prefix',
+                    decoration: InputDecoration(
+                      labelText: context.l10n.map_publicKeyPrefix,
                       hintText: 'e.g. ab12',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                       isDense: true,
                     ),
                     onChanged: (value) {
@@ -1108,16 +1106,16 @@ class _MapScreenState extends State<MapScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Markers',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.map_markers,
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 8),
                   CheckboxListTile(
-                    title: const Text('Show shared markers'),
+                    title: Text(context.l10n.map_showSharedMarkers),
                     value: settings.mapShowMarkers,
                     onChanged: (value) {
                       service.setMapShowMarkers(value ?? true);
@@ -1125,9 +1123,9 @@ class _MapScreenState extends State<MapScreen> {
                     contentPadding: EdgeInsets.zero,
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Last Seen Time',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.map_lastSeenTime,
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -1158,7 +1156,7 @@ class _MapScreenState extends State<MapScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Close'),
+            child: Text(context.l10n.common_close),
           ),
         ],
       ),
@@ -1205,23 +1203,24 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   String _getTimeFilterLabel(double hours) {
-    if (hours == 0) return 'All Time';
+    if (hours == 0) return context.l10n.time_allTime;
 
     if (hours < 1) {
-      return '${(hours * 60).round()} minutes';
+      return '${(hours * 60).round()} ${context.l10n.time_minutes}';
     } else if (hours < 24) {
-      return '${hours.round()} ${hours.round() == 1 ? 'hour' : 'hours'}';
+      final h = hours.round();
+      return '$h ${h == 1 ? context.l10n.time_hour : context.l10n.time_hours}';
     } else if (hours < 168) {
       final days = (hours / 24).round();
-      return '$days ${days == 1 ? 'day' : 'days'}';
+      return '$days ${days == 1 ? context.l10n.time_day : context.l10n.time_days}';
     } else if (hours < 720) {
       final weeks = (hours / 168).round();
-      return '$weeks ${weeks == 1 ? 'week' : 'weeks'}';
+      return '$weeks ${weeks == 1 ? context.l10n.time_week : context.l10n.time_weeks}';
     } else if (hours < 4380) {
       final months = (hours / 730).round();
-      return '$months ${months == 1 ? 'month' : 'months'}';
+      return '$months ${months == 1 ? context.l10n.time_month : context.l10n.time_months}';
     } else {
-      return 'All Time';
+      return context.l10n.time_allTime;
     }
   }
 }

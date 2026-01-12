@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../connector/meshcore_connector.dart';
 import '../connector/meshcore_protocol.dart';
+import '../l10n/l10n.dart';
 import '../models/radio_settings.dart';
 import 'app_settings_screen.dart';
 import 'app_debug_log_screen.dart';
@@ -18,7 +19,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _showBatteryVoltage = false;
-  String _appVersion = '...';
+  String _appVersion = '';
 
   @override
   void initState() {
@@ -35,9 +36,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(l10n.settings_title),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -47,7 +49,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                _buildDeviceInfoCard(connector),
+                _buildDeviceInfoCard(context, connector),
                 const SizedBox(height: 16),
                 _buildAppSettingsCard(context),
                 const SizedBox(height: 16),
@@ -66,46 +68,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildDeviceInfoCard(MeshCoreConnector connector) {
+  Widget _buildDeviceInfoCard(BuildContext context, MeshCoreConnector connector) {
+    final l10n = context.l10n;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Device Info',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              l10n.settings_deviceInfo,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildInfoRow('Name', connector.deviceDisplayName),
-            _buildInfoRow('ID', connector.deviceIdLabel),
-            _buildInfoRow('Status', connector.isConnected ? 'Connected' : 'Disconnected'),
-            _buildBatteryInfoRow(connector),
+            _buildInfoRow(l10n.settings_infoName, connector.deviceDisplayName),
+            _buildInfoRow(l10n.settings_infoId, connector.deviceIdLabel),
+            _buildInfoRow(l10n.settings_infoStatus, connector.isConnected ? l10n.common_connected : l10n.common_disconnected),
+            _buildBatteryInfoRow(context, connector),
             if (connector.selfName != null)
-              _buildInfoRow('Node Name', connector.selfName!),
+              _buildInfoRow(l10n.settings_nodeName, connector.selfName!),
             if (connector.selfPublicKey != null)
-              _buildInfoRow('Public Key', '${pubKeyToHex(connector.selfPublicKey!).substring(0, 16)}...'),
-            _buildInfoRow('Contacts Count', '${connector.contacts.length}'),
-            _buildInfoRow('Channel Count', '${connector.channels.length}'),
+              _buildInfoRow(l10n.settings_infoPublicKey, '${pubKeyToHex(connector.selfPublicKey!).substring(0, 16)}...'),
+            _buildInfoRow(l10n.settings_infoContactsCount, '${connector.contacts.length}'),
+            _buildInfoRow(l10n.settings_infoChannelCount, '${connector.channels.length}'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBatteryInfoRow(MeshCoreConnector connector) {
+  Widget _buildBatteryInfoRow(BuildContext context, MeshCoreConnector connector) {
+    final l10n = context.l10n;
     final percent = connector.batteryPercent;
     final millivolts = connector.batteryMillivolts;
 
     // figure out display value
     final String displayValue;
     if (millivolts == null) {
-      displayValue = '—';
+      displayValue = l10n.common_notAvailable;
     } else if (_showBatteryVoltage) {
-      displayValue = '${(millivolts / 1000.0).toStringAsFixed(2)} V';
+      displayValue = l10n.common_voltageValue(
+        (millivolts / 1000.0).toStringAsFixed(2),
+      );
     } else {
-      displayValue = percent != null ? '$percent%' : '—';
+      displayValue = percent != null
+          ? l10n.common_percentValue(percent)
+          : l10n.common_notAvailable;
     }
 
     final IconData icon;
@@ -127,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return _buildInfoRow(
-      'Battery',
+      l10n.settings_infoBattery,
       displayValue,
       leading: Icon(icon, size: 18, color: iconColor),
       valueColor: valueColor,
@@ -142,11 +150,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildAppSettingsCard(BuildContext context) {
+    final l10n = context.l10n;
     return Card(
       child: ListTile(
         leading: const Icon(Icons.settings_outlined),
-        title: const Text('App Settings'),
-        subtitle: const Text('Notifications, messaging, and map preferences'),
+        title: Text(l10n.settings_appSettings),
+        subtitle: Text(l10n.settings_appSettingsSubtitle),
         trailing: const Icon(Icons.chevron_right),
         onTap: () {
           Navigator.push(
@@ -159,45 +168,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildNodeSettingsCard(BuildContext context, MeshCoreConnector connector) {
+    final l10n = context.l10n;
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
-              'Node Settings',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              l10n.settings_nodeSettings,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
           ListTile(
             leading: const Icon(Icons.person_outline),
-            title: const Text('Node Name'),
-            subtitle: Text(connector.selfName ?? 'Not set'),
+            title: Text(l10n.settings_nodeName),
+            subtitle: Text(connector.selfName ?? l10n.settings_nodeNameNotSet),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _editNodeName(context, connector),
           ),
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.radio),
-            title: const Text('Radio Settings'),
-            subtitle: const Text('Frequency, power, spreading factor'),
+            title: Text(l10n.settings_radioSettings),
+            subtitle: Text(l10n.settings_radioSettingsSubtitle),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showRadioSettings(context, connector),
           ),
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.location_on_outlined),
-            title: const Text('Location'),
-            subtitle: const Text('GPS coordinates'),
+            title: Text(l10n.settings_location),
+            subtitle: Text(l10n.settings_locationSubtitle),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _editLocation(context, connector),
           ),
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.visibility_off_outlined),
-            title: const Text('Privacy Mode'),
-            subtitle: const Text('Hide name/location in advertisements'),
+            title: Text(l10n.settings_privacyMode),
+            subtitle: Text(l10n.settings_privacyModeSubtitle),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _togglePrivacy(context, connector),
           ),
@@ -207,42 +217,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildActionsCard(BuildContext context, MeshCoreConnector connector) {
+    final l10n = context.l10n;
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
-              'Actions',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              l10n.settings_actions,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
           ListTile(
             leading: const Icon(Icons.cell_tower),
-            title: const Text('Send Advertisement'),
-            subtitle: const Text('Broadcast presence now'),
+            title: Text(l10n.settings_sendAdvertisement),
+            subtitle: Text(l10n.settings_sendAdvertisementSubtitle),
             onTap: () => _sendAdvert(context, connector),
           ),
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.sync),
-            title: const Text('Sync Time'),
-            subtitle: const Text('Set device clock to phone time'),
+            title: Text(l10n.settings_syncTime),
+            subtitle: Text(l10n.settings_syncTimeSubtitle),
             onTap: () => _syncTime(context, connector),
           ),
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.refresh),
-            title: const Text('Refresh Contacts'),
-            subtitle: const Text('Reload contact list from device'),
+            title: Text(l10n.settings_refreshContacts),
+            subtitle: Text(l10n.settings_refreshContactsSubtitle),
             onTap: () => connector.getContacts(),
           ),
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.restart_alt, color: Colors.orange),
-            title: const Text('Reboot Device'),
-            subtitle: const Text('Restart the MeshCore device'),
+            title: Text(l10n.settings_rebootDevice),
+            subtitle: Text(l10n.settings_rebootDeviceSubtitle),
             onTap: () => _confirmReboot(context, connector),
           ),
         ],
@@ -251,32 +262,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildAboutCard(BuildContext context) {
+    final l10n = context.l10n;
     return Card(
       child: ListTile(
         leading: const Icon(Icons.info_outline),
-        title: const Text('About'),
-        subtitle: Text('MeshCore Open v$_appVersion'),
+        title: Text(l10n.settings_about),
+        subtitle: Text(
+          l10n.settings_aboutVersion(
+            _appVersion.isEmpty ? l10n.common_loading : _appVersion,
+          ),
+        ),
         onTap: () => _showAbout(context),
       ),
     );
   }
 
   Widget _buildDebugCard(BuildContext context) {
+    final l10n = context.l10n;
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
-              'Debug',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              l10n.settings_debug,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
           ListTile(
             leading: const Icon(Icons.bluetooth_outlined),
-            title: const Text('BLE Debug Log'),
-            subtitle: const Text('BLE commands, responses, and raw data'),
+            title: Text(l10n.settings_bleDebugLog),
+            subtitle: Text(l10n.settings_bleDebugLogSubtitle),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               Navigator.push(
@@ -288,8 +305,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.code_outlined),
-            title: const Text('App Debug Log'),
-            subtitle: const Text('Application debug messages'),
+            title: Text(l10n.settings_appDebugLog),
+            subtitle: Text(l10n.settings_appDebugLogSubtitle),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               Navigator.push(
@@ -349,23 +366,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _editNodeName(BuildContext context, MeshCoreConnector connector) {
+    final l10n = context.l10n;
     final controller = TextEditingController(text: connector.selfName ?? '');
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Node Name'),
+        title: Text(l10n.settings_nodeName),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Enter node name',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            hintText: l10n.settings_nodeNameHint,
+            border: const OutlineInputBorder(),
           ),
           maxLength: 31,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.common_cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -374,10 +392,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               await connector.refreshDeviceInfo();
               if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Name updated')),
+                SnackBar(content: Text(l10n.settings_nodeNameUpdated)),
               );
             },
-            child: const Text('Save'),
+            child: Text(l10n.common_save),
           ),
         ],
       ),
@@ -392,29 +410,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _editLocation(BuildContext context, MeshCoreConnector connector) {
+    final l10n = context.l10n;
     final latController = TextEditingController();
     final lonController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Location'),
+        title: Text(l10n.settings_location),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: latController,
-              decoration: const InputDecoration(
-                labelText: 'Latitude',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.settings_latitude,
+                border: const OutlineInputBorder(),
               ),
               keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: lonController,
-              decoration: const InputDecoration(
-                labelText: 'Longitude',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.settings_longitude,
+                border: const OutlineInputBorder(),
               ),
               keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
             ),
@@ -423,7 +442,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.common_cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -441,14 +460,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (lat == null || lon == null) {
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Enter both latitude and longitude.')),
+                  SnackBar(content: Text(l10n.settings_locationBothRequired)),
                 );
                 return;
               }
               if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Invalid latitude or longitude.')),
+                  SnackBar(content: Text(l10n.settings_locationInvalid)),
                 );
                 return;
               }
@@ -457,10 +476,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               await connector.refreshDeviceInfo();
               if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Location updated')),
+                SnackBar(content: Text(l10n.settings_locationUpdated)),
               );
             },
-            child: const Text('Save'),
+            child: Text(l10n.common_save),
           ),
         ],
       ),
@@ -468,15 +487,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _togglePrivacy(BuildContext context, MeshCoreConnector connector) {
+    final l10n = context.l10n;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Privacy Mode'),
-        content: const Text('Toggle privacy mode to hide your name and location in advertisements.'),
+        title: Text(l10n.settings_privacyMode),
+        content: Text(l10n.settings_privacyModeToggle),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.common_cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -485,10 +505,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               await connector.refreshDeviceInfo();
               if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Privacy mode enabled')),
+                SnackBar(content: Text(l10n.settings_privacyModeEnabled)),
               );
             },
-            child: const Text('Enable'),
+            child: Text(l10n.common_enable),
           ),
           TextButton(
             onPressed: () async {
@@ -497,10 +517,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               await connector.refreshDeviceInfo();
               if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Privacy mode disabled')),
+                SnackBar(content: Text(l10n.settings_privacyModeDisabled)),
               );
             },
-            child: const Text('Disable'),
+            child: Text(l10n.common_disable),
           ),
         ],
       ),
@@ -508,36 +528,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _sendAdvert(BuildContext context, MeshCoreConnector connector) {
+    final l10n = context.l10n;
     connector.sendSelfAdvert(flood: true);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Advertisement sent')),
+      SnackBar(content: Text(l10n.settings_advertisementSent)),
     );
   }
 
   void _syncTime(BuildContext context, MeshCoreConnector connector) {
+    final l10n = context.l10n;
     connector.syncTime();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Time synchronized')),
+      SnackBar(content: Text(l10n.settings_timeSynchronized)),
     );
   }
 
   void _confirmReboot(BuildContext context, MeshCoreConnector connector) {
+    final l10n = context.l10n;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Reboot Device'),
-        content: const Text('Are you sure you want to reboot the device? You will be disconnected.'),
+        title: Text(l10n.settings_rebootDevice),
+        content: Text(l10n.settings_rebootDeviceConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.common_cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               connector.rebootDevice();
             },
-            child: const Text('Reboot', style: TextStyle(color: Colors.orange)),
+            child: Text(l10n.common_reboot, style: const TextStyle(color: Colors.orange)),
           ),
         ],
       ),
@@ -545,16 +568,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showAbout(BuildContext context) {
+    final l10n = context.l10n;
     showAboutDialog(
       context: context,
-      applicationName: 'MeshCore Open',
-      applicationVersion: _appVersion,
-      applicationLegalese: '2024 MeshCore Open Source Project',
+      applicationName: l10n.appTitle,
+      applicationVersion: _appVersion.isEmpty ? l10n.common_loading : _appVersion,
+      applicationLegalese: l10n.settings_aboutLegalese,
       children: [
         const SizedBox(height: 16),
-        const Text(
-          'An open-source Flutter client for MeshCore LoRa mesh networking devices.',
-        ),
+        Text(l10n.settings_aboutDescription),
       ],
     );
   }
@@ -643,19 +665,20 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
   }
 
   Future<void> _saveSettings() async {
+    final l10n = context.l10n;
     final freqMHz = double.tryParse(_frequencyController.text);
     final txPower = int.tryParse(_txPowerController.text);
 
     if (freqMHz == null || freqMHz < 300 || freqMHz > 2500) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid frequency (300-2500 MHz)')),
+        SnackBar(content: Text(l10n.settings_frequencyInvalid)),
       );
       return;
     }
 
     if (txPower == null || txPower < 0 || txPower > 22) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid TX power (0-22 dBm)')),
+        SnackBar(content: Text(l10n.settings_txPowerInvalid)),
       );
       return;
     }
@@ -673,12 +696,12 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
       if (!mounted) return;
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Radio settings updated')),
+        SnackBar(content: Text(l10n.settings_radioSettingsUpdated)),
       );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(content: Text(l10n.settings_error(e.toString()))),
       );
     }
   }
@@ -696,36 +719,37 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AlertDialog(
-      title: const Text('Radio Settings'),
+      title: Text(l10n.settings_radioSettings),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Presets', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(l10n.settings_presets, style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               children: [
                 _PresetChip(
-                  label: '915 MHz',
+                  label: l10n.settings_preset915Mhz,
                   onTap: () => _applyPreset(RadioSettings.preset915MHz),
                 ),
                 _PresetChip(
-                  label: '868 MHz',
+                  label: l10n.settings_preset868Mhz,
                   onTap: () => _applyPreset(RadioSettings.preset868MHz),
                 ),
                 _PresetChip(
-                  label: '433 MHz',
+                  label: l10n.settings_preset433Mhz,
                   onTap: () => _applyPreset(RadioSettings.preset433MHz),
                 ),
                 _PresetChip(
-                  label: 'Long Range',
+                  label: l10n.settings_longRange,
                   onTap: () => _applyPreset(RadioSettings.presetLongRange),
                 ),
                 _PresetChip(
-                  label: 'Fast Speed',
+                  label: l10n.settings_fastSpeed,
                   onTap: () => _applyPreset(RadioSettings.presetFastSpeed),
                 ),
               ],
@@ -733,19 +757,19 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
             const SizedBox(height: 24),
             TextField(
               controller: _frequencyController,
-              decoration: const InputDecoration(
-                labelText: 'Frequency (MHz)',
-                border: OutlineInputBorder(),
-                helperText: '300.0 - 2500.0',
+              decoration: InputDecoration(
+                labelText: l10n.settings_frequency,
+                border: const OutlineInputBorder(),
+                helperText: l10n.settings_frequencyHelper,
               ),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<LoRaBandwidth>(
               initialValue: _bandwidth,
-              decoration: const InputDecoration(
-                labelText: 'Bandwidth',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.settings_bandwidth,
+                border: const OutlineInputBorder(),
               ),
               items: LoRaBandwidth.values
                   .map((bw) => DropdownMenuItem(
@@ -760,9 +784,9 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
             const SizedBox(height: 16),
             DropdownButtonFormField<LoRaSpreadingFactor>(
               initialValue: _spreadingFactor,
-              decoration: const InputDecoration(
-                labelText: 'Spreading Factor',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.settings_spreadingFactor,
+                border: const OutlineInputBorder(),
               ),
               items: LoRaSpreadingFactor.values
                   .map((sf) => DropdownMenuItem(
@@ -777,9 +801,9 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
             const SizedBox(height: 16),
             DropdownButtonFormField<LoRaCodingRate>(
               initialValue: _codingRate,
-              decoration: const InputDecoration(
-                labelText: 'Coding Rate',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.settings_codingRate,
+                border: const OutlineInputBorder(),
               ),
               items: LoRaCodingRate.values
                   .map((cr) => DropdownMenuItem(
@@ -794,10 +818,10 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
             const SizedBox(height: 16),
             TextField(
               controller: _txPowerController,
-              decoration: const InputDecoration(
-                labelText: 'TX Power (dBm)',
-                border: OutlineInputBorder(),
-                helperText: '0 - 22',
+              decoration: InputDecoration(
+                labelText: l10n.settings_txPower,
+                border: const OutlineInputBorder(),
+                helperText: l10n.settings_txPowerHelper,
               ),
               keyboardType: TextInputType.number,
             ),
@@ -807,11 +831,11 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(l10n.common_cancel),
         ),
         FilledButton(
           onPressed: _saveSettings,
-          child: const Text('Save'),
+          child: Text(l10n.common_save),
         ),
       ],
     );

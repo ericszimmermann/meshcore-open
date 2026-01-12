@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
+import '../l10n/l10n.dart';
 import '../models/contact.dart';
 import '../services/storage_service.dart';
 import '../connector/meshcore_connector.dart';
@@ -181,7 +182,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Login failed: $e'),
+            content: Text(context.l10n.login_failed(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -223,6 +224,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final connector = context.watch<MeshCoreConnector>();
     final repeater = _resolveRepeater(connector);
     final isFloodMode = repeater.pathOverride == -1;
@@ -235,7 +237,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Repeater Login'),
+                Text(l10n.login_repeaterLogin),
                 Text(
                   repeater.name,
                   style: TextStyle(
@@ -260,17 +262,17 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Enter the repeater password to access settings and status.',
-                  style: TextStyle(fontSize: 14),
+                Text(
+                  l10n.login_repeaterDescription,
+                  style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: 'Password',
-                    hintText: 'Enter password',
+                    labelText: l10n.login_password,
+                    hintText: l10n.login_enterPassword,
                     border: const OutlineInputBorder(),
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
@@ -297,13 +299,13 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                       _savePassword = value ?? false;
                     });
                   },
-                  title: const Text(
-                    'Save password',
-                    style: TextStyle(fontSize: 14),
+                  title: Text(
+                    l10n.login_savePassword,
+                    style: const TextStyle(fontSize: 14),
                   ),
-                  subtitle: const Text(
-                    'Password will be stored securely on this device',
-                    style: TextStyle(fontSize: 12),
+                  subtitle: Text(
+                    l10n.login_savePasswordSubtitle,
+                    style: const TextStyle(fontSize: 12),
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
                   contentPadding: EdgeInsets.zero,
@@ -311,14 +313,14 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                 const Divider(),
                 Row(
                   children: [
-                    const Text(
-                      'Routing',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    Text(
+                      l10n.login_routing,
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
                     PopupMenuButton<String>(
                       icon: Icon(isFloodMode ? Icons.waves : Icons.route),
-                      tooltip: 'Routing mode',
+                      tooltip: l10n.login_routingMode,
                       onSelected: (mode) async {
                         if (mode == 'flood') {
                           await connector.setPathOverride(repeater, pathLen: -1);
@@ -334,7 +336,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                               Icon(Icons.auto_mode, size: 20, color: !isFloodMode ? Theme.of(context).primaryColor : null),
                               const SizedBox(width: 8),
                               Text(
-                                'Auto (use saved path)',
+                                l10n.login_autoUseSavedPath,
                                 style: TextStyle(
                                   fontWeight: !isFloodMode ? FontWeight.bold : FontWeight.normal,
                                 ),
@@ -349,7 +351,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                               Icon(Icons.waves, size: 20, color: isFloodMode ? Theme.of(context).primaryColor : null),
                               const SizedBox(width: 8),
                               Text(
-                                'Force Flood Mode',
+                                l10n.login_forceFloodMode,
                                 style: TextStyle(
                                   fontWeight: isFloodMode ? FontWeight.bold : FontWeight.normal,
                                 ),
@@ -372,7 +374,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                   child: TextButton.icon(
                     onPressed: () => PathManagementDialog.show(context, contact: repeater),
                     icon: const Icon(Icons.timeline, size: 18),
-                    label: const Text('Manage Paths'),
+                    label: Text(l10n.login_managePaths),
                   ),
                 ),
               ],
@@ -380,7 +382,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(l10n.common_cancel),
         ),
         if (_isLoggingIn)
           SizedBox(
@@ -399,7 +401,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text('Attempt $_currentAttempt/$_maxAttempts'),
+                  Text(l10n.login_attempt(_currentAttempt, _maxAttempts)),
                 ],
               ),
             ),
@@ -408,7 +410,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
           FilledButton.icon(
             onPressed: _isLoading ? null : _handleLogin,
             icon: const Icon(Icons.login, size: 18),
-            label: const Text('Login'),
+            label: Text(l10n.login_login),
           ),
       ],
     );

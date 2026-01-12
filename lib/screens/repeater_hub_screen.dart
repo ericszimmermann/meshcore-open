@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/l10n.dart';
 import '../models/contact.dart';
 import 'repeater_status_screen.dart';
 import 'repeater_cli_screen.dart';
@@ -17,13 +18,14 @@ class RepeaterHubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Scaffold(
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Repeater Management'),
+            Text(l10n.repeater_management),
             Text(
               repeater.name,
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
@@ -77,17 +79,17 @@ class RepeaterHubScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const Text(
-                'Management Tools',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                l10n.repeater_managementTools,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               // Status button
               _buildManagementCard(
                 context,
                 icon: Icons.analytics,
-                title: 'Status',
-                subtitle: 'View repeater status, stats, and neighbors',
+                title: l10n.repeater_status,
+                subtitle: l10n.repeater_statusSubtitle,
                 color: Colors.blue,
                 onTap: () {
                   Navigator.push(
@@ -102,12 +104,12 @@ class RepeaterHubScreen extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 16),
-              // Status button
+              // Telemetry button
               _buildManagementCard(
                 context,
                 icon: Icons.bar_chart_sharp,
-                title: 'Telemetry',
-                subtitle: 'View telemetry of sensors and system stats',
+                title: l10n.repeater_telemetry,
+                subtitle: l10n.repeater_telemetrySubtitle,
                 color: Colors.teal,
                 onTap: () {
                   Navigator.push(
@@ -126,8 +128,8 @@ class RepeaterHubScreen extends StatelessWidget {
               _buildManagementCard(
                 context,
                 icon: Icons.terminal,
-                title: 'CLI',
-                subtitle: 'Send commands to the repeater',
+                title: l10n.repeater_cli,
+                subtitle: l10n.repeater_cliSubtitle,
                 color: Colors.green,
                 onTap: () {
                   Navigator.push(
@@ -146,8 +148,8 @@ class RepeaterHubScreen extends StatelessWidget {
               _buildManagementCard(
                 context,
                 icon: Icons.settings,
-                title: 'Settings',
-                subtitle: 'Configure repeater parameters',
+                title: l10n.repeater_settings,
+                subtitle: l10n.repeater_settingsSubtitle,
                 color: Colors.orange,
                 onTap: () {
                   Navigator.push(

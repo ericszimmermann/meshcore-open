@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../l10n/l10n.dart';
 import '../models/contact.dart';
 import '../models/path_selection.dart';
 import '../connector/meshcore_connector.dart';
@@ -30,7 +31,8 @@ class TelemetryScreen extends StatefulWidget {
 class _TelemetryScreenState extends State<TelemetryScreen> {
   static const int _statusPayloadOffset = 8;
   static const int _statusStatsSize = 52;
-  static const int _statusResponseBytes = _statusPayloadOffset + _statusStatsSize;
+  static const int _statusResponseBytes =
+      _statusPayloadOffset + _statusStatsSize;
   Uint8List _tagData = Uint8List(4);
   int _timeEstment = 0;
 
@@ -66,7 +68,8 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
       }
 
       // Check if it's a binary response
-      if (frame[0] == pushCodeBinaryResponse && listEquals(frame.sublist(2, 6), _tagData)) {
+      if (frame[0] == pushCodeBinaryResponse &&
+          listEquals(frame.sublist(2, 6), _tagData)) {
         _handleStatusResponse(context, frame.sublist(6));
       }
     });
@@ -78,10 +81,10 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Received Telemetry Data'),
+      SnackBar(
+        content: Text(context.l10n.telemetry_receivedData),
         backgroundColor: Colors.green,
-      )
+      ),
     );
     _statusTimeout?.cancel();
     if (!mounted) return;
@@ -111,7 +114,10 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
       final repeater = _resolveRepeater(connector);
       final selection = await connector.preparePathForContactSend(repeater);
       _pendingStatusSelection = selection;
-      final frame = buildSendBinaryReq(repeater.publicKey, payload: Uint8List.fromList([reqTypeGetTelemetry]));
+      final frame = buildSendBinaryReq(
+        repeater.publicKey,
+        payload: Uint8List.fromList([reqTypeGetTelemetry]),
+      );
       await connector.sendFrame(frame);
 
       final pathLengthValue = selection.useFlood ? -1 : selection.hopCount;
@@ -130,8 +136,8 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
           _isLoaded = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Telemetry request timed out.'),
+          SnackBar(
+            content: Text(context.l10n.telemetry_requestTimeout),
             backgroundColor: Colors.red,
           ),
         );
@@ -146,7 +152,7 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading telemetry: $e'),
+            content: Text(context.l10n.telemetry_errorLoading(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -173,6 +179,7 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final connector = context.watch<MeshCoreConnector>();
     final repeater = _resolveRepeater(connector);
     final isFloodMode = repeater.pathOverride == -1;
@@ -183,10 +190,16 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Repeater Telemetry', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              l10n.repeater_telemetry,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             Text(
               repeater.name,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
             ),
           ],
         ),
@@ -194,7 +207,7 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
         actions: [
           PopupMenuButton<String>(
             icon: Icon(isFloodMode ? Icons.waves : Icons.route),
-            tooltip: 'Routing mode',
+            tooltip: l10n.repeater_routingMode,
             onSelected: (mode) async {
               if (mode == 'flood') {
                 await connector.setPathOverride(repeater, pathLen: -1);
@@ -207,12 +220,20 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
                 value: 'auto',
                 child: Row(
                   children: [
-                    Icon(Icons.auto_mode, size: 20, color: !isFloodMode ? Theme.of(context).primaryColor : null),
+                    Icon(
+                      Icons.auto_mode,
+                      size: 20,
+                      color: !isFloodMode
+                          ? Theme.of(context).primaryColor
+                          : null,
+                    ),
                     const SizedBox(width: 8),
                     Text(
-                      'Auto (use saved path)',
+                      l10n.repeater_autoUseSavedPath,
                       style: TextStyle(
-                        fontWeight: !isFloodMode ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: !isFloodMode
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -222,12 +243,20 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
                 value: 'flood',
                 child: Row(
                   children: [
-                    Icon(Icons.waves, size: 20, color: isFloodMode ? Theme.of(context).primaryColor : null),
+                    Icon(
+                      Icons.waves,
+                      size: 20,
+                      color: isFloodMode
+                          ? Theme.of(context).primaryColor
+                          : null,
+                    ),
                     const SizedBox(width: 8),
                     Text(
-                      'Force Flood Mode',
+                      l10n.repeater_forceFloodMode,
                       style: TextStyle(
-                        fontWeight: isFloodMode ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isFloodMode
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -237,8 +266,9 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.timeline),
-            tooltip: 'Path management',
-            onPressed: () => PathManagementDialog.show(context, contact: repeater),
+            tooltip: l10n.repeater_pathManagement,
+            onPressed: () =>
+                PathManagementDialog.show(context, contact: repeater),
           ),
           IconButton(
             icon: _isLoading
@@ -249,7 +279,7 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
                   )
                 : const Icon(Icons.refresh),
             onPressed: _isLoading ? null : _loadTelemetry,
-            tooltip: 'Refresh',
+            tooltip: l10n.repeater_refresh,
           ),
         ],
       ),
@@ -260,16 +290,24 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              if (!_isLoaded && !_hasData && (_parsedTelemetry == null || _parsedTelemetry!.isEmpty))
-                const Center(
+              if (!_isLoaded &&
+                  !_hasData &&
+                  (_parsedTelemetry == null || _parsedTelemetry!.isEmpty))
+                Center(
                   child: Text(
-                    'No telemetry data available.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    l10n.telemetry_noData,
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 ),
-              if ((_isLoaded || _hasData) && _parsedTelemetry != null && _parsedTelemetry!.isNotEmpty)
+              if ((_isLoaded || _hasData) &&
+                  _parsedTelemetry != null &&
+                  _parsedTelemetry!.isNotEmpty)
                 for (final entry in _parsedTelemetry ?? [])
-                  _buildChannelInfoCard(entry['values'], 'Channel ${entry['channel']}', entry['channel']),
+                  _buildChannelInfoCard(
+                    entry['values'],
+                    l10n.telemetry_channelTitle(entry['channel']),
+                    entry['channel'],
+                  ),
             ],
           ),
         ),
@@ -277,7 +315,12 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
     );
   }
 
-  Widget _buildChannelInfoCard(Map<String, dynamic> channelData, String title, int channel) {
+  Widget _buildChannelInfoCard(
+    Map<String, dynamic> channelData,
+    String title,
+    int channel,
+  ) {
+    final l10n = context.l10n;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -286,26 +329,47 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.info_outline, color: Theme.of(context).textTheme.headlineSmall?.color),
+                Icon(
+                  Icons.info_outline,
+                  color: Theme.of(context).textTheme.headlineSmall?.color,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   title,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
             const Divider(),
             for (final entry in channelData.entries)
               if (entry.key == 'voltage' && channel == 1)
-                _buildInfoRow('Battery', _batteryText(entry.value))
+                _buildInfoRow(
+                  l10n.telemetry_batteryLabel,
+                  _batteryText(entry.value),
+                )
               else if (entry.key == 'voltage')
-                _buildInfoRow('Voltage', '${entry.value}V')
+                _buildInfoRow(
+                  l10n.telemetry_voltageLabel,
+                  l10n.telemetry_voltageValue(entry.value.toString()),
+                )
               else if (entry.key == 'temperature' && channel == 1)
-                _buildInfoRow('MCU Temperature', _temperatureText(entry.value))
+                _buildInfoRow(
+                  l10n.telemetry_mcuTemperatureLabel,
+                  _temperatureText(entry.value),
+                )
               else if (entry.key == 'temperature')
-                _buildInfoRow('Temperature', _temperatureText(entry.value))
+                _buildInfoRow(
+                  l10n.telemetry_temperatureLabel,
+                  _temperatureText(entry.value),
+                )
               else if (entry.key == 'current' && channel == 1)
-                _buildInfoRow('Current', '${entry.value}A')
+                _buildInfoRow(
+                  l10n.telemetry_currentLabel,
+                  l10n.telemetry_currentValue(entry.value.toString()),
+                )
               else
                 _buildInfoRow(entry.key, entry.value.toString()),
           ],
@@ -341,11 +405,12 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
     );
   }
 
-  String _batteryText(double? _batteryMv) {
-    if (_batteryMv == null) return '—';
-    final percent = _batteryPercentFromMv(_batteryMv);
-    final volts = _batteryMv.toStringAsFixed(2);
-    return '$percent% / ${volts}V';
+  String _batteryText(double? batteryMv) {
+    final l10n = context.l10n;
+    if (batteryMv == null) return l10n.common_notAvailable;
+    final percent = _batteryPercentFromMv(batteryMv);
+    final volts = batteryMv.toStringAsFixed(2);
+    return l10n.telemetry_batteryValue(percent, volts);
   }
 
   int _batteryPercentFromMv(double millivolts) {
@@ -357,8 +422,12 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
   }
 
   String _temperatureText(double? tempC) {
-    if (tempC == null) return '—';
+    final l10n = context.l10n;
+    if (tempC == null) return l10n.common_notAvailable;
     final tempF = (tempC * 9 / 5) + 32;
-    return '${tempC.toStringAsFixed(1)}°C / ${tempF.toStringAsFixed(1)}°F';
+    return l10n.telemetry_temperatureValue(
+      tempC.toStringAsFixed(1),
+      tempF.toStringAsFixed(1),
+    );
   }
 }

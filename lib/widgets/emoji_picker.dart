@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
+import '../l10n/l10n.dart';
 
 class EmojiPicker extends StatelessWidget {
   final Function(String) onEmojiSelected;
@@ -10,30 +12,39 @@ class EmojiPicker extends StatelessWidget {
 
   static const List<String> quickEmojis = ['👍', '❤️', '😂', '🎉', '👏', '🔥'];
 
-  static const Map<String, List<String>> emojiCategories = {
-    'Smileys': [
+  static const List<String> _smileys = [
       '😀', '😃', '😄', '😁', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘',
       '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🥸', '🤩', '🥳', '😏',
       '😒', '😞', '😔', '😟', '😕', '🙁', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡',
       '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗', '🤔', '🤭', '🤫', '🤥', '😶',
-    ],
-    'Gestures': [
+    ];
+  static const List<String> _gestures = [
       '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌️', '🤟', '🤘', '👌', '🤌', '🤏', '👈', '👉', '👆',
       '👇', '☝️', '👋', '🤚', '🖐️', '✋', '🖖', '👏', '🙌', '👐', '🤲', '🤝', '🙏', '✍️', '💅', '🤳',
-    ],
-    'Hearts': [
+    ];
+  static const List<String> _hearts = [
       '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❤️‍🔥', '❤️‍🩹', '💕', '💞', '💓', '💗',
       '💖', '💘', '💝', '💟', '💌', '💢', '💥', '💫', '💦', '💨', '🕳️', '💬', '👁️‍🗨️', '🗨️', '🗯️', '💭',
-    ],
-    'Objects': [
+    ];
+  static const List<String> _objects = [
       '🎉', '🎊', '🎈', '🎁', '🎀', '🪅', '🪆', '🏆', '🥇', '🥈', '🥉', '⚽', '⚾', '🥎', '🏀', '🏐',
       '🏈', '🏉', '🎾', '🥏', '🎳', '🏏', '🏑', '🏒', '🥍', '🏓', '🏸', '🥊', '🥋', '🥅', '⛳', '🔥',
       '⭐', '🌟', '✨', '⚡', '💡', '🔦', '🏮', '🪔', '📱', '💻', '⌚', '📷', '📺', '📻', '🎵', '🎶',
-    ],
-  };
+    ];
+
+  Map<String, List<String>> _emojiCategories(AppLocalizations l10n) {
+    return {
+      l10n.emojiCategorySmileys: _smileys,
+      l10n.emojiCategoryGestures: _gestures,
+      l10n.emojiCategoryHearts: _hearts,
+      l10n.emojiCategoryObjects: _objects,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final emojiCategories = _emojiCategories(l10n);
     return Container(
       height: MediaQuery.of(context).size.height * 0.5,
       decoration: BoxDecoration(
@@ -47,9 +58,9 @@ class EmojiPicker extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Add Reaction',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.chat_addReaction,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),

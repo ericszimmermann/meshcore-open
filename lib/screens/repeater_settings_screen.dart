@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../l10n/l10n.dart';
 import '../models/contact.dart';
 import '../connector/meshcore_connector.dart';
 import '../connector/meshcore_protocol.dart';
@@ -32,7 +33,6 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
   bool _refreshingLocation = false;
   bool _refreshingRepeat = false;
   bool _refreshingAllowReadOnly = false;
-  bool _refreshingPrivacy = false;
   bool _refreshingAdvertisement = false;
   StreamSubscription<Uint8List>? _frameSubscription;
   RepeaterCommandService? _commandService;
@@ -246,17 +246,6 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
     });
   }
 
-  bool _isAnySectionRefreshing() {
-    return _refreshingBasic ||
-        _refreshingRadio ||
-        _refreshingTxPower ||
-        _refreshingLocation ||
-        _refreshingRepeat ||
-        _refreshingAllowReadOnly ||
-        _refreshingPrivacy ||
-        _refreshingAdvertisement;
-  }
-
   bool _normalizeOnOff(String value) {
     final normalized = value.trim().toLowerCase();
     return normalized == 'on' ||
@@ -398,6 +387,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
     required ValueSetter<bool> setRefreshing,
   }) async {
     if (_commandService == null) return;
+    final l10n = context.l10n;
 
     setState(() {
       setRefreshing(true);
@@ -426,14 +416,14 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
       if (successCount > 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$label refreshed'),
+            content: Text(l10n.repeater_refreshed(label)),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error refreshing $label'),
+            content: Text(l10n.repeater_errorRefreshing(label)),
             backgroundColor: Colors.red,
           ),
         );
@@ -449,64 +439,63 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
   }
 
   Future<void> _refreshBasicSettings() async {
+    final l10n = context.l10n;
     await _refreshSection(
-      label: 'Basic settings',
+      label: l10n.repeater_basicSettings,
       commands: const ['get name'],
       setRefreshing: (value) => _refreshingBasic = value,
     );
   }
 
   Future<void> _refreshRadioSettings() async {
+    final l10n = context.l10n;
     await _refreshSection(
-      label: 'Radio settings',
+      label: l10n.repeater_radioSettings,
       commands: const ['get radio'],
       setRefreshing: (value) => _refreshingRadio = value,
     );
   }
 
   Future<void> _refreshTxPower() async {
+    final l10n = context.l10n;
     await _refreshSection(
-      label: 'TX power',
+      label: l10n.repeater_txPower,
       commands: const ['get tx'],
       setRefreshing: (value) => _refreshingTxPower = value,
     );
   }
 
   Future<void> _refreshLocationSettings() async {
+    final l10n = context.l10n;
     await _refreshSection(
-      label: 'Location settings',
+      label: l10n.repeater_locationSettings,
       commands: const ['get lat', 'get lon'],
       setRefreshing: (value) => _refreshingLocation = value,
     );
   }
 
   Future<void> _refreshRepeat() async {
+    final l10n = context.l10n;
     await _refreshSection(
-      label: 'Packet forwarding',
+      label: l10n.repeater_packetForwarding,
       commands: const ['get repeat'],
       setRefreshing: (value) => _refreshingRepeat = value,
     );
   }
 
   Future<void> _refreshAllowReadOnly() async {
+    final l10n = context.l10n;
     await _refreshSection(
-      label: 'Guest access',
+      label: l10n.repeater_guestAccess,
       commands: const ['get allow.read.only'],
       setRefreshing: (value) => _refreshingAllowReadOnly = value,
     );
   }
 
-  Future<void> _refreshPrivacy() async {
-    await _refreshSection(
-      label: 'Privacy mode',
-      commands: const ['get privacy'],
-      setRefreshing: (value) => _refreshingPrivacy = value,
-    );
-  }
-
   Future<void> _refreshAdvertisementSettings() async {
+    final l10n = context.l10n;
     await _refreshSection(
-      label: 'Advertisement settings',
+      label: l10n.repeater_advertisementSettings,
       commands: const [
         'get advert.interval',
         'get flood.advert.interval',
@@ -604,8 +593,8 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Settings saved successfully'),
+          SnackBar(
+            content: Text(context.l10n.repeater_settingsSaved),
             backgroundColor: Colors.green,
           ),
         );
@@ -618,7 +607,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving settings: $e'),
+            content: Text(context.l10n.repeater_errorSavingSettings(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -637,6 +626,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
   Widget _buildSectionHeader({
     required IconData icon,
     required String title,
+    required String tooltip,
     required bool isRefreshing,
     required VoidCallback onRefresh,
   }) {
@@ -658,7 +648,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
                 )
               : const Icon(Icons.refresh),
           onPressed: isRefreshing ? null : onRefresh,
-          tooltip: 'Refresh $title',
+          tooltip: tooltip,
         ),
       ],
     );
@@ -688,6 +678,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final connector = context.watch<MeshCoreConnector>();
     final repeater = _resolveRepeater(connector);
     final isFloodMode = repeater.pathOverride == -1;
@@ -698,7 +689,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Repeater Settings'),
+            Text(l10n.repeater_settingsTitle),
             Text(
               repeater.name,
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
@@ -709,7 +700,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
         actions: [
           PopupMenuButton<String>(
             icon: Icon(isFloodMode ? Icons.waves : Icons.route),
-            tooltip: 'Routing mode',
+            tooltip: l10n.repeater_routingMode,
             onSelected: (mode) async {
               if (mode == 'flood') {
                 await connector.setPathOverride(repeater, pathLen: -1);
@@ -728,7 +719,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
                     Icon(Icons.auto_mode, size: 20, color: !isFloodMode ? Theme.of(context).primaryColor : null),
                     const SizedBox(width: 8),
                     Text(
-                      'Auto (use saved path)',
+                      l10n.repeater_autoUseSavedPath,
                       style: TextStyle(
                         fontWeight: !isFloodMode ? FontWeight.bold : FontWeight.normal,
                       ),
@@ -743,7 +734,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
                     Icon(Icons.waves, size: 20, color: isFloodMode ? Theme.of(context).primaryColor : null),
                     const SizedBox(width: 8),
                     Text(
-                      'Force Flood Mode',
+                      l10n.repeater_forceFloodMode,
                       style: TextStyle(
                         fontWeight: isFloodMode ? FontWeight.bold : FontWeight.normal,
                       ),
@@ -755,14 +746,14 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.timeline),
-            tooltip: 'Path management',
+            tooltip: l10n.repeater_pathManagement,
             onPressed: () => PathManagementDialog.show(context, contact: repeater),
           ),
           if (_hasChanges)
             TextButton.icon(
               onPressed: _isLoading ? null : _saveSettings,
               icon: const Icon(Icons.save),
-              label: const Text('Save'),
+              label: Text(l10n.common_save),
             ),
         ],
       ),
@@ -791,6 +782,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
   }
 
   Widget _buildBasicSettingsCard() {
+    final l10n = context.l10n;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -799,27 +791,28 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
           children: [
             _buildSectionHeader(
               icon: Icons.settings,
-              title: 'Basic Settings',
+              title: l10n.repeater_basicSettings,
+              tooltip: l10n.repeater_refreshBasicSettings,
               isRefreshing: _refreshingBasic,
               onRefresh: _refreshBasicSettings,
             ),
             const Divider(),
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Repeater Name',
-                helperText: 'Display name for this repeater',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.repeater_repeaterName,
+                helperText: l10n.repeater_repeaterNameHelper,
+                border: const OutlineInputBorder(),
               ),
               onChanged: (_) => _markChanged(),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Admin Password',
-                helperText: 'Full access password',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.repeater_adminPassword,
+                helperText: l10n.repeater_adminPasswordHelper,
+                border: const OutlineInputBorder(),
               ),
               obscureText: true,
               onChanged: (_) => _markChanged(),
@@ -827,10 +820,10 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
             const SizedBox(height: 16),
             TextField(
               controller: _guestPasswordController,
-              decoration: const InputDecoration(
-                labelText: 'Guest Password',
-                helperText: 'Read-only access password',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.repeater_guestPassword,
+                helperText: l10n.repeater_guestPasswordHelper,
+                border: const OutlineInputBorder(),
               ),
               obscureText: true,
               onChanged: (_) => _markChanged(),
@@ -842,6 +835,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
   }
 
   Widget _buildRadioSettingsCard() {
+    final l10n = context.l10n;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -850,17 +844,18 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
           children: [
             _buildSectionHeader(
               icon: Icons.radio,
-              title: 'Radio Settings',
+              title: l10n.repeater_radioSettings,
+              tooltip: l10n.repeater_refreshRadioSettings,
               isRefreshing: _refreshingRadio,
               onRefresh: _refreshRadioSettings,
             ),
             const Divider(),
             TextField(
               controller: _freqController,
-              decoration: const InputDecoration(
-                labelText: 'Frequency (MHz)',
-                helperText: '300-2500 MHz',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.repeater_frequencyMhz,
+                helperText: l10n.repeater_frequencyHelper,
+                border: const OutlineInputBorder(),
                 suffixText: 'MHz',
               ),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -873,10 +868,10 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
                 Expanded(
                   child: TextField(
                     controller: _txPowerController,
-                    decoration: const InputDecoration(
-                      labelText: 'TX Power',
-                      helperText: '1-30 dBm',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.repeater_txPower,
+                      helperText: l10n.repeater_txPowerHelper,
+                      border: const OutlineInputBorder(),
                       suffixText: 'dBm',
                     ),
                     keyboardType: TextInputType.number,
@@ -887,16 +882,16 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
                 _buildInlineRefreshButton(
                   isRefreshing: _refreshingTxPower,
                   onRefresh: _refreshTxPower,
-                  tooltip: 'Refresh TX power',
+                  tooltip: l10n.repeater_refreshTxPower,
                 ),
               ],
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<int>(
               initialValue: _bandwidth,
-              decoration: const InputDecoration(
-                labelText: 'Bandwidth',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.repeater_bandwidth,
+                border: const OutlineInputBorder(),
               ),
               items: _bandwidthOptions.map((bw) {
                 return DropdownMenuItem(
@@ -916,9 +911,9 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
             const SizedBox(height: 16),
             DropdownButtonFormField<int>(
               initialValue: _spreadingFactor,
-              decoration: const InputDecoration(
-                labelText: 'Spreading Factor',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.repeater_spreadingFactor,
+                border: const OutlineInputBorder(),
               ),
               items: _spreadingFactorOptions.map((sf) {
                 return DropdownMenuItem(
@@ -938,9 +933,9 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
             const SizedBox(height: 16),
             DropdownButtonFormField<int>(
               initialValue: _codingRate,
-              decoration: const InputDecoration(
-                labelText: 'Coding Rate',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.repeater_codingRate,
+                border: const OutlineInputBorder(),
               ),
               items: _codingRateOptions.map((cr) {
                 return DropdownMenuItem(
@@ -964,6 +959,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
   }
 
   Widget _buildLocationSettingsCard() {
+    final l10n = context.l10n;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -972,17 +968,18 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
           children: [
             _buildSectionHeader(
               icon: Icons.location_on,
-              title: 'Location Settings',
+              title: l10n.repeater_locationSettings,
+              tooltip: l10n.repeater_refreshLocationSettings,
               isRefreshing: _refreshingLocation,
               onRefresh: _refreshLocationSettings,
             ),
             const Divider(),
             TextField(
               controller: _latController,
-              decoration: const InputDecoration(
-                labelText: 'Latitude',
-                helperText: 'Decimal degrees (e.g., 37.7749)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.repeater_latitude,
+                helperText: l10n.repeater_latitudeHelper,
+                border: const OutlineInputBorder(),
               ),
               keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
               onChanged: (_) => _markChanged(),
@@ -990,10 +987,10 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
             const SizedBox(height: 16),
             TextField(
               controller: _lonController,
-              decoration: const InputDecoration(
-                labelText: 'Longitude',
-                helperText: 'Decimal degrees (e.g., -122.4194)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.repeater_longitude,
+                helperText: l10n.repeater_longitudeHelper,
+                border: const OutlineInputBorder(),
               ),
               keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
               onChanged: (_) => _markChanged(),
@@ -1005,6 +1002,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
   }
 
   Widget _buildFeatureTogglesCard() {
+    final l10n = context.l10n;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -1015,16 +1013,16 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
               children: [
                 Icon(Icons.toggle_on, color: Theme.of(context).textTheme.headlineSmall?.color),
                 const SizedBox(width: 8),
-                const Text(
-                  'Features',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.repeater_features,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             const Divider(),
             _buildFeatureToggleRow(
-              title: 'Packet Forwarding',
-              subtitle: 'Enable repeater to forward packets',
+              title: l10n.repeater_packetForwarding,
+              subtitle: l10n.repeater_packetForwardingSubtitle,
               value: _repeatEnabled,
               isRefreshing: _refreshingRepeat,
               onChanged: (value) {
@@ -1034,10 +1032,11 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
                 _markChanged();
               },
               onRefresh: _refreshRepeat,
+              refreshTooltip: l10n.repeater_refreshPacketForwarding,
             ),
             _buildFeatureToggleRow(
-              title: 'Guest Access',
-              subtitle: 'Allow read-only guest access',
+              title: l10n.repeater_guestAccess,
+              subtitle: l10n.repeater_guestAccessSubtitle,
               value: _allowReadOnly,
               isRefreshing: _refreshingAllowReadOnly,
               onChanged: (value) {
@@ -1047,11 +1046,12 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
                 _markChanged();
               },
               onRefresh: _refreshAllowReadOnly,
+              refreshTooltip: l10n.repeater_refreshGuestAccess,
             ),
             // Privacy mode - hidden until fully implemented
             // _buildFeatureToggleRow(
-            //   title: 'Privacy Mode',
-            //   subtitle: 'Hide name/location in advertisements',
+            //   title: l10n.repeater_privacyMode,
+            //   subtitle: l10n.repeater_privacyModeSubtitle,
             //   value: _privacyMode,
             //   isRefreshing: _refreshingPrivacy,
             //   onChanged: (value) {
@@ -1061,6 +1061,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
             //     _markChanged();
             //   },
             //   onRefresh: _refreshPrivacy,
+            //   refreshTooltip: l10n.repeater_refreshPrivacyMode,
             // ),
           ],
         ),
@@ -1075,6 +1076,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
     required bool isRefreshing,
     required ValueChanged<bool> onChanged,
     required VoidCallback onRefresh,
+    required String refreshTooltip,
   }) {
     return Row(
       children: [
@@ -1093,10 +1095,10 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
                   width: 18,
                   height: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
-                )
+              )
               : const Icon(Icons.refresh, size: 20),
           onPressed: isRefreshing ? null : onRefresh,
-          tooltip: 'Refresh $title',
+          tooltip: refreshTooltip,
           visualDensity: VisualDensity.compact,
         ),
       ],
@@ -1104,6 +1106,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
   }
 
   Widget _buildAdvertisementSettingsCard() {
+    final l10n = context.l10n;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -1112,22 +1115,23 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
           children: [
             _buildSectionHeader(
               icon: Icons.broadcast_on_personal,
-              title: 'Advertisement Settings',
+              title: l10n.repeater_advertisementSettings,
+              tooltip: l10n.repeater_refreshAdvertisementSettings,
               isRefreshing: _refreshingAdvertisement,
               onRefresh: _refreshAdvertisementSettings,
             ),
             const Divider(),
             ListTile(
-              title: const Text('Local Advertisement Interval'),
-              subtitle: Text('$_advertInterval minutes'),
-              trailing: Text('${_advertInterval}m'),
+              title: Text(l10n.repeater_localAdvertInterval),
+              subtitle: Text(l10n.repeater_localAdvertIntervalMinutes(_advertInterval)),
+              trailing: Text(l10n.repeater_localAdvertIntervalMinutes(_advertInterval)),
             ),
             Slider(
               value: _advertInterval.toDouble(),
               min: 60,
               max: 240,
               divisions: 18,
-              label: '${_advertInterval}m',
+              label: l10n.repeater_localAdvertIntervalMinutes(_advertInterval),
               onChanged: (value) {
                 setState(() {
                   _advertInterval = value.toInt();
@@ -1137,16 +1141,16 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
             ),
             const SizedBox(height: 16),
             ListTile(
-              title: const Text('Flood Advertisement Interval'),
-              subtitle: Text('$_floodAdvertInterval hours'),
-              trailing: Text('${_floodAdvertInterval}h'),
+              title: Text(l10n.repeater_floodAdvertInterval),
+              subtitle: Text(l10n.repeater_floodAdvertIntervalHours(_floodAdvertInterval)),
+              trailing: Text(l10n.repeater_floodAdvertIntervalHours(_floodAdvertInterval)),
             ),
             Slider(
               value: _floodAdvertInterval.toDouble(),
               min: 3,
               max: 48,
               divisions: 45,
-              label: '${_floodAdvertInterval}h',
+              label: l10n.repeater_floodAdvertIntervalHours(_floodAdvertInterval),
               onChanged: (value) {
                 setState(() {
                   _floodAdvertInterval = value.toInt();
@@ -1158,16 +1162,16 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
             // if (_privacyMode) ...[
             //   const SizedBox(height: 16),
             //   ListTile(
-            //     title: const Text('Encrypted Advertisement Interval'),
-            //     subtitle: Text('$_privAdvertInterval minutes'),
-            //     trailing: Text('${_privAdvertInterval}m'),
+            //     title: Text(l10n.repeater_encryptedAdvertInterval),
+            //     subtitle: Text(l10n.repeater_localAdvertIntervalMinutes(_privAdvertInterval)),
+            //     trailing: Text(l10n.repeater_localAdvertIntervalMinutes(_privAdvertInterval)),
             //   ),
             //   Slider(
             //     value: _privAdvertInterval.toDouble(),
             //     min: 30,
             //     max: 240,
             //     divisions: 21,
-            //     label: '${_privAdvertInterval}m',
+            //     label: l10n.repeater_localAdvertIntervalMinutes(_privAdvertInterval),
             //     onChanged: (value) {
             //       setState(() {
             //         _privAdvertInterval = value.toInt();
@@ -1183,6 +1187,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
   }
 
   Widget _buildDangerZoneCard() {
+    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
     return Card(
       color: colorScheme.errorContainer,
@@ -1196,7 +1201,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
                 Icon(Icons.warning, color: colorScheme.onErrorContainer),
                 const SizedBox(width: 8),
                 Text(
-                  'Danger Zone',
+                  l10n.repeater_dangerZone,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -1208,14 +1213,14 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
             const Divider(),
             ListTile(
               leading: Icon(Icons.refresh, color: colorScheme.onErrorContainer),
-              title: Text('Reboot Repeater', style: TextStyle(color: colorScheme.onErrorContainer)),
+              title: Text(l10n.repeater_rebootRepeater, style: TextStyle(color: colorScheme.onErrorContainer)),
               subtitle: Text(
-                'Restart the repeater device',
+                l10n.repeater_rebootRepeaterSubtitle,
                 style: TextStyle(color: colorScheme.onErrorContainer.withValues(alpha: 0.8)),
               ),
               onTap: () => _confirmAction(
-                'Reboot Repeater',
-                'Are you sure you want to reboot this repeater?',
+                l10n.repeater_rebootRepeater,
+                l10n.repeater_rebootRepeaterConfirm,
                 () => _sendDangerCommand('reboot'),
               ),
             ),
@@ -1235,14 +1240,14 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
             // ),
             ListTile(
               leading: Icon(Icons.delete_forever, color: colorScheme.onErrorContainer),
-              title: Text('Erase File System', style: TextStyle(color: colorScheme.onErrorContainer)),
+              title: Text(l10n.repeater_eraseFileSystem, style: TextStyle(color: colorScheme.onErrorContainer)),
               subtitle: Text(
-                'Format the repeater file system',
+                l10n.repeater_eraseFileSystemSubtitle,
                 style: TextStyle(color: colorScheme.onErrorContainer.withValues(alpha: 0.8)),
               ),
               onTap: () => _confirmAction(
-                'Erase File System',
-                'WARNING: This will erase all data on the repeater. This cannot be undone!',
+                l10n.repeater_eraseFileSystem,
+                l10n.repeater_eraseFileSystemConfirm,
                 () => _sendDangerCommand('erase'),
                 isDestructive: true,
               ),
@@ -1254,13 +1259,14 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
   }
 
   Future<void> _sendDangerCommand(String command) async {
+    final l10n = context.l10n;
     final connector = Provider.of<MeshCoreConnector>(context, listen: false);
     final repeater = _resolveRepeater(connector);
 
     if (command == 'erase') {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erase is only available over serial console.')),
+          SnackBar(content: Text(l10n.repeater_eraseSerialOnly)),
         );
       }
       return;
@@ -1284,14 +1290,14 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Command sent: $command')),
+          SnackBar(content: Text(l10n.repeater_commandSent(command))),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error sending command: $e'),
+            content: Text(l10n.repeater_errorSendingCommand(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -1305,6 +1311,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
     VoidCallback onConfirm, {
     bool isDestructive = false,
   }) {
+    final l10n = context.l10n;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1313,7 +1320,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.common_cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -1323,7 +1330,7 @@ class _RepeaterSettingsScreenState extends State<RepeaterSettingsScreen> {
             style: isDestructive
                 ? FilledButton.styleFrom(backgroundColor: Colors.red)
                 : null,
-            child: const Text('Confirm'),
+            child: Text(l10n.repeater_confirm),
           ),
         ],
       ),

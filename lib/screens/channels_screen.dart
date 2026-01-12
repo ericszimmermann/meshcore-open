@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../connector/meshcore_connector.dart';
+import '../l10n/l10n.dart';
 import '../models/channel.dart';
 import '../utils/dialog_utils.dart';
 import '../utils/disconnect_navigation_mixin.dart';
@@ -77,18 +78,18 @@ class _ChannelsScreenState extends State<ChannelsScreen>
       child: Scaffold(
         appBar: AppBar(
           leading: BatteryIndicator(connector: connector),
-          title: const Text('Channels'),
+          title: Text(context.l10n.channels_title),
           centerTitle: true,
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
               icon: const Icon(Icons.bluetooth_disabled),
-              tooltip: 'Disconnect',
+              tooltip: context.l10n.common_disconnect,
               onPressed: () => _disconnect(context),
             ),
             IconButton(
               icon: const Icon(Icons.tune),
-              tooltip: 'Settings',
+              tooltip: context.l10n.common_settings,
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
@@ -114,11 +115,11 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                     height: MediaQuery.of(context).size.height - 200,
                     child: EmptyState(
                       icon: Icons.tag,
-                      title: 'No channels configured',
+                      title: context.l10n.channels_noChannelsConfigured,
                       action: FilledButton.icon(
                         onPressed: () => _addPublicChannel(context, connector),
                         icon: const Icon(Icons.public),
-                        label: const Text('Add Public Channel'),
+                        label: Text(context.l10n.channels_addPublicChannel),
                       ),
                     ),
                   ),
@@ -135,7 +136,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Search channels...',
+                      hintText: context.l10n.channels_searchChannels,
                       prefixIcon: const Icon(Icons.search),
                       suffixIcon: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -183,7 +184,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                                     Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
                                     const SizedBox(height: 16),
                                     Text(
-                                      'No channels found',
+                                      context.l10n.channels_noChannelsFound,
                                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                                     ),
                                   ],
@@ -289,15 +290,15 @@ class _ChannelsScreenState extends State<ChannelsScreen>
           ),
         ),
         title: Text(
-          channel.name.isEmpty ? 'Channel ${channel.index}' : channel.name,
+          channel.name.isEmpty ? context.l10n.channels_channelIndex(channel.index) : channel.name,
           style: const TextStyle(fontWeight: FontWeight.w500),
         ),
         subtitle: Text(
           channel.name.startsWith('#')
-              ? 'Hashtag channel'
+              ? context.l10n.channels_hashtagChannel
               : channel.isPublicChannel
-                  ? 'Public channel'
-                  : 'Private channel',
+                  ? context.l10n.channels_publicChannel
+                  : context.l10n.channels_privateChannel,
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -346,7 +347,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
           children: [
             ListTile(
               leading: const Icon(Icons.edit_outlined),
-              title: const Text('Edit channel'),
+              title: Text(context.l10n.channels_editChannel),
               onTap: () async {
                 Navigator.pop(context);
                 await Future.delayed(const Duration(milliseconds: 100));
@@ -357,7 +358,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
             ),
             ListTile(
               leading: const Icon(Icons.delete_outline, color: Colors.red),
-              title: const Text('Delete channel', style: TextStyle(color: Colors.red)),
+              title: Text(context.l10n.channels_deleteChannel, style: const TextStyle(color: Colors.red)),
               onTap: () async {
                 Navigator.pop(context);
                 await Future.delayed(const Duration(milliseconds: 100));
@@ -406,28 +407,29 @@ class _ChannelsScreenState extends State<ChannelsScreen>
     const actionSortUnread = 3;
 
     return SortFilterMenu(
+      tooltip: context.l10n.listFilter_tooltip,
       sections: [
         SortFilterMenuSection(
-          title: 'Sort by',
+          title: context.l10n.channels_sortBy,
           options: [
             SortFilterMenuOption(
               value: actionSortManual,
-              label: 'Manual',
+              label: context.l10n.channels_sortManual,
               checked: _sortOption == ChannelSortOption.manual,
             ),
             SortFilterMenuOption(
               value: actionSortName,
-              label: 'A-Z',
+              label: context.l10n.channels_sortAZ,
               checked: _sortOption == ChannelSortOption.name,
             ),
             SortFilterMenuOption(
               value: actionSortLatest,
-              label: 'Latest messages',
+              label: context.l10n.channels_sortLatestMessages,
               checked: _sortOption == ChannelSortOption.latestMessages,
             ),
             SortFilterMenuOption(
               value: actionSortUnread,
-              label: 'Unread',
+              label: context.l10n.channels_sortUnread,
               checked: _sortOption == ChannelSortOption.unread,
             ),
           ],
@@ -503,7 +505,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
   }
 
   String _normalizeChannelName(Channel channel) {
-    if (channel.name.isEmpty) return 'Channel ${channel.index}';
+    if (channel.name.isEmpty) return 'Channel ${channel.index}'; // Fallback for sorting
     final trimmed = channel.name.trim();
     if (trimmed.startsWith('#') && trimmed.length > 1) {
       return trimmed.substring(1);
@@ -521,9 +523,9 @@ class _ChannelsScreenState extends State<ChannelsScreen>
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Add Channel'),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => AlertDialog(
+          title: Text(dialogContext.l10n.channels_addChannel),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -531,14 +533,14 @@ class _ChannelsScreenState extends State<ChannelsScreen>
               children: [
                 DropdownButtonFormField<int>(
                   initialValue: selectedIndex,
-                  decoration: const InputDecoration(
-                    labelText: 'Channel Index',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: dialogContext.l10n.channels_channelIndexLabel,
+                    border: const OutlineInputBorder(),
                   ),
                   items: List.generate(maxChannels, (i) => i)
                       .map((i) => DropdownMenuItem(
                             value: i,
-                            child: Text('Channel $i'),
+                            child: Text(dialogContext.l10n.channels_channelIndex(i)),
                           ))
                       .toList(),
                   onChanged: (value) {
@@ -550,16 +552,16 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                 const SizedBox(height: 16),
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Channel Name',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: dialogContext.l10n.channels_channelName,
+                    border: const OutlineInputBorder(),
                   ),
                   maxLength: 31,
                 ),
                 const SizedBox(height: 8),
                 CheckboxListTile(
-                  title: const Text('Use Public Channel'),
-                  subtitle: const Text('Standard public PSK'),
+                  title: Text(dialogContext.l10n.channels_usePublicChannel),
+                  subtitle: Text(dialogContext.l10n.channels_standardPublicPsk),
                   value: usePublicPsk,
                   onChanged: (value) {
                     setDialogState(() {
@@ -578,11 +580,11 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                   TextField(
                     controller: pskController,
                     decoration: InputDecoration(
-                      labelText: 'PSK (Hex)',
+                      labelText: dialogContext.l10n.channels_pskHex,
                       border: const OutlineInputBorder(),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.casino),
-                        tooltip: 'Generate random PSK',
+                        tooltip: dialogContext.l10n.channels_generateRandomPsk,
                         onPressed: () {
                           final random = Random.secure();
                           final bytes = Uint8List(16);
@@ -600,8 +602,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(dialogContext.l10n.common_cancel),
             ),
             FilledButton(
               onPressed: () {
@@ -611,8 +613,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                     : pskController.text.trim();
 
                 if (name.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please enter a channel name')),
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    SnackBar(content: Text(dialogContext.l10n.channels_enterChannelName)),
                   );
                   return;
                 }
@@ -621,21 +623,21 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                 try {
                   psk = Channel.parsePskHex(pskHex);
                 } on FormatException {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('PSK must be 32 hex characters')),
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    SnackBar(content: Text(dialogContext.l10n.channels_pskMustBe32Hex)),
                   );
                   return;
                 }
 
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
                 connector.setChannel(selectedIndex, name, psk);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Channel "$name" added')),
+                    SnackBar(content: Text(context.l10n.channels_channelAdded(name))),
                   );
                 }
               },
-              child: const Text('Add'),
+              child: Text(dialogContext.l10n.common_add),
             ),
           ],
         ),
@@ -654,18 +656,18 @@ class _ChannelsScreenState extends State<ChannelsScreen>
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text('Edit Channel ${channel.index}'),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setState) => AlertDialog(
+          title: Text(dialogContext.l10n.channels_editChannelTitle(channel.index)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Channel Name',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: dialogContext.l10n.channels_channelName,
+                    border: const OutlineInputBorder(),
                   ),
                   maxLength: 31,
                 ),
@@ -673,11 +675,11 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                 TextField(
                   controller: pskController,
                   decoration: InputDecoration(
-                    labelText: 'PSK (Hex)',
+                    labelText: dialogContext.l10n.channels_pskHex,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.casino),
-                      tooltip: 'Generate random PSK',
+                      tooltip: dialogContext.l10n.channels_generateRandomPsk,
                       onPressed: () {
                         final random = Random.secure();
                         final bytes = Uint8List(16);
@@ -692,7 +694,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                 const SizedBox(height: 16),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('SMAZ compression'),
+                  title: Text(dialogContext.l10n.channels_smazCompression),
                   value: smazEnabled,
                   onChanged: (value) => setState(() => smazEnabled = value),
                 ),
@@ -701,8 +703,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(dialogContext.l10n.common_cancel),
             ),
             FilledButton(
               onPressed: () {
@@ -713,20 +715,20 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                 try {
                   psk = Channel.parsePskHex(pskHex);
                 } on FormatException {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('PSK must be 32 hex characters')),
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    SnackBar(content: Text(dialogContext.l10n.channels_pskMustBe32Hex)),
                   );
                   return;
                 }
 
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
                 connector.setChannel(channel.index, name, psk);
                 connector.setChannelSmazEnabled(channel.index, smazEnabled);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Channel "$name" updated')),
+                  SnackBar(content: Text(context.l10n.channels_channelUpdated(name))),
                 );
               },
-              child: const Text('Save'),
+              child: Text(dialogContext.l10n.common_save),
             ),
           ],
         ),
@@ -741,23 +743,23 @@ class _ChannelsScreenState extends State<ChannelsScreen>
   ) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Channel'),
-        content: Text('Delete "${channel.name}"? This cannot be undone.'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(dialogContext.l10n.channels_deleteChannel),
+        content: Text(dialogContext.l10n.channels_deleteChannelConfirm(channel.name)),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(dialogContext.l10n.common_cancel),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
               connector.deleteChannel(channel.index);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Channel "${channel.name}" deleted')),
+                SnackBar(content: Text(context.l10n.channels_channelDeleted(channel.name))),
               );
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(dialogContext.l10n.common_delete, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -768,7 +770,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
     final psk = Channel.parsePskHex(Channel.publicChannelPsk);
     connector.setChannel(0, 'Public', psk);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Public channel added')),
+      SnackBar(content: Text(context.l10n.channels_publicChannelAdded)),
     );
   }
 
