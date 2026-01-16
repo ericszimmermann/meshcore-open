@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -47,6 +49,8 @@ class _MapScreenState extends State<MapScreen> {
   final Set<String> _hiddenMarkerIds = {};
   Set<String> _removedMarkerIds = {};
   bool _isSelectingPoi = false;
+  bool _hasInitializedMap = false;
+  bool _removedMarkersLoaded = false;
 
   @override
   void initState() {
@@ -67,7 +71,37 @@ class _MapScreenState extends State<MapScreen> {
     if (!mounted) return;
     setState(() {
       _removedMarkerIds = ids;
+      _removedMarkersLoaded = true;
     });
+  }
+
+  double _standardDeviation(List<double> values) {
+    if (values.length <= 1) {
+      return 0.0;
+    }
+
+    final mean = values.reduce((a, b) => a + b) / values.length;
+
+    double sumSquaredDiff = 0.0;
+    for (final value in values) {
+      final diff = value - mean;
+      sumSquaredDiff += diff * diff;
+    }
+
+    // Sample standard deviation (n-1) — most appropriate here
+    final variance = sumSquaredDiff / (values.length - 1);
+
+    return sqrt(variance);
+  }
+
+  // Calculate zoom level based on the spread of points (std deviation in degrees)
+  double _zoomFromStdDev(double latStdDev, double lonStdDev) {
+    final maxSpread = max(latStdDev, lonStdDev);
+    if (maxSpread <= 0) return 13.0;
+    // Approzimate: each zoom level halves the visible area
+    // ~0.01 degrees spread -> zoom 13, ~0.1 -> zoom 10, ~1.0 -> zoom 7
+    final zoom = 10.0 - log(maxSpread * 10 + 1) / ln10 * 3;
+    return zoom.clamp(4.0, 15.0);
   }
 
   @override
@@ -80,10 +114,12 @@ class _MapScreenState extends State<MapScreen> {
         final highlightPosition = widget.highlightPosition;
         final sharedMarkers = settings.mapShowMarkers
             ? _collectSharedMarkers(connector)
-                .where((marker) =>
-                    !_hiddenMarkerIds.contains(marker.id) &&
-                    !_removedMarkerIds.contains(marker.id))
-                .toList()
+                  .where(
+                    (marker) =>
+                        !_hiddenMarkerIds.contains(marker.id) &&
+                        !_removedMarkerIds.contains(marker.id),
+                  )
+                  .toList()
             : <_SharedMarker>[];
 
         // Filter by time
@@ -91,16 +127,18 @@ class _MapScreenState extends State<MapScreen> {
         final filteredByTime = settings.mapTimeFilterHours == 0
             ? contacts
             : contacts.where((c) {
-                final hoursSinceLastSeen =
-                    now.difference(c.lastSeen).inHours;
+                final hoursSinceLastSeen = now.difference(c.lastSeen).inHours;
                 return hoursSinceLastSeen <= settings.mapTimeFilterHours;
               }).toList();
 
         // Filter by key prefix
         final keyPrefix = settings.mapKeyPrefix.trim();
-        final filteredByKeyPrefix = (settings.mapKeyPrefixEnabled && keyPrefix.isNotEmpty)
+        final filteredByKeyPrefix =
+            (settings.mapKeyPrefixEnabled && keyPrefix.isNotEmpty)
             ? filteredByTime.where((c) {
-                return c.publicKeyHex.toLowerCase().startsWith(keyPrefix.toLowerCase());
+                return c.publicKeyHex.toLowerCase().startsWith(
+                  keyPrefix.toLowerCase(),
+                );
               }).toList()
             : filteredByTime;
 
@@ -109,30 +147,91 @@ class _MapScreenState extends State<MapScreen> {
             .where((c) => c.hasLocation)
             .toList();
 
-        // Calculate center of all nodes, or default to (0, 0)
+        // Calculate center and zoom of all nodes, or default to (0, 0)
         LatLng center = const LatLng(0, 0);
-        final hasMapContent = contactsWithLocation.isNotEmpty ||
+        double initialZoom = 10.0;
+        final hasMapContent =
+            contactsWithLocation.isNotEmpty ||
             sharedMarkers.isNotEmpty ||
             _isSelectingPoi ||
             highlightPosition != null;
         if (contactsWithLocation.isNotEmpty || sharedMarkers.isNotEmpty) {
-          double avgLat = contactsWithLocation
-              .map((c) => c.latitude!)
-              .fold<double>(0, (sum, lat) => sum + lat);
-          double avgLon = contactsWithLocation
-              .map((c) => c.longitude!)
-              .fold<double>(0, (sum, lon) => sum + lon);
-          for (final marker in sharedMarkers) {
-            avgLat += marker.position.latitude;
-            avgLon += marker.position.longitude;
-          }
-          final total = contactsWithLocation.length + sharedMarkers.length;
-          if (total > 0) {
-            center = LatLng(avgLat / total, avgLon / total);
+          final allPoints = [
+            ...contactsWithLocation.map(
+              (c) => LatLng(c.latitude!, c.longitude!),
+            ),
+            ...sharedMarkers.map((m) => m.position),
+          ];
+          if (allPoints.length >= 3) {
+            final latValues = allPoints.map((p) => p.latitude).toList();
+            final lonValues = allPoints.map((p) => p.longitude).toList();
+
+            final meanLat =
+                latValues.reduce((a, b) => a + b) / latValues.length;
+            final meanLon =
+                lonValues.reduce((a, b) => a + b) / lonValues.length;
+            final latStdDev = _standardDeviation(latValues);
+            final lonStdDev = _standardDeviation(lonValues);
+
+            final filteredPoints = allPoints
+                .where(
+                  (p) =>
+                      (p.latitude - meanLat).abs() <= latStdDev * 2 &&
+                      (p.longitude - meanLon).abs() <= lonStdDev * 2,
+                )
+                .toList();
+
+            if (filteredPoints.isNotEmpty) {
+              final filteredLatValues = filteredPoints
+                  .map((p) => p.latitude)
+                  .toList();
+              final filteredLonValues = filteredPoints
+                  .map((p) => p.longitude)
+                  .toList();
+              final avgLat = filteredLatValues.reduce((a, b) => a + b);
+              final avgLon = filteredLonValues.reduce((a, b) => a + b);
+              center = LatLng(
+                avgLat / filteredPoints.length,
+                avgLon / filteredPoints.length,
+              );
+              // Use std deviation of filtered points for zoom
+              final filteredLatStdDev = _standardDeviation(filteredLatValues);
+              final filteredLonStdDev = _standardDeviation(filteredLonValues);
+              initialZoom = _zoomFromStdDev(
+                filteredLatStdDev,
+                filteredLonStdDev,
+              );
+            } else {
+              center = LatLng(meanLat, meanLon);
+              initialZoom = _zoomFromStdDev(latStdDev, lonStdDev);
+            }
+          } else {
+            double avgLat = 0.0;
+            double avgLon = 0.0;
+            for (final point in allPoints) {
+              avgLat += point.latitude;
+              avgLon += point.longitude;
+            }
+            center = LatLng(
+              avgLat / allPoints.length,
+              avgLon / allPoints.length,
+            );
+            initialZoom = 12.0;
           }
         }
         if (highlightPosition != null) {
           center = highlightPosition;
+          initialZoom = widget.highlightZoom;
+        }
+
+        // Re center map after removed markers have loaded
+        if (!_hasInitializedMap && _removedMarkersLoaded && hasMapContent) {
+          _hasInitializedMap = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              _mapController.move(center, initialZoom);
+            }
+          });
         }
 
         final allowBack = !connector.isConnected;
@@ -156,7 +255,9 @@ class _MapScreenState extends State<MapScreen> {
                   tooltip: context.l10n.common_settings,
                   onPressed: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsScreen(),
+                    ),
                   ),
                 ),
               ],
@@ -169,7 +270,7 @@ class _MapScreenState extends State<MapScreen> {
                         mapController: _mapController,
                         options: MapOptions(
                           initialCenter: center,
-                          initialZoom: 13.0,
+                          initialZoom: initialZoom,
                           minZoom: 2.0,
                           maxZoom: 18.0,
                           onTap: (_, latLng) {
@@ -234,14 +335,18 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                         ],
                       ),
-                      _buildLegend(contactsWithLocation.length, sharedMarkers.length),
+                      _buildLegend(
+                        contactsWithLocation.length,
+                        sharedMarkers.length,
+                      ),
                     ],
                   ),
             bottomNavigationBar: SafeArea(
               top: false,
               child: QuickSwitchBar(
                 selectedIndex: 2,
-                onDestinationSelected: (index) => _handleQuickSwitch(index, context),
+                onDestinationSelected: (index) =>
+                    _handleQuickSwitch(index, context),
               ),
             ),
             floatingActionButton: FloatingActionButton(
@@ -259,27 +364,17 @@ class _MapScreenState extends State<MapScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.location_off,
-            size: 64,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.location_off, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
             context.l10n.map_noNodesWithLocation,
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
           ),
           const SizedBox(height: 8),
           Text(
             context.l10n.map_nodesNeedGps,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
         ],
       ),
@@ -293,7 +388,8 @@ class _MapScreenState extends State<MapScreen> {
       if (!contact.hasLocation) continue;
 
       // Apply node type filters
-      if (contact.type == advTypeRepeater && !settings.mapShowRepeaters) continue;
+      if (contact.type == advTypeRepeater && !settings.mapShowRepeaters)
+        continue;
       if (contact.type == advTypeChat && !settings.mapShowChatNodes) continue;
       if (contact.type != advTypeChat &&
           contact.type != advTypeRepeater &&
@@ -396,13 +492,37 @@ class _MapScreenState extends State<MapScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              _buildLegendItem(Icons.person, context.l10n.map_chat, Colors.blue),
-              _buildLegendItem(Icons.router, context.l10n.map_repeater, Colors.green),
-              _buildLegendItem(Icons.meeting_room, context.l10n.map_room, Colors.purple),
-              _buildLegendItem(Icons.sensors, context.l10n.map_sensor, Colors.orange),
+              _buildLegendItem(
+                Icons.person,
+                context.l10n.map_chat,
+                Colors.blue,
+              ),
+              _buildLegendItem(
+                Icons.router,
+                context.l10n.map_repeater,
+                Colors.green,
+              ),
+              _buildLegendItem(
+                Icons.meeting_room,
+                context.l10n.map_room,
+                Colors.purple,
+              ),
+              _buildLegendItem(
+                Icons.sensors,
+                context.l10n.map_sensor,
+                Colors.orange,
+              ),
               _buildLegendItem(Icons.flag, context.l10n.map_pinDm, Colors.blue),
-              _buildLegendItem(Icons.flag, context.l10n.map_pinPrivate, Colors.purple),
-              _buildLegendItem(Icons.flag, context.l10n.map_pinPublic, Colors.orange),
+              _buildLegendItem(
+                Icons.flag,
+                context.l10n.map_pinPrivate,
+                Colors.purple,
+              ),
+              _buildLegendItem(
+                Icons.flag,
+                context.l10n.map_pinPublic,
+                Colors.orange,
+              ),
             ],
           ),
         ),
@@ -418,10 +538,7 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           Icon(icon, size: 16, color: color),
           const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12),
-          ),
+          Text(label, style: const TextStyle(fontSize: 12)),
         ],
       ),
     );
@@ -475,7 +592,9 @@ class _MapScreenState extends State<MapScreen> {
             label: payload.label,
             flags: payload.flags,
             fromName: message.senderName,
-            sourceLabel: channel.name.isEmpty ? 'Channel ${channel.index}' : channel.name,
+            sourceLabel: channel.name.isEmpty
+                ? 'Channel ${channel.index}'
+                : channel.name,
             isChannel: true,
             isPublicChannel: isPublic,
           ),
@@ -541,11 +660,7 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.flag,
-                color: Colors.white,
-                size: 20,
-              ),
+              child: const Icon(Icons.flag, color: Colors.white, size: 20),
             ),
           ],
         ),
@@ -563,10 +678,8 @@ class _MapScreenState extends State<MapScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => RepeaterHubScreen(
-                repeater: repeater,
-                password: password,
-              ),
+              builder: (context) =>
+                  RepeaterHubScreen(repeater: repeater, password: password),
             ),
           );
         },
@@ -584,9 +697,7 @@ class _MapScreenState extends State<MapScreen> {
           context.read<MeshCoreConnector>().markContactRead(room.publicKeyHex);
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => ChatScreen(contact: room),
-            ),
+            MaterialPageRoute(builder: (context) => ChatScreen(contact: room)),
           );
         },
       ),
@@ -613,9 +724,14 @@ class _MapScreenState extends State<MapScreen> {
           children: [
             _buildInfoRow('Type', contact.typeLabel),
             _buildInfoRow('Path', contact.pathLabel),
-            _buildInfoRow('Location',
-              '${contact.latitude!.toStringAsFixed(6)}, ${contact.longitude!.toStringAsFixed(6)}'),
-            _buildInfoRow(context.l10n.map_lastSeen, _formatLastSeen(contact.lastSeen)),
+            _buildInfoRow(
+              'Location',
+              '${contact.latitude!.toStringAsFixed(6)}, ${contact.longitude!.toStringAsFixed(6)}',
+            ),
+            _buildInfoRow(
+              context.l10n.map_lastSeen,
+              _formatLastSeen(contact.lastSeen),
+            ),
             _buildInfoRow('Public Key', contact.publicKeyHex),
           ],
         ),
@@ -624,7 +740,8 @@ class _MapScreenState extends State<MapScreen> {
             onPressed: () => Navigator.pop(dialogContext),
             child: Text(context.l10n.common_close),
           ),
-          if (contact.type == advTypeChat) // Only show chat button for chat nodes
+          if (contact.type ==
+              advTypeChat) // Only show chat button for chat nodes
             TextButton(
               onPressed: () {
                 Navigator.pop(dialogContext);
@@ -637,22 +754,22 @@ class _MapScreenState extends State<MapScreen> {
               },
               child: Text(context.l10n.contacts_openChat),
             ),
-            if (contact.type == advTypeRepeater)
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(dialogContext);
-                  _showRepeaterLogin(context, contact);
-                },
-                child: Text(context.l10n.map_manageRepeater),
-              ),
-            if (contact.type == advTypeRoom)
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(dialogContext);
-                  _showRoomLogin(context, contact);
-                },
-                child: Text(context.l10n.map_joinRoom),
-              ),
+          if (contact.type == advTypeRepeater)
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                _showRepeaterLogin(context, contact);
+              },
+              child: Text(context.l10n.map_manageRepeater),
+            ),
+          if (contact.type == advTypeRoom)
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                _showRoomLogin(context, contact);
+              },
+              child: Text(context.l10n.map_joinRoom),
+            ),
         ],
       ),
     );
@@ -664,17 +781,13 @@ class _MapScreenState extends State<MapScreen> {
       case 0:
         Navigator.pushReplacement(
           context,
-          buildQuickSwitchRoute(
-            const ContactsScreen(hideBackButton: true),
-          ),
+          buildQuickSwitchRoute(const ContactsScreen(hideBackButton: true)),
         );
         break;
       case 1:
         Navigator.pushReplacement(
           context,
-          buildQuickSwitchRoute(
-            const ChannelsScreen(hideBackButton: true),
-          ),
+          buildQuickSwitchRoute(const ChannelsScreen(hideBackButton: true)),
         );
         break;
     }
@@ -722,7 +835,8 @@ class _MapScreenState extends State<MapScreen> {
               'Location',
               '${marker.position.latitude.toStringAsFixed(6)}, ${marker.position.longitude.toStringAsFixed(6)}',
             ),
-            if (marker.flags.isNotEmpty) _buildInfoRow(context.l10n.map_flags, marker.flags),
+            if (marker.flags.isNotEmpty)
+              _buildInfoRow(context.l10n.map_flags, marker.flags),
           ],
         ),
         actions: [
@@ -772,10 +886,7 @@ class _MapScreenState extends State<MapScreen> {
             ),
           ),
           const SizedBox(height: 2),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 14),
-          ),
+          Text(value, style: const TextStyle(fontSize: 14)),
         ],
       ),
     );
@@ -860,7 +971,10 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Future<String?> _promptForLabel(BuildContext context, String defaultLabel) async {
+  Future<String?> _promptForLabel(
+    BuildContext context,
+    String defaultLabel,
+  ) async {
     final controller = TextEditingController(text: defaultLabel);
     return showDialog<String>(
       context: context,
@@ -881,7 +995,10 @@ class _MapScreenState extends State<MapScreen> {
           TextButton(
             onPressed: () {
               final label = controller.text.trim().replaceAll('|', '/');
-              Navigator.pop(dialogContext, label.isEmpty ? defaultLabel : label);
+              Navigator.pop(
+                dialogContext,
+                label.isEmpty ? defaultLabel : label,
+              );
             },
             child: Text(context.l10n.common_continue),
           ),
@@ -913,8 +1030,11 @@ class _MapScreenState extends State<MapScreen> {
           return Consumer<MeshCoreConnector>(
             builder: (consumerContext, liveConnector, child) {
               final allContacts = liveConnector.contacts
-                  .where((contact) =>
-                      contact.type != advTypeRepeater && contact.type != advTypeRoom)
+                  .where(
+                    (contact) =>
+                        contact.type != advTypeRepeater &&
+                        contact.type != advTypeRoom,
+                  )
                   .toList();
               return SafeArea(
                 child: SingleChildScrollView(
@@ -924,7 +1044,10 @@ class _MapScreenState extends State<MapScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-                        child: Text(context.l10n.map_sendToContact, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(
+                          context.l10n.map_sendToContact,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
@@ -935,7 +1058,10 @@ class _MapScreenState extends State<MapScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
                           onChanged: (value) {
                             setSheetState(() {
@@ -945,50 +1071,73 @@ class _MapScreenState extends State<MapScreen> {
                         ),
                       ),
                       ...allContacts
-                          .where((contact) =>
-                              query.isEmpty || matchesContactQuery(contact, query))
+                          .where(
+                            (contact) =>
+                                query.isEmpty ||
+                                matchesContactQuery(contact, query),
+                          )
                           .map((contact) {
-                        return ListTile(
-                          leading: const Icon(Icons.person),
-                          title: Text(contact.name),
-                          onTap: () {
-                            Navigator.pop(sheetContext);
-                            liveConnector.sendMessage(contact, markerText);
-                          },
-                        );
-                      }),
+                            return ListTile(
+                              leading: const Icon(Icons.person),
+                              title: Text(contact.name),
+                              onTap: () {
+                                Navigator.pop(sheetContext);
+                                liveConnector.sendMessage(contact, markerText);
+                              },
+                            );
+                          }),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-                        child: Text(context.l10n.map_sendToChannel, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(
+                          context.l10n.map_sendToChannel,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                       if (liveConnector.isLoadingChannels)
                         const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           child: LinearProgressIndicator(),
                         )
-                      else if (liveConnector.channels.where((c) => !c.isEmpty).isEmpty)
+                      else if (liveConnector.channels
+                          .where((c) => !c.isEmpty)
+                          .isEmpty)
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           child: Text(context.l10n.map_noChannelsAvailable),
                         )
                       else
-                        ...liveConnector.channels.where((c) => !c.isEmpty).map((channel) {
+                        ...liveConnector.channels.where((c) => !c.isEmpty).map((
+                          channel,
+                        ) {
                           final isPublic = _isPublicChannel(channel);
-                          final label = channel.name.isEmpty ? 'Channel ${channel.index}' : channel.name;
+                          final label = channel.name.isEmpty
+                              ? 'Channel ${channel.index}'
+                              : channel.name;
                           return ListTile(
                             leading: Icon(
                               isPublic ? Icons.public : Icons.tag,
                               color: isPublic ? Colors.orange : Colors.blue,
                             ),
                             title: Text(label),
-                            subtitle: isPublic ? Text(context.l10n.channels_publicChannel) : null,
+                            subtitle: isPublic
+                                ? Text(context.l10n.channels_publicChannel)
+                                : null,
                             onTap: () async {
                               Navigator.pop(sheetContext);
                               final canSend = isPublic
                                   ? await _confirmPublicShare(context, label)
                                   : true;
                               if (canSend) {
-                                liveConnector.sendChannelMessage(channel, markerText);
+                                liveConnector.sendChannelMessage(
+                                  channel,
+                                  markerText,
+                                );
                               }
                             },
                           );
@@ -1008,12 +1157,17 @@ class _MapScreenState extends State<MapScreen> {
     return channel.isPublicChannel;
   }
 
-  Future<bool> _confirmPublicShare(BuildContext context, String channelLabel) async {
+  Future<bool> _confirmPublicShare(
+    BuildContext context,
+    String channelLabel,
+  ) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(context.l10n.map_publicLocationShare),
-        content: Text(context.l10n.map_publicLocationShareConfirm(channelLabel)),
+        content: Text(
+          context.l10n.map_publicLocationShareConfirm(channelLabel),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
@@ -1029,7 +1183,10 @@ class _MapScreenState extends State<MapScreen> {
     return result ?? false;
   }
 
-  void _showFilterDialog(BuildContext context, AppSettingsService settingsService) {
+  void _showFilterDialog(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -1133,10 +1290,7 @@ class _MapScreenState extends State<MapScreen> {
                   const SizedBox(height: 8),
                   Text(
                     _getTimeFilterLabel(settings.mapTimeFilterHours),
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[700],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                   ),
                   Slider(
                     value: _hoursToSliderValue(settings.mapTimeFilterHours),
@@ -1176,11 +1330,14 @@ class _MapScreenState extends State<MapScreen> {
 
     if (hours <= 24) {
       return (hours / 24) * 40;
-    } else if (hours <= 168) { // 7 days
+    } else if (hours <= 168) {
+      // 7 days
       return 40 + ((hours - 24) / (168 - 24)) * 20;
-    } else if (hours <= 720) { // 30 days
+    } else if (hours <= 720) {
+      // 30 days
       return 60 + ((hours - 168) / (720 - 168)) * 20;
-    } else if (hours <= 4380) { // 6 months
+    } else if (hours <= 4380) {
+      // 6 months
       return 80 + ((hours - 720) / (4380 - 720)) * 19;
     } else {
       return 100;
