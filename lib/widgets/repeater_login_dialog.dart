@@ -31,6 +31,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
   bool _savePassword = false;
   bool _isLoading = true;
   bool _obscurePassword = true;
+  String? _loginError;
   late MeshCoreConnector _connector;
   int _currentAttempt = 0;
   static const int _maxAttempts = 5;
@@ -79,6 +80,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
     setState(() {
       _isLoggingIn = true;
       _currentAttempt = 0;
+      _loginError = null;
     });
 
     try {
@@ -134,7 +136,7 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
             'Login failed for ${repeater.name}',
             tag: 'RepeaterLogin',
           );
-          throw Exception('Wrong password or node is unreachable');
+          break;
         }
         appLogger.warn(
           'Login attempt ${attempt + 1} timed out after ${timeoutSeconds}s',
@@ -156,7 +158,13 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
       }
 
       if (loginResult != true) {
-        throw Exception('Wrong password or node is unreachable');
+        if (mounted) {
+          setState(() {
+            _isLoggingIn = false;
+            _loginError = context.l10n.login_failedMessage;
+          });
+        }
+        return;
       }
 
       // If we got a response, login succeeded
@@ -182,13 +190,8 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
       if (mounted) {
         setState(() {
           _isLoggingIn = false;
+          _loginError = context.l10n.login_failedMessage;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.login_failed(e.toString())),
-            backgroundColor: Colors.red,
-          ),
-        );
       }
     }
   }
@@ -271,6 +274,25 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                   style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 16),
+                if (_loginError != null) ...[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.error, size: 18, color: Theme.of(context).colorScheme.error),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _loginError!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 TextField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
@@ -292,6 +314,13 @@ class _RepeaterLoginDialogState extends State<RepeaterLoginDialog> {
                       },
                     ),
                   ),
+                  onChanged: (_) {
+                    if (_loginError != null && mounted) {
+                      setState(() {
+                        _loginError = null;
+                      });
+                    }
+                  },
                   onSubmitted: (_) => _handleLogin(),
                   autofocus: _passwordController.text.isEmpty,
                 ),

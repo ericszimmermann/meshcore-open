@@ -821,6 +821,8 @@
       }
     }
   },
+  "login_failedMessage": "Anmeldung fehlgeschlagen. Entweder ist das Passwort falsch oder der Repeater ist nicht erreichbar.",
+
   "common_reload": "Neu laden",
   "common_clear": "Löschen",
   "path_currentPath": "Aktiger Pfad: {path}",

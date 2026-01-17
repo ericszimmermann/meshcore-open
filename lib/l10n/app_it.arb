@@ -821,6 +821,8 @@
       }
     }
   },
+  "login_failedMessage": "Accesso fallito. La password non è corretta oppure il ripetitore non è raggiungibile.",
+
   "common_reload": "Ricaricare",
   "common_clear": "Cancella",
   "path_currentPath": "Percorso corrente: {path}",

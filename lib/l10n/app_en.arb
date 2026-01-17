@@ -723,6 +723,8 @@
       "error": {"type": "String"}
     }
   },
+  "login_failedMessage": "Login failed. Either the password is incorrect or the repeater is unreachable.",
+
 
   "common_reload": "Reload",
   "common_clear": "Clear",

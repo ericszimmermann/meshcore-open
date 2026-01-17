@@ -821,6 +821,8 @@
       }
     }
   },
+  "login_failedMessage": "Inloggen mislukt. Het wachtwoord is onjuist of de repeater is niet bereikbaar.",
+
   "common_reload": "Opnieuw laden",
   "common_clear": "Schoonmaken",
   "path_currentPath": "Huidige pad: {path}",

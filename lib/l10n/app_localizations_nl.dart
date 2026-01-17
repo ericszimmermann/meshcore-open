@@ -1507,6 +1507,10 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String get login_failedMessage =>
+      'Inloggen mislukt. Het wachtwoord is onjuist of de repeater is niet bereikbaar.';
+
+  @override
   String get common_reload => 'Opnieuw laden';
 
   @override

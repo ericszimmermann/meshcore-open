@@ -1511,6 +1511,10 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get login_failedMessage =>
+      'Accesso fallito. La password non è corretta oppure il ripetitore non è raggiungibile.';
+
+  @override
   String get common_reload => 'Ricaricare';
 
   @override

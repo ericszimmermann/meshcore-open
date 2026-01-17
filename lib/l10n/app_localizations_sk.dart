@@ -1508,6 +1508,10 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
+  String get login_failedMessage =>
+      'Prihlásenie zlyhalo. Heslo je nesprávne alebo je opakovač nedostupný.';
+
+  @override
   String get common_reload => 'Načítať';
 
   @override

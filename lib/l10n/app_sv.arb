@@ -821,6 +821,8 @@
       }
     }
   },
+  "login_failedMessage": "Inloggning misslyckades. Antingen är lösenordet fel eller så går det inte att nå repeatern.",
+
   "common_reload": "Ladda om",
   "common_clear": "Rensa",
   "path_currentPath": "Nuvarande sökväg: {path}",

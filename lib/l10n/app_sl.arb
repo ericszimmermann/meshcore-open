@@ -821,6 +821,8 @@
       }
     }
   },
+  "login_failedMessage": "Prijava je bila neuspešna. Geslo je napačno ali pa je repetitor nedosegljiv.",
+
   "common_reload": "Ponovno naloži",
   "common_clear": "Ponoviti",
   "path_currentPath": "Trenutna pot: {path}",

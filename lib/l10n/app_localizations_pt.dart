@@ -1513,6 +1513,10 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get login_failedMessage =>
+      'Falha no login. A senha está incorreta ou o repetidor está inacessível.';
+
+  @override
   String get common_reload => 'Recarregar';
 
   @override

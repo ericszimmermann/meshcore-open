@@ -1448,6 +1448,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get login_failedMessage => '登录失败。密码不正确或中继器不可达。';
+
+  @override
   String get common_reload => '重新加载';
 
   @override

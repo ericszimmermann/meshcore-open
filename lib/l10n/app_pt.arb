@@ -821,6 +821,8 @@
       }
     }
   },
+  "login_failedMessage": "Falha no login. A senha está incorreta ou o repetidor está inacessível.",
+
   "common_reload": "Recarregar",
   "common_clear": "Limpar",
   "path_currentPath": "Caminho atual: {path}",

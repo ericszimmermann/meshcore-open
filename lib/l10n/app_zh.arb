@@ -821,6 +821,8 @@
       }
     }
   },
+  "login_failedMessage": "登录失败。密码不正确或中继器不可达。",
+
   "common_reload": "重新加载",
   "common_clear": "清除",
   "path_currentPath": "当前路径：{path}",

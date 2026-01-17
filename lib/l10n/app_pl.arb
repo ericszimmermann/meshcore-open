@@ -821,6 +821,8 @@
       }
     }
   },
+  "login_failedMessage": "Logowanie nie powiodło się. Hasło jest nieprawidłowe albo repeater jest nieosiągalny.",
+
   "common_reload": "Ponownie załadować",
   "common_clear": "Wyczyść",
   "path_currentPath": "Aktualny ścieżka: {path}",

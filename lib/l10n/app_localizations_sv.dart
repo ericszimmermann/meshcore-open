@@ -1498,6 +1498,10 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
+  String get login_failedMessage =>
+      'Inloggning misslyckades. Antingen är lösenordet fel eller så går det inte att nå repeatern.';
+
+  @override
   String get common_reload => 'Ladda om';
 
   @override

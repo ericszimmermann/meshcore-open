@@ -1519,6 +1519,10 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get login_failedMessage =>
+      'Connexion échouée. Soit le mot de passe est incorrect, soit le relais est injoignable.';
+
+  @override
   String get common_reload => 'Recharger';
 
   @override

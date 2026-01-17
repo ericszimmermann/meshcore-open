@@ -821,6 +821,8 @@
       }
     }
   },
+  "login_failedMessage": "Inicio fallido. La contraseña es incorrecta o el repetidor no está disponible.",
+
   "common_reload": "Recargar",
   "common_clear": "Borrar",
   "path_currentPath": "Ruta actual: {path}",

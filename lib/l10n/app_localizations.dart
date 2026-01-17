@@ -2759,6 +2759,12 @@ abstract class AppLocalizations {
   /// **'Login failed: {error}'**
   String login_failed(String error);
 
+  /// No description provided for @login_failedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Login failed. Either the password is incorrect or the repeater is unreachable.'**
+  String get login_failedMessage;
+
   /// No description provided for @common_reload.
   ///
   /// In en, this message translates to:
