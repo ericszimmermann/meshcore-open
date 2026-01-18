@@ -822,7 +822,6 @@
     }
   },
   "login_failedMessage": "Prihlásenie zlyhalo. Heslo je nesprávne alebo je opakovač nedostupný.",
-
   "common_reload": "Načítať",
   "common_clear": "Zmazať",
   "path_currentPath": "Aktívna cesta: {path}",
@@ -1349,5 +1348,9 @@
   "channels_scanQrCode": "Skenujte QR kód",
   "channels_scanQrCodeComingSoon": "Čoskoro",
   "channels_enterHashtag": "Zadajte hashtag",
-  "channels_hashtagHint": "napr. #tím"
+  "channels_hashtagHint": "napr. #tím",
+  "settings_locationGPSEnable": "Aktivovať GPS",
+  "settings_locationGPSEnableSubtitle": "Zapnite GPS na automatické posielanie dát o polohe (ak je podporované).",
+  "settings_locationIntervalSec": "Interval (Sekundy)",
+  "settings_locationIntervalInvalid": "Interval musí byť aspoň 60 sekúnd a menej ako 86400 sekúnd."
 }

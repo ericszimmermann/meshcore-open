@@ -822,7 +822,6 @@
     }
   },
   "login_failedMessage": "Inloggen mislukt. Het wachtwoord is onjuist of de repeater is niet bereikbaar.",
-
   "common_reload": "Opnieuw laden",
   "common_clear": "Schoonmaken",
   "path_currentPath": "Huidige pad: {path}",
@@ -1349,5 +1348,9 @@
   "channels_scanQrCode": "Scan een QR-code",
   "channels_scanQrCodeComingSoon": "Komt later",
   "channels_enterHashtag": "Voer hashtag in",
-  "channels_hashtagHint": "bijv. #team"
+  "channels_hashtagHint": "bijv. #team",
+  "settings_locationGPSEnable": "GPS inschakelen",
+  "settings_locationGPSEnableSubtitle": "Zijze GPS inschakelen om locatiegegevens automatisch te verzenden (indien ondersteund).",
+  "settings_locationIntervalInvalid": "De intervallen moeten minstens 60 seconden zijn en minder dan 86400 seconden.",
+  "settings_locationIntervalSec": "Interval (Seconden)"
 }

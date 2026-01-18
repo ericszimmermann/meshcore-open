@@ -202,6 +202,20 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settings_locationInvalid => 'Latitude ou longitude inválidos.';
 
   @override
+  String get settings_locationGPSEnable => 'Ativar GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Habilite o GPS para enviar dados de localização automaticamente (se suportado).';
+
+  @override
+  String get settings_locationIntervalSec => 'Intervalo (Segundos)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'O intervalo deve ser de pelo menos 60 segundos e inferior a 86400 segundos.';
+
+  @override
   String get settings_latitude => 'Latitude';
 
   @override

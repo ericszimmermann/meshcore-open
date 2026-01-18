@@ -190,7 +190,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_locationSubtitle => 'GPS coordinates';
 
   @override
-  String get settings_locationUpdated => 'Location updated';
+  String get settings_locationUpdated => 'GPS settings updated.';
 
   @override
   String get settings_locationBothRequired =>
@@ -198,6 +198,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_locationInvalid => 'Invalid latitude or longitude.';
+
+  @override
+  String get settings_locationGPSEnable => 'GPS Enable';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Enable GPS to automatically send location data (if supported)';
+
+  @override
+  String get settings_locationIntervalSec => 'Interval (Seconds)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'Interval must be at least 60 seconds, and less than 86400 seconds.';
 
   @override
   String get settings_latitude => 'Latitude';

@@ -203,6 +203,20 @@ class AppLocalizationsPl extends AppLocalizations {
       'Nieprawidłowa szerokość geograficzna lub długość geograficzna.';
 
   @override
+  String get settings_locationGPSEnable => 'Włącz GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Włącz GPS, aby automatycznie wysyłać dane o lokalizacji (jeśli jest obsługiwane).';
+
+  @override
+  String get settings_locationIntervalSec => 'Interwał (Sekundy)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'Interwał musi wynosić co najmniej 60 sekund i mniej niż 86400 sekund.';
+
+  @override
   String get settings_latitude => 'Szerokość';
 
   @override

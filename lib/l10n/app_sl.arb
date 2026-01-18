@@ -822,7 +822,6 @@
     }
   },
   "login_failedMessage": "Prijava je bila neuspešna. Geslo je napačno ali pa je repetitor nedosegljiv.",
-
   "common_reload": "Ponovno naloži",
   "common_clear": "Ponoviti",
   "path_currentPath": "Trenutna pot: {path}",
@@ -1349,5 +1348,9 @@
   "channels_scanQrCode": "Skeniraj QR kodo",
   "channels_scanQrCodeComingSoon": "Prihajajoča",
   "channels_enterHashtag": "Vnesite hashtag",
-  "channels_hashtagHint": "npr. #ekipa"
+  "channels_hashtagHint": "npr. #ekipa",
+  "settings_locationGPSEnable": "Omogoči GPS",
+  "settings_locationGPSEnableSubtitle": "Omogoči GPS za samodejno pošiljanje podatkov o lokaciji (če je podprto).",
+  "settings_locationIntervalSec": "Interval (Sekunde)",
+  "settings_locationIntervalInvalid": "Intervallo mora biti vsaj 60 sekund in manj kot 86400 sekund."
 }

@@ -197,6 +197,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings_locationInvalid => '无效的纬度或经度。';
 
   @override
+  String get settings_locationGPSEnable => '启用GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle => '启用GPS自动发送位置数据（如果支持）。';
+
+  @override
+  String get settings_locationIntervalSec => '时间间隔（秒）';
+
+  @override
+  String get settings_locationIntervalInvalid => '时间间隔必须至少为60秒，且小于86400秒。';
+
+  @override
   String get settings_latitude => '纬度';
 
   @override

@@ -822,7 +822,6 @@
     }
   },
   "login_failedMessage": "Connexion échouée. Soit le mot de passe est incorrect, soit le relais est injoignable.",
-
   "common_reload": "Recharger",
   "common_clear": "Effacer",
   "path_currentPath": "Chemin actuel : {path}",
@@ -1349,5 +1348,9 @@
   "channels_scanQrCode": "Scanner un code QR",
   "channels_scanQrCodeComingSoon": "Bientôt disponible",
   "channels_enterHashtag": "Entrez le hashtag",
-  "channels_hashtagHint": "ex. #équipe"
+  "channels_hashtagHint": "ex. #équipe",
+  "settings_locationGPSEnable": "Activer le GPS",
+  "settings_locationGPSEnableSubtitle": "Activer le GPS pour envoyer automatiquement les données de localisation (si pris en charge).",
+  "settings_locationIntervalSec": "Intervalle (Secondes)",
+  "settings_locationIntervalInvalid": "L'intervalle doit être d'au moins 60 secondes et inférieur à 86400 secondes."
 }

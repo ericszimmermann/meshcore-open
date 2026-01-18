@@ -822,7 +822,6 @@
     }
   },
   "login_failedMessage": "Logowanie nie powiodło się. Hasło jest nieprawidłowe albo repeater jest nieosiągalny.",
-
   "common_reload": "Ponownie załadować",
   "common_clear": "Wyczyść",
   "path_currentPath": "Aktualny ścieżka: {path}",
@@ -1349,5 +1348,9 @@
   "channels_scanQrCode": "Skanuj kod QR",
   "channels_scanQrCodeComingSoon": "Wkrótce",
   "channels_enterHashtag": "Wprowadź hashtag",
-  "channels_hashtagHint": "np. #zespół"
+  "channels_hashtagHint": "np. #zespół",
+  "settings_locationGPSEnable": "Włącz GPS",
+  "settings_locationGPSEnableSubtitle": "Włącz GPS, aby automatycznie wysyłać dane o lokalizacji (jeśli jest obsługiwane).",
+  "settings_locationIntervalSec": "Interwał (Sekundy)",
+  "settings_locationIntervalInvalid": "Interwał musi wynosić co najmniej 60 sekund i mniej niż 86400 sekund."
 }

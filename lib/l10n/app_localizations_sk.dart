@@ -201,6 +201,20 @@ class AppLocalizationsSk extends AppLocalizations {
   String get settings_locationInvalid => 'Neplatná šírka alebo dĺžka.';
 
   @override
+  String get settings_locationGPSEnable => 'Aktivovať GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Zapnite GPS na automatické posielanie dát o polohe (ak je podporované).';
+
+  @override
+  String get settings_locationIntervalSec => 'Interval (Sekundy)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'Interval musí byť aspoň 60 sekúnd a menej ako 86400 sekúnd.';
+
+  @override
   String get settings_latitude => 'Súradnica';
 
   @override

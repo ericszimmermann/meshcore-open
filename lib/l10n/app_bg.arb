@@ -822,7 +822,6 @@
     }
   },
   "login_failedMessage": "Входът не беше успешен. Или паролата е грешна, или повторителят е недостъпен.",
-
   "common_reload": "Презареди",
   "common_clear": "Изчисти",
   "path_currentPath": "Текущ път: {path}",
@@ -1349,5 +1348,9 @@
   "channels_scanQrCode": "Сканирайте QR код",
   "channels_scanQrCodeComingSoon": "Ще излезе скоро",
   "channels_enterHashtag": "Въведете хаштаг",
-  "channels_hashtagHint": "напр. #отбор"
+  "channels_hashtagHint": "напр. #отбор",
+  "settings_locationIntervalSec": "Интервал (Секунди)",
+  "settings_locationGPSEnableSubtitle": "Активирайте GPS, за автоматично изпращане на данни за местоположението (ако е поддържано).",
+  "settings_locationIntervalInvalid": "Интервалът трябва да бъде поне 60 секунди и по-малко от 86400 секунди.",
+  "settings_locationGPSEnable": "Активиране на GPS"
 }

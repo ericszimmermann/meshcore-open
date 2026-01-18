@@ -201,6 +201,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settings_locationInvalid => 'Ungültige Breiten- oder Längengrade.';
 
   @override
+  String get settings_locationGPSEnable => 'GPS aktivieren';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Aktivieren Sie GPS, um Standortdaten automatisch zu senden (falls unterstützt).';
+
+  @override
+  String get settings_locationIntervalSec => 'Zeitintervall (Sekunden)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'Der Zeitraum muss mindestens 60 Sekunden betragen und weniger als 86400 Sekunden sein.';
+
+  @override
   String get settings_latitude => 'Breitengrad';
 
   @override

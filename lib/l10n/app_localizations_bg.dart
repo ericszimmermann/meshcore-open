@@ -202,6 +202,20 @@ class AppLocalizationsBg extends AppLocalizations {
   String get settings_locationInvalid => 'Невалидна ширина или дължина.';
 
   @override
+  String get settings_locationGPSEnable => 'Активиране на GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Активирайте GPS, за автоматично изпращане на данни за местоположението (ако е поддържано).';
+
+  @override
+  String get settings_locationIntervalSec => 'Интервал (Секунди)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'Интервалът трябва да бъде поне 60 секунди и по-малко от 86400 секунди.';
+
+  @override
   String get settings_latitude => 'Широчина';
 
   @override

@@ -201,6 +201,20 @@ class AppLocalizationsSl extends AppLocalizations {
       'Neveljna zemeljska širina ali dolžina.';
 
   @override
+  String get settings_locationGPSEnable => 'Omogoči GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Omogoči GPS za samodejno pošiljanje podatkov o lokaciji (če je podprto).';
+
+  @override
+  String get settings_locationIntervalSec => 'Interval (Sekunde)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'Intervallo mora biti vsaj 60 sekund in manj kot 86400 sekund.';
+
+  @override
   String get settings_latitude => 'Širina';
 
   @override
