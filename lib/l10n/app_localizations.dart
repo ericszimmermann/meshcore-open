@@ -465,7 +465,7 @@ abstract class AppLocalizations {
   /// No description provided for @settings_locationUpdated.
   ///
   /// In en, this message translates to:
-  /// **'Location updated'**
+  /// **'Location and GPS settings updated'**
   String get settings_locationUpdated;
 
   /// No description provided for @settings_locationBothRequired.
@@ -479,6 +479,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid latitude or longitude.'**
   String get settings_locationInvalid;
+
+  /// No description provided for @settings_locationGPSEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS Enable'**
+  String get settings_locationGPSEnable;
+
+  /// No description provided for @settings_locationGPSEnableSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enables GPS to automatically update location.'**
+  String get settings_locationGPSEnableSubtitle;
+
+  /// No description provided for @settings_locationIntervalSec.
+  ///
+  /// In en, this message translates to:
+  /// **'Interval for GPS (Seconds)'**
+  String get settings_locationIntervalSec;
+
+  /// No description provided for @settings_locationIntervalInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Interval must be at least 60 seconds, and less than 86400 seconds.'**
+  String get settings_locationIntervalInvalid;
 
   /// No description provided for @settings_latitude.
   ///
@@ -1284,10 +1308,16 @@ abstract class AppLocalizations {
   /// **'Manage Repeater'**
   String get contacts_manageRepeater;
 
+  /// No description provided for @contacts_manageRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Room Server'**
+  String get contacts_manageRoom;
+
   /// No description provided for @contacts_roomLogin.
   ///
   /// In en, this message translates to:
-  /// **'Room Login'**
+  /// **'Room Server Login'**
   String get contacts_roomLogin;
 
   /// No description provided for @contacts_openChat.
@@ -2672,7 +2702,7 @@ abstract class AppLocalizations {
   /// No description provided for @login_roomLogin.
   ///
   /// In en, this message translates to:
-  /// **'Room Login'**
+  /// **'Room Server Login'**
   String get login_roomLogin;
 
   /// No description provided for @login_password.
@@ -2866,6 +2896,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Repeater Management'**
   String get repeater_management;
+
+  /// No description provided for @room_management.
+  ///
+  /// In en, this message translates to:
+  /// **'Room Server Management'**
+  String get room_management;
 
   /// No description provided for @repeater_managementTools.
   ///

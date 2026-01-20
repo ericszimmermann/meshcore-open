@@ -202,6 +202,20 @@ class AppLocalizationsBg extends AppLocalizations {
   String get settings_locationInvalid => 'Невалидна ширина или дължина.';
 
   @override
+  String get settings_locationGPSEnable => 'Активиране на GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Активирайте автоматичното актуализиране на местоположението чрез GPS.';
+
+  @override
+  String get settings_locationIntervalSec => 'Интервал за GPS (Секунди)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'Интервалът трябва да бъде поне 60 секунди и по-малко от 86400 секунди.';
+
+  @override
   String get settings_latitude => 'Широчина';
 
   @override
@@ -649,6 +663,9 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get contacts_manageRepeater => 'Управление на Повтарящ се Елемент';
+
+  @override
+  String get contacts_manageRoom => 'Управление на сървър за стая';
 
   @override
   String get contacts_roomLogin => 'Вход в стаята';
@@ -1586,6 +1603,9 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get repeater_management => 'Управление на повторители';
+
+  @override
+  String get room_management => 'Управление на сървъра за стая';
 
   @override
   String get repeater_managementTools => 'Инструменти за управление';

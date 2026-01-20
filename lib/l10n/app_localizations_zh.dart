@@ -197,6 +197,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings_locationInvalid => '无效的纬度或经度。';
 
   @override
+  String get settings_locationGPSEnable => '启用GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle => '启用GPS自动更新位置。';
+
+  @override
+  String get settings_locationIntervalSec => 'GPS 间隔（秒）';
+
+  @override
+  String get settings_locationIntervalInvalid => '时间间隔必须至少为60秒，且小于86400秒。';
+
+  @override
   String get settings_latitude => '纬度';
 
   @override
@@ -610,6 +622,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get contacts_manageRepeater => '管理重复项';
+
+  @override
+  String get contacts_manageRoom => '管理房间服务器';
 
   @override
   String get contacts_roomLogin => '房间登录';
@@ -1512,6 +1527,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get repeater_management => '重复器管理';
+
+  @override
+  String get room_management => '房间服务器管理';
 
   @override
   String get repeater_managementTools => '管理工具';

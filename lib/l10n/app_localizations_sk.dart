@@ -201,6 +201,20 @@ class AppLocalizationsSk extends AppLocalizations {
   String get settings_locationInvalid => 'Neplatná šírka alebo dĺžka.';
 
   @override
+  String get settings_locationGPSEnable => 'Aktivovať GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Povolí automatické aktualizovanie polohy pomocou GPS.';
+
+  @override
+  String get settings_locationIntervalSec => 'Interval pre GPS (Sekundy)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'Interval musí byť aspoň 60 sekúnd a menej ako 86400 sekúnd.';
+
+  @override
   String get settings_latitude => 'Súradnica';
 
   @override
@@ -641,6 +655,9 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get contacts_manageRepeater => 'Spravovať opakované zoznamy';
+
+  @override
+  String get contacts_manageRoom => 'Spravovať server miestnosti';
 
   @override
   String get contacts_roomLogin => 'Prihlásenie do miestnosti';
@@ -1100,7 +1117,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get chat_clearPathSubtitle =>
-      'Znovu nájsť vynútene pri nasledujacej pošlite';
+      'Znovu nájsť vynútene pri nasledujúcej pošlite';
 
   @override
   String get chat_pathCleared =>
@@ -1579,6 +1596,9 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_management => 'Správa opakérov';
+
+  @override
+  String get room_management => 'Správa servera miestnosti';
 
   @override
   String get repeater_managementTools => 'Nástroje na správu';

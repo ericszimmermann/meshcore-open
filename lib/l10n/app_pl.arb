@@ -1378,5 +1378,11 @@
     }
   },
   "neighbors_heardAgo": "Usłyszano: {time} temu",
-  "neighbors_unknownContact": "Nieznana {pubkey}"
+  "neighbors_unknownContact": "Nieznana {pubkey}",
+  "settings_locationGPSEnable": "Włącz GPS",
+  "settings_locationGPSEnableSubtitle": "Włącza automatyczne aktualizowanie pozycji za pomocą GPS.",
+  "settings_locationIntervalSec": "Interwał dla GPS (Sekundy)",
+  "settings_locationIntervalInvalid": "Interwał musi wynosić co najmniej 60 sekund i mniej niż 86400 sekund.",
+  "contacts_manageRoom": "Zarządzaj Serwerem Pokoju",
+  "room_management": "Zarządzanie Serwerem Pokoju"
 }

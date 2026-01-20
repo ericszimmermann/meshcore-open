@@ -203,6 +203,20 @@ class AppLocalizationsPl extends AppLocalizations {
       'Nieprawidłowa szerokość geograficzna lub długość geograficzna.';
 
   @override
+  String get settings_locationGPSEnable => 'Włącz GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Włącza automatyczne aktualizowanie pozycji za pomocą GPS.';
+
+  @override
+  String get settings_locationIntervalSec => 'Interwał dla GPS (Sekundy)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'Interwał musi wynosić co najmniej 60 sekund i mniej niż 86400 sekund.';
+
+  @override
   String get settings_latitude => 'Szerokość';
 
   @override
@@ -648,6 +662,9 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get contacts_manageRepeater => 'Zarządzaj Powtórzami';
+
+  @override
+  String get contacts_manageRoom => 'Zarządzaj Serwerem Pokoju';
 
   @override
   String get contacts_roomLogin => 'Logowanie do pokoju';
@@ -1586,6 +1603,9 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get repeater_management => 'Zarządzanie Powtórzami';
+
+  @override
+  String get room_management => 'Zarządzanie Serwerem Pokoju';
 
   @override
   String get repeater_managementTools => 'Narzędzia Zarządzania';

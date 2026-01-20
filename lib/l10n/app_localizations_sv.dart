@@ -200,6 +200,20 @@ class AppLocalizationsSv extends AppLocalizations {
   String get settings_locationInvalid => 'Ogiltig latitud eller longitud.';
 
   @override
+  String get settings_locationGPSEnable => 'Aktivera GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Aktivera automatiska uppdateringar av platsen med hjälp av GPS.';
+
+  @override
+  String get settings_locationIntervalSec => 'Interval för GPS (Sekunder)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'Intervalet måste vara minst 60 sekunder och mindre än 86400 sekunder.';
+
+  @override
   String get settings_latitude => 'Latitud';
 
   @override
@@ -637,6 +651,9 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get contacts_manageRepeater => 'Hantera Upprepare';
+
+  @override
+  String get contacts_manageRoom => 'Hantera Rumserver';
 
   @override
   String get contacts_roomLogin => 'Rum Inloggning';
@@ -1568,6 +1585,9 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get repeater_management => 'Återuppspelarens Hantering';
+
+  @override
+  String get room_management => 'Rumserverhantering';
 
   @override
   String get repeater_managementTools => 'Administrationsverktyg';

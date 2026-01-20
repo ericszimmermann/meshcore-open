@@ -201,6 +201,20 @@ class AppLocalizationsIt extends AppLocalizations {
   String get settings_locationInvalid => 'Latitudine o longitudine non valida.';
 
   @override
+  String get settings_locationGPSEnable => 'Abilita GPS';
+
+  @override
+  String get settings_locationGPSEnableSubtitle =>
+      'Abilita l\'aggiornamento automatico della posizione tramite GPS.';
+
+  @override
+  String get settings_locationIntervalSec => 'Intervallo GPS (Secondi)';
+
+  @override
+  String get settings_locationIntervalInvalid =>
+      'L\'intervallo deve essere di almeno 60 secondi e inferiore a 86400 secondi.';
+
+  @override
   String get settings_latitude => 'Latitudine';
 
   @override
@@ -645,6 +659,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get contacts_manageRepeater => 'Gestisci Ripetitore';
+
+  @override
+  String get contacts_manageRoom => 'Gestisci Server Camera';
 
   @override
   String get contacts_roomLogin => 'Login Camera';
@@ -1582,6 +1599,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get repeater_management => 'Gestione Ripetitori';
+
+  @override
+  String get room_management => 'Gestione del Server di Camera';
 
   @override
   String get repeater_managementTools => 'Strumenti di Gestione';
