@@ -24,6 +24,9 @@ class AppLocalizationsBg extends AppLocalizations {
   String get common_cancel => 'Отказ';
 
   @override
+  String get common_ok => 'Добре';
+
+  @override
   String get common_connect => 'Свържи се';
 
   @override
@@ -2451,6 +2454,174 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get channelPath_unknownRepeater => 'Неизвестен повторител';
+
+  @override
+  String get community_title => 'Общност';
+
+  @override
+  String get community_create => 'Създай общност';
+
+  @override
+  String get community_createDesc =>
+      'Създайте нова общност и я споделете чрез QR код.';
+
+  @override
+  String get community_join => 'Присъедини се';
+
+  @override
+  String get community_joinTitle => 'Присъедини се към общността';
+
+  @override
+  String community_joinConfirmation(String name) {
+    return 'Искате ли да се присъедините към общността \"$name\"?';
+  }
+
+  @override
+  String get community_scanQr => 'Сканирайте QR кода на общността';
+
+  @override
+  String get community_scanInstructions =>
+      'Насочете камерата към QR код на общността';
+
+  @override
+  String get community_showQr => 'Покажи QR код';
+
+  @override
+  String get community_publicChannel => 'Обществено общност';
+
+  @override
+  String get community_hashtagChannel => 'Хаштаг на общността';
+
+  @override
+  String get community_name => 'Име на общността';
+
+  @override
+  String get community_enterName => 'Въведете име на общността';
+
+  @override
+  String community_created(String name) {
+    return 'Общността \"$name\" е създадена';
+  }
+
+  @override
+  String community_joined(String name) {
+    return 'Присъединено общност \"$name\"';
+  }
+
+  @override
+  String get community_qrTitle => 'Споделяне в общността';
+
+  @override
+  String community_qrInstructions(String name) {
+    return 'Сканирайте този QR код, за да се присъедините към $name.';
+  }
+
+  @override
+  String get community_hashtagPrivacyHint =>
+      'Хаштаг каналите на общността са достъпни само за членове на общността';
+
+  @override
+  String get community_invalidQrCode => 'Невалиден QR код на общността';
+
+  @override
+  String get community_alreadyMember => 'Вече съм член';
+
+  @override
+  String community_alreadyMemberMessage(String name) {
+    return 'Вие вече сте член на \"$name\".';
+  }
+
+  @override
+  String get community_addPublicChannel => 'Добави публичен общностен канал';
+
+  @override
+  String get community_addPublicChannelHint =>
+      'Автоматично добавете публичния канал за тази общност.';
+
+  @override
+  String get community_noCommunities => 'Няма присъединени общности още.';
+
+  @override
+  String get community_scanOrCreate =>
+      'Сканирайте QR код или създайте общност, за да започнете.';
+
+  @override
+  String get community_manageCommunities => 'Управление на общности';
+
+  @override
+  String get community_delete => 'Напусни общността';
+
+  @override
+  String community_deleteConfirm(String name) {
+    return 'Напускате \"$name\"?';
+  }
+
+  @override
+  String community_deleteChannelsWarning(int count) {
+    return 'Това ще изтрие също $count канал(а) и техните съобщения.';
+  }
+
+  @override
+  String community_deleted(String name) {
+    return 'Остави общността \"$name\"';
+  }
+
+  @override
+  String get community_regenerateSecret => 'Regenerate Secret';
+
+  @override
+  String community_regenerateSecretConfirm(String name) {
+    return 'Regenerate the secret key for \"$name\"? All members will need to scan the new QR code to continue communicating.';
+  }
+
+  @override
+  String get community_regenerate => 'Regenerate';
+
+  @override
+  String community_secretRegenerated(String name) {
+    return 'Secret regenerated for \"$name\"';
+  }
+
+  @override
+  String get community_updateSecret => 'Update Secret';
+
+  @override
+  String community_secretUpdated(String name) {
+    return 'Secret updated for \"$name\"';
+  }
+
+  @override
+  String community_scanToUpdateSecret(String name) {
+    return 'Scan the new QR code to update the secret for \"$name\"';
+  }
+
+  @override
+  String get community_addHashtagChannel => 'Добави общностен хаштаг';
+
+  @override
+  String get community_addHashtagChannelDesc =>
+      'Добавете хаштаг канал за тази общност';
+
+  @override
+  String get community_selectCommunity => 'Изберете общност';
+
+  @override
+  String get community_regularHashtag => 'Обикновен хаштаг';
+
+  @override
+  String get community_regularHashtagDesc =>
+      'Общ хаштаг (всеки може да се присъедини)';
+
+  @override
+  String get community_communityHashtag => 'Общностен хаштаг';
+
+  @override
+  String get community_communityHashtagDesc => 'Само за членове на общността';
+
+  @override
+  String community_forCommunity(String name) {
+    return 'За $name';
+  }
 
   @override
   String get listFilter_tooltip => 'Филтрирайте и сортирайте';

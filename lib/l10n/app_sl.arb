@@ -1384,5 +1384,105 @@
   "settings_locationIntervalSec": "Interval za GPS (Sekunde)",
   "settings_locationIntervalInvalid": "Intervallo mora biti vsaj 60 sekund in manj kot 86400 sekund.",
   "contacts_manageRoom": "Upravljajte strežnik sobe",
-  "room_management": "Upravljanje stremlišča"
+  "room_management": "Upravljanje stremlišča",
+  "@community_joinConfirmation": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_created": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_joined": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_qrInstructions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_alreadyMemberMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_forCommunity": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_createDesc": "Ustvari novo skupnost in jo deli preko QR kode.",
+  "community_title": "Skupnost",
+  "common_ok": "V redu",
+  "community_create": "Ustvari skupnost",
+  "community_joinTitle": "Pridružite se skupnosti",
+  "community_joinConfirmation": "Želiš se pridružiti skupnosti \"{name}\"?",
+  "community_scanQr": "Skeniraj QR kode skupnosti",
+  "community_scanInstructions": "Nasmerite kamero s skupnostnim QR kodom.",
+  "community_showQr": "Pokaži QR kodo",
+  "community_publicChannel": "Skupnostna javna",
+  "community_hashtagChannel": "Skupnostni hashtag",
+  "community_name": "Komunitarne ime",
+  "community_enterName": "Vnesite ime skupnosti",
+  "community_join": "Pridružiti se",
+  "community_created": "Skupnost \"{name}\" je bila ustvarila.",
+  "community_joined": "Prilojen k skupnosti \"{name}\"",
+  "community_qrTitle": "Delite skupnost",
+  "community_qrInstructions": "Skenirajte to QR kodo za vključitev {name}.",
+  "community_hashtagPrivacyHint": "Hashtag kanali skupnosti so dostopni samo članom skupnosti",
+  "community_invalidQrCode": "Neveljaven QR koden skupnosti",
+  "community_alreadyMember": "Že član",
+  "community_alreadyMemberMessage": "Kljub temu ste že član/ka {name}.",
+  "community_addPublicChannel": "Dodaj Objavni Kanal Komunitarja",
+  "community_addPublicChannelHint": "Samodejno dodaj javni kanal za to skupnost.",
+  "community_noCommunities": "Še nobena skupnost se ni pridružila.",
+  "community_scanOrCreate": "Skenirajte QR kodo ali ustvarite skupnost za začetek.",
+  "community_manageCommunities": "Upravljajte skupnosti",
+  "community_delete": "Opusti skupnost",
+  "community_deleteConfirm": "Zapustiti \"{name}\"?",
+  "community_deleteChannelsWarning": "To bo izbrisalo tudi {count} kanal/kanalov in njihova sporočila.",
+  "@community_deleteChannelsWarning": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "community_deleted": "Zapustil skupnost \"{name}\"",
+  "community_addHashtagChannel": "Dodaj Oznako Obštnine",
+  "community_addHashtagChannelDesc": "Dodajte hashtag kanal za to skupnost.",
+  "community_selectCommunity": "Izberi skupnost",
+  "community_regularHashtag": "Oznaka s hashtagom",
+  "community_regularHashtagDesc": "javna oznaka (kateri koli lahko sodelujejo)",
+  "community_communityHashtag": "Skupnostni hashtag",
+  "community_communityHashtagDesc": "Izključeno za uporabnike skupnosti",
+  "community_forCommunity": "Za {name}"
 }

@@ -24,6 +24,9 @@ class AppLocalizationsSv extends AppLocalizations {
   String get common_cancel => 'Avbryt';
 
   @override
+  String get common_ok => 'Okej';
+
+  @override
   String get common_connect => 'Anslut';
 
   @override
@@ -2424,6 +2427,175 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get channelPath_unknownRepeater => 'Okänt Upprepare';
+
+  @override
+  String get community_title => 'Gemenskap';
+
+  @override
+  String get community_create => 'Skapa Gemenskap';
+
+  @override
+  String get community_createDesc =>
+      'Skapa en ny gemenskap och dela via QR-kod.';
+
+  @override
+  String get community_join => 'Gå med';
+
+  @override
+  String get community_joinTitle => 'Gå med i gemenskapen';
+
+  @override
+  String community_joinConfirmation(String name) {
+    return 'Vill du gå med i communityn \"$name\"?';
+  }
+
+  @override
+  String get community_scanQr => 'Skanna Gemenskapens QR';
+
+  @override
+  String get community_scanInstructions =>
+      'Rikta kameran mot en QR-kod i communityn';
+
+  @override
+  String get community_showQr => 'Visa QR-kod';
+
+  @override
+  String get community_publicChannel => 'Föreningens Offentliga';
+
+  @override
+  String get community_hashtagChannel => 'Community Hashtag';
+
+  @override
+  String get community_name => 'Gemenskapens namn';
+
+  @override
+  String get community_enterName => 'Ange communities namn';
+
+  @override
+  String community_created(String name) {
+    return 'Community \"$name\" har skapats';
+  }
+
+  @override
+  String community_joined(String name) {
+    return 'Medlem i communityn \"$name\"';
+  }
+
+  @override
+  String get community_qrTitle => 'Dela Gemenskap';
+
+  @override
+  String community_qrInstructions(String name) {
+    return 'Skanna denna QR-kod för att gå med i \"$name\"';
+  }
+
+  @override
+  String get community_hashtagPrivacyHint =>
+      'Community-hashtagkanaler kan endast nås av medlemmar i communityn';
+
+  @override
+  String get community_invalidQrCode => 'Ogiltig community QR-kod';
+
+  @override
+  String get community_alreadyMember => 'Är redan medlem';
+
+  @override
+  String community_alreadyMemberMessage(String name) {
+    return 'Du är redan medlem av \"$name\".';
+  }
+
+  @override
+  String get community_addPublicChannel =>
+      'Lägg till Gemenskapskanal (Offentlig)';
+
+  @override
+  String get community_addPublicChannelHint =>
+      'Lägg automatiskt till den offentliga kanalen för denna community';
+
+  @override
+  String get community_noCommunities => 'Inga gemenskaper har anslutats ännu';
+
+  @override
+  String get community_scanOrCreate =>
+      'Skanna en QR-kod eller skapa en community för att komma igång';
+
+  @override
+  String get community_manageCommunities => 'Hantera Gemenskaper';
+
+  @override
+  String get community_delete => 'Lämna Gemenskap';
+
+  @override
+  String community_deleteConfirm(String name) {
+    return 'Lämna \"$name\"?';
+  }
+
+  @override
+  String community_deleteChannelsWarning(int count) {
+    return 'Detta kommer också att radera $count kanal/kanaler och deras meddelanden.';
+  }
+
+  @override
+  String community_deleted(String name) {
+    return 'Lämnade community \"$name\"';
+  }
+
+  @override
+  String get community_regenerateSecret => 'Regenerate Secret';
+
+  @override
+  String community_regenerateSecretConfirm(String name) {
+    return 'Regenerate the secret key for \"$name\"? All members will need to scan the new QR code to continue communicating.';
+  }
+
+  @override
+  String get community_regenerate => 'Regenerate';
+
+  @override
+  String community_secretRegenerated(String name) {
+    return 'Secret regenerated for \"$name\"';
+  }
+
+  @override
+  String get community_updateSecret => 'Update Secret';
+
+  @override
+  String community_secretUpdated(String name) {
+    return 'Secret updated for \"$name\"';
+  }
+
+  @override
+  String community_scanToUpdateSecret(String name) {
+    return 'Scan the new QR code to update the secret for \"$name\"';
+  }
+
+  @override
+  String get community_addHashtagChannel => 'Lägg till Gemenskapens Hashtag';
+
+  @override
+  String get community_addHashtagChannelDesc =>
+      'Lägg till en hashtag-kanal för denna community';
+
+  @override
+  String get community_selectCommunity => 'Välj Gemenskap';
+
+  @override
+  String get community_regularHashtag => 'Vanlig Hash Tag';
+
+  @override
+  String get community_regularHashtagDesc =>
+      'Offentlig hashtag (alla kan gå med)';
+
+  @override
+  String get community_communityHashtag => 'Community Hashtag';
+
+  @override
+  String get community_communityHashtagDesc => 'Endast för medlemmar';
+
+  @override
+  String community_forCommunity(String name) {
+    return 'För $name';
+  }
 
   @override
   String get listFilter_tooltip => 'Filtrera och sortera';

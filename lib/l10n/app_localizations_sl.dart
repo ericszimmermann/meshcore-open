@@ -24,6 +24,9 @@ class AppLocalizationsSl extends AppLocalizations {
   String get common_cancel => 'Prekliči';
 
   @override
+  String get common_ok => 'V redu';
+
+  @override
   String get common_connect => 'Poveži se';
 
   @override
@@ -2441,6 +2444,175 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get channelPath_unknownRepeater => 'Nepoznati ponovitelj';
+
+  @override
+  String get community_title => 'Skupnost';
+
+  @override
+  String get community_create => 'Ustvari skupnost';
+
+  @override
+  String get community_createDesc =>
+      'Ustvari novo skupnost in jo deli preko QR kode.';
+
+  @override
+  String get community_join => 'Pridružiti se';
+
+  @override
+  String get community_joinTitle => 'Pridružite se skupnosti';
+
+  @override
+  String community_joinConfirmation(String name) {
+    return 'Želiš se pridružiti skupnosti \"$name\"?';
+  }
+
+  @override
+  String get community_scanQr => 'Skeniraj QR kode skupnosti';
+
+  @override
+  String get community_scanInstructions =>
+      'Nasmerite kamero s skupnostnim QR kodom.';
+
+  @override
+  String get community_showQr => 'Pokaži QR kodo';
+
+  @override
+  String get community_publicChannel => 'Skupnostna javna';
+
+  @override
+  String get community_hashtagChannel => 'Skupnostni hashtag';
+
+  @override
+  String get community_name => 'Komunitarne ime';
+
+  @override
+  String get community_enterName => 'Vnesite ime skupnosti';
+
+  @override
+  String community_created(String name) {
+    return 'Skupnost \"$name\" je bila ustvarila.';
+  }
+
+  @override
+  String community_joined(String name) {
+    return 'Prilojen k skupnosti \"$name\"';
+  }
+
+  @override
+  String get community_qrTitle => 'Delite skupnost';
+
+  @override
+  String community_qrInstructions(String name) {
+    return 'Skenirajte to QR kodo za vključitev $name.';
+  }
+
+  @override
+  String get community_hashtagPrivacyHint =>
+      'Hashtag kanali skupnosti so dostopni samo članom skupnosti';
+
+  @override
+  String get community_invalidQrCode => 'Neveljaven QR koden skupnosti';
+
+  @override
+  String get community_alreadyMember => 'Že član';
+
+  @override
+  String community_alreadyMemberMessage(String name) {
+    return 'Kljub temu ste že član/ka $name.';
+  }
+
+  @override
+  String get community_addPublicChannel => 'Dodaj Objavni Kanal Komunitarja';
+
+  @override
+  String get community_addPublicChannelHint =>
+      'Samodejno dodaj javni kanal za to skupnost.';
+
+  @override
+  String get community_noCommunities => 'Še nobena skupnost se ni pridružila.';
+
+  @override
+  String get community_scanOrCreate =>
+      'Skenirajte QR kodo ali ustvarite skupnost za začetek.';
+
+  @override
+  String get community_manageCommunities => 'Upravljajte skupnosti';
+
+  @override
+  String get community_delete => 'Opusti skupnost';
+
+  @override
+  String community_deleteConfirm(String name) {
+    return 'Zapustiti \"$name\"?';
+  }
+
+  @override
+  String community_deleteChannelsWarning(int count) {
+    return 'To bo izbrisalo tudi $count kanal/kanalov in njihova sporočila.';
+  }
+
+  @override
+  String community_deleted(String name) {
+    return 'Zapustil skupnost \"$name\"';
+  }
+
+  @override
+  String get community_regenerateSecret => 'Regenerate Secret';
+
+  @override
+  String community_regenerateSecretConfirm(String name) {
+    return 'Regenerate the secret key for \"$name\"? All members will need to scan the new QR code to continue communicating.';
+  }
+
+  @override
+  String get community_regenerate => 'Regenerate';
+
+  @override
+  String community_secretRegenerated(String name) {
+    return 'Secret regenerated for \"$name\"';
+  }
+
+  @override
+  String get community_updateSecret => 'Update Secret';
+
+  @override
+  String community_secretUpdated(String name) {
+    return 'Secret updated for \"$name\"';
+  }
+
+  @override
+  String community_scanToUpdateSecret(String name) {
+    return 'Scan the new QR code to update the secret for \"$name\"';
+  }
+
+  @override
+  String get community_addHashtagChannel => 'Dodaj Oznako Obštnine';
+
+  @override
+  String get community_addHashtagChannelDesc =>
+      'Dodajte hashtag kanal za to skupnost.';
+
+  @override
+  String get community_selectCommunity => 'Izberi skupnost';
+
+  @override
+  String get community_regularHashtag => 'Oznaka s hashtagom';
+
+  @override
+  String get community_regularHashtagDesc =>
+      'javna oznaka (kateri koli lahko sodelujejo)';
+
+  @override
+  String get community_communityHashtag => 'Skupnostni hashtag';
+
+  @override
+  String get community_communityHashtagDesc =>
+      'Izključeno za uporabnike skupnosti';
+
+  @override
+  String community_forCommunity(String name) {
+    return 'Za $name';
+  }
 
   @override
   String get listFilter_tooltip => 'Filtri in vrstiči';

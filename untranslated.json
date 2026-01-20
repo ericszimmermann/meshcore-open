@@ -1,1 +1,121 @@
-{}
+{
+  "bg": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ],
+
+  "de": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ],
+
+  "es": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ],
+
+  "fr": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ],
+
+  "it": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ],
+
+  "nl": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ],
+
+  "pl": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ],
+
+  "pt": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ],
+
+  "sk": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ],
+
+  "sl": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ],
+
+  "sv": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ],
+
+  "zh": [
+    "community_regenerateSecret",
+    "community_regenerateSecretConfirm",
+    "community_regenerate",
+    "community_secretRegenerated",
+    "community_updateSecret",
+    "community_secretUpdated",
+    "community_scanToUpdateSecret"
+  ]
+}

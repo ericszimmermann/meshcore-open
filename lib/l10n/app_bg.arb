@@ -1384,5 +1384,105 @@
   "settings_locationGPSEnableSubtitle": "Активирайте автоматичното актуализиране на местоположението чрез GPS.",
   "settings_locationIntervalInvalid": "Интервалът трябва да бъде поне 60 секунди и по-малко от 86400 секунди.",
   "room_management": "Управление на сървъра за стая",
-  "contacts_manageRoom": "Управление на сървър за стая"
+  "contacts_manageRoom": "Управление на сървър за стая",
+  "@community_joinConfirmation": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_created": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_joined": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_qrInstructions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_alreadyMemberMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_forCommunity": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_title": "Общност",
+  "common_ok": "Добре",
+  "community_createDesc": "Създайте нова общност и я споделете чрез QR код.",
+  "community_create": "Създай общност",
+  "community_joinTitle": "Присъедини се към общността",
+  "community_joinConfirmation": "Искате ли да се присъедините към общността \"{name}\"?",
+  "community_scanQr": "Сканирайте QR кода на общността",
+  "community_scanInstructions": "Насочете камерата към QR код на общността",
+  "community_showQr": "Покажи QR код",
+  "community_publicChannel": "Обществено общност",
+  "community_hashtagChannel": "Хаштаг на общността",
+  "community_name": "Име на общността",
+  "community_enterName": "Въведете име на общността",
+  "community_created": "Общността \"{name}\" е създадена",
+  "community_joined": "Присъединено общност \"{name}\"",
+  "community_qrTitle": "Споделяне в общността",
+  "community_join": "Присъедини се",
+  "community_qrInstructions": "Сканирайте този QR код, за да се присъедините към {name}.",
+  "community_hashtagPrivacyHint": "Хаштаг каналите на общността са достъпни само за членове на общността",
+  "community_invalidQrCode": "Невалиден QR код на общността",
+  "community_alreadyMember": "Вече съм член",
+  "community_alreadyMemberMessage": "Вие вече сте член на \"{name}\".",
+  "community_addPublicChannel": "Добави публичен общностен канал",
+  "community_addPublicChannelHint": "Автоматично добавете публичния канал за тази общност.",
+  "community_noCommunities": "Няма присъединени общности още.",
+  "community_scanOrCreate": "Сканирайте QR код или създайте общност, за да започнете.",
+  "community_manageCommunities": "Управление на общности",
+  "community_delete": "Напусни общността",
+  "community_deleteConfirm": "Напускате \"{name}\"?",
+  "community_deleteChannelsWarning": "Това ще изтрие също {count} канал(а) и техните съобщения.",
+  "@community_deleteChannelsWarning": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "community_deleted": "Остави общността \"{name}\"",
+  "community_addHashtagChannel": "Добави общностен хаштаг",
+  "community_addHashtagChannelDesc": "Добавете хаштаг канал за тази общност",
+  "community_selectCommunity": "Изберете общност",
+  "community_regularHashtag": "Обикновен хаштаг",
+  "community_regularHashtagDesc": "Общ хаштаг (всеки може да се присъедини)",
+  "community_communityHashtag": "Общностен хаштаг",
+  "community_communityHashtagDesc": "Само за членове на общността",
+  "community_forCommunity": "За {name}"
 }

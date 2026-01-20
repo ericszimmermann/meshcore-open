@@ -1384,5 +1384,105 @@
   "settings_locationIntervalSec": "GPS 间隔（秒）",
   "settings_locationIntervalInvalid": "时间间隔必须至少为60秒，且小于86400秒。",
   "contacts_manageRoom": "管理房间服务器",
-  "room_management": "房间服务器管理"
+  "room_management": "房间服务器管理",
+  "@community_joinConfirmation": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_created": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_joined": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_qrInstructions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_alreadyMemberMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_forCommunity": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_create": "创建社区",
+  "community_title": "社区",
+  "community_createDesc": "创建新的社区并可通过二维码分享。",
+  "common_ok": "好的",
+  "community_join": "加入",
+  "community_joinTitle": "加入社区",
+  "community_joinConfirmation": "您想加入社区 \"{name}\" 吗？",
+  "community_scanQr": "扫描社区二维码",
+  "community_scanInstructions": "将相机对准社区二维码",
+  "community_showQr": "显示二维码",
+  "community_publicChannel": "社区公开",
+  "community_hashtagChannel": "社区标签",
+  "community_name": "社区名称",
+  "community_enterName": "请输入社区名称",
+  "community_created": "社区“{name}”已创建",
+  "community_joined": "加入社区 \"{name}\"",
+  "community_qrTitle": "分享社区",
+  "community_qrInstructions": "扫描此二维码加入{name}",
+  "community_hashtagPrivacyHint": "社区标签频道仅社区成员可加入",
+  "community_invalidQrCode": "无效的社区二维码",
+  "community_alreadyMember": "已经是会员了",
+  "community_alreadyMemberMessage": "您已经是 \"{name}\" 的会员。",
+  "community_addPublicChannel": "添加社区公共频道",
+  "community_addPublicChannelHint": "自动添加该社区的公共频道",
+  "community_noCommunities": "尚未加入任何社区",
+  "community_scanOrCreate": "扫描二维码或创建社区开始",
+  "community_manageCommunities": "管理社群",
+  "community_delete": "退出社区",
+  "community_deleteConfirm": "退出 \"{name}\"？",
+  "community_deleteChannelsWarning": "这也将删除 {count} 个频道及其消息。",
+  "@community_deleteChannelsWarning": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "community_deleted": "已退出社区 \"{name}\"",
+  "community_addHashtagChannel": "添加社区标签",
+  "community_addHashtagChannelDesc": "添加一个话题频道给此社区",
+  "community_selectCommunity": "选择社区",
+  "community_regularHashtag": "常规话题标签",
+  "community_regularHashtagDesc": "公共话题（任何人都可以加入）",
+  "community_communityHashtag": "社区标签",
+  "community_communityHashtagDesc": "仅限社区成员使用",
+  "community_forCommunity": "对于 {name}"
 }

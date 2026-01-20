@@ -1384,5 +1384,105 @@
   "settings_locationIntervalInvalid": "O intervalo deve ser de pelo menos 60 segundos e inferior a 86400 segundos.",
   "settings_locationIntervalSec": "Intervalo para GPS (Segundos)",
   "contacts_manageRoom": "Gerenciar Servidor de Sala",
-  "room_management": "Gerenciamento de Servidor de Sala"
+  "room_management": "Gerenciamento de Servidor de Sala",
+  "@community_joinConfirmation": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_created": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_joined": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_qrInstructions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_alreadyMemberMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_forCommunity": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_title": "Comunidade",
+  "community_createDesc": "Crie uma nova comunidade e compartilhe via código QR.",
+  "common_ok": "OK",
+  "community_create": "Criar Comunidade",
+  "community_join": "Junte-se",
+  "community_joinTitle": "Junte-se à Comunidade",
+  "community_joinConfirmation": "Você gostaria de se juntar à comunidade \"{name}\"?",
+  "community_scanQr": "Digitalizar a QR Code da Comunidade",
+  "community_scanInstructions": "Aponte a câmera para um código QR da comunidade",
+  "community_showQr": "Mostrar Código QR",
+  "community_publicChannel": "Comunidade Pública",
+  "community_hashtagChannel": "Hashtag da Comunidade",
+  "community_name": "Nome da Comunidade",
+  "community_enterName": "Insira o nome da comunidade",
+  "community_created": "Comunidade \"{name}\" criada",
+  "community_joined": "Juntou-se à comunidade \"{name}\"",
+  "community_qrTitle": "Partilhar Comunidade",
+  "community_qrInstructions": "Escanear este código QR para juntar-se a {name}",
+  "community_hashtagPrivacyHint": "Os canais de hashtag da comunidade só podem ser acessados por membros da comunidade",
+  "community_invalidQrCode": "Código QR da comunidade inválido",
+  "community_alreadyMember": "Já é Membro",
+  "community_alreadyMemberMessage": "Você já é membro de \"{name}\".",
+  "community_addPublicChannel": "Adicionar Canal Público da Comunidade",
+  "community_addPublicChannelHint": "Adicionar automaticamente o canal público para esta comunidade",
+  "community_noCommunities": "Ainda não foram adicionadas comunidades.",
+  "community_scanOrCreate": "Escaneie um código QR ou crie uma comunidade para começar.",
+  "community_manageCommunities": "Gerenciar Comunidades",
+  "community_delete": "Deixar Comunidade",
+  "community_deleteConfirm": "Sair de \"{name}\"?",
+  "community_deleteChannelsWarning": "Isso também excluirá {count} canal/canais e suas mensagens.",
+  "@community_deleteChannelsWarning": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "community_deleted": "Saiu da comunidade \"{name}\"",
+  "community_addHashtagChannel": "Adicionar Hashtag da Comunidade",
+  "community_addHashtagChannelDesc": "Adicionar um canal de hashtag para esta comunidade",
+  "community_selectCommunity": "Selecione Comunidade",
+  "community_regularHashtag": "Hashtag Regular",
+  "community_regularHashtagDesc": "Hashtag público (qualquer pessoa pode participar)",
+  "community_communityHashtag": "Hashtag da Comunidade",
+  "community_communityHashtagDesc": "Apenas para membros da comunidade",
+  "community_forCommunity": "Para {name}"
 }

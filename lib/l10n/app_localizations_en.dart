@@ -24,6 +24,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get common_cancel => 'Cancel';
 
   @override
+  String get common_ok => 'OK';
+
+  @override
   String get common_connect => 'Connect';
 
   @override
@@ -2412,6 +2415,173 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get channelPath_unknownRepeater => 'Unknown Repeater';
+
+  @override
+  String get community_title => 'Community';
+
+  @override
+  String get community_create => 'Create Community';
+
+  @override
+  String get community_createDesc =>
+      'Create a new community and share via QR code.';
+
+  @override
+  String get community_join => 'Join';
+
+  @override
+  String get community_joinTitle => 'Join Community';
+
+  @override
+  String community_joinConfirmation(String name) {
+    return 'Do you want to join the community \"$name\"?';
+  }
+
+  @override
+  String get community_scanQr => 'Scan Community QR';
+
+  @override
+  String get community_scanInstructions =>
+      'Point the camera at a community QR code';
+
+  @override
+  String get community_showQr => 'Show QR Code';
+
+  @override
+  String get community_publicChannel => 'Community Public';
+
+  @override
+  String get community_hashtagChannel => 'Community Hashtag';
+
+  @override
+  String get community_name => 'Community Name';
+
+  @override
+  String get community_enterName => 'Enter community name';
+
+  @override
+  String community_created(String name) {
+    return 'Community \"$name\" created';
+  }
+
+  @override
+  String community_joined(String name) {
+    return 'Joined community \"$name\"';
+  }
+
+  @override
+  String get community_qrTitle => 'Share Community';
+
+  @override
+  String community_qrInstructions(String name) {
+    return 'Scan this QR code to join \"$name\"';
+  }
+
+  @override
+  String get community_hashtagPrivacyHint =>
+      'Community hashtag channels are only joinable by members of the community';
+
+  @override
+  String get community_invalidQrCode => 'Invalid community QR code';
+
+  @override
+  String get community_alreadyMember => 'Already a Member';
+
+  @override
+  String community_alreadyMemberMessage(String name) {
+    return 'You are already a member of \"$name\".';
+  }
+
+  @override
+  String get community_addPublicChannel => 'Add Community Public Channel';
+
+  @override
+  String get community_addPublicChannelHint =>
+      'Automatically add the public channel for this community';
+
+  @override
+  String get community_noCommunities => 'No communities joined yet';
+
+  @override
+  String get community_scanOrCreate =>
+      'Scan a QR code or create a community to get started';
+
+  @override
+  String get community_manageCommunities => 'Manage Communities';
+
+  @override
+  String get community_delete => 'Leave Community';
+
+  @override
+  String community_deleteConfirm(String name) {
+    return 'Leave \"$name\"?';
+  }
+
+  @override
+  String community_deleteChannelsWarning(int count) {
+    return 'This will also delete $count channel(s) and their messages.';
+  }
+
+  @override
+  String community_deleted(String name) {
+    return 'Left community \"$name\"';
+  }
+
+  @override
+  String get community_regenerateSecret => 'Regenerate Secret';
+
+  @override
+  String community_regenerateSecretConfirm(String name) {
+    return 'Regenerate the secret key for \"$name\"? All members will need to scan the new QR code to continue communicating.';
+  }
+
+  @override
+  String get community_regenerate => 'Regenerate';
+
+  @override
+  String community_secretRegenerated(String name) {
+    return 'Secret regenerated for \"$name\"';
+  }
+
+  @override
+  String get community_updateSecret => 'Update Secret';
+
+  @override
+  String community_secretUpdated(String name) {
+    return 'Secret updated for \"$name\"';
+  }
+
+  @override
+  String community_scanToUpdateSecret(String name) {
+    return 'Scan the new QR code to update the secret for \"$name\"';
+  }
+
+  @override
+  String get community_addHashtagChannel => 'Add Community Hashtag';
+
+  @override
+  String get community_addHashtagChannelDesc =>
+      'Add a hashtag channel for this community';
+
+  @override
+  String get community_selectCommunity => 'Select Community';
+
+  @override
+  String get community_regularHashtag => 'Regular Hashtag';
+
+  @override
+  String get community_regularHashtagDesc => 'Public hashtag (anyone can join)';
+
+  @override
+  String get community_communityHashtag => 'Community Hashtag';
+
+  @override
+  String get community_communityHashtagDesc => 'Private to community members';
+
+  @override
+  String community_forCommunity(String name) {
+    return 'For $name';
+  }
 
   @override
   String get listFilter_tooltip => 'Filter and sort';

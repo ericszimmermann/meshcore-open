@@ -24,6 +24,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get common_cancel => 'Annuleren';
 
   @override
+  String get common_ok => 'OK';
+
+  @override
   String get common_connect => 'Verbinden';
 
   @override
@@ -2438,6 +2441,177 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get channelPath_unknownRepeater => 'Onbekend Repeater';
+
+  @override
+  String get community_title => 'Gemeenschap';
+
+  @override
+  String get community_create => 'Maak Gemeenschap';
+
+  @override
+  String get community_createDesc =>
+      'Maak een nieuwe community en deel deze via QR-code.';
+
+  @override
+  String get community_join => 'Sluit aan';
+
+  @override
+  String get community_joinTitle => 'Worden lid van de community';
+
+  @override
+  String community_joinConfirmation(String name) {
+    return 'Wil je je aansluiten bij de community \"$name\"?';
+  }
+
+  @override
+  String get community_scanQr => 'Scan Gemeenschap QR';
+
+  @override
+  String get community_scanInstructions =>
+      'Richt de camera op een gemeenschappelijke QR-code';
+
+  @override
+  String get community_showQr => 'Toon QR-code';
+
+  @override
+  String get community_publicChannel => 'Gemeenschap Openbaar';
+
+  @override
+  String get community_hashtagChannel => 'Gemeenschappelijk Hashtag';
+
+  @override
+  String get community_name => 'Gemeenschapnaam';
+
+  @override
+  String get community_enterName => 'Voer de gemeenschapsnaam in';
+
+  @override
+  String community_created(String name) {
+    return 'Gemeenschap \"$name\" is aangemaakt';
+  }
+
+  @override
+  String community_joined(String name) {
+    return 'Gevonden in de community \"$name\"';
+  }
+
+  @override
+  String get community_qrTitle => 'Deel Gemeenschap';
+
+  @override
+  String community_qrInstructions(String name) {
+    return 'Scan deze QR-code om je aan te sluiten bij $name';
+  }
+
+  @override
+  String get community_hashtagPrivacyHint =>
+      'Community hashtag-kanalen zijn alleen toegankelijk voor leden van de community';
+
+  @override
+  String get community_invalidQrCode => 'Ongeldige community QR-code';
+
+  @override
+  String get community_alreadyMember => 'Alleen al lid';
+
+  @override
+  String community_alreadyMemberMessage(String name) {
+    return 'U bent al lid van \"$name\".';
+  }
+
+  @override
+  String get community_addPublicChannel =>
+      'Voeg een Openbaar Gemeenschapskanaal toe';
+
+  @override
+  String get community_addPublicChannelHint =>
+      'Automatisch de publieke kanaal toevoegen voor deze community';
+
+  @override
+  String get community_noCommunities =>
+      'Nog geen gemeenschappen zijn bijgesloten.';
+
+  @override
+  String get community_scanOrCreate =>
+      'Scan een QR-code of een community aanmaken om te beginnen';
+
+  @override
+  String get community_manageCommunities => 'Beheer Gemeenschappen';
+
+  @override
+  String get community_delete => 'Laat Gemeenschap';
+
+  @override
+  String community_deleteConfirm(String name) {
+    return '\"$name\" verlaten?';
+  }
+
+  @override
+  String community_deleteChannelsWarning(int count) {
+    return 'Dit verwijdert ook $count kanaal/kanalen en hun berichten.';
+  }
+
+  @override
+  String community_deleted(String name) {
+    return 'Community \"$name\" verlaten';
+  }
+
+  @override
+  String get community_regenerateSecret => 'Regenerate Secret';
+
+  @override
+  String community_regenerateSecretConfirm(String name) {
+    return 'Regenerate the secret key for \"$name\"? All members will need to scan the new QR code to continue communicating.';
+  }
+
+  @override
+  String get community_regenerate => 'Regenerate';
+
+  @override
+  String community_secretRegenerated(String name) {
+    return 'Secret regenerated for \"$name\"';
+  }
+
+  @override
+  String get community_updateSecret => 'Update Secret';
+
+  @override
+  String community_secretUpdated(String name) {
+    return 'Secret updated for \"$name\"';
+  }
+
+  @override
+  String community_scanToUpdateSecret(String name) {
+    return 'Scan the new QR code to update the secret for \"$name\"';
+  }
+
+  @override
+  String get community_addHashtagChannel => 'Voeg Community Hashtag toe';
+
+  @override
+  String get community_addHashtagChannelDesc =>
+      'Voeg een hashtag-kanaal toe aan deze community';
+
+  @override
+  String get community_selectCommunity => 'Selecteer Gemeenschap';
+
+  @override
+  String get community_regularHashtag => 'Gewone Hashtag';
+
+  @override
+  String get community_regularHashtagDesc =>
+      'Open hashtag (iedereen kan deelnemen)';
+
+  @override
+  String get community_communityHashtag => 'Gemeenschappelijk Hashtag';
+
+  @override
+  String get community_communityHashtagDesc =>
+      'Alleen zichtbaar voor leden van de community';
+
+  @override
+  String community_forCommunity(String name) {
+    return 'Voor $name';
+  }
 
   @override
   String get listFilter_tooltip => 'Filteren en sorteren';

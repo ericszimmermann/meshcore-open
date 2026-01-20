@@ -1384,5 +1384,105 @@
   "settings_locationIntervalSec": "Interval pre GPS (Sekundy)",
   "settings_locationIntervalInvalid": "Interval musí byť aspoň 60 sekúnd a menej ako 86400 sekúnd.",
   "contacts_manageRoom": "Spravovať server miestnosti",
-  "room_management": "Správa servera miestnosti"
+  "room_management": "Správa servera miestnosti",
+  "@community_joinConfirmation": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_created": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_joined": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_qrInstructions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_alreadyMemberMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_forCommunity": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_create": "Vytvoriť komunitu",
+  "community_title": "Komunita",
+  "community_createDesc": "Vytvorte novú komunitu a zdieľajte cez QR kód.",
+  "community_join": "Pripojiť",
+  "community_joinTitle": "Pripojiť sa k spoločenstvu",
+  "community_joinConfirmation": "Chceš sa pridať do komunity \"{name}\"?",
+  "community_scanQr": "Skontrolujte komunitný QR kód",
+  "community_scanInstructions": "Zamerte kameru na komunitný QR kód.",
+  "community_showQr": "Zobraziť QR kód",
+  "common_ok": "OK\nDobre",
+  "community_publicChannel": "Komunita verejná",
+  "community_hashtagChannel": "Komunitný Hashtag",
+  "community_name": "Komunita",
+  "community_enterName": "Zadajte názov komunity",
+  "community_created": "Komunita \"{name}\" vytvorená",
+  "community_joined": "Pripojená komunita \"{name}\"",
+  "community_qrTitle": "Zdieľť komunitu",
+  "community_qrInstructions": "Skenejte tento QR kód, aby ste sa pripojili k {name}.",
+  "community_hashtagPrivacyHint": "Hashtagové kanály komunity sú prístupné len členom komunity",
+  "community_invalidQrCode": "Neplatná QR kód komunity.",
+  "community_alreadyMember": "Už ste členom.",
+  "community_alreadyMemberMessage": "Vy ste už členom \"{name}\".",
+  "community_addPublicChannel": "Pridať verejný komunikačný kanál",
+  "community_addPublicChannelHint": "Automaticky prida verejný kanál pre túto komunitu.",
+  "community_noCommunities": "Zatiaľ ste sa nepripojili k žiadnej komunite",
+  "community_scanOrCreate": "Skene QR kód alebo vytvor komunitu na začiatok.",
+  "community_manageCommunities": "Spravovať komunity",
+  "community_delete": "Nechajte komunitu",
+  "community_deleteConfirm": "Opustiť \"{name}\"?",
+  "community_deleteChannelsWarning": "Tým sa tiež vymaže {count} kanál/kanálov a ich správy.",
+  "@community_deleteChannelsWarning": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "community_deleted": "Opustená komunita \"{name}\"",
+  "community_addHashtagChannel": "Pridať komunitný hashtag",
+  "community_addHashtagChannelDesc": "Pridajte hashtagový kanál pre túto komunitu.",
+  "community_selectCommunity": "Vyberte komunitu",
+  "community_regularHashtag": "Zvyčajný hashtag",
+  "community_regularHashtagDesc": "Veľký hashtag (ktočokoľvek sa môže pridať)",
+  "community_communityHashtag": "Komunitný Hashtag",
+  "community_communityHashtagDesc": "Špecifické pre členov komunity",
+  "community_forCommunity": "Pre {name}"
 }

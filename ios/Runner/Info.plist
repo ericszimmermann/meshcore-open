@@ -53,5 +53,7 @@
 	<string>This app uses Bluetooth to communicate with MeshCore devices.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>This app uses Bluetooth to communicate with MeshCore devices.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app uses the camera to scan QR codes for joining communities.</string>
 </dict>
 </plist>

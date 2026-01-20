@@ -1615,6 +1615,10 @@ class MeshCoreConnector extends ChangeNotifier {
     await sendFrame(buildSetChannelFrame(index, '', Uint8List(16)));
     _channelLastReadMs.remove(index);
     _unreadStore.saveChannelLastRead(Map<int, int>.from(_channelLastReadMs));
+    // Clear stored messages for this channel
+    await _channelMessageStore.clearChannelMessages(index);
+    // Clear in-memory messages for this channel
+    _channelMessages.remove(index);
     // Refresh channels after deleting
     await getChannels();
   }

@@ -1384,5 +1384,105 @@
   "settings_locationIntervalSec": "Interval för GPS (Sekunder)",
   "settings_locationIntervalInvalid": "Intervalet måste vara minst 60 sekunder och mindre än 86400 sekunder.",
   "contacts_manageRoom": "Hantera Rumserver",
-  "room_management": "Rumserverhantering"
+  "room_management": "Rumserverhantering",
+  "@community_joinConfirmation": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_created": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_joined": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_qrInstructions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_alreadyMemberMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_deleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_forCommunity": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_create": "Skapa Gemenskap",
+  "community_createDesc": "Skapa en ny gemenskap och dela via QR-kod.",
+  "common_ok": "Okej",
+  "community_title": "Gemenskap",
+  "community_join": "Gå med",
+  "community_joinTitle": "Gå med i gemenskapen",
+  "community_joinConfirmation": "Vill du gå med i communityn \"{name}\"?",
+  "community_scanQr": "Skanna Gemenskapens QR",
+  "community_scanInstructions": "Rikta kameran mot en QR-kod i communityn",
+  "community_showQr": "Visa QR-kod",
+  "community_publicChannel": "Föreningens Offentliga",
+  "community_name": "Gemenskapens namn",
+  "community_enterName": "Ange communities namn",
+  "community_created": "Community \"{name}\" har skapats",
+  "community_joined": "Medlem i communityn \"{name}\"",
+  "community_qrTitle": "Dela Gemenskap",
+  "community_qrInstructions": "Skanna denna QR-kod för att gå med i \"{name}\"",
+  "community_hashtagPrivacyHint": "Community-hashtagkanaler kan endast nås av medlemmar i communityn",
+  "community_hashtagChannel": "Community Hashtag",
+  "community_invalidQrCode": "Ogiltig community QR-kod",
+  "community_alreadyMember": "Är redan medlem",
+  "community_alreadyMemberMessage": "Du är redan medlem av \"{name}\".",
+  "community_addPublicChannel": "Lägg till Gemenskapskanal (Offentlig)",
+  "community_addPublicChannelHint": "Lägg automatiskt till den offentliga kanalen för denna community",
+  "community_noCommunities": "Inga gemenskaper har anslutats ännu",
+  "community_scanOrCreate": "Skanna en QR-kod eller skapa en community för att komma igång",
+  "community_manageCommunities": "Hantera Gemenskaper",
+  "community_delete": "Lämna Gemenskap",
+  "community_deleteConfirm": "Lämna \"{name}\"?",
+  "community_deleteChannelsWarning": "Detta kommer också att radera {count} kanal/kanaler och deras meddelanden.",
+  "@community_deleteChannelsWarning": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "community_deleted": "Lämnade community \"{name}\"",
+  "community_addHashtagChannel": "Lägg till Gemenskapens Hashtag",
+  "community_addHashtagChannelDesc": "Lägg till en hashtag-kanal för denna community",
+  "community_selectCommunity": "Välj Gemenskap",
+  "community_regularHashtag": "Vanlig Hash Tag",
+  "community_regularHashtagDesc": "Offentlig hashtag (alla kan gå med)",
+  "community_communityHashtagDesc": "Endast för medlemmar",
+  "community_forCommunity": "För {name}",
+  "community_communityHashtag": "Community Hashtag"
 }
