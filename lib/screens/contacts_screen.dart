@@ -54,6 +54,7 @@ class _ContactsScreenState extends State<ContactsScreen>
   List<ContactGroup> _groups = [];
   Timer? _searchDebounce;
 
+  bool _imported = false;
   StreamSubscription<Uint8List>? _frameSubscription;
 
   @override
@@ -96,6 +97,23 @@ class _ContactsScreenState extends State<ContactsScreen>
         final hexString = pubKeyToHex(advertPacket);
         Clipboard.setData(ClipboardData(text: "meshcore://$hexString"));
       }
+
+      if(code == respCodeOk && _imported) {
+        // Show a snackbar indicating success
+        _imported = false;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.contacts_contactImported)),
+        );
+      }
+
+      if(code == respCodeErr && _imported) {
+        // Show a snackbar indicating success
+        _imported = false;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.contacts_contactImportFailed)),
+        );
+      }
+
     });
   }
 
@@ -126,9 +144,7 @@ class _ContactsScreenState extends State<ContactsScreen>
       final connector = Provider.of<MeshCoreConnector>(context, listen: false);
       final importContactFrame = buildImportContactFrame(hexString);
       await connector.sendFrame(importContactFrame);
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(content: Text(context.l10n.contacts_contactAdded)),
-      // );
+      _imported = true;
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.l10n.contacts_invalidAdvertFormat)),
@@ -923,6 +939,7 @@ class _ContactsScreenState extends State<ContactsScreen>
                   _openChat(context, contact);
                 },
               ),
+            ],
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.red),
               title: Text(
@@ -997,7 +1014,7 @@ class _ContactTile extends StatelessWidget {
       ),
       title: Text(contact.name),
       subtitle: Text(
-        '${contact.typeLabel} • ${contact.pathLabel} $shotPublicKey',
+        '${contact.typeLabel}\n${contact.shortPubKeyHex}',
       ),
       // Clamp text scaling in trailing section to prevent overflow while
       // maintaining accessibility. Primary content (title/subtitle) scales normally.
@@ -1019,13 +1036,24 @@ class _ContactTile extends StatelessWidget {
               _formatLastSeen(context, lastSeen),
               style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
-            if (contact.hasLocation)
-              Icon(Icons.location_on, size: 14, color: Colors.grey[400]),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+              Text(contact.pathLabel,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+              if (contact.hasLocation)
+                Icon(Icons.location_on, size: 14, color: Colors.grey[400]),
+              ],
+            ),
+          Text(
+            _formatLastSeen(context, lastSeen),
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          ),
+          if (contact.hasLocation)
+            Icon(Icons.location_on, size: 14, color: Colors.grey[400]),
           ],
         ),
       ),
-      onTap: onTap,
-      onLongPress: onLongPress,
     );
   }
 

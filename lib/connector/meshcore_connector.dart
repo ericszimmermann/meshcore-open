@@ -1680,6 +1680,12 @@ class MeshCoreConnector extends ChangeNotifier {
         _isLoadingContacts = true;
         notifyListeners();
         break;
+      case pushCodeNewAdvert:
+        debugPrint('Got NEW_ADVERT');
+        _handleContact(frame);
+        notifyListeners();
+        unawaited(_persistContacts());
+        break;
       case respCodeContact:
         debugPrint('Got CONTACT');
         _handleContact(frame);
@@ -1737,6 +1743,7 @@ class MeshCoreConnector extends ChangeNotifier {
         break;
       case respCodeCustomVars:
         _handleCustomVars(frame);
+        break;
       default:
         debugPrint('Unknown frame code: $code');
     }

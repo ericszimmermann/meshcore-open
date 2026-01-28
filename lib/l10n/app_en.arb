@@ -1309,8 +1309,23 @@
   "listFilter_roomServers": "Room servers",
   "listFilter_unreadOnly": "Unread only",
   "listFilter_newGroup": "New group",
+  
+  "contacts_pathTrace": "Path Trace",
+  "contacts_ping": "Ping",
+  "contacts_repeaterPathTrace": "Path trace to repeater",
+  "contacts_repeaterPing": "Ping repeater",
+  "contacts_roomPathTrace": "Path trace to room server",
+  "contacts_roomPing": "Ping room server",
+  "contacts_chatTraceRoute": "Path trace route",
+  "contacts_pathTraceTo": "Trace route to {name}",
+  "@contacts_pathTraceTo": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
 
   "contacts_clipboardEmpty": "Clipboard Is Empty.",
   "contacts_invalidAdvertFormat": "Invalid Contact Data",
-  "contacts_contactAdded": "Contact has been added."
+  "contacts_contactImported": "Contact has been Imported.",
+  "contacts_contactImportFailed": "Contact Failed to Imported."
 }
