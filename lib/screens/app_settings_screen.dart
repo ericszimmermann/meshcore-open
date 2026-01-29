@@ -471,6 +471,10 @@ class AppSettingsScreen extends StatelessWidget {
         return context.l10n.appSettings_languageSk;
       case 'bg':
         return context.l10n.appSettings_languageBg;
+      case 'ru':
+        return context.l10n.appSettings_languageRu;
+      case 'uk':
+        return context.l10n.appSettings_languageUk;
       default:
         return context.l10n.appSettings_languageSystem;
     }
@@ -546,6 +550,14 @@ class AppSettingsScreen extends StatelessWidget {
                 RadioListTile<String?>(
                   title: Text(context.l10n.appSettings_languageBg),
                   value: 'bg',
+                ),
+                RadioListTile<String?>(
+                  title: Text(context.l10n.appSettings_languageRu),
+                  value: 'ru',
+                ),
+                RadioListTile<String?>(
+                  title: Text(context.l10n.appSettings_languageUk),
+                  value: 'uk',
                 ),
               ],
             ),

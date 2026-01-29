@@ -14,9 +14,11 @@ import 'app_localizations_it.dart';
 import 'app_localizations_nl.dart';
 import 'app_localizations_pl.dart';
 import 'app_localizations_pt.dart';
+import 'app_localizations_ru.dart';
 import 'app_localizations_sk.dart';
 import 'app_localizations_sl.dart';
 import 'app_localizations_sv.dart';
+import 'app_localizations_uk.dart';
 import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
@@ -114,9 +116,11 @@ abstract class AppLocalizations {
     Locale('nl'),
     Locale('pl'),
     Locale('pt'),
+    Locale('ru'),
     Locale('sk'),
     Locale('sl'),
     Locale('sv'),
+    Locale('uk'),
     Locale('zh'),
   ];
 
@@ -941,6 +945,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Български'**
   String get appSettings_languageBg;
+
+  /// No description provided for @appSettings_languageRu.
+  ///
+  /// In en, this message translates to:
+  /// **'Русский'**
+  String get appSettings_languageRu;
+
+  /// No description provided for @appSettings_languageUk.
+  ///
+  /// In en, this message translates to:
+  /// **'Українська'**
+  String get appSettings_languageUk;
 
   /// No description provided for @appSettings_notifications.
   ///
@@ -2225,6 +2241,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unread: {count}'**
   String chat_unread(int count);
+
+  /// No description provided for @chat_openLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Link?'**
+  String get chat_openLink;
+
+  /// No description provided for @chat_openLinkConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to open this link in your browser?'**
+  String get chat_openLinkConfirmation;
+
+  /// No description provided for @chat_open.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get chat_open;
+
+  /// No description provided for @chat_couldNotOpenLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open link: {url}'**
+  String chat_couldNotOpenLink(String url);
+
+  /// No description provided for @chat_invalidLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid link format'**
+  String get chat_invalidLink;
 
   /// No description provided for @map_title.
   ///
@@ -4653,6 +4699,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New group'**
   String get listFilter_newGroup;
+
+  /// No description provided for @pathTrace_you.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get pathTrace_you;
+
+  /// No description provided for @pathTrace_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Path trace failed.'**
+  String get pathTrace_failed;
+
+  /// No description provided for @pathTrace_notAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Path trace not available.'**
+  String get pathTrace_notAvailable;
+
+  /// No description provided for @pathTrace_refreshTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh Path Trace.'**
+  String get pathTrace_refreshTooltip;
+
+  /// No description provided for @contacts_pathTrace.
+  ///
+  /// In en, this message translates to:
+  /// **'Path Trace'**
+  String get contacts_pathTrace;
+
+  /// No description provided for @contacts_ping.
+  ///
+  /// In en, this message translates to:
+  /// **'Ping'**
+  String get contacts_ping;
+
+  /// No description provided for @contacts_repeaterPathTrace.
+  ///
+  /// In en, this message translates to:
+  /// **'Path trace to repeater'**
+  String get contacts_repeaterPathTrace;
+
+  /// No description provided for @contacts_repeaterPing.
+  ///
+  /// In en, this message translates to:
+  /// **'Ping repeater'**
+  String get contacts_repeaterPing;
+
+  /// No description provided for @contacts_roomPathTrace.
+  ///
+  /// In en, this message translates to:
+  /// **'Path trace to room server'**
+  String get contacts_roomPathTrace;
+
+  /// No description provided for @contacts_roomPing.
+  ///
+  /// In en, this message translates to:
+  /// **'Ping room server'**
+  String get contacts_roomPing;
+
+  /// No description provided for @contacts_chatTraceRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Path trace route'**
+  String get contacts_chatTraceRoute;
+
+  /// No description provided for @contacts_pathTraceTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Trace route to {name}'**
+  String contacts_pathTraceTo(String name);
 }
 
 class _AppLocalizationsDelegate
@@ -4675,9 +4793,11 @@ class _AppLocalizationsDelegate
     'nl',
     'pl',
     'pt',
+    'ru',
     'sk',
     'sl',
     'sv',
+    'uk',
     'zh',
   ].contains(locale.languageCode);
 
@@ -4706,12 +4826,16 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsPl();
     case 'pt':
       return AppLocalizationsPt();
+    case 'ru':
+      return AppLocalizationsRu();
     case 'sk':
       return AppLocalizationsSk();
     case 'sl':
       return AppLocalizationsSl();
     case 'sv':
       return AppLocalizationsSv();
+    case 'uk':
+      return AppLocalizationsUk();
     case 'zh':
       return AppLocalizationsZh();
   }

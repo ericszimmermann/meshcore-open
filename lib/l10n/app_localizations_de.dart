@@ -160,7 +160,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settings_appSettingsSubtitle =>
-      'Benachrichtigungen, Messaging und Kartenwahrnehmungen';
+      'Benachrichtigungen, Messaging und Kartenwahrnehmung';
 
   @override
   String get settings_nodeSettings => 'Knoten-Einstellungen';
@@ -445,6 +445,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appSettings_languageBg => 'Български';
 
   @override
+  String get appSettings_languageRu => 'Русский';
+
+  @override
+  String get appSettings_languageUk => 'Українська';
+
+  @override
   String get appSettings_notifications => 'Benachrichtigungen';
 
   @override
@@ -662,7 +668,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get contacts_manageRepeater => 'Wiederholungen verwalten';
+  String get contacts_manageRepeater => 'Repeater verwalten';
 
   @override
   String get contacts_manageRoom => 'Raum-Server verwalten';
@@ -796,7 +802,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get channels_usePublicChannel => 'Verwende öffentlichen Kanal';
 
   @override
-  String get channels_standardPublicPsk => 'Standard-Öffentliche PSK';
+  String get channels_standardPublicPsk => 'Öffentliche Standard PSK';
 
   @override
   String get channels_pskHex => 'PSK (Hex)';
@@ -1029,11 +1035,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get debugFrame_textMessageHeader => 'Textnachricht-Frame:';
+  String get debugFrame_textMessageHeader => 'Textnachrichten Frame:';
 
   @override
   String debugFrame_destinationPubKey(String pubKey) {
-    return '- Ziel-Pub-Schlüssel: $pubKey';
+    return '- Ziel-Public-Schlüssel: $pubKey';
   }
 
   @override
@@ -1205,6 +1211,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String chat_unread(int count) {
     return 'Ungelesen: $count';
   }
+
+  @override
+  String get chat_openLink => 'Link öffnen?';
+
+  @override
+  String get chat_openLinkConfirmation =>
+      'Möchten Sie diesen Link in Ihrem Browser öffnen?';
+
+  @override
+  String get chat_open => 'Öffnen';
+
+  @override
+  String chat_couldNotOpenLink(String url) {
+    return 'Link konnte nicht geöffnet werden: $url';
+  }
+
+  @override
+  String get chat_invalidLink => 'Ungültiges Link-Format';
 
   @override
   String get map_title => 'Karte';
@@ -1870,8 +1894,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get repeater_rebootRepeater => 'Neustart Repeater';
 
   @override
-  String get repeater_rebootRepeaterSubtitle =>
-      'Wiederholen Sie das Repeater-Gerät.';
+  String get repeater_rebootRepeaterSubtitle => 'Repeater-Gerät neu starten.';
 
   @override
   String get repeater_rebootRepeaterConfirm =>
@@ -2339,7 +2362,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get neighbors_repeatersNeighbours => 'Wiederholer Nachbarn';
+  String get neighbors_repeatersNeighbours => 'Nachbarn';
 
   @override
   String get neighbors_noData => 'Keine Nachbardaten verfügbar.';
@@ -2570,32 +2593,32 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get community_regenerateSecret => 'Regenerate Secret';
+  String get community_regenerateSecret => 'Neugenerierung des Schlüssels';
 
   @override
   String community_regenerateSecretConfirm(String name) {
-    return 'Regenerate the secret key for \"$name\"? All members will need to scan the new QR code to continue communicating.';
+    return 'Nehmen Sie den geheimen Schlüssel für \"$name\" neu auf? Alle Mitglieder müssen den neuen QR-Code scannen, um die Kommunikation fortzusetzen.';
   }
 
   @override
-  String get community_regenerate => 'Regenerate';
+  String get community_regenerate => 'Neu generieren';
 
   @override
   String community_secretRegenerated(String name) {
-    return 'Secret regenerated for \"$name\"';
+    return 'Wiederherstellung des Schlüssels für \"$name\" erfolgreich';
   }
 
   @override
-  String get community_updateSecret => 'Update Secret';
+  String get community_updateSecret => 'Aktualisieren Sie den Schlüssel';
 
   @override
   String community_secretUpdated(String name) {
-    return 'Secret updated for \"$name\"';
+    return 'Schlüssel für \"$name\" aktualisiert';
   }
 
   @override
   String community_scanToUpdateSecret(String name) {
-    return 'Scan the new QR code to update the secret for \"$name\"';
+    return 'Scannen Sie den neuen QR-Code, um das Geheimnis für \"$name\" zu aktualisieren.';
   }
 
   @override
@@ -2663,4 +2686,42 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get listFilter_newGroup => 'Neue Gruppe';
+
+  @override
+  String get pathTrace_you => 'Du';
+
+  @override
+  String get pathTrace_failed => 'Pfadverfolgung fehlgeschlagen.';
+
+  @override
+  String get pathTrace_notAvailable => 'Pfadverfolgung nicht verfügbar.';
+
+  @override
+  String get pathTrace_refreshTooltip => 'Path Trace aktualisieren.';
+
+  @override
+  String get contacts_pathTrace => 'Pfadverfolgung';
+
+  @override
+  String get contacts_ping => 'Pingen';
+
+  @override
+  String get contacts_repeaterPathTrace => 'Pfadverfolgung zum Repeater';
+
+  @override
+  String get contacts_repeaterPing => 'Repeater pingen';
+
+  @override
+  String get contacts_roomPathTrace => 'Pfadverfolgung zum Raumserver';
+
+  @override
+  String get contacts_roomPing => 'Raumserver anpingen';
+
+  @override
+  String get contacts_chatTraceRoute => 'Pfadverfolgungsroute';
+
+  @override
+  String contacts_pathTraceTo(String name) {
+    return 'Route nach $name verfolgen';
+  }
 }

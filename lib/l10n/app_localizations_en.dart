@@ -443,6 +443,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appSettings_languageBg => 'Български';
 
   @override
+  String get appSettings_languageRu => 'Русский';
+
+  @override
+  String get appSettings_languageUk => 'Українська';
+
+  @override
   String get appSettings_notifications => 'Notifications';
 
   @override
@@ -1185,6 +1191,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String chat_unread(int count) {
     return 'Unread: $count';
   }
+
+  @override
+  String get chat_openLink => 'Open Link?';
+
+  @override
+  String get chat_openLinkConfirmation =>
+      'Do you want to open this link in your browser?';
+
+  @override
+  String get chat_open => 'Open';
+
+  @override
+  String chat_couldNotOpenLink(String url) {
+    return 'Could not open link: $url';
+  }
+
+  @override
+  String get chat_invalidLink => 'Invalid link format';
 
   @override
   String get map_title => 'Node Map';
@@ -2618,4 +2642,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get listFilter_newGroup => 'New group';
+
+  @override
+  String get pathTrace_you => 'You';
+
+  @override
+  String get pathTrace_failed => 'Path trace failed.';
+
+  @override
+  String get pathTrace_notAvailable => 'Path trace not available.';
+
+  @override
+  String get pathTrace_refreshTooltip => 'Refresh Path Trace.';
+
+  @override
+  String get contacts_pathTrace => 'Path Trace';
+
+  @override
+  String get contacts_ping => 'Ping';
+
+  @override
+  String get contacts_repeaterPathTrace => 'Path trace to repeater';
+
+  @override
+  String get contacts_repeaterPing => 'Ping repeater';
+
+  @override
+  String get contacts_roomPathTrace => 'Path trace to room server';
+
+  @override
+  String get contacts_roomPing => 'Ping room server';
+
+  @override
+  String get contacts_chatTraceRoute => 'Path trace route';
+
+  @override
+  String contacts_pathTraceTo(String name) {
+    return 'Trace route to $name';
+  }
 }

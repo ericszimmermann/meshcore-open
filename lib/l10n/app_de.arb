@@ -74,7 +74,7 @@
   "settings_title": "Einstellungen",
   "settings_deviceInfo": "Geräteinformationen",
   "settings_appSettings": "App-Einstellungen",
-  "settings_appSettingsSubtitle": "Benachrichtigungen, Messaging und Kartenwahrnehmungen",
+  "settings_appSettingsSubtitle": "Benachrichtigungen, Messaging und Kartenwahrnehmung",
   "settings_nodeSettings": "Knoten-Einstellungen",
   "settings_nodeName": "Knotenname",
   "settings_nodeNameNotSet": "Nicht festgelegt",
@@ -266,7 +266,7 @@
       }
     }
   },
-  "contacts_manageRepeater": "Wiederholungen verwalten",
+  "contacts_manageRepeater": "Repeater verwalten",
   "contacts_roomLogin": "Raum-Login",
   "contacts_openChat": "Öffne Chat",
   "contacts_editGroup": "Gruppe bearbeiten",
@@ -360,7 +360,7 @@
   "channels_channelIndexLabel": "Kanalindex",
   "channels_channelName": "Kanalname",
   "channels_usePublicChannel": "Verwende öffentlichen Kanal",
-  "channels_standardPublicPsk": "Standard-Öffentliche PSK",
+  "channels_standardPublicPsk": "Öffentliche Standard PSK",
   "channels_pskHex": "PSK (Hex)",
   "channels_generateRandomPsk": "Zufällige PSK generieren",
   "channels_enterChannelName": "Bitte geben Sie einen Kanalnamen ein.",
@@ -489,8 +489,8 @@
       }
     }
   },
-  "debugFrame_textMessageHeader": "Textnachricht-Frame:",
-  "debugFrame_destinationPubKey": "- Ziel-Pub-Schlüssel: {pubKey}",
+  "debugFrame_textMessageHeader": "Textnachrichten Frame:",
+  "debugFrame_destinationPubKey": "- Ziel-Public-Schlüssel: {pubKey}",
   "@debugFrame_destinationPubKey": {
     "placeholders": {
       "pubKey": {
@@ -604,6 +604,18 @@
       }
     }
   },
+  "chat_openLink": "Link öffnen?",
+  "chat_openLinkConfirmation": "Möchten Sie diesen Link in Ihrem Browser öffnen?",
+  "chat_open": "Öffnen",
+  "chat_couldNotOpenLink": "Link konnte nicht geöffnet werden: {url}",
+  "@chat_couldNotOpenLink": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "chat_invalidLink": "Ungültiges Link-Format",
   "map_title": "Karte",
   "map_noNodesWithLocation": "Keine Knoten mit Standortdaten",
   "map_nodesNeedGps": "Knoten müssen ihre GPS-Koordinaten teilen,\num auf der Karte zu erscheinen.",
@@ -1014,7 +1026,7 @@
   "repeater_encryptedAdvertInterval": "Intervall der verschlüsselten Ankündigung",
   "repeater_dangerZone": "Gefahrenzone",
   "repeater_rebootRepeater": "Neustart Repeater",
-  "repeater_rebootRepeaterSubtitle": "Wiederholen Sie das Repeater-Gerät.",
+  "repeater_rebootRepeaterSubtitle": "Repeater-Gerät neu starten.",
   "repeater_rebootRepeaterConfirm": "Sind Sie sicher, dass Sie diesen Repeater neu starten möchten?",
   "repeater_regenerateIdentityKey": "Schlüssel für die Identitätswiederherstellung",
   "repeater_regenerateIdentityKeySubtitle": "Neuen öffentlichen/privaten Schlüsselpaar generieren",
@@ -1349,7 +1361,7 @@
   "neighbors_receivedData": "Empfangene Nachbarendaten",
   "neighbors_requestTimedOut": "Nachbarn melden zeitweise Ausfall.",
   "neighbors_errorLoading": "Fehler beim Laden der Nachbarn: {error}",
-  "neighbors_repeatersNeighbours": "Wiederholer Nachbarn",
+  "neighbors_repeatersNeighbours": "Nachbarn",
   "neighbors_noData": "Keine Nachbardaten verfügbar.",
   "channels_joinPrivateChannel": "Treten Sie einem privaten Kanal bei",
   "channels_joinPrivateChannelDesc": "Manuelle Eingabe eines geheimen Schlüssels.",
@@ -1473,7 +1485,9 @@
   "community_deleteChannelsWarning": "Dies löscht auch {count} Kanal/Kanäle und deren Nachrichten.",
   "@community_deleteChannelsWarning": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "community_deleted": "Community \"{name}\" verlassen",
@@ -1484,5 +1498,59 @@
   "community_regularHashtagDesc": "Öffentliches Hashtag (jeder kann teilnehmen)",
   "community_communityHashtagDesc": "Nur für Mitglieder der Community",
   "community_forCommunity": "Für {name}",
-  "community_communityHashtag": "Community Hashtag"
+  "community_communityHashtag": "Community Hashtag",
+  "@community_regenerateSecretConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretRegenerated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretUpdated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_scanToUpdateSecret": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_regenerate": "Neu generieren",
+  "community_secretRegenerated": "Wiederherstellung des Schlüssels für \"{name}\" erfolgreich",
+  "community_regenerateSecretConfirm": "Nehmen Sie den geheimen Schlüssel für \"{name}\" neu auf? Alle Mitglieder müssen den neuen QR-Code scannen, um die Kommunikation fortzusetzen.",
+  "community_regenerateSecret": "Neugenerierung des Schlüssels",
+  "community_secretUpdated": "Schlüssel für \"{name}\" aktualisiert",
+  "community_scanToUpdateSecret": "Scannen Sie den neuen QR-Code, um das Geheimnis für \"{name}\" zu aktualisieren.",
+  "community_updateSecret": "Aktualisieren Sie den Schlüssel",
+  "@contacts_pathTraceTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pathTrace_refreshTooltip": "Path Trace aktualisieren.",
+  "pathTrace_you": "Du",
+  "pathTrace_failed": "Pfadverfolgung fehlgeschlagen.",
+  "pathTrace_notAvailable": "Pfadverfolgung nicht verfügbar.",
+  "contacts_pathTrace": "Pfadverfolgung",
+  "contacts_ping": "Pingen",
+  "contacts_repeaterPathTrace": "Pfadverfolgung zum Repeater",
+  "contacts_repeaterPing": "Repeater pingen",
+  "contacts_roomPathTrace": "Pfadverfolgung zum Raumserver",
+  "contacts_roomPing": "Raumserver anpingen",
+  "contacts_pathTraceTo": "Route nach {name} verfolgen",
+  "contacts_chatTraceRoute": "Pfadverfolgungsroute"
 }

@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:meshcore_open/widgets/path_trace_dialog.dart';
 import 'package:provider/provider.dart';
 
 import '../connector/meshcore_connector.dart';
@@ -51,7 +53,7 @@ class _ContactsScreenState extends State<ContactsScreen>
   final ContactGroupStore _groupStore = ContactGroupStore();
   List<ContactGroup> _groups = [];
   Timer? _searchDebounce;
-
+  
   @override
   void initState() {
     super.initState();
@@ -312,6 +314,14 @@ class _ContactsScreenState extends State<ContactsScreen>
       if (_searchQuery.isEmpty) return true;
       return matchesContactQuery(contact, _searchQuery);
     }).toList();
+
+    // Filter out own node from the list
+    if (connector.selfPublicKey != null) {
+      final selfPubKeyHex = pubKeyToHex(connector.selfPublicKey!);
+      filtered = filtered.where((contact) {
+        return contact.publicKeyHex != selfPubKeyHex;
+      }).toList();
+    }
 
     if (_typeFilter != ContactTypeFilter.all) {
       filtered = filtered.where(_matchesTypeFilter).toList();
@@ -752,7 +762,19 @@ class _ContactsScreenState extends State<ContactsScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (isRepeater)
+            if (isRepeater) ...[
+              ListTile(
+                leading: const Icon(Icons.radar, color: Colors.green),
+                title: contact.pathLength > 0 ? Text(context.l10n.contacts_pathTrace) : Text(context.l10n.contacts_ping),
+                onTap: () {
+                  showDialog(context: context, builder: (context) {
+                    return PathTraceDialog(
+                      title: contact.pathLength > 0 ? context.l10n.contacts_repeaterPathTrace : context.l10n.contacts_repeaterPing,
+                      path: contact.traceRouteBytes ?? Uint8List(0),
+                    );
+                  });
+                }
+              ),
               ListTile(
                 leading: const Icon(Icons.cell_tower, color: Colors.orange),
                 title: Text(context.l10n.contacts_manageRepeater),
@@ -761,7 +783,19 @@ class _ContactsScreenState extends State<ContactsScreen>
                   _showRepeaterLogin(context, contact);
                 },
               )
-            else if (isRoom) ...[
+            ]else if (isRoom) ...[
+              ListTile(
+                leading: const Icon(Icons.radar, color: Colors.green),
+                title: contact.pathLength > 0 ? Text(context.l10n.contacts_pathTrace) : Text(context.l10n.contacts_ping),
+                onTap: () {
+                  showDialog(context: context, builder: (context) {
+                    return PathTraceDialog(
+                      title: contact.pathLength > 0 ? context.l10n.contacts_roomPathTrace : context.l10n.contacts_roomPing,
+                      path: contact.traceRouteBytes ?? Uint8List(0),
+                    );
+                  });
+                }
+              ),
               ListTile(
                 leading: const Icon(Icons.room, color: Colors.blue),
                 title: Text(context.l10n.contacts_roomLogin),
@@ -778,7 +812,20 @@ class _ContactsScreenState extends State<ContactsScreen>
                   _showRoomLogin(context, contact, RoomLoginDestination.management);
                 },
               ),
-            ] else
+            ] else ...[
+              if(contact.pathLength > 0)
+              ListTile(
+                leading: const Icon(Icons.radar, color: Colors.green),
+                title: Text(context.l10n.contacts_chatTraceRoute),
+                onTap: () {
+                  showDialog(context: context, builder: (context) {
+                    return PathTraceDialog(
+                      title: context.l10n.contacts_pathTraceTo(contact.name),
+                      path: contact.traceRouteBytes ?? Uint8List(0),
+                    );
+                  });
+                }
+              ),
               ListTile(
                 leading: const Icon(Icons.chat),
                 title: Text(context.l10n.contacts_openChat),
@@ -798,6 +845,7 @@ class _ContactsScreenState extends State<ContactsScreen>
                 _confirmDelete(context, connector, contact);
               },
             ),
+            ],
           ],
         ),
       ),
@@ -852,8 +900,6 @@ class _ContactTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shotPublicKey =
-        "<${contact.publicKeyHex.substring(0, 8)}...${contact.publicKeyHex.substring(contact.publicKeyHex.length - 8)}>";
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: _getTypeColor(contact.type),
@@ -861,23 +907,32 @@ class _ContactTile extends StatelessWidget {
       ),
       title: Text(contact.name),
       subtitle: Text(
-        '${contact.typeLabel} • ${contact.pathLabel} $shotPublicKey',
+        '${contact.typeLabel} • ${contact.pathLabel} ${contact.shortPubKeyHex}',
       ),
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (unreadCount > 0) ...[
-            UnreadBadge(count: unreadCount),
-            const SizedBox(height: 4),
-          ],
-          Text(
-            _formatLastSeen(context, lastSeen),
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+      // Clamp text scaling in trailing section to prevent overflow while
+      // maintaining accessibility. Primary content (title/subtitle) scales normally.
+      trailing: MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          textScaler: TextScaler.linear(
+            MediaQuery.textScalerOf(context).scale(1.0).clamp(1.0, 1.3),
           ),
-          if (contact.hasLocation)
-            Icon(Icons.location_on, size: 14, color: Colors.grey[400]),
-        ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (unreadCount > 0) ...[
+              UnreadBadge(count: unreadCount),
+              const SizedBox(height: 4),
+            ],
+            Text(
+              _formatLastSeen(context, lastSeen),
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
+            if (contact.hasLocation)
+              Icon(Icons.location_on, size: 14, color: Colors.grey[400]),
+          ],
+        ),
       ),
       onTap: onTap,
       onLongPress: onLongPress,

@@ -449,6 +449,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get appSettings_languageBg => 'Български';
 
   @override
+  String get appSettings_languageRu => 'Русский';
+
+  @override
+  String get appSettings_languageUk => 'Українська';
+
+  @override
   String get appSettings_notifications => 'Powiadomienia';
 
   @override
@@ -1204,6 +1210,24 @@ class AppLocalizationsPl extends AppLocalizations {
   String chat_unread(int count) {
     return 'Niezgłoszone: $count';
   }
+
+  @override
+  String get chat_openLink => 'Otworzyć link?';
+
+  @override
+  String get chat_openLinkConfirmation =>
+      'Czy chcesz otworzyć ten link w przeglądarce?';
+
+  @override
+  String get chat_open => 'Otwórz';
+
+  @override
+  String chat_couldNotOpenLink(String url) {
+    return 'Nie można otworzyć linku: $url';
+  }
+
+  @override
+  String get chat_invalidLink => 'Nieprawidłowy format linku';
 
   @override
   String get map_title => 'Mapa węzłów';
@@ -2564,32 +2588,32 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get community_regenerateSecret => 'Regenerate Secret';
+  String get community_regenerateSecret => 'Zregeneruj sekret';
 
   @override
   String community_regenerateSecretConfirm(String name) {
-    return 'Regenerate the secret key for \"$name\"? All members will need to scan the new QR code to continue communicating.';
+    return 'Regeneruj tajny klucz dla \"$name\"? Wszyscy członkowie będą musieli zeskanować nowy kod QR, aby kontynuować komunikację.';
   }
 
   @override
-  String get community_regenerate => 'Regenerate';
+  String get community_regenerate => 'Zregeneruj';
 
   @override
   String community_secretRegenerated(String name) {
-    return 'Secret regenerated for \"$name\"';
+    return 'Hasło ponownie wygenerowane dla \"$name\"';
   }
 
   @override
-  String get community_updateSecret => 'Update Secret';
+  String get community_updateSecret => 'Zaktualizuj tajny klucz';
 
   @override
   String community_secretUpdated(String name) {
-    return 'Secret updated for \"$name\"';
+    return 'Hasło zaktualizowane dla \"$name\"';
   }
 
   @override
   String community_scanToUpdateSecret(String name) {
-    return 'Scan the new QR code to update the secret for \"$name\"';
+    return 'Skanuj nowy kod QR, aby zaktualizować sekret dla \"$name\"';
   }
 
   @override
@@ -2656,4 +2680,43 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get listFilter_newGroup => 'Nowa grupa';
+
+  @override
+  String get pathTrace_you => 'Ty';
+
+  @override
+  String get pathTrace_failed => 'Śledzenie ścieżki nie powiodło się.';
+
+  @override
+  String get pathTrace_notAvailable => 'Ścieżka śledzenia niedostępna.';
+
+  @override
+  String get pathTrace_refreshTooltip => 'Odśwież ścieżkę.';
+
+  @override
+  String get contacts_pathTrace => 'Śledzenie Ścieżek';
+
+  @override
+  String get contacts_ping => 'Pingować';
+
+  @override
+  String get contacts_repeaterPathTrace => 'Śledzenie ścieżki do repeatera';
+
+  @override
+  String get contacts_repeaterPing => 'Repeater pingowy';
+
+  @override
+  String get contacts_roomPathTrace =>
+      'Śledzenie ścieżki do serwera pokojowego';
+
+  @override
+  String get contacts_roomPing => 'Pinguj serwer pokoju';
+
+  @override
+  String get contacts_chatTraceRoute => 'Śledź trasę promienia';
+
+  @override
+  String contacts_pathTraceTo(String name) {
+    return 'Śledź trasę do $name';
+  }
 }

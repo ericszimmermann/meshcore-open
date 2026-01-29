@@ -174,6 +174,8 @@
   "appSettings_languageNl": "Nederlands",
   "appSettings_languageSk": "Slovenčina",
   "appSettings_languageBg": "Български",
+  "appSettings_languageRu": "Русский",
+  "appSettings_languageUk": "Українська",
   "appSettings_notifications": "Notifications",
   "appSettings_enableNotifications": "Enable Notifications",
   "appSettings_enableNotificationsSubtitle": "Receive notifications for messages and adverts",
@@ -550,6 +552,16 @@
       "count": {"type": "int"}
     }
   },
+  "chat_openLink": "Open Link?",
+  "chat_openLinkConfirmation": "Do you want to open this link in your browser?",
+  "chat_open": "Open",
+  "chat_couldNotOpenLink": "Could not open link: {url}",
+  "@chat_couldNotOpenLink": {
+    "placeholders": {
+      "url": {"type": "String"}
+    }
+  },
+  "chat_invalidLink": "Invalid link format",
 
   "map_title": "Node Map",
   "map_noNodesWithLocation": "No nodes with location data",
@@ -1298,5 +1310,24 @@
   "listFilter_repeaters": "Repeaters",
   "listFilter_roomServers": "Room servers",
   "listFilter_unreadOnly": "Unread only",
-  "listFilter_newGroup": "New group"
+  "listFilter_newGroup": "New group",
+
+  "pathTrace_you": "You",
+  "pathTrace_failed": "Path trace failed.",
+  "pathTrace_notAvailable": "Path trace not available.",
+  "pathTrace_refreshTooltip": "Refresh Path Trace.",
+  "contacts_pathTrace": "Path Trace",
+  "contacts_ping": "Ping",
+  "contacts_repeaterPathTrace": "Path trace to repeater",
+  "contacts_repeaterPing": "Ping repeater",
+  "contacts_roomPathTrace": "Path trace to room server",
+  "contacts_roomPing": "Ping room server",
+  "contacts_chatTraceRoute": "Path trace route",
+  "contacts_pathTraceTo": "Trace route to {name}",
+  "@contacts_pathTraceTo": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+
 }

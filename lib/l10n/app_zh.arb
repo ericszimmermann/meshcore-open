@@ -604,6 +604,18 @@
       }
     }
   },
+  "chat_openLink": "打开链接？",
+  "chat_openLinkConfirmation": "您想在浏览器中打开此链接吗？",
+  "chat_open": "打开",
+  "chat_couldNotOpenLink": "无法打开链接：{url}",
+  "@chat_couldNotOpenLink": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "chat_invalidLink": "链接格式无效",
   "map_title": "节点地图",
   "map_noNodesWithLocation": "没有具有位置数据的节点",
   "map_nodesNeedGps": "节点需要共享它们的 GPS 坐标\n才能在地图上显示",
@@ -1473,7 +1485,9 @@
   "community_deleteChannelsWarning": "这也将删除 {count} 个频道及其消息。",
   "@community_deleteChannelsWarning": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "community_deleted": "已退出社区 \"{name}\"",
@@ -1484,5 +1498,59 @@
   "community_regularHashtagDesc": "公共话题（任何人都可以加入）",
   "community_communityHashtag": "社区标签",
   "community_communityHashtagDesc": "仅限社区成员使用",
-  "community_forCommunity": "对于 {name}"
+  "community_forCommunity": "对于 {name}",
+  "@community_regenerateSecretConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretRegenerated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretUpdated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_scanToUpdateSecret": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_regenerateSecret": "重新生成密钥",
+  "community_secretRegenerated": "密码已重置为“{name}”",
+  "community_regenerate": "重新生成",
+  "community_regenerateSecretConfirm": "重新生成“{name}”的秘密密钥？所有成员将需要扫描新的二维码才能继续沟通。",
+  "community_scanToUpdateSecret": "扫描新的二维码更新\"{name}\"的密码",
+  "community_updateSecret": "更新密钥",
+  "community_secretUpdated": "密码已更新为“{name}”",
+  "@contacts_pathTraceTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pathTrace_you": "你",
+  "pathTrace_failed": "路径追踪失败。",
+  "pathTrace_notAvailable": "路径追踪不可用",
+  "pathTrace_refreshTooltip": "刷新路径追踪",
+  "contacts_pathTrace": "路径追踪",
+  "contacts_ping": "ping",
+  "contacts_repeaterPathTrace": "路径追踪到中继器",
+  "contacts_repeaterPing": "Ping 中继器",
+  "contacts_roomPathTrace": "路径追踪至房间服务器",
+  "contacts_roomPing": "Ping 房间服务器",
+  "contacts_chatTraceRoute": "路径追踪",
+  "contacts_pathTraceTo": "追踪路由到 {name}"
 }

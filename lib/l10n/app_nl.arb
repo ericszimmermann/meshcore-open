@@ -604,6 +604,18 @@
       }
     }
   },
+  "chat_openLink": "Link openen?",
+  "chat_openLinkConfirmation": "Wilt u deze link in uw browser openen?",
+  "chat_open": "Openen",
+  "chat_couldNotOpenLink": "Kan link niet openen: {url}",
+  "@chat_couldNotOpenLink": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "chat_invalidLink": "Ongeldig linkformaat",
   "map_title": "Node Map",
   "map_noNodesWithLocation": "Geen nodes met locatiegegevens",
   "map_nodesNeedGps": "Nodes moeten hun GPS-coördinaten delen\nom op de kaart te verschijnen",
@@ -1473,7 +1485,9 @@
   "community_deleteChannelsWarning": "Dit verwijdert ook {count} kanaal/kanalen en hun berichten.",
   "@community_deleteChannelsWarning": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "community_deleted": "Community \"{name}\" verlaten",
@@ -1484,5 +1498,59 @@
   "community_regularHashtagDesc": "Open hashtag (iedereen kan deelnemen)",
   "community_communityHashtag": "Gemeenschappelijk Hashtag",
   "community_communityHashtagDesc": "Alleen zichtbaar voor leden van de community",
-  "community_forCommunity": "Voor {name}"
+  "community_forCommunity": "Voor {name}",
+  "@community_regenerateSecretConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretRegenerated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretUpdated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_scanToUpdateSecret": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_secretRegenerated": "Geheim hersteld voor \"{name}\"",
+  "community_regenerateSecret": "Regeneer Geheimwoord",
+  "community_regenerateSecretConfirm": "Regeneere de geheime sleutel voor \"{name}\"? Alle leden moeten de nieuwe QR-code scannen om verder te communiceren.",
+  "community_regenerate": "Regeneer",
+  "community_updateSecret": "Bijwerken Geheime",
+  "community_secretUpdated": "Geheim gewijzigd voor \"{name}\"",
+  "community_scanToUpdateSecret": "Scan de nieuwe QR-code om het geheim voor \"{name}\" bij te werken",
+  "@contacts_pathTraceTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pathTrace_you": "Jij",
+  "pathTrace_failed": "Padtrace mislukt.",
+  "pathTrace_notAvailable": "Padtrace niet beschikbaar.",
+  "pathTrace_refreshTooltip": "Path Trace vernieuwen.",
+  "contacts_pathTrace": "Pad Traceren",
+  "contacts_ping": "Pingen",
+  "contacts_repeaterPathTrace": "Pad traceren naar repeater",
+  "contacts_repeaterPing": "Ping repeater",
+  "contacts_roomPathTrace": "Padtrace naar room server",
+  "contacts_roomPing": "Ping kamer server",
+  "contacts_chatTraceRoute": "Route traceren",
+  "contacts_pathTraceTo": "Trace route to {name}"
 }

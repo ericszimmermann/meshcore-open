@@ -604,6 +604,18 @@
       }
     }
   },
+  "chat_openLink": "Otvoriť odkaz?",
+  "chat_openLinkConfirmation": "Chcete otvoriť tento odkaz v prehliadači?",
+  "chat_open": "Otvoriť",
+  "chat_couldNotOpenLink": "Nepodarilo sa otvoriť odkaz: {url}",
+  "@chat_couldNotOpenLink": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "chat_invalidLink": "Neplatný formát odkazu",
   "map_title": "Mapa uzlov",
   "map_noNodesWithLocation": "Žiadne uzly s údajmi o polohe",
   "map_nodesNeedGps": "Uholníky musia zdieľať svoje GPS súradnice, aby sa zobrazili na mape.",
@@ -1473,7 +1485,9 @@
   "community_deleteChannelsWarning": "Tým sa tiež vymaže {count} kanál/kanálov a ich správy.",
   "@community_deleteChannelsWarning": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "community_deleted": "Opustená komunita \"{name}\"",
@@ -1484,5 +1498,59 @@
   "community_regularHashtagDesc": "Veľký hashtag (ktočokoľvek sa môže pridať)",
   "community_communityHashtag": "Komunitný Hashtag",
   "community_communityHashtagDesc": "Špecifické pre členov komunity",
-  "community_forCommunity": "Pre {name}"
+  "community_forCommunity": "Pre {name}",
+  "@community_regenerateSecretConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretRegenerated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretUpdated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_scanToUpdateSecret": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_secretRegenerated": "Záznam pre \"{name}\" bol regenerovaný tajne",
+  "community_regenerateSecretConfirm": "Znovu vygenerovať tajný kľúč pre \"{name}\"? Všetci členovia budú musieť skanovať nový QR kód, aby mohli nadviazať komunikáciu.",
+  "community_regenerate": "Znovu vygenerovať",
+  "community_regenerateSecret": "Zobraziť nový tajný kód",
+  "community_scanToUpdateSecret": "Skáňte nový QR kód na aktualizáciu tajného hesla pre \"{name}\"",
+  "community_updateSecret": "Aktualizovať tajné heslo",
+  "community_secretUpdated": "Zmena tajnej slova pre \"{name}\"",
+  "@contacts_pathTraceTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pathTrace_you": "Vy",
+  "pathTrace_failed": "Sledovanie cesty zlyhalo.",
+  "pathTrace_notAvailable": "Path trace nie je k dispozícii.",
+  "pathTrace_refreshTooltip": "Obnoviť Path Trace.",
+  "contacts_pathTrace": "Sledovanie lúčov",
+  "contacts_ping": "Pingovať",
+  "contacts_repeaterPathTrace": "Sledovanie cesty k opakovaču",
+  "contacts_repeaterPing": "Pingovať opakovač",
+  "contacts_roomPathTrace": "Sledovanie cesty k serveru miestnosti",
+  "contacts_roomPing": "Ping server miestnosti",
+  "contacts_chatTraceRoute": "Sledovať trasu lúča",
+  "contacts_pathTraceTo": "Sledovať trasu k {name}"
 }

@@ -445,6 +445,12 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_languageBg => 'Български';
 
   @override
+  String get appSettings_languageRu => 'Русский';
+
+  @override
+  String get appSettings_languageUk => 'Українська';
+
+  @override
   String get appSettings_notifications => 'Upozornenia';
 
   @override
@@ -1199,6 +1205,24 @@ class AppLocalizationsSk extends AppLocalizations {
   String chat_unread(int count) {
     return 'Nezriadené: $count';
   }
+
+  @override
+  String get chat_openLink => 'Otvoriť odkaz?';
+
+  @override
+  String get chat_openLinkConfirmation =>
+      'Chcete otvoriť tento odkaz v prehliadači?';
+
+  @override
+  String get chat_open => 'Otvoriť';
+
+  @override
+  String chat_couldNotOpenLink(String url) {
+    return 'Nepodarilo sa otvoriť odkaz: $url';
+  }
+
+  @override
+  String get chat_invalidLink => 'Neplatný formát odkazu';
 
   @override
   String get map_title => 'Mapa uzlov';
@@ -2553,32 +2577,32 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
-  String get community_regenerateSecret => 'Regenerate Secret';
+  String get community_regenerateSecret => 'Zobraziť nový tajný kód';
 
   @override
   String community_regenerateSecretConfirm(String name) {
-    return 'Regenerate the secret key for \"$name\"? All members will need to scan the new QR code to continue communicating.';
+    return 'Znovu vygenerovať tajný kľúč pre \"$name\"? Všetci členovia budú musieť skanovať nový QR kód, aby mohli nadviazať komunikáciu.';
   }
 
   @override
-  String get community_regenerate => 'Regenerate';
+  String get community_regenerate => 'Znovu vygenerovať';
 
   @override
   String community_secretRegenerated(String name) {
-    return 'Secret regenerated for \"$name\"';
+    return 'Záznam pre \"$name\" bol regenerovaný tajne';
   }
 
   @override
-  String get community_updateSecret => 'Update Secret';
+  String get community_updateSecret => 'Aktualizovať tajné heslo';
 
   @override
   String community_secretUpdated(String name) {
-    return 'Secret updated for \"$name\"';
+    return 'Zmena tajnej slova pre \"$name\"';
   }
 
   @override
   String community_scanToUpdateSecret(String name) {
-    return 'Scan the new QR code to update the secret for \"$name\"';
+    return 'Skáňte nový QR kód na aktualizáciu tajného hesla pre \"$name\"';
   }
 
   @override
@@ -2644,4 +2668,42 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get listFilter_newGroup => 'Nová skupina';
+
+  @override
+  String get pathTrace_you => 'Vy';
+
+  @override
+  String get pathTrace_failed => 'Sledovanie cesty zlyhalo.';
+
+  @override
+  String get pathTrace_notAvailable => 'Path trace nie je k dispozícii.';
+
+  @override
+  String get pathTrace_refreshTooltip => 'Obnoviť Path Trace.';
+
+  @override
+  String get contacts_pathTrace => 'Sledovanie lúčov';
+
+  @override
+  String get contacts_ping => 'Pingovať';
+
+  @override
+  String get contacts_repeaterPathTrace => 'Sledovanie cesty k opakovaču';
+
+  @override
+  String get contacts_repeaterPing => 'Pingovať opakovač';
+
+  @override
+  String get contacts_roomPathTrace => 'Sledovanie cesty k serveru miestnosti';
+
+  @override
+  String get contacts_roomPing => 'Ping server miestnosti';
+
+  @override
+  String get contacts_chatTraceRoute => 'Sledovať trasu lúča';
+
+  @override
+  String contacts_pathTraceTo(String name) {
+    return 'Sledovať trasu k $name';
+  }
 }

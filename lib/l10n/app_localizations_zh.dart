@@ -433,6 +433,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appSettings_languageBg => 'Български';
 
   @override
+  String get appSettings_languageRu => 'Русский';
+
+  @override
+  String get appSettings_languageUk => 'Українська';
+
+  @override
   String get appSettings_notifications => '通知';
 
   @override
@@ -1147,6 +1153,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String chat_unread(int count) {
     return '未读：$count';
   }
+
+  @override
+  String get chat_openLink => '打开链接？';
+
+  @override
+  String get chat_openLinkConfirmation => '您想在浏览器中打开此链接吗？';
+
+  @override
+  String get chat_open => '打开';
+
+  @override
+  String chat_couldNotOpenLink(String url) {
+    return '无法打开链接：$url';
+  }
+
+  @override
+  String get chat_invalidLink => '链接格式无效';
 
   @override
   String get map_title => '节点地图';
@@ -2425,32 +2448,32 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get community_regenerateSecret => 'Regenerate Secret';
+  String get community_regenerateSecret => '重新生成密钥';
 
   @override
   String community_regenerateSecretConfirm(String name) {
-    return 'Regenerate the secret key for \"$name\"? All members will need to scan the new QR code to continue communicating.';
+    return '重新生成“$name”的秘密密钥？所有成员将需要扫描新的二维码才能继续沟通。';
   }
 
   @override
-  String get community_regenerate => 'Regenerate';
+  String get community_regenerate => '重新生成';
 
   @override
   String community_secretRegenerated(String name) {
-    return 'Secret regenerated for \"$name\"';
+    return '密码已重置为“$name”';
   }
 
   @override
-  String get community_updateSecret => 'Update Secret';
+  String get community_updateSecret => '更新密钥';
 
   @override
   String community_secretUpdated(String name) {
-    return 'Secret updated for \"$name\"';
+    return '密码已更新为“$name”';
   }
 
   @override
   String community_scanToUpdateSecret(String name) {
-    return 'Scan the new QR code to update the secret for \"$name\"';
+    return '扫描新的二维码更新\"$name\"的密码';
   }
 
   @override
@@ -2514,4 +2537,42 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get listFilter_newGroup => '新组';
+
+  @override
+  String get pathTrace_you => '你';
+
+  @override
+  String get pathTrace_failed => '路径追踪失败。';
+
+  @override
+  String get pathTrace_notAvailable => '路径追踪不可用';
+
+  @override
+  String get pathTrace_refreshTooltip => '刷新路径追踪';
+
+  @override
+  String get contacts_pathTrace => '路径追踪';
+
+  @override
+  String get contacts_ping => 'ping';
+
+  @override
+  String get contacts_repeaterPathTrace => '路径追踪到中继器';
+
+  @override
+  String get contacts_repeaterPing => 'Ping 中继器';
+
+  @override
+  String get contacts_roomPathTrace => '路径追踪至房间服务器';
+
+  @override
+  String get contacts_roomPing => 'Ping 房间服务器';
+
+  @override
+  String get contacts_chatTraceRoute => '路径追踪';
+
+  @override
+  String contacts_pathTraceTo(String name) {
+    return '追踪路由到 $name';
+  }
 }

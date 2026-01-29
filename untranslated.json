@@ -1,121 +1,69 @@
 {
   "bg": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
   ],
 
   "de": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
   ],
 
   "es": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
   ],
 
   "fr": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
   ],
 
   "it": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
   ],
 
   "nl": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
   ],
 
   "pl": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
   ],
 
   "pt": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
+  ],
+
+  "ru": [
+    "appSettings_languageUk"
   ],
 
   "sk": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
   ],
 
   "sl": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
   ],
 
   "sv": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
+  ],
+
+  "uk": [
+    "appSettings_languageRu"
   ],
 
   "zh": [
-    "community_regenerateSecret",
-    "community_regenerateSecretConfirm",
-    "community_regenerate",
-    "community_secretRegenerated",
-    "community_updateSecret",
-    "community_secretUpdated",
-    "community_scanToUpdateSecret"
+    "appSettings_languageRu",
+    "appSettings_languageUk"
   ]
 }

@@ -112,7 +112,7 @@ class NotificationService {
     await _notifications.show(
       contactId?.hashCode ?? 0,
       'New message from $contactName',
-      message.length > 100 ? '${message.substring(0, 100)}...' : message,
+      message,
       notificationDetails,
       payload: 'message:$contactId',
     );
@@ -203,10 +203,10 @@ class NotificationService {
       macOS: macDetails,
     );
 
-    final preview = _truncateMessage(message, 30);
+    final preview = message.trim();
     final body = preview.isEmpty
         ? 'Received new message'
-        : 'Received new message: $preview';
+        : preview;
 
     await _notifications.show(
       channelIndex?.hashCode ?? DateTime.now().millisecondsSinceEpoch,
@@ -215,12 +215,6 @@ class NotificationService {
       notificationDetails,
       payload: 'channel:$channelIndex',
     );
-  }
-
-  String _truncateMessage(String message, int maxLength) {
-    final trimmed = message.trim();
-    if (trimmed.length <= maxLength) return trimmed;
-    return '${trimmed.substring(0, maxLength)}...';
   }
 
   void _onNotificationTapped(NotificationResponse response) {

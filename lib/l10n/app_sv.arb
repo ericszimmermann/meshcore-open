@@ -604,6 +604,18 @@
       }
     }
   },
+  "chat_openLink": "Öppna länk?",
+  "chat_openLinkConfirmation": "Vill du öppna den här länken i din webbläsare?",
+  "chat_open": "Öppna",
+  "chat_couldNotOpenLink": "Kunde inte öppna länken: {url}",
+  "@chat_couldNotOpenLink": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "chat_invalidLink": "Ogiltigt länkformat",
   "map_title": "Nodkarta",
   "map_noNodesWithLocation": "Inga noder med platsinformation",
   "map_nodesNeedGps": "Noder måste dela sina GPS-koordinater\nför att visas på kartan",
@@ -1473,7 +1485,9 @@
   "community_deleteChannelsWarning": "Detta kommer också att radera {count} kanal/kanaler och deras meddelanden.",
   "@community_deleteChannelsWarning": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "community_deleted": "Lämnade community \"{name}\"",
@@ -1484,5 +1498,59 @@
   "community_regularHashtagDesc": "Offentlig hashtag (alla kan gå med)",
   "community_communityHashtagDesc": "Endast för medlemmar",
   "community_forCommunity": "För {name}",
-  "community_communityHashtag": "Community Hashtag"
+  "community_communityHashtag": "Community Hashtag",
+  "@community_regenerateSecretConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretRegenerated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretUpdated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_scanToUpdateSecret": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_regenerate": "Regenerera",
+  "community_regenerateSecretConfirm": "Regenerera den hemliga nyckeln för \"{name}\"? Alla medlemmar måste scanna den nya QR-koden för att fortsätta kommunicera.",
+  "community_secretRegenerated": "Lösenord återskapad för \"{name}\"",
+  "community_regenerateSecret": "Regenerera hemlig kod",
+  "community_scanToUpdateSecret": "Skanna den nya QR-koden för att uppdatera hemligheten för \"{name}\"",
+  "community_secretUpdated": "Hemlighet uppdaterad för \"{name}\"",
+  "community_updateSecret": "Uppdatera hemlighet",
+  "@contacts_pathTraceTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pathTrace_you": "Du",
+  "pathTrace_failed": "Sökvägsföljning misslyckades.",
+  "pathTrace_notAvailable": "Path trace ej tillgänglig.",
+  "pathTrace_refreshTooltip": "Uppdatera Path Trace",
+  "contacts_pathTrace": "Path Trace",
+  "contacts_ping": "Ping",
+  "contacts_repeaterPathTrace": "Vägspårning till repeater",
+  "contacts_repeaterPing": "Ping-repeater",
+  "contacts_roomPathTrace": "Vägspårning till rumserver",
+  "contacts_roomPing": "Ping rumsserver",
+  "contacts_chatTraceRoute": "Spåra rutt",
+  "contacts_pathTraceTo": "Spåra rutt till {name}"
 }

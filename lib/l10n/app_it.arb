@@ -604,6 +604,18 @@
       }
     }
   },
+  "chat_openLink": "Aprire il link?",
+  "chat_openLinkConfirmation": "Vuoi aprire questo link nel tuo browser?",
+  "chat_open": "Apri",
+  "chat_couldNotOpenLink": "Impossibile aprire il link: {url}",
+  "@chat_couldNotOpenLink": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "chat_invalidLink": "Formato di link non valido",
   "map_title": "Mappa Nodi",
   "map_noNodesWithLocation": "Nessun nodo con dati di posizione",
   "map_nodesNeedGps": "I nodi devono condividere le loro coordinate GPS\nper apparire sulla mappa",
@@ -1473,7 +1485,9 @@
   "community_deleteChannelsWarning": "Questo eliminerà anche {count} canale/i e i loro messaggi.",
   "@community_deleteChannelsWarning": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "community_deleted": "Hai lasciato la comunità \"{name}\"",
@@ -1484,5 +1498,59 @@
   "community_regularHashtagDesc": "Hashtag pubblico (chiunque può unirsi)",
   "community_communityHashtag": "Hashtag della Comunità",
   "community_communityHashtagDesc": "Visibile solo ai membri della comunità",
-  "community_forCommunity": "Per {name}"
+  "community_forCommunity": "Per {name}",
+  "@community_regenerateSecretConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretRegenerated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_secretUpdated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@community_scanToUpdateSecret": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "community_regenerateSecretConfirm": "Regenera la chiave segreta per \"{name}\"? Tutti i membri dovranno scansionare il nuovo codice QR per continuare a comunicare.",
+  "community_regenerateSecret": "Ri genera la chiave segreta",
+  "community_regenerate": "Rigenera",
+  "community_secretRegenerated": "Codice segreto rigenerato per \"{name}\"",
+  "community_updateSecret": "Aggiorna Segreto",
+  "community_secretUpdated": "Segreto aggiornato per \"{name}\"",
+  "community_scanToUpdateSecret": "Scansiona il nuovo codice QR per aggiornare il segreto di \"{name}\"",
+  "@contacts_pathTraceTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pathTrace_failed": "Tracciamento del percorso fallito.",
+  "pathTrace_you": "Tu",
+  "pathTrace_notAvailable": "Tracciamento del percorso non disponibile.",
+  "pathTrace_refreshTooltip": "Aggiorna Path Trace.",
+  "contacts_ping": "Ping",
+  "contacts_repeaterPathTrace": "Traccia percorso al ripetitore",
+  "contacts_roomPathTrace": "Traccia del percorso al server della stanza",
+  "contacts_pathTrace": "Traccia Percorso",
+  "contacts_repeaterPing": "Ripetitore ping",
+  "contacts_pathTraceTo": "Traccia percorso verso {name}",
+  "contacts_roomPing": "Ping al server della stanza",
+  "contacts_chatTraceRoute": "Traccia percorso path"
 }
