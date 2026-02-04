@@ -27,10 +27,7 @@ import 'map_screen.dart';
 class ChannelChatScreen extends StatefulWidget {
   final Channel channel;
 
-  const ChannelChatScreen({
-    super.key,
-    required this.channel,
-  });
+  const ChannelChatScreen({super.key, required this.channel});
 
   @override
   State<ChannelChatScreen> createState() => _ChannelChatScreenState();
@@ -135,15 +132,19 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                 children: [
                   Text(
                     widget.channel.name.isEmpty
-                        ? context.l10n.channels_channelIndex(widget.channel.index)
+                        ? context.l10n.channels_channelIndex(
+                            widget.channel.index,
+                          )
                         : widget.channel.name,
                     style: const TextStyle(fontSize: 16),
                   ),
                   Consumer<MeshCoreConnector>(
                     builder: (context, connector, _) {
-                      final unreadCount =
-                          connector.getUnreadCountForChannelIndex(widget.channel.index);
-                      final privacy = widget.channel.isPublicChannel ? context.l10n.channels_public : context.l10n.channels_private;
+                      final unreadCount = connector
+                          .getUnreadCountForChannelIndex(widget.channel.index);
+                      final privacy = widget.channel.isPublicChannel
+                          ? context.l10n.channels_public
+                          : context.l10n.channels_private;
                       return Text(
                         '$privacy • ${context.l10n.chat_unread(unreadCount)}',
                         overflow: TextOverflow.ellipsis,
@@ -202,7 +203,8 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
 
                   // Reverse messages so newest appear at bottom with reverse: true
                   final reversedMessages = messages.reversed.toList();
-                  final itemCount = reversedMessages.length + (_isLoadingOlder ? 1 : 0);
+                  final itemCount =
+                      reversedMessages.length + (_isLoadingOlder ? 1 : 0);
 
                   // Auto-scroll to bottom if user is already at bottom
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -225,7 +227,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                                 child: SizedBox(
                                   width: 20,
                                   height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
                                 ),
                               ),
                             );
@@ -241,9 +245,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                           );
                         },
                       ),
-                      JumpToBottomButton(
-                        scrollController: _scrollController,
-                      ),
+                      JumpToBottomButton(scrollController: _scrollController),
                     ],
                   );
                 },
@@ -262,15 +264,21 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     final poi = _parsePoiMessage(message.text);
     final displayPath = message.pathBytes.isNotEmpty
         ? message.pathBytes
-        : (message.pathVariants.isNotEmpty ? message.pathVariants.first : Uint8List(0));
+        : (message.pathVariants.isNotEmpty
+              ? message.pathVariants.first
+              : Uint8List(0));
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Column(
-        crossAxisAlignment: isOutgoing ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isOutgoing
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: isOutgoing ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment: isOutgoing
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (!isOutgoing) ...[
@@ -282,128 +290,160 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                   onTap: () => _showMessagePathInfo(message),
                   onLongPress: () => _showMessageActions(message),
                   child: Container(
-                padding: gifId != null
-                    ? const EdgeInsets.all(4)
-                    : const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.65,
-                ),
-                decoration: BoxDecoration(
-                  color: isOutgoing
-                      ? Theme.of(context).colorScheme.primaryContainer
-                      : Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (!isOutgoing) ...[
-                      Padding(
-                        padding: gifId != null
-                            ? const EdgeInsets.only(left: 8, top: 4, bottom: 4)
-                            : EdgeInsets.zero,
-                        child: Text(
-                          message.senderName,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
+                    padding: gifId != null
+                        ? const EdgeInsets.all(4)
+                        : const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
                           ),
-                        ),
-                      ),
-                      if (gifId == null) const SizedBox(height: 4),
-                    ],
-                    if (message.replyToMessageId != null) ...[
-                      _buildReplyPreview(message),
-                      const SizedBox(height: 8),
-                    ],
-                    if (poi != null)
-                      _buildPoiMessage(context, poi, isOutgoing)
-                    else if (gifId != null)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: GifMessage(
-                          url: 'https://media.giphy.com/media/$gifId/giphy.gif',
-                          backgroundColor: Colors.transparent,
-                          fallbackTextColor: isOutgoing
-                              ? Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.7)
-                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
-                      )
-                    else
-                      Linkify(
-                        text: message.text,
-                        style: const TextStyle(fontSize: 14),
-                        linkStyle: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.green,
-                          decoration: TextDecoration.underline,
-                        ),
-                        options: const LinkifyOptions(
-                          humanize: false,
-                          defaultToHttps: false,
-                        ),
-                        linkifiers: const [UrlLinkifier()],
-                        onOpen: (link) => LinkHandler.handleLinkTap(context, link.url),
-                      ),
-                    if (displayPath.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Padding(
-                        padding: gifId != null
-                            ? const EdgeInsets.symmetric(horizontal: 8)
-                            : EdgeInsets.zero,
-                        child: Text(
-                          'via ${_formatPathPrefixes(displayPath)}',
-                          style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 4),
-                    Padding(
-                      padding: gifId != null
-                          ? const EdgeInsets.only(left: 8, right: 8, bottom: 4)
-                          : EdgeInsets.zero,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            _formatTime(message.timestamp),
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey[600],
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.65,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isOutgoing
+                          ? Theme.of(context).colorScheme.primaryContainer
+                          : Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (!isOutgoing) ...[
+                          Padding(
+                            padding: gifId != null
+                                ? const EdgeInsets.only(
+                                    left: 8,
+                                    top: 4,
+                                    bottom: 4,
+                                  )
+                                : EdgeInsets.zero,
+                            child: Text(
+                              message.senderName,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
-                          if (message.repeatCount > 0) ...[
-                            const SizedBox(width: 6),
-                            Icon(Icons.repeat, size: 12, color: Colors.grey[600]),
-                            const SizedBox(width: 2),
-                            Text(
-                              '${message.repeatCount}',
-                              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                          if (gifId == null) const SizedBox(height: 4),
+                        ],
+                        if (message.replyToMessageId != null) ...[
+                          _buildReplyPreview(message),
+                          const SizedBox(height: 8),
+                        ],
+                        if (poi != null)
+                          _buildPoiMessage(context, poi, isOutgoing)
+                        else if (gifId != null)
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: GifMessage(
+                              url:
+                                  'https://media.giphy.com/media/$gifId/giphy.gif',
+                              backgroundColor: Colors.transparent,
+                              fallbackTextColor: isOutgoing
+                                  ? Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer
+                                        .withValues(alpha: 0.7)
+                                  : Theme.of(context).colorScheme.onSurface
+                                        .withValues(alpha: 0.6),
                             ),
-                          ],
-                          if (isOutgoing) ...[
-                            const SizedBox(width: 4),
-                            Icon(
-                              message.status == ChannelMessageStatus.sent
-                                  ? Icons.check
-                                  : message.status == ChannelMessageStatus.pending
+                          )
+                        else
+                          Linkify(
+                            text: message.text,
+                            style: const TextStyle(fontSize: 14),
+                            linkStyle: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.green,
+                              decoration: TextDecoration.underline,
+                            ),
+                            options: const LinkifyOptions(
+                              humanize: false,
+                              defaultToHttps: false,
+                            ),
+                            linkifiers: const [UrlLinkifier()],
+                            onOpen: (link) =>
+                                LinkHandler.handleLinkTap(context, link.url),
+                          ),
+                        if (displayPath.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Padding(
+                            padding: gifId != null
+                                ? const EdgeInsets.symmetric(horizontal: 8)
+                                : EdgeInsets.zero,
+                            child: Text(
+                              'via ${_formatPathPrefixes(displayPath)}',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 4),
+                        Padding(
+                          padding: gifId != null
+                              ? const EdgeInsets.only(
+                                  left: 8,
+                                  right: 8,
+                                  bottom: 4,
+                                )
+                              : EdgeInsets.zero,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _formatTime(message.timestamp),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              if (message.repeatCount > 0) ...[
+                                const SizedBox(width: 6),
+                                Icon(
+                                  Icons.repeat,
+                                  size: 12,
+                                  color: Colors.grey[600],
+                                ),
+                                const SizedBox(width: 2),
+                                Text(
+                                  '${message.repeatCount}',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                              if (isOutgoing) ...[
+                                const SizedBox(width: 4),
+                                Icon(
+                                  message.status == ChannelMessageStatus.sent
+                                      ? Icons.check
+                                      : message.status ==
+                                            ChannelMessageStatus.pending
                                       ? Icons.schedule
                                       : Icons.error_outline,
-                              size: 14,
-                              color: message.status == ChannelMessageStatus.failed
-                                  ? Colors.red
-                                  : Colors.grey[600],
-                            ),
-                          ],
-                        ],
-                      ),
+                                  size: 14,
+                                  color:
+                                      message.status ==
+                                          ChannelMessageStatus.failed
+                                      ? Colors.red
+                                      : Colors.grey[600],
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
             ],
           ),
           if (message.reactions.isNotEmpty) ...[
@@ -444,7 +484,10 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
         children: [
           Icon(Icons.location_on_outlined, size: 14, color: previewTextColor),
           const SizedBox(width: 4),
-          Text(context.l10n.chat_location, style: TextStyle(fontSize: 12, color: previewTextColor)),
+          Text(
+            context.l10n.chat_location,
+            style: TextStyle(fontSize: 12, color: previewTextColor),
+          ),
         ],
       );
     } else {
@@ -468,10 +511,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
           color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(8),
           border: Border(
-            left: BorderSide(
-              color: colorScheme.primary,
-              width: 3,
-            ),
+            left: BorderSide(color: colorScheme.primary, width: 3),
           ),
         ),
         child: Column(
@@ -509,17 +549,16 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
             color: Theme.of(context).colorScheme.secondaryContainer,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                emoji,
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text(emoji, style: const TextStyle(fontSize: 16)),
               if (count > 1) ...[
                 const SizedBox(width: 4),
                 Text(
@@ -546,7 +585,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
 
   _PoiInfo? _parsePoiMessage(String text) {
     final trimmed = text.trim();
-    final match = RegExp(r'm:([\-0-9.]+),([\-0-9.]+)\|([^|]*)\|').firstMatch(trimmed);
+    final match = RegExp(
+      r'm:([\-0-9.]+),([\-0-9.]+)\|([^|]*)\|',
+    ).firstMatch(trimmed);
     if (match == null) return null;
     final lat = double.tryParse(match.group(1) ?? '');
     final lon = double.tryParse(match.group(2) ?? '');
@@ -557,10 +598,13 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
 
   Widget _buildPoiMessage(BuildContext context, _PoiInfo poi, bool isOutgoing) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textColor =
-        isOutgoing ? colorScheme.onPrimaryContainer : colorScheme.onSurface;
+    final textColor = isOutgoing
+        ? colorScheme.onPrimaryContainer
+        : colorScheme.onSurface;
     final metaColor = textColor.withValues(alpha: 0.7);
-    final channelColor = widget.channel.isPublicChannel ? Colors.orange : Colors.blue;
+    final channelColor = widget.channel.isPublicChannel
+        ? Colors.orange
+        : Colors.blue;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -588,18 +632,12 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
             children: [
               Text(
                 context.l10n.chat_poiShared,
-                style: TextStyle(
-                  color: textColor,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
               ),
               if (poi.label.isNotEmpty)
                 Text(
                   poi.label,
-                  style: TextStyle(
-                    color: metaColor,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: metaColor, fontSize: 12),
                 ),
             ],
           ),
@@ -676,10 +714,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
         border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).dividerColor,
-            width: 1,
-          ),
+          bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1),
         ),
       ),
       child: Row(
@@ -708,7 +743,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 11,
-                    color: Theme.of(context).colorScheme.onSecondaryContainer.withValues(alpha: 0.7),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSecondaryContainer.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -746,73 +783,76 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
             ],
           ),
           child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.gif_box),
-            onPressed: () => _showGifPicker(context),
-            tooltip: context.l10n.chat_sendGif,
-          ),
-          Expanded(
-            child: ValueListenableBuilder<TextEditingValue>(
-              valueListenable: _textController,
-              builder: (context, value, child) {
-                final gifId = _parseGifId(value.text);
-                if (gifId != null) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: GifMessage(
-                            url: 'https://media.giphy.com/media/$gifId/giphy.gif',
-                            backgroundColor:
-                                Theme.of(context).colorScheme.surfaceContainerHighest,
-                            fallbackTextColor:
-                                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                            maxSize: 160,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.gif_box),
+                onPressed: () => _showGifPicker(context),
+                tooltip: context.l10n.chat_sendGif,
+              ),
+              Expanded(
+                child: ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: _textController,
+                  builder: (context, value, child) {
+                    final gifId = _parseGifId(value.text);
+                    if (gifId != null) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: GifMessage(
+                                url:
+                                    'https://media.giphy.com/media/$gifId/giphy.gif',
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+                                fallbackTextColor: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                                maxSize: 160,
+                              ),
+                            ),
                           ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => _textController.clear(),
+                          ),
+                        ],
+                      );
+                    }
+
+                    return TextField(
+                      controller: _textController,
+                      focusNode: _textFieldFocusNode,
+                      inputFormatters: [
+                        Utf8LengthLimitingTextInputFormatter(maxBytes),
+                      ],
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: InputDecoration(
+                        hintText: context.l10n.chat_typeMessage,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => _textController.clear(),
-                      ),
-                    ],
-                  );
-                }
-
-                return TextField(
-                  controller: _textController,
-                  focusNode: _textFieldFocusNode,
-                  inputFormatters: [
-                    Utf8LengthLimitingTextInputFormatter(maxBytes),
-                  ],
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    hintText: context.l10n.chat_typeMessage,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                  ),
-                  maxLines: null,
-                  textInputAction: TextInputAction.send,
-                  onSubmitted: (_) => _sendMessage(),
-                );
-              },
-            ),
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: _sendMessage,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ],
+                      maxLines: null,
+                      textInputAction: TextInputAction.send,
+                      onSubmitted: (_) => _sendMessage(),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.send),
+                onPressed: _sendMessage,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ],
           ),
         ),
       ],
@@ -932,24 +972,28 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     final emojiIndex = ReactionHelper.emojiToIndex(emoji);
     if (emojiIndex == null) return; // Unknown emoji, skip
     final timestampSecs = message.timestamp.millisecondsSinceEpoch ~/ 1000;
-    final hash = ReactionHelper.computeReactionHash(timestampSecs, message.senderName, message.text);
+    final hash = ReactionHelper.computeReactionHash(
+      timestampSecs,
+      message.senderName,
+      message.text,
+    );
     final reactionText = 'r:$hash:$emojiIndex';
     connector.sendChannelMessage(widget.channel, reactionText);
   }
 
   void _copyMessageText(String text) {
     Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.chat_messageCopied)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.chat_messageCopied)));
   }
 
   Future<void> _deleteMessage(ChannelMessage message) async {
     await context.read<MeshCoreConnector>().deleteChannelMessage(message);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.chat_messageDeleted)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.chat_messageDeleted)));
   }
 
   String _formatPathPrefixes(Uint8List pathBytes) {
@@ -964,9 +1008,5 @@ class _PoiInfo {
   final double lon;
   final String label;
 
-  const _PoiInfo({
-    required this.lat,
-    required this.lon,
-    required this.label,
-  });
+  const _PoiInfo({required this.lat, required this.lon, required this.label});
 }

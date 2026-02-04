@@ -1286,9 +1286,12 @@ class MeshCoreConnector extends ChangeNotifier {
     if (reactionInfo != null) {
       // Check if we've already processed this reaction
       _processedChannelReactions.putIfAbsent(channel.index, () => {});
-      final reactionIdentifier = '${reactionInfo.targetHash}_${reactionInfo.emoji}';
+      final reactionIdentifier =
+          '${reactionInfo.targetHash}_${reactionInfo.emoji}';
 
-      if (_processedChannelReactions[channel.index]!.contains(reactionIdentifier)) {
+      if (_processedChannelReactions[channel.index]!.contains(
+        reactionIdentifier,
+      )) {
         // Already processed, don't process again
         return;
       }
@@ -1504,7 +1507,9 @@ class MeshCoreConnector extends ChangeNotifier {
 
     // Skip fetching if already loaded and not forced
     if (_hasLoadedChannels && !force) {
-      debugPrint('[ChannelSync] Channels already loaded, skipping fetch (use force=true to reload)');
+      debugPrint(
+        '[ChannelSync] Channels already loaded, skipping fetch (use force=true to reload)',
+      );
       return;
     }
 
@@ -2696,10 +2701,12 @@ class MeshCoreConnector extends ChangeNotifier {
     if (reactionInfo != null) {
       // Check if we've already processed this exact reaction
       _processedContactReactions.putIfAbsent(pubKeyHex, () => {});
-      final reactionIdentifier = '${reactionInfo.targetHash}_${reactionInfo.emoji}';
+      final reactionIdentifier =
+          '${reactionInfo.targetHash}_${reactionInfo.emoji}';
 
-      final isDuplicate =
-          _processedContactReactions[pubKeyHex]!.contains(reactionIdentifier);
+      final isDuplicate = _processedContactReactions[pubKeyHex]!.contains(
+        reactionIdentifier,
+      );
 
       if (!isDuplicate) {
         // New reaction - process it
@@ -2734,20 +2741,22 @@ class MeshCoreConnector extends ChangeNotifier {
 
     for (int i = messages.length - 1; i >= 0; i--) {
       final msg = messages[i];
-      
+
       // For 1:1 chats: contact reacts to my outgoing messages only
       // For room servers: any message can be reacted to (multi-user)
       if (!isRoomServer && !msg.isOutgoing) continue;
-      
+
       final timestampSecs = msg.timestamp.millisecondsSinceEpoch ~/ 1000;
-      
+
       // For room servers, include sender name (resolve from fourByteRoomContactKey)
       // For 1:1 chats, sender is implicit (null)
       String? senderName;
       if (isRoomServer && !msg.isOutgoing) {
         // Resolve sender from the message's fourByteRoomContactKey
         final senderContact = _contacts.cast<Contact?>().firstWhere(
-          (c) => c != null && _matchesPrefix(c.publicKey, msg.fourByteRoomContactKey),
+          (c) =>
+              c != null &&
+              _matchesPrefix(c.publicKey, msg.fourByteRoomContactKey),
           orElse: () => null,
         );
         senderName = senderContact?.name;
@@ -2755,7 +2764,7 @@ class MeshCoreConnector extends ChangeNotifier {
         senderName = selfName;
       }
       // For 1:1, senderName stays null
-      
+
       final msgHash = ReactionHelper.computeReactionHash(
         timestampSecs,
         senderName,
@@ -2919,10 +2928,12 @@ class MeshCoreConnector extends ChangeNotifier {
     if (reactionInfo != null) {
       // Check if we've already processed this exact reaction
       _processedChannelReactions.putIfAbsent(channelIndex, () => {});
-      final reactionIdentifier = '${reactionInfo.targetHash}_${reactionInfo.emoji}';
+      final reactionIdentifier =
+          '${reactionInfo.targetHash}_${reactionInfo.emoji}';
 
-      final isDuplicate =
-          _processedChannelReactions[channelIndex]!.contains(reactionIdentifier);
+      final isDuplicate = _processedChannelReactions[channelIndex]!.contains(
+        reactionIdentifier,
+      );
 
       if (!isDuplicate) {
         // New reaction - process it

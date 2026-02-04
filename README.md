@@ -217,6 +217,7 @@ This is an open-source project. Contributions are welcome!
 - Use `const` constructors where possible
 - Keep functions small and focused
 - Avoid premature abstractions
+- Run dart format on all changes before submitting
 
 ## Support
 

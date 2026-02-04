@@ -34,10 +34,7 @@ class Community {
   }) : hashtagChannels = hashtagChannels ?? [];
 
   /// Generate a new community with a random 32-byte secret
-  factory Community.create({
-    required String id,
-    required String name,
-  }) {
+  factory Community.create({required String id, required String name}) {
     final random = Random.secure();
     final secret = Uint8List(32);
     for (int i = 0; i < 32; i++) {
@@ -84,7 +81,8 @@ class Community {
       name: json['name'] as String,
       secret: base64Decode(json['secret'] as String),
       createdAt: DateTime.fromMillisecondsSinceEpoch(json['created_at'] as int),
-      hashtagChannels: (json['hashtag_channels'] as List<dynamic>?)
+      hashtagChannels:
+          (json['hashtag_channels'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
@@ -234,9 +232,7 @@ class Community {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Community &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+      other is Community && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

@@ -121,10 +121,7 @@ class QrCodeDisplay extends StatelessWidget {
       size: size,
       backgroundColor: bgColor,
       errorCorrectionLevel: errorCorrectionLevel,
-      eyeStyle: QrEyeStyle(
-        eyeShape: QrEyeShape.square,
-        color: fgColor,
-      ),
+      eyeStyle: QrEyeStyle(eyeShape: QrEyeShape.square, color: fgColor),
       dataModuleStyle: QrDataModuleStyle(
         dataModuleShape: QrDataModuleShape.square,
         color: fgColor,
@@ -143,10 +140,7 @@ class QrCodeDisplay extends StatelessWidget {
           backgroundColor: bgColor,
           // Use higher error correction when embedding image
           errorCorrectionLevel: QrErrorCorrectLevel.H,
-          eyeStyle: QrEyeStyle(
-            eyeShape: QrEyeShape.square,
-            color: fgColor,
-          ),
+          eyeStyle: QrEyeStyle(eyeShape: QrEyeShape.square, color: fgColor),
           dataModuleStyle: QrDataModuleStyle(
             dataModuleShape: QrDataModuleShape.square,
             color: fgColor,

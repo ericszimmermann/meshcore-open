@@ -29,16 +29,9 @@ import 'map_screen.dart';
 import 'repeater_hub_screen.dart';
 import 'settings_screen.dart';
 
-enum RoomLoginDestination {
-  chat,
-  management,
-}
+enum RoomLoginDestination { chat, management }
 
-enum ContactOperationType {
-  import,
-  export,
-  zeroHopShare,
-}
+enum ContactOperationType { import, export, zeroHopShare }
 
 class ContactsScreen extends StatefulWidget {
   final bool hideBackButton;
@@ -105,7 +98,9 @@ class _ContactsScreenState extends State<ContactsScreen>
         if (advertPacket.length < 98) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(context.l10n.contacts_invalidAdvertFormat)),
+              SnackBar(
+                content: Text(context.l10n.contacts_invalidAdvertFormat),
+              ),
             );
           }
           _pendingOperations.remove(ContactOperationType.export);
@@ -115,23 +110,25 @@ class _ContactsScreenState extends State<ContactsScreen>
         Clipboard.setData(ClipboardData(text: "meshcore://$hexString"));
       }
 
-      if(code == respCodeOk) {
+      if (code == respCodeOk) {
         // Show a snackbar indicating success
-        if(!mounted) return;
+        if (!mounted) return;
 
-        if(_pendingOperations.contains(ContactOperationType.import)){
+        if (_pendingOperations.contains(ContactOperationType.import)) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(context.l10n.contacts_contactImported)),
           );
         }
 
-        if(_pendingOperations.contains(ContactOperationType.zeroHopShare)) {
+        if (_pendingOperations.contains(ContactOperationType.zeroHopShare)) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(context.l10n.contacts_zeroHopContactAdvertSent)),
+            SnackBar(
+              content: Text(context.l10n.contacts_zeroHopContactAdvertSent),
+            ),
           );
         }
 
-        if(_pendingOperations.contains(ContactOperationType.export)) {
+        if (_pendingOperations.contains(ContactOperationType.export)) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(context.l10n.contacts_contactAdvertCopied)),
           );
@@ -140,30 +137,33 @@ class _ContactsScreenState extends State<ContactsScreen>
         _pendingOperations.clear();
       }
 
-      if(code == respCodeErr) {
+      if (code == respCodeErr) {
         // Show a snackbar indicating failure
-        if(!mounted) return;
+        if (!mounted) return;
 
-        if(_pendingOperations.contains(ContactOperationType.import)){
+        if (_pendingOperations.contains(ContactOperationType.import)) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(context.l10n.contacts_contactImportFailed)),
           );
         }
 
-        if(_pendingOperations.contains(ContactOperationType.zeroHopShare)) {
+        if (_pendingOperations.contains(ContactOperationType.zeroHopShare)) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(context.l10n.contacts_zeroHopContactAdvertFailed)),
+            SnackBar(
+              content: Text(context.l10n.contacts_zeroHopContactAdvertFailed),
+            ),
           );
         }
-        if(_pendingOperations.contains(ContactOperationType.export)) {
+        if (_pendingOperations.contains(ContactOperationType.export)) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(context.l10n.contacts_contactAdvertCopyFailed)),
+            SnackBar(
+              content: Text(context.l10n.contacts_contactAdvertCopyFailed),
+            ),
           );
         }
 
         _pendingOperations.clear();
       }
-
     });
   }
 
@@ -185,7 +185,7 @@ class _ContactsScreenState extends State<ContactsScreen>
     final connector = Provider.of<MeshCoreConnector>(context, listen: false);
     final clipboardData = await Clipboard.getData('text/plain');
     if (clipboardData == null || clipboardData.text == null) {
-      if(mounted) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.l10n.contacts_clipboardEmpty)),
         );
@@ -194,7 +194,7 @@ class _ContactsScreenState extends State<ContactsScreen>
     }
     final text = clipboardData.text!.trim();
     if (!text.startsWith('meshcore://')) {
-      if(mounted) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.l10n.contacts_invalidAdvertFormat)),
         );
@@ -207,7 +207,7 @@ class _ContactsScreenState extends State<ContactsScreen>
       _pendingOperations.add(ContactOperationType.import);
       await connector.sendFrame(importContactFrame);
     } catch (e) {
-      if(mounted) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.l10n.contacts_invalidAdvertFormat)),
         );
@@ -234,59 +234,64 @@ class _ContactsScreenState extends State<ContactsScreen>
           centerTitle: true,
           automaticallyImplyLeading: false,
           actions: [
-            PopupMenuButton(itemBuilder:  (context) => [
-              PopupMenuItem(
-                child: Row(
-                  children: [
-                    const Icon(Icons.connect_without_contact),
-                    const SizedBox(width: 8),
-                    Text(context.l10n.contacts_zeroHopAdvert),
-                  ],
-                ),
-                onTap: () => {
+            PopupMenuButton(
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  child: Row(
+                    children: [
+                      const Icon(Icons.connect_without_contact),
+                      const SizedBox(width: 8),
+                      Text(context.l10n.contacts_zeroHopAdvert),
+                    ],
+                  ),
+                  onTap: () => {
                     connector.sendSelfAdvert(flood: false),
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text(context.l10n.settings_advertisementSent))),
-                },
-              ),
-              PopupMenuItem(
-                child: Row(
-                  children: [
-                    const Icon(Icons.cell_tower),
-                    const SizedBox(width: 8),
-                    Text(context.l10n.contacts_floodAdvert),
-                  ],
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(context.l10n.settings_advertisementSent),
+                      ),
+                    ),
+                  },
                 ),
-                onTap: () => {
+                PopupMenuItem(
+                  child: Row(
+                    children: [
+                      const Icon(Icons.cell_tower),
+                      const SizedBox(width: 8),
+                      Text(context.l10n.contacts_floodAdvert),
+                    ],
+                  ),
+                  onTap: () => {
                     connector.sendSelfAdvert(flood: true),
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text(context.l10n.settings_advertisementSent))),
-                },
-              ),
-              PopupMenuItem(
-                child: Row(
-                  children: [
-                    const Icon(Icons.copy),
-                    const SizedBox(width: 8),
-                    Text(context.l10n.contacts_copyAdvertToClipboard),
-                  ],
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(context.l10n.settings_advertisementSent),
+                      ),
+                    ),
+                  },
                 ),
-                onTap: () => _contactExport(Uint8List.fromList([])),
-              ),
-              PopupMenuItem(
-                child: Row(
-                  children: [
-                    const Icon(Icons.paste),
-                    const SizedBox(width: 8),
-                    Text(context.l10n.contacts_addContactFromClipboard),
-                  ],
+                PopupMenuItem(
+                  child: Row(
+                    children: [
+                      const Icon(Icons.copy),
+                      const SizedBox(width: 8),
+                      Text(context.l10n.contacts_copyAdvertToClipboard),
+                    ],
+                  ),
+                  onTap: () => _contactExport(Uint8List.fromList([])),
                 ),
-                onTap: () => _contactImport(),
-              ),
-            ],
-            icon: const Icon(Icons.connect_without_contact),
+                PopupMenuItem(
+                  child: Row(
+                    children: [
+                      const Icon(Icons.paste),
+                      const SizedBox(width: 8),
+                      Text(context.l10n.contacts_addContactFromClipboard),
+                    ],
+                  ),
+                  onTap: () => _contactImport(),
+                ),
+              ],
+              icon: const Icon(Icons.connect_without_contact),
             ),
             PopupMenuButton(
               itemBuilder: (context) => [
@@ -310,7 +315,9 @@ class _ContactsScreenState extends State<ContactsScreen>
                   ),
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsScreen(),
+                    ),
                   ),
                 ),
               ],
@@ -704,7 +711,8 @@ class _ContactsScreenState extends State<ContactsScreen>
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => destination == RoomLoginDestination.management
+              builder: (context) =>
+                  destination == RoomLoginDestination.management
                   ? RepeaterHubScreen(repeater: room, password: password)
                   : ChatScreen(contact: room),
             ),
@@ -970,15 +978,22 @@ class _ContactsScreenState extends State<ContactsScreen>
             if (isRepeater) ...[
               ListTile(
                 leading: const Icon(Icons.radar, color: Colors.green),
-                title: contact.pathLength > 0 ? Text(context.l10n.contacts_pathTrace) : Text(context.l10n.contacts_ping),
+                title: contact.pathLength > 0
+                    ? Text(context.l10n.contacts_pathTrace)
+                    : Text(context.l10n.contacts_ping),
                 onTap: () {
-                  showDialog(context: context, builder: (context) {
-                    return PathTraceDialog(
-                      title: contact.pathLength > 0 ? context.l10n.contacts_repeaterPathTrace : context.l10n.contacts_repeaterPing,
-                      path: contact.traceRouteBytes ?? Uint8List(0),
-                    );
-                  });
-                }
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return PathTraceDialog(
+                        title: contact.pathLength > 0
+                            ? context.l10n.contacts_repeaterPathTrace
+                            : context.l10n.contacts_repeaterPing,
+                        path: contact.traceRouteBytes ?? Uint8List(0),
+                      );
+                    },
+                  );
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.cell_tower, color: Colors.orange),
@@ -987,19 +1002,26 @@ class _ContactsScreenState extends State<ContactsScreen>
                   Navigator.pop(sheetContext);
                   _showRepeaterLogin(context, contact);
                 },
-              )
-            ]else if (isRoom) ...[
+              ),
+            ] else if (isRoom) ...[
               ListTile(
                 leading: const Icon(Icons.radar, color: Colors.green),
-                title: contact.pathLength > 0 ? Text(context.l10n.contacts_pathTrace) : Text(context.l10n.contacts_ping),
+                title: contact.pathLength > 0
+                    ? Text(context.l10n.contacts_pathTrace)
+                    : Text(context.l10n.contacts_ping),
                 onTap: () {
-                  showDialog(context: context, builder: (context) {
-                    return PathTraceDialog(
-                      title: contact.pathLength > 0 ? context.l10n.contacts_roomPathTrace : context.l10n.contacts_roomPing,
-                      path: contact.traceRouteBytes ?? Uint8List(0),
-                    );
-                  });
-                }
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return PathTraceDialog(
+                        title: contact.pathLength > 0
+                            ? context.l10n.contacts_roomPathTrace
+                            : context.l10n.contacts_roomPing,
+                        path: contact.traceRouteBytes ?? Uint8List(0),
+                      );
+                    },
+                  );
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.room, color: Colors.blue),
@@ -1010,27 +1032,39 @@ class _ContactsScreenState extends State<ContactsScreen>
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.room_preferences, color: Colors.orange),
+                leading: const Icon(
+                  Icons.room_preferences,
+                  color: Colors.orange,
+                ),
                 title: Text(context.l10n.room_management),
                 onTap: () {
                   Navigator.pop(sheetContext);
-                  _showRoomLogin(context, contact, RoomLoginDestination.management);
+                  _showRoomLogin(
+                    context,
+                    contact,
+                    RoomLoginDestination.management,
+                  );
                 },
               ),
             ] else ...[
-              if(contact.pathLength > 0)
-              ListTile(
-                leading: const Icon(Icons.radar, color: Colors.green),
-                title: Text(context.l10n.contacts_chatTraceRoute),
-                onTap: () {
-                  showDialog(context: context, builder: (context) {
-                    return PathTraceDialog(
-                      title: context.l10n.contacts_pathTraceTo(contact.name),
-                      path: contact.traceRouteBytes ?? Uint8List(0),
+              if (contact.pathLength > 0)
+                ListTile(
+                  leading: const Icon(Icons.radar, color: Colors.green),
+                  title: Text(context.l10n.contacts_chatTraceRoute),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return PathTraceDialog(
+                          title: context.l10n.contacts_pathTraceTo(
+                            contact.name,
+                          ),
+                          path: contact.traceRouteBytes ?? Uint8List(0),
+                        );
+                      },
                     );
-                  });
-                }
-              ),
+                  },
+                ),
               ListTile(
                 leading: const Icon(Icons.chat),
                 title: Text(context.l10n.contacts_openChat),
@@ -1051,7 +1085,7 @@ class _ContactsScreenState extends State<ContactsScreen>
             ListTile(
               leading: const Icon(Icons.connect_without_contact),
               title: Text(context.l10n.contacts_ShareContactZeroHop),
-              onTap: () { 
+              onTap: () {
                 Navigator.pop(sheetContext);
                 _contactZeroHop(contact.publicKey);
               },
@@ -1127,10 +1161,13 @@ class _ContactTile extends StatelessWidget {
         child: _buildContactAvatar(contact),
       ),
       title: Text(contact.name),
-      subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(contact.pathLabel),
-        Text(contact.shortPubKeyHex, style: TextStyle(fontSize: 12))
-      ],),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(contact.pathLabel),
+          Text(contact.shortPubKeyHex, style: TextStyle(fontSize: 12)),
+        ],
+      ),
       // Clamp text scaling in trailing section to prevent overflow while
       // maintaining accessibility. Primary content (title/subtitle) scales normally.
       trailing: MediaQuery(
@@ -1154,8 +1191,8 @@ class _ContactTile extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-              if (contact.hasLocation)
-                Icon(Icons.location_on, size: 14, color: Colors.grey[400]),
+                if (contact.hasLocation)
+                  Icon(Icons.location_on, size: 14, color: Colors.grey[400]),
               ],
             ),
           ],

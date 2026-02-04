@@ -113,7 +113,9 @@ class BufferWriter {
       final hexByte = hex.substring(i * 2, i * 2 + 2);
       final byte = int.tryParse(hexByte, radix: 16);
       if (byte == null) {
-        throw FormatException('Invalid hex characters at position $i: $hexByte');
+        throw FormatException(
+          'Invalid hex characters at position $i: $hexByte',
+        );
       }
       result.add(byte);
     }
@@ -219,8 +221,10 @@ const int maxFrameSize = 172;
 const int appProtocolVersion = 3;
 // Matches firmware MAX_TEXT_LEN (10 * CIPHER_BLOCK_SIZE).
 const int maxTextPayloadBytes = 160;
-const int _sendTextMsgOverheadBytes = 1 + 1 + 1 + 4 + 6 + 1 + 2; // +2 safety margin
-const int _sendChannelTextMsgOverheadBytes = 1 + 1 + 1 + 4 + 1 + 2; // +2 safety margin
+const int _sendTextMsgOverheadBytes =
+    1 + 1 + 1 + 4 + 6 + 1 + 2; // +2 safety margin
+const int _sendChannelTextMsgOverheadBytes =
+    1 + 1 + 1 + 4 + 1 + 2; // +2 safety margin
 
 int maxContactMessageBytes() {
   final byFrame = maxFrameSize - _sendTextMsgOverheadBytes;
@@ -735,8 +739,7 @@ Uint8List buildSendBinaryReq(Uint8List repeaterPubKey, {Uint8List? payload}) {
 
 //Build a trace request frame
 //[cmd][tag x4][auth x4][flag][payload]
-Uint8List buildTraceReq(int tag, int auth, int flag, {Uint8List? payload})
-{
+Uint8List buildTraceReq(int tag, int auth, int flag, {Uint8List? payload}) {
   final writer = BufferWriter();
   writer.writeByte(cmdSendTracePath);
   writer.writeUInt32LE(tag);

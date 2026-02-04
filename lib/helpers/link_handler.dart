@@ -26,10 +26,7 @@ class LinkHandler {
               ),
               child: SelectableText(
                 url,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontFamily: 'monospace',
-                ),
+                style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
               ),
             ),
           ],

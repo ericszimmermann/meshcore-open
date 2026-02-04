@@ -23,22 +23,21 @@ class _ScannerScreenState extends State<ScannerScreen> {
   void initState() {
     super.initState();
     final connector = Provider.of<MeshCoreConnector>(context, listen: false);
-    
+
     _connectionListener = () {
       if (connector.state == MeshCoreConnectionState.disconnected) {
         _changedNavigation = false;
-      } else if (connector.state == MeshCoreConnectionState.connected && !_changedNavigation) {
+      } else if (connector.state == MeshCoreConnectionState.connected &&
+          !_changedNavigation) {
         _changedNavigation = true;
         if (mounted) {
           Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const ContactsScreen(),
-            ),
+            MaterialPageRoute(builder: (context) => const ContactsScreen()),
           );
         }
       }
     };
-    
+
     connector.addListener(_connectionListener);
   }
 
@@ -67,9 +66,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 _buildStatusBar(context, connector),
 
                 // Device list
-                Expanded(
-                  child: _buildDeviceList(context, connector),
-                ),
+                Expanded(child: _buildDeviceList(context, connector)),
               ],
             );
           },
@@ -77,8 +74,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
       ),
       floatingActionButton: Consumer<MeshCoreConnector>(
         builder: (context, connector, child) {
-          final isScanning = connector.state == MeshCoreConnectionState.scanning;
-          
+          final isScanning =
+              connector.state == MeshCoreConnectionState.scanning;
+
           return FloatingActionButton.extended(
             onPressed: () {
               if (isScanning) {
@@ -87,7 +85,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 connector.startScan();
               }
             },
-            icon: isScanning 
+            icon: isScanning
                 ? const SizedBox(
                     width: 20,
                     height: 20,
@@ -97,7 +95,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
                     ),
                   )
                 : const Icon(Icons.bluetooth_searching),
-            label: Text(isScanning ? context.l10n.scanner_stop : context.l10n.scanner_scan),
+            label: Text(
+              isScanning
+                  ? context.l10n.scanner_stop
+                  : context.l10n.scanner_scan,
+            ),
           );
         },
       ),
@@ -108,7 +110,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
     String statusText;
     Color statusColor;
 
-final l10n = context.l10n;
+    final l10n = context.l10n;
     switch (connector.state) {
       case MeshCoreConnectionState.scanning:
         statusText = l10n.scanner_scanning;
@@ -155,20 +157,13 @@ final l10n = context.l10n;
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.bluetooth,
-              size: 64,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.bluetooth, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
               connector.state == MeshCoreConnectionState.scanning
                   ? context.l10n.scanner_searchingDevices
                   : context.l10n.scanner_tapToScan,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ],
         ),

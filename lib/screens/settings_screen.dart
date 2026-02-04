@@ -442,7 +442,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     bool isGPSEnabled = customVars["gps"] == "1";
 
     // Read current interval or default to 900 (15 minutes)
-    final currentInterval = int.tryParse(customVars["gps_interval"] ?? "") ?? 900;
+    final currentInterval =
+        int.tryParse(customVars["gps_interval"] ?? "") ?? 900;
     intervalController.text = currentInterval.toString();
 
     showDialog(
@@ -782,9 +783,7 @@ class _RadioSettingsDialogState extends State<_RadioSettingsDialog> {
 
     final maxTxPower = widget.connector.maxTxPower ?? 22;
     if (txPower == null || txPower < 0 || txPower > maxTxPower) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${l10n.settings_txPowerInvalid} (0-$maxTxPower dBm)'),
         ),

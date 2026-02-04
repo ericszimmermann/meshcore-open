@@ -154,7 +154,9 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                   ),
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsScreen(),
+                    ),
                   ),
                 ),
               ],
@@ -951,7 +953,9 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                                 dialogContext.l10n.community_communityHashtag,
                               ),
                               subtitle: Text(
-                                dialogContext.l10n.community_communityHashtagDesc,
+                                dialogContext
+                                    .l10n
+                                    .community_communityHashtagDesc,
                               ),
                               dense: true,
                             ),
@@ -1047,7 +1051,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                                   hashtag = hashtag.substring(1);
                                 }
                                 final String channelName;
-                                
+
                                 final Uint8List psk;
                                 if (isRegularHashtag) {
                                   channelName = '#$hashtag';
@@ -1069,8 +1073,10 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                                     );
                                     return;
                                   }
-                                  channelName = '${selectedCommunity!.name} #$hashtag';
-                                  psk = selectedCommunity!.deriveCommunityHashtagPsk(hashtag);
+                                  channelName =
+                                      '${selectedCommunity!.name} #$hashtag';
+                                  psk = selectedCommunity!
+                                      .deriveCommunityHashtagPsk(hashtag);
                                   // Track in community's hashtag list
                                   await _communityStore.addHashtagChannel(
                                     selectedCommunity!.id,

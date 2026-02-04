@@ -4,10 +4,7 @@ class ReactionInfo {
   final String targetHash;
   final String emoji;
 
-  ReactionInfo({
-    required this.targetHash,
-    required this.emoji,
-  });
+  ReactionInfo({required this.targetHash, required this.emoji});
 }
 
 class ReactionHelper {
@@ -42,7 +39,11 @@ class ReactionHelper {
   /// Compute a 4-char hex hash for a message reaction.
   /// Hash input: timestampSeconds + [senderName] + first 5 chars of text
   /// For 1:1 chats, senderName can be null (sender is implicit).
-  static String computeReactionHash(int timestampSeconds, String? senderName, String text) {
+  static String computeReactionHash(
+    int timestampSeconds,
+    String? senderName,
+    String text,
+  ) {
     final first5 = text.length >= 5 ? text.substring(0, 5) : text;
     final input = senderName != null
         ? '$timestampSeconds$senderName$first5'
@@ -62,9 +63,6 @@ class ReactionHelper {
     final emoji = indexToEmoji(match.group(2)!);
     if (emoji == null) return null;
 
-    return ReactionInfo(
-      targetHash: match.group(1)!,
-      emoji: emoji,
-    );
+    return ReactionInfo(targetHash: match.group(1)!, emoji: emoji);
   }
 }

@@ -269,7 +269,9 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsScreen(),
+                        ),
                       ),
                     ),
                   ],
@@ -278,85 +280,82 @@ class _MapScreenState extends State<MapScreen> {
               ],
             ),
             body: Stack(
-                    children: [
-                      FlutterMap(
-                        mapController: _mapController,
-                        options: MapOptions(
-                          initialCenter: center,
-                          initialZoom: initialZoom,
-                          minZoom: 2.0,
-                          maxZoom: 18.0,
-                          interactionOptions: InteractionOptions(
-                            flags: ~InteractiveFlag.rotate
-                          ),
-                          onTap: (_, latLng) {
-                            if (_isSelectingPoi) {
-                              setState(() {
-                                _isSelectingPoi = false;
-                              });
-                              _shareMarker(
-                                context: context,
-                                connector: connector,
-                                position: latLng,
-                                defaultLabel: context.l10n.map_pointOfInterest,
-                                flags: 'poi',
-                              );
-                            }
-                          },
-                          onLongPress: (_, latLng) {
-                            if (_isSelectingPoi) {
-                              setState(() {
-                                _isSelectingPoi = false;
-                              });
-                              _shareMarker(
-                                context: context,
-                                connector: connector,
-                                position: latLng,
-                                defaultLabel: context.l10n.map_pointOfInterest,
-                                flags: 'poi',
-                              );
-                              return;
-                            }
-                            _showShareMarkerAtPositionSheet(
-                              context: context,
-                              connector: connector,
-                              position: latLng,
-                            );
-                          },
-                        ),
-                        children: [
-                          TileLayer(
-                            urlTemplate: kMapTileUrlTemplate,
-                            tileProvider: tileCache.tileProvider,
-                            userAgentPackageName:
-                                MapTileCacheService.userAgentPackageName,
-                            maxZoom: 19,
-                          ),
-                          MarkerLayer(
-                            markers: [
-                              if (highlightPosition != null)
-                                Marker(
-                                  point: highlightPosition,
-                                  width: 40,
-                                  height: 40,
-                                  child: Icon(
-                                    Icons.location_on_outlined,
-                                    color: Colors.red[600],
-                                    size: 34,
-                                  ),
-                                ),
-                              ..._buildMarkers(contactsWithLocation, settings),
-                              ...sharedMarkers.map(_buildSharedMarker),
-                            ],
-                          ),
-                        ],
-                      ),
-                      _buildLegend(
-                        contactsWithLocation.length,
-                        sharedMarkers.length,
-                      ),
-                    ],
+              children: [
+                FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: center,
+                    initialZoom: initialZoom,
+                    minZoom: 2.0,
+                    maxZoom: 18.0,
+                    interactionOptions: InteractionOptions(
+                      flags: ~InteractiveFlag.rotate,
+                    ),
+                    onTap: (_, latLng) {
+                      if (_isSelectingPoi) {
+                        setState(() {
+                          _isSelectingPoi = false;
+                        });
+                        _shareMarker(
+                          context: context,
+                          connector: connector,
+                          position: latLng,
+                          defaultLabel: context.l10n.map_pointOfInterest,
+                          flags: 'poi',
+                        );
+                      }
+                    },
+                    onLongPress: (_, latLng) {
+                      if (_isSelectingPoi) {
+                        setState(() {
+                          _isSelectingPoi = false;
+                        });
+                        _shareMarker(
+                          context: context,
+                          connector: connector,
+                          position: latLng,
+                          defaultLabel: context.l10n.map_pointOfInterest,
+                          flags: 'poi',
+                        );
+                        return;
+                      }
+                      _showShareMarkerAtPositionSheet(
+                        context: context,
+                        connector: connector,
+                        position: latLng,
+                      );
+                    },
                   ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: kMapTileUrlTemplate,
+                      tileProvider: tileCache.tileProvider,
+                      userAgentPackageName:
+                          MapTileCacheService.userAgentPackageName,
+                      maxZoom: 19,
+                    ),
+                    MarkerLayer(
+                      markers: [
+                        if (highlightPosition != null)
+                          Marker(
+                            point: highlightPosition,
+                            width: 40,
+                            height: 40,
+                            child: Icon(
+                              Icons.location_on_outlined,
+                              color: Colors.red[600],
+                              size: 34,
+                            ),
+                          ),
+                        ..._buildMarkers(contactsWithLocation, settings),
+                        ...sharedMarkers.map(_buildSharedMarker),
+                      ],
+                    ),
+                  ],
+                ),
+                _buildLegend(contactsWithLocation.length, sharedMarkers.length),
+              ],
+            ),
             bottomNavigationBar: SafeArea(
               top: false,
               child: QuickSwitchBar(
@@ -375,7 +374,6 @@ class _MapScreenState extends State<MapScreen> {
       },
     );
   }
-
 
   List<Marker> _buildMarkers(List<Contact> contacts, settings) {
     final markers = <Marker>[];

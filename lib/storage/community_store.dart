@@ -40,7 +40,7 @@ class CommunityStore {
   /// Add a new community
   Future<void> addCommunity(Community community) async {
     final communities = await loadCommunities();
-    
+
     // Check if community with same ID already exists
     final existingIndex = communities.indexWhere((c) => c.id == community.id);
     if (existingIndex >= 0) {
@@ -49,7 +49,7 @@ class CommunityStore {
     } else {
       communities.add(community);
     }
-    
+
     await saveCommunities(communities);
   }
 
@@ -92,10 +92,7 @@ class CommunityStore {
   }
 
   /// Add a hashtag channel to a community
-  Future<void> addHashtagChannel(
-    String communityId,
-    String hashtag,
-  ) async {
+  Future<void> addHashtagChannel(String communityId, String hashtag) async {
     final community = await getCommunity(communityId);
     if (community != null) {
       final updated = community.addHashtagChannel(hashtag);
@@ -104,10 +101,7 @@ class CommunityStore {
   }
 
   /// Remove a hashtag channel from a community
-  Future<void> removeHashtagChannel(
-    String communityId,
-    String hashtag,
-  ) async {
+  Future<void> removeHashtagChannel(String communityId, String hashtag) async {
     final community = await getCommunity(communityId);
     if (community != null) {
       final updated = community.removeHashtagChannel(hashtag);

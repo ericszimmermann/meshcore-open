@@ -215,10 +215,7 @@ class _QrScannerWidgetState extends State<QrScannerWidget>
                     ),
                     child: Text(
                       widget.instructions!,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -274,7 +271,8 @@ class _QrScannerWidgetState extends State<QrScannerWidget>
 
     switch (error.errorCode) {
       case MobileScannerErrorCode.permissionDenied:
-        message = 'Camera permission denied.\nPlease enable camera access in settings.';
+        message =
+            'Camera permission denied.\nPlease enable camera access in settings.';
         icon = Icons.no_photography;
         break;
       case MobileScannerErrorCode.unsupported:
@@ -282,7 +280,8 @@ class _QrScannerWidgetState extends State<QrScannerWidget>
         icon = Icons.videocam_off;
         break;
       default:
-        message = 'Failed to start camera.\n${error.errorDetails?.message ?? ''}';
+        message =
+            'Failed to start camera.\n${error.errorDetails?.message ?? ''}';
         icon = Icons.error_outline;
     }
 
@@ -297,10 +296,7 @@ class _QrScannerWidgetState extends State<QrScannerWidget>
             Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 16,
-              ),
+              style: TextStyle(color: Colors.grey[600], fontSize: 16),
             ),
           ],
         ),

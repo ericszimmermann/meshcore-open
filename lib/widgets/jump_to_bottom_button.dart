@@ -4,10 +4,7 @@ import '../helpers/chat_scroll_controller.dart';
 class JumpToBottomButton extends StatelessWidget {
   final ChatScrollController scrollController;
 
-  const JumpToBottomButton({
-    super.key,
-    required this.scrollController,
-  });
+  const JumpToBottomButton({super.key, required this.scrollController});
 
   @override
   Widget build(BuildContext context) {
