@@ -118,7 +118,7 @@ class NotificationService {
 
     await _notifications.show(
       contactId?.hashCode ?? 0,
-      'New message from $contactName',
+      contactName,
       message,
       notificationDetails,
       payload: 'message:$contactId',
