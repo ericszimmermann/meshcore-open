@@ -2766,4 +2766,58 @@ class AppLocalizationsBg extends AppLocalizations {
   @override
   String get contacts_contactAdvertCopyFailed =>
       'Копирането на обявата в клипборда не успя.';
+
+  @override
+  String get settings_gpxExportRepeaters =>
+      'Експортиране на повтарящи се устройства / сървър на стаята до GPX';
+
+  @override
+  String get settings_gpxExportRepeatersSubtitle =>
+      'Изпраща повторители / roomserver с местоположение в GPX файл.';
+
+  @override
+  String get settings_gpxExportContacts => 'Експортирай спътници към GPX';
+
+  @override
+  String get settings_gpxExportContactsSubtitle =>
+      'Експортира спътници с местоположение в GPX файл.';
+
+  @override
+  String get settings_gpxExportAll => 'Експортирай всички контакти в GPX';
+
+  @override
+  String get settings_gpxExportAllSubtitle =>
+      'Експортира всички контакти с местоположение в файл GPX.';
+
+  @override
+  String get settings_gpxExportSuccess => 'Успешно изlexport на файл GPX.';
+
+  @override
+  String get settings_gpxExportNoContacts => 'Няма контакти за изlexport.';
+
+  @override
+  String get settings_gpxExportNotAvailable =>
+      'Не е поддържан на вашето устройство/ОС';
+
+  @override
+  String get settings_gpxExportError => 'Възникна грешка при изнасяне.';
+
+  @override
+  String get settings_gpxExportRepeatersRoom =>
+      'Местоположения на повторител и сървър на стаята';
+
+  @override
+  String get settings_gpxExportChat => 'Местоположения на спътници';
+
+  @override
+  String get settings_gpxExportAllContacts =>
+      'Местоположения на всички контакти';
+
+  @override
+  String get settings_gpxExportShareText =>
+      'Картинни данни изнесени от meshcore-open';
+
+  @override
+  String get settings_gpxExportShareSubject =>
+      'meshcore-open износ на данни за карта в формат GPX';
 }

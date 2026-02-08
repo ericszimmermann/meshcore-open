@@ -2621,4 +2621,49 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get contacts_contactAdvertCopyFailed => '将广告复制到剪贴板操作失败。';
+
+  @override
+  String get settings_gpxExportRepeaters => '导出重复器/房间服务器到GPX';
+
+  @override
+  String get settings_gpxExportRepeatersSubtitle => '导出带有位置的重复器/房间服务器到GPX文件。';
+
+  @override
+  String get settings_gpxExportContacts => '导出伴侣到GPX';
+
+  @override
+  String get settings_gpxExportContactsSubtitle => '导出带有位置的伙伴到GPX文件。';
+
+  @override
+  String get settings_gpxExportAll => '导出所有联系人到GPX';
+
+  @override
+  String get settings_gpxExportAllSubtitle => '导出所有带有位置的联系人到GPX文件。';
+
+  @override
+  String get settings_gpxExportSuccess => '成功导出GPX文件';
+
+  @override
+  String get settings_gpxExportNoContacts => '没有联系人可导出';
+
+  @override
+  String get settings_gpxExportNotAvailable => '您的设备/操作系统不支持';
+
+  @override
+  String get settings_gpxExportError => '导出时发生错误';
+
+  @override
+  String get settings_gpxExportRepeatersRoom => '重复器和房间服务器位置';
+
+  @override
+  String get settings_gpxExportChat => '伴侣位置';
+
+  @override
+  String get settings_gpxExportAllContacts => '所有联系人位置';
+
+  @override
+  String get settings_gpxExportShareText => '来自meshcore-open的导出地图数据';
+
+  @override
+  String get settings_gpxExportShareSubject => 'meshcore-open GPX 地图数据导出';
 }

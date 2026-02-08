@@ -2773,4 +2773,58 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get contacts_contactAdvertCopyFailed =>
       'Kopieren des Werbeinhalts in die Zwischenablage fehlgeschlagen.';
+
+  @override
+  String get settings_gpxExportRepeaters =>
+      'Repeater und Raumserver nach GPX exportieren';
+
+  @override
+  String get settings_gpxExportRepeatersSubtitle =>
+      'Exportiert Repeater und Raumserver mit einem Standort in eine GPX-Datei.';
+
+  @override
+  String get settings_gpxExportContacts => 'Begleiter nach GPX exportieren';
+
+  @override
+  String get settings_gpxExportContactsSubtitle =>
+      'Exportiert Begleiter mit einem Ort in eine GPX-Datei.';
+
+  @override
+  String get settings_gpxExportAll => 'Alle Kontakte nach GPX exportieren';
+
+  @override
+  String get settings_gpxExportAllSubtitle =>
+      'Exportiert alle Kontakte mit einem Standort in eine GPX-Datei.';
+
+  @override
+  String get settings_gpxExportSuccess => 'Erfolgreich GPX-Datei exportiert.';
+
+  @override
+  String get settings_gpxExportNoContacts => 'Keine Kontakte zum Exportieren.';
+
+  @override
+  String get settings_gpxExportNotAvailable =>
+      'Nicht auf Ihrem Gerät/Betriebssystem unterstützt';
+
+  @override
+  String get settings_gpxExportError =>
+      'Beim Export ist ein Fehler aufgetreten.';
+
+  @override
+  String get settings_gpxExportRepeatersRoom =>
+      'Repeater- und Raumserver-Standorte';
+
+  @override
+  String get settings_gpxExportChat => 'Begleiterstandorte';
+
+  @override
+  String get settings_gpxExportAllContacts => 'Alle Kontaktstandorte';
+
+  @override
+  String get settings_gpxExportShareText =>
+      'Kartendaten aus meshcore-open exportiert';
+
+  @override
+  String get settings_gpxExportShareSubject =>
+      'meshcore-open GPX-Kartendaten exportieren';
 }

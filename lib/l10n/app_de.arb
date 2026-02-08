@@ -1568,5 +1568,20 @@
   "contacts_zeroHopContactAdvertFailed": "Kontakt konnte nicht gesendet werden.",
   "contacts_zeroHopContactAdvertSent": "Kontakt über Anzeige gesendet",
   "contacts_contactAdvertCopied": "Anzeige in die Zwischenablage kopiert.",
-  "contacts_contactAdvertCopyFailed": "Kopieren des Werbeinhalts in die Zwischenablage fehlgeschlagen."
+  "contacts_contactAdvertCopyFailed": "Kopieren des Werbeinhalts in die Zwischenablage fehlgeschlagen.",
+  "settings_gpxExportAll": "Alle Kontakte nach GPX exportieren",
+  "settings_gpxExportAllSubtitle": "Exportiert alle Kontakte mit einem Standort in eine GPX-Datei.",
+  "settings_gpxExportRepeaters": "Repeater und Raumserver nach GPX exportieren",
+  "settings_gpxExportContacts": "Begleiter nach GPX exportieren",
+  "settings_gpxExportRepeatersSubtitle": "Exportiert Repeater und Raumserver mit einem Standort in eine GPX-Datei.",
+  "settings_gpxExportContactsSubtitle": "Exportiert Begleiter mit einem Ort in eine GPX-Datei.",
+  "settings_gpxExportRepeatersRoom": "Repeater- und Raumserver-Standorte",
+  "settings_gpxExportChat": "Begleiterstandorte",
+  "settings_gpxExportNoContacts": "Keine Kontakte zum Exportieren.",
+  "settings_gpxExportError": "Beim Export ist ein Fehler aufgetreten.",
+  "settings_gpxExportNotAvailable": "Nicht auf Ihrem Gerät/Betriebssystem unterstützt",
+  "settings_gpxExportSuccess": "Erfolgreich GPX-Datei exportiert.",
+  "settings_gpxExportAllContacts": "Alle Kontaktstandorte",
+  "settings_gpxExportShareSubject": "meshcore-open GPX-Kartendaten exportieren",
+  "settings_gpxExportShareText": "Kartendaten aus meshcore-open exportiert"
 }

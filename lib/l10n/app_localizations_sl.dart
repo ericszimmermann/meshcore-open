@@ -2754,4 +2754,57 @@ class AppLocalizationsSl extends AppLocalizations {
   @override
   String get contacts_contactAdvertCopyFailed =>
       'Kopiranje oglasa v odložišče je spodletelo.';
+
+  @override
+  String get settings_gpxExportRepeaters =>
+      'Izvoz ponoviteljev / strežnika sobe v GPX';
+
+  @override
+  String get settings_gpxExportRepeatersSubtitle =>
+      'Izvozi ponovljene oddajnike / strežnik sobe z lokacijo v datoteko GPX.';
+
+  @override
+  String get settings_gpxExportContacts => 'Izvoz spremljevalcev v GPX';
+
+  @override
+  String get settings_gpxExportContactsSubtitle =>
+      'Izvozi spremljevalce z lokacijo v datoteko GPX.';
+
+  @override
+  String get settings_gpxExportAll => 'Izvozi vse kontakte v GPX';
+
+  @override
+  String get settings_gpxExportAllSubtitle =>
+      'Izvozi vse kontakte z lokacijo v datoteko GPX.';
+
+  @override
+  String get settings_gpxExportSuccess => 'Uspešno izvoz GPX datoteke.';
+
+  @override
+  String get settings_gpxExportNoContacts => 'Ni stikov za izvoz.';
+
+  @override
+  String get settings_gpxExportNotAvailable =>
+      'Ni podprto na vašem napravi/operacijskem sistemu';
+
+  @override
+  String get settings_gpxExportError => 'Pri izvozu je prišlo do napake.';
+
+  @override
+  String get settings_gpxExportRepeatersRoom =>
+      'Lokacije ponovljivca in strežnika sobe';
+
+  @override
+  String get settings_gpxExportChat => 'Lokacije spremljevalcev';
+
+  @override
+  String get settings_gpxExportAllContacts => 'Lokacije vseh stikov';
+
+  @override
+  String get settings_gpxExportShareText =>
+      'Podatki kart izvoženi iz meshcore-open';
+
+  @override
+  String get settings_gpxExportShareSubject =>
+      'meshcore-open izvoz podatkov GPX karte';
 }
