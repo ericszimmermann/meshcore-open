@@ -33,6 +33,7 @@
             cmake
             ninja
             pkg-config
+            libdatrie
 
             # Additional tools for installing Android SDK if not present
             curl
@@ -44,18 +45,13 @@
             export PKG_CONFIG_PATH="${pkgs.gtk3}/lib/pkgconfig:${pkgs.glib}/lib/pkgconfig:${pkgs.sysprof}/lib/pkgconfig:$PKG_CONFIG_PATH"
             export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [pkgs.gtk3 pkgs.glib pkgs.sysprof pkgs.libdatrie]}:$LD_LIBRARY_PATH"
             export CMAKE_INSTALL_PREFIX="$PWD/build/bundle"
-            mkdir -p "$PWD/build/bundle"
             
             # Setup Android SDK in home directory (standard location)
             export ANDROID_HOME="$HOME/Android/Sdk"
             export ANDROID_SDK_ROOT="$ANDROID_HOME"
             export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin:$PATH"
             
-            # Use gradle wrapper
-            export GRADLE_USER_HOME="$PWD/.gradle"
-            
             echo "Android SDK: $ANDROID_HOME"
-            echo "Gradle Home: $GRADLE_USER_HOME"
             echo ""
             
             # Check if Android SDK exists and offer to download if not
@@ -72,7 +68,7 @@ mkdir -p cmdline-tools/latest && \
 mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || echo "Warning: failed to move Android cmdline-tools into 'latest' directory; please check your SDK layout." >&2 && \
 rm cmdline-tools.zip && \
 cd cmdline-tools/latest/bin && \
-yes | ./sdkmanager --sdk_root=~/Android/Sdk 'platform-tools' 'platforms;android-34' 'build-tools;34.0.0' && \
+yes | ./sdkmanager --sdk_root=~/Android/Sdk 'platform-tools' && \
 echo "Android SDK setup complete!"
 EOF
               echo ""
