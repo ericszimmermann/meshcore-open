@@ -2658,6 +2658,9 @@ class AppLocalizationsSl extends AppLocalizations {
   String get listFilter_all => 'Vse';
 
   @override
+  String get listFilter_favorites => 'Favorites';
+
+  @override
   String get listFilter_users => 'Uporabniki';
 
   @override

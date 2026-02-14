@@ -2659,6 +2659,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get listFilter_all => 'Alles';
 
   @override
+  String get listFilter_favorites => 'Favorites';
+
+  @override
   String get listFilter_users => 'Gebruikers';
 
   @override

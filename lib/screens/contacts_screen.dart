@@ -11,6 +11,7 @@ import '../connector/meshcore_protocol.dart';
 import '../models/contact.dart';
 import '../models/contact_group.dart';
 import '../storage/contact_group_store.dart';
+import '../storage/contact_settings_store.dart';
 import '../utils/contact_search.dart';
 import '../utils/dialog_utils.dart';
 import '../utils/disconnect_navigation_mixin.dart';
@@ -51,7 +52,9 @@ class _ContactsScreenState extends State<ContactsScreen>
   bool _showUnreadOnly = false;
   ContactTypeFilter _typeFilter = ContactTypeFilter.all;
   final ContactGroupStore _groupStore = ContactGroupStore();
+  final ContactSettingsStore _contactSettingsStore = ContactSettingsStore();
   List<ContactGroup> _groups = [];
+  Set<String> _favoriteContactKeys = {};
   Timer? _searchDebounce;
 
   final Set<ContactOperationType> _pendingOperations = {};
@@ -62,6 +65,7 @@ class _ContactsScreenState extends State<ContactsScreen>
   void initState() {
     super.initState();
     _loadGroups();
+    _loadFavoriteContactKeys();
     _setupFrameListener();
   }
 
@@ -83,6 +87,26 @@ class _ContactsScreenState extends State<ContactsScreen>
 
   Future<void> _saveGroups() async {
     await _groupStore.saveGroups(_groups);
+  }
+
+  Future<void> _loadFavoriteContactKeys() async {
+    final favoriteKeys = await _contactSettingsStore.loadFavoriteContactKeys();
+    if (!mounted) return;
+    setState(() {
+      _favoriteContactKeys = favoriteKeys;
+    });
+  }
+
+  Future<void> _setContactFavorite(Contact contact, bool isFavorite) async {
+    await _contactSettingsStore.saveFavorite(contact.publicKeyHex, isFavorite);
+    if (!mounted) return;
+    setState(() {
+      if (isFavorite) {
+        _favoriteContactKeys.add(contact.publicKeyHex);
+      } else {
+        _favoriteContactKeys.remove(contact.publicKeyHex);
+      }
+    });
   }
 
   void _setupFrameListener() {
@@ -475,6 +499,9 @@ class _ContactsScreenState extends State<ContactsScreen>
                         contact: contact,
                         lastSeen: _resolveLastSeen(contact),
                         unreadCount: unreadCount,
+                        isFavorite: _favoriteContactKeys.contains(
+                          contact.publicKeyHex,
+                        ),
                         onTap: () => _openChat(context, contact),
                         onLongPress: () =>
                             _showContactOptions(context, connector, contact),
@@ -558,6 +585,7 @@ class _ContactsScreenState extends State<ContactsScreen>
         })
         .where((group) {
           if (_typeFilter == ContactTypeFilter.all) return true;
+          if (_typeFilter == ContactTypeFilter.favorites) return false;
           for (final key in group.memberKeys) {
             final contact = contactsByKey[key];
             if (contact != null && _matchesTypeFilter(contact)) return true;
@@ -632,6 +660,8 @@ class _ContactsScreenState extends State<ContactsScreen>
     switch (_typeFilter) {
       case ContactTypeFilter.all:
         return true;
+      case ContactTypeFilter.favorites:
+        return _favoriteContactKeys.contains(contact.publicKeyHex);
       case ContactTypeFilter.users:
         return contact.type == advTypeChat;
       case ContactTypeFilter.repeaters:
@@ -1022,6 +1052,7 @@ class _ContactsScreenState extends State<ContactsScreen>
   ) {
     final isRepeater = contact.type == advTypeRepeater;
     final isRoom = contact.type == advTypeRoom;
+    final isFavorite = _favoriteContactKeys.contains(contact.publicKeyHex);
     final roomSyncService = context.read<RoomSyncService>();
 
     showModalBottomSheet(
@@ -1146,6 +1177,21 @@ class _ContactsScreenState extends State<ContactsScreen>
               ),
             ],
             ListTile(
+              leading: Icon(
+                isFavorite ? Icons.star : Icons.star_border,
+                color: Colors.amber[700],
+              ),
+              title: Text(
+                isFavorite
+                    ? '${context.l10n.common_remove} ${context.l10n.listFilter_favorites}'
+                    : '${context.l10n.common_add} ${context.l10n.listFilter_favorites}',
+              ),
+              onTap: () async {
+                Navigator.pop(sheetContext);
+                await _setContactFavorite(contact, !isFavorite);
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.copy),
               title: Text(context.l10n.contacts_ShareContact),
               onTap: () {
@@ -1213,6 +1259,7 @@ class _ContactTile extends StatelessWidget {
   final Contact contact;
   final DateTime lastSeen;
   final int unreadCount;
+  final bool isFavorite;
   final VoidCallback onTap;
   final VoidCallback onLongPress;
 
@@ -1220,6 +1267,7 @@ class _ContactTile extends StatelessWidget {
     required this.contact,
     required this.lastSeen,
     required this.unreadCount,
+    required this.isFavorite,
     required this.onTap,
     required this.onLongPress,
   });
@@ -1280,6 +1328,9 @@ class _ContactTile extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (isFavorite)
+                  Icon(Icons.star, size: 14, color: Colors.amber[700]),
+                if (isFavorite && contact.hasLocation) const SizedBox(width: 2),
                 if (contact.hasLocation)
                   Icon(Icons.location_on, size: 14, color: Colors.grey[400]),
               ],

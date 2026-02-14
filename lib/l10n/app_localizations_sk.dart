@@ -2655,6 +2655,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get listFilter_all => 'Všetko';
 
   @override
+  String get listFilter_favorites => 'Favorites';
+
+  @override
   String get listFilter_users => 'Používatelia';
 
   @override
