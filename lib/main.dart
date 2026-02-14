@@ -14,6 +14,8 @@ import 'services/ble_debug_log_service.dart';
 import 'services/app_debug_log_service.dart';
 import 'services/background_service.dart';
 import 'services/map_tile_cache_service.dart';
+import 'services/room_sync_service.dart';
+import 'storage/room_sync_store.dart';
 import 'storage/prefs_manager.dart';
 import 'utils/app_logger.dart';
 
@@ -33,6 +35,10 @@ void main() async {
   final appDebugLogService = AppDebugLogService();
   final backgroundService = BackgroundService();
   final mapTileCacheService = MapTileCacheService();
+  final roomSyncService = RoomSyncService(
+    roomSyncStore: RoomSyncStore(),
+    storageService: storage,
+  );
 
   // Load settings
   await appSettingsService.loadSettings();
@@ -65,6 +71,11 @@ void main() async {
   // Load persisted channel messages
   await connector.loadAllChannelMessages();
   await connector.loadUnreadState();
+  await roomSyncService.initialize(
+    connector: connector,
+    appSettingsService: appSettingsService,
+    appDebugLogService: appDebugLogService,
+  );
 
   runApp(
     MeshCoreApp(
@@ -76,6 +87,7 @@ void main() async {
       bleDebugLogService: bleDebugLogService,
       appDebugLogService: appDebugLogService,
       mapTileCacheService: mapTileCacheService,
+      roomSyncService: roomSyncService,
     ),
   );
 }
@@ -89,6 +101,7 @@ class MeshCoreApp extends StatelessWidget {
   final BleDebugLogService bleDebugLogService;
   final AppDebugLogService appDebugLogService;
   final MapTileCacheService mapTileCacheService;
+  final RoomSyncService roomSyncService;
 
   const MeshCoreApp({
     super.key,
@@ -100,6 +113,7 @@ class MeshCoreApp extends StatelessWidget {
     required this.bleDebugLogService,
     required this.appDebugLogService,
     required this.mapTileCacheService,
+    required this.roomSyncService,
   });
 
   @override
@@ -112,6 +126,7 @@ class MeshCoreApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: appSettingsService),
         ChangeNotifierProvider.value(value: bleDebugLogService),
         ChangeNotifierProvider.value(value: appDebugLogService),
+        ChangeNotifierProvider.value(value: roomSyncService),
         Provider.value(value: storage),
         Provider.value(value: mapTileCacheService),
       ],

@@ -20,6 +20,7 @@ import '../models/channel_message.dart';
 import '../models/contact.dart';
 import '../models/message.dart';
 import '../services/path_history_service.dart';
+import '../services/room_sync_service.dart';
 import 'channel_message_path_screen.dart';
 import 'map_screen.dart';
 import '../utils/emoji_utils.dart';
@@ -91,14 +92,17 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Consumer2<PathHistoryService, MeshCoreConnector>(
-          builder: (context, pathService, connector, _) {
+        title: Consumer3<PathHistoryService, MeshCoreConnector, RoomSyncService>(
+          builder: (context, pathService, connector, roomSync, _) {
             final contact = _resolveContact(connector);
             final unreadCount = connector.getUnreadCountForContactKey(
               widget.contact.publicKeyHex,
             );
             final unreadLabel = context.l10n.chat_unread(unreadCount);
             final pathLabel = _currentPathLabel(contact);
+            final roomStatus = contact.type == advTypeRoom
+                ? roomSync.roomStatusLabel(contact.publicKeyHex)
+                : null;
 
             // Show path details if we have path data (from device or override)
             final hasPathData =
@@ -116,7 +120,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       ? () => _showFullPathDialog(context, effectivePath)
                       : null,
                   child: Text(
-                    '$pathLabel • $unreadLabel',
+                    roomStatus == null
+                        ? '$pathLabel • $unreadLabel'
+                        : '$pathLabel • $unreadLabel • $roomStatus',
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 11,

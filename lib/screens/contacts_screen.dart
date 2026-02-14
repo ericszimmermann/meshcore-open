@@ -23,6 +23,7 @@ import '../widgets/quick_switch_bar.dart';
 import '../widgets/repeater_login_dialog.dart';
 import '../widgets/room_login_dialog.dart';
 import '../widgets/unread_badge.dart';
+import '../services/room_sync_service.dart';
 import 'channels_screen.dart';
 import 'chat_screen.dart';
 import 'map_screen.dart';
@@ -371,6 +372,7 @@ class _ContactsScreenState extends State<ContactsScreen>
 
   Widget _buildContactsBody(BuildContext context, MeshCoreConnector connector) {
     final contacts = connector.contacts;
+    final hasRoomServers = contacts.any((c) => c.type == advTypeRoom);
 
     if (contacts.isEmpty && connector.isLoadingContacts && _groups.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -433,6 +435,11 @@ class _ContactsScreenState extends State<ContactsScreen>
             },
           ),
         ),
+        if (hasRoomServers)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+            child: _buildRoomSyncLegend(context),
+          ),
         Expanded(
           child: filteredAndSorted.isEmpty && filteredGroups.isEmpty
               ? Center(
@@ -477,6 +484,53 @@ class _ContactsScreenState extends State<ContactsScreen>
                 ),
         ),
       ],
+    );
+  }
+
+  Widget _buildRoomSyncLegend(BuildContext context) {
+    final textColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 8,
+        children: [
+          _RoomSyncLegendItem(
+            icon: Icons.check_circle_outline,
+            label: 'Synced',
+            color: Colors.green[700]!,
+            textColor: textColor,
+          ),
+          _RoomSyncLegendItem(
+            icon: Icons.sync,
+            label: 'Syncing',
+            color: Colors.blue[700]!,
+            textColor: textColor,
+          ),
+          _RoomSyncLegendItem(
+            icon: Icons.warning_amber_outlined,
+            label: 'Stale',
+            color: Colors.orange[700]!,
+            textColor: textColor,
+          ),
+          _RoomSyncLegendItem(
+            icon: Icons.sync_disabled,
+            label: 'Sync Disabled',
+            color: Colors.grey[700]!,
+            textColor: textColor,
+          ),
+          _RoomSyncLegendItem(
+            icon: Icons.link_off,
+            label: 'Not Logged In',
+            color: Colors.grey[700]!,
+            textColor: textColor,
+          ),
+        ],
+      ),
     );
   }
 
@@ -968,6 +1022,7 @@ class _ContactsScreenState extends State<ContactsScreen>
   ) {
     final isRepeater = contact.type == advTypeRepeater;
     final isRoom = contact.type == advTypeRoom;
+    final roomSyncService = context.read<RoomSyncService>();
 
     showModalBottomSheet(
       context: context,
@@ -1029,6 +1084,22 @@ class _ContactsScreenState extends State<ContactsScreen>
                 onTap: () {
                   Navigator.pop(sheetContext);
                   _showRoomLogin(context, contact, RoomLoginDestination.chat);
+                },
+              ),
+              SwitchListTile(
+                secondary: const Icon(Icons.sync),
+                title: const Text('Auto-sync this room'),
+                subtitle: const Text(
+                  'Enable automatic login and background catch-up sync for this room.',
+                ),
+                value: roomSyncService.isRoomAutoSyncEnabled(
+                  contact.publicKeyHex,
+                ),
+                onChanged: (enabled) async {
+                  await roomSyncService.setRoomAutoSyncEnabled(
+                    contact.publicKeyHex,
+                    enabled,
+                  );
                 },
               ),
               ListTile(
@@ -1155,6 +1226,19 @@ class _ContactTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final roomSync = context.watch<RoomSyncService>();
+    final roomStatus = contact.type == advTypeRoom
+        ? roomSync.roomStatusLabel(contact.publicKeyHex)
+        : null;
+    final roomStatusColor = (() {
+      if (roomStatus == null) return Colors.grey[600];
+      if (roomStatus.contains('Syncing')) return Colors.blue[700];
+      if (roomStatus.contains('synced')) return Colors.green[700];
+      if (roomStatus.contains('disabled')) return Colors.grey[700];
+      if (roomStatus.contains('Not logged in')) return Colors.grey[700];
+      return Colors.orange[700];
+    })();
+
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: _getTypeColor(contact.type),
@@ -1165,6 +1249,11 @@ class _ContactTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(contact.pathLabel),
+          if (roomStatus != null)
+            Text(
+              roomStatus,
+              style: TextStyle(fontSize: 12, color: roomStatusColor),
+            ),
           Text(contact.shortPubKeyHex, style: TextStyle(fontSize: 12)),
         ],
       ),
@@ -1261,5 +1350,31 @@ class _ContactTile extends StatelessWidget {
     return days == 1
         ? context.l10n.contacts_lastSeenDayAgo
         : context.l10n.contacts_lastSeenDaysAgo(days);
+  }
+}
+
+class _RoomSyncLegendItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final Color textColor;
+
+  const _RoomSyncLegendItem({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.textColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 15, color: color),
+        const SizedBox(width: 4),
+        Text(label, style: TextStyle(fontSize: 12, color: textColor)),
+      ],
+    );
   }
 }
