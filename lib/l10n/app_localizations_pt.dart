@@ -2692,6 +2692,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get listFilter_all => 'Tudo';
 
   @override
+  String get listFilter_favorites => 'Favorites';
+
+  @override
   String get listFilter_users => 'Usuários';
 
   @override

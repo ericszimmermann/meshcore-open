@@ -255,6 +255,7 @@ int _minPositive(int a, int b) {
 const int contactPubKeyOffset = 1;
 const int contactTypeOffset = 33;
 const int contactFlagsOffset = 34;
+const int contactFlagFavorite = 0x01;
 const int contactPathLenOffset = 35;
 const int contactPathOffset = 36;
 const int contactNameOffset = 100;
@@ -595,7 +596,7 @@ Uint8List buildUpdateContactPathFrame(
   writer.writeBytes(pubKey);
   writer.writeByte(type);
   writer.writeByte(flags);
-  writer.writeByte(pathLen);
+  writer.writeByte(pathLen & 0xFF);
 
   // Path data (64 bytes, zero-padded)
   final pathPadded = Uint8List(maxPathSize);

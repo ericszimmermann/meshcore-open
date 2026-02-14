@@ -608,6 +608,7 @@ class MeshCoreConnector extends ChangeNotifier {
       publicKey: contact.publicKey,
       name: contact.name,
       type: contact.type,
+      flags: contact.flags,
       pathLength: selection.hopCount >= 0
           ? selection.hopCount
           : contact.pathLength,
@@ -1109,9 +1110,37 @@ class MeshCoreConnector extends ChangeNotifier {
         customPath,
         pathLen,
         type: contact.type,
+        flags: contact.flags,
         name: contact.name,
       ),
     );
+  }
+
+  Future<void> setContactFavorite(Contact contact, bool isFavorite) async {
+    if (!isConnected) return;
+    final updatedFlags = isFavorite
+        ? (contact.flags | contactFlagFavorite)
+        : (contact.flags & ~contactFlagFavorite);
+
+    await sendFrame(
+      buildUpdateContactPathFrame(
+        contact.publicKey,
+        contact.path,
+        contact.pathLength,
+        type: contact.type,
+        flags: updatedFlags,
+        name: contact.name,
+      ),
+    );
+
+    final index = _contacts.indexWhere(
+      (c) => c.publicKeyHex == contact.publicKeyHex,
+    );
+    if (index >= 0) {
+      _contacts[index] = _contacts[index].copyWith(flags: updatedFlags);
+      notifyListeners();
+      unawaited(_persistContacts());
+    }
   }
 
   /// Set path override for a contact (persists across contact refreshes)

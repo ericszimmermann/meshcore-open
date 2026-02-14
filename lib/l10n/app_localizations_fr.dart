@@ -2707,6 +2707,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get listFilter_all => 'Tout';
 
   @override
+  String get listFilter_favorites => 'Favorites';
+
+  @override
   String get listFilter_users => 'Utilisateurs';
 
   @override
