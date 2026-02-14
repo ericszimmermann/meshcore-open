@@ -11,7 +11,6 @@ import '../connector/meshcore_protocol.dart';
 import '../models/contact.dart';
 import '../models/contact_group.dart';
 import '../storage/contact_group_store.dart';
-import '../storage/contact_settings_store.dart';
 import '../utils/contact_search.dart';
 import '../utils/dialog_utils.dart';
 import '../utils/disconnect_navigation_mixin.dart';
@@ -52,9 +51,7 @@ class _ContactsScreenState extends State<ContactsScreen>
   bool _showUnreadOnly = false;
   ContactTypeFilter _typeFilter = ContactTypeFilter.all;
   final ContactGroupStore _groupStore = ContactGroupStore();
-  final ContactSettingsStore _contactSettingsStore = ContactSettingsStore();
   List<ContactGroup> _groups = [];
-  Set<String> _favoriteContactKeys = {};
   Timer? _searchDebounce;
 
   final Set<ContactOperationType> _pendingOperations = {};
@@ -65,7 +62,6 @@ class _ContactsScreenState extends State<ContactsScreen>
   void initState() {
     super.initState();
     _loadGroups();
-    _loadFavoriteContactKeys();
     _setupFrameListener();
   }
 
@@ -87,26 +83,6 @@ class _ContactsScreenState extends State<ContactsScreen>
 
   Future<void> _saveGroups() async {
     await _groupStore.saveGroups(_groups);
-  }
-
-  Future<void> _loadFavoriteContactKeys() async {
-    final favoriteKeys = await _contactSettingsStore.loadFavoriteContactKeys();
-    if (!mounted) return;
-    setState(() {
-      _favoriteContactKeys = favoriteKeys;
-    });
-  }
-
-  Future<void> _setContactFavorite(Contact contact, bool isFavorite) async {
-    await _contactSettingsStore.saveFavorite(contact.publicKeyHex, isFavorite);
-    if (!mounted) return;
-    setState(() {
-      if (isFavorite) {
-        _favoriteContactKeys.add(contact.publicKeyHex);
-      } else {
-        _favoriteContactKeys.remove(contact.publicKeyHex);
-      }
-    });
   }
 
   void _setupFrameListener() {
@@ -499,9 +475,7 @@ class _ContactsScreenState extends State<ContactsScreen>
                         contact: contact,
                         lastSeen: _resolveLastSeen(contact),
                         unreadCount: unreadCount,
-                        isFavorite: _favoriteContactKeys.contains(
-                          contact.publicKeyHex,
-                        ),
+                        isFavorite: contact.isFavorite,
                         onTap: () => _openChat(context, contact),
                         onLongPress: () =>
                             _showContactOptions(context, connector, contact),
@@ -661,7 +635,7 @@ class _ContactsScreenState extends State<ContactsScreen>
       case ContactTypeFilter.all:
         return true;
       case ContactTypeFilter.favorites:
-        return _favoriteContactKeys.contains(contact.publicKeyHex);
+        return contact.isFavorite;
       case ContactTypeFilter.users:
         return contact.type == advTypeChat;
       case ContactTypeFilter.repeaters:
@@ -1052,7 +1026,7 @@ class _ContactsScreenState extends State<ContactsScreen>
   ) {
     final isRepeater = contact.type == advTypeRepeater;
     final isRoom = contact.type == advTypeRoom;
-    final isFavorite = _favoriteContactKeys.contains(contact.publicKeyHex);
+    final isFavorite = contact.isFavorite;
     final roomSyncService = context.read<RoomSyncService>();
 
     showModalBottomSheet(
@@ -1188,7 +1162,7 @@ class _ContactsScreenState extends State<ContactsScreen>
               ),
               onTap: () async {
                 Navigator.pop(sheetContext);
-                await _setContactFavorite(contact, !isFavorite);
+                await connector.setContactFavorite(contact, !isFavorite);
               },
             ),
             ListTile(
