@@ -395,29 +395,25 @@ class AppSettingsScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
-              'Room Sync',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              context.l10n.appSettings_roomSyncTitle,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
           SwitchListTile(
             secondary: const Icon(Icons.sync),
-            title: const Text('Enable room auto-sync'),
-            subtitle: const Text(
-              'Automatically keep room-server backlog synced while connected.',
-            ),
+            title: Text(context.l10n.appSettings_roomSyncEnableTitle),
+            subtitle: Text(context.l10n.appSettings_roomSyncEnableSubtitle),
             value: settings.roomSyncEnabled,
             onChanged: (value) => settingsService.setRoomSyncEnabled(value),
           ),
           const Divider(height: 1),
           SwitchListTile(
             secondary: const Icon(Icons.login),
-            title: const Text('Auto-login saved room sessions'),
-            subtitle: const Text(
-              'On reconnect, login to room servers with saved passwords.',
-            ),
+            title: Text(context.l10n.appSettings_roomSyncAutoLoginTitle),
+            subtitle: Text(context.l10n.appSettings_roomSyncAutoLoginSubtitle),
             value: settings.roomSyncAutoLoginEnabled,
             onChanged: settings.roomSyncEnabled
                 ? (value) => settingsService.setRoomSyncAutoLoginEnabled(value)
@@ -426,14 +422,14 @@ class AppSettingsScreen extends StatelessWidget {
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.timer_outlined),
-            title: const Text('Base sync interval'),
+            title: Text(context.l10n.appSettings_roomSyncBaseIntervalTitle),
             subtitle: Text('${settings.roomSyncIntervalSeconds}s'),
             trailing: const Icon(Icons.chevron_right),
             enabled: settings.roomSyncEnabled,
             onTap: settings.roomSyncEnabled
                 ? () => _editIntegerSetting(
                     context: context,
-                    title: 'Base sync interval (seconds)',
+                    title: context.l10n.appSettings_roomSyncBaseIntervalDialog,
                     initialValue: settings.roomSyncIntervalSeconds,
                     min: 15,
                     max: 3600,
@@ -444,14 +440,14 @@ class AppSettingsScreen extends StatelessWidget {
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.schedule),
-            title: const Text('Max backoff interval'),
+            title: Text(context.l10n.appSettings_roomSyncMaxBackoffTitle),
             subtitle: Text('${settings.roomSyncMaxIntervalSeconds}s'),
             trailing: const Icon(Icons.chevron_right),
             enabled: settings.roomSyncEnabled,
             onTap: settings.roomSyncEnabled
                 ? () => _editIntegerSetting(
                     context: context,
-                    title: 'Max backoff interval (seconds)',
+                    title: context.l10n.appSettings_roomSyncMaxBackoffDialog,
                     initialValue: settings.roomSyncMaxIntervalSeconds,
                     min: 30,
                     max: 7200,
@@ -462,14 +458,14 @@ class AppSettingsScreen extends StatelessWidget {
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.hourglass_bottom),
-            title: const Text('Sync timeout'),
+            title: Text(context.l10n.appSettings_roomSyncTimeoutTitle),
             subtitle: Text('${settings.roomSyncTimeoutSeconds}s'),
             trailing: const Icon(Icons.chevron_right),
             enabled: settings.roomSyncEnabled,
             onTap: settings.roomSyncEnabled
                 ? () => _editIntegerSetting(
                     context: context,
-                    title: 'Sync timeout (seconds)',
+                    title: context.l10n.appSettings_roomSyncTimeoutDialog,
                     initialValue: settings.roomSyncTimeoutSeconds,
                     min: 5,
                     max: 120,
@@ -480,14 +476,14 @@ class AppSettingsScreen extends StatelessWidget {
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.warning_amber_outlined),
-            title: const Text('Mark room stale after'),
+            title: Text(context.l10n.appSettings_roomSyncStaleAfterTitle),
             subtitle: Text('${settings.roomSyncStaleMinutes} min'),
             trailing: const Icon(Icons.chevron_right),
             enabled: settings.roomSyncEnabled,
             onTap: settings.roomSyncEnabled
                 ? () => _editIntegerSetting(
                     context: context,
-                    title: 'Stale threshold (minutes)',
+                    title: context.l10n.appSettings_roomSyncStaleAfterDialog,
                     initialValue: settings.roomSyncStaleMinutes,
                     min: 1,
                     max: 240,

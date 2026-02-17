@@ -1118,18 +1118,20 @@ class MeshCoreConnector extends ChangeNotifier {
 
   Future<void> setContactFavorite(Contact contact, bool isFavorite) async {
     if (!isConnected) return;
+    final latestContact =
+        await _fetchContactSnapshotFromDevice(contact.publicKey) ?? contact;
     final updatedFlags = isFavorite
-        ? (contact.flags | contactFlagFavorite)
-        : (contact.flags & ~contactFlagFavorite);
+        ? (latestContact.flags | contactFlagFavorite)
+        : (latestContact.flags & ~contactFlagFavorite);
 
     await sendFrame(
       buildUpdateContactPathFrame(
-        contact.publicKey,
-        contact.path,
-        contact.pathLength,
-        type: contact.type,
+        latestContact.publicKey,
+        latestContact.path,
+        latestContact.pathLength,
+        type: latestContact.type,
         flags: updatedFlags,
-        name: contact.name,
+        name: latestContact.name,
       ),
     );
 
@@ -1137,9 +1139,46 @@ class MeshCoreConnector extends ChangeNotifier {
       (c) => c.publicKeyHex == contact.publicKeyHex,
     );
     if (index >= 0) {
-      _contacts[index] = _contacts[index].copyWith(flags: updatedFlags);
+      _contacts[index] = _contacts[index].copyWith(
+        type: latestContact.type,
+        name: latestContact.name,
+        pathLength: latestContact.pathLength,
+        path: latestContact.path,
+        flags: updatedFlags,
+      );
       notifyListeners();
       unawaited(_persistContacts());
+    }
+  }
+
+  Future<Contact?> _fetchContactSnapshotFromDevice(
+    Uint8List pubKey, {
+    Duration timeout = const Duration(seconds: 3),
+  }) async {
+    if (!isConnected) return null;
+    final expectedKeyHex = pubKeyToHex(pubKey);
+    final completer = Completer<Contact?>();
+
+    void finish(Contact? result) {
+      if (!completer.isCompleted) {
+        completer.complete(result);
+      }
+    }
+
+    final subscription = receivedFrames.listen((frame) {
+      if (frame.isEmpty || frame[0] != respCodeContact) return;
+      final parsed = Contact.fromFrame(frame);
+      if (parsed == null || parsed.publicKeyHex != expectedKeyHex) return;
+      finish(parsed);
+    });
+
+    final timer = Timer(timeout, () => finish(null));
+    try {
+      await getContactByKey(pubKey);
+      return await completer.future;
+    } finally {
+      timer.cancel();
+      await subscription.cancel();
     }
   }
 

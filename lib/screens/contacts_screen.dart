@@ -502,31 +502,31 @@ class _ContactsScreenState extends State<ContactsScreen>
         children: [
           _RoomSyncLegendItem(
             icon: Icons.check_circle_outline,
-            label: 'Synced',
+            label: context.l10n.roomSync_statusConnectedSynced,
             color: Colors.green[700]!,
             textColor: textColor,
           ),
           _RoomSyncLegendItem(
             icon: Icons.sync,
-            label: 'Syncing',
+            label: context.l10n.roomSync_statusSyncing,
             color: Colors.blue[700]!,
             textColor: textColor,
           ),
           _RoomSyncLegendItem(
             icon: Icons.warning_amber_outlined,
-            label: 'Stale',
+            label: context.l10n.roomSync_statusConnectedStale,
             color: Colors.orange[700]!,
             textColor: textColor,
           ),
           _RoomSyncLegendItem(
             icon: Icons.sync_disabled,
-            label: 'Sync Disabled',
+            label: context.l10n.roomSync_statusDisabled,
             color: Colors.grey[700]!,
             textColor: textColor,
           ),
           _RoomSyncLegendItem(
             icon: Icons.link_off,
-            label: 'Not Logged In',
+            label: context.l10n.roomSync_statusNotLoggedIn,
             color: Colors.grey[700]!,
             textColor: textColor,
           ),
@@ -1093,10 +1093,8 @@ class _ContactsScreenState extends State<ContactsScreen>
               ),
               SwitchListTile(
                 secondary: const Icon(Icons.sync),
-                title: const Text('Auto-sync this room'),
-                subtitle: const Text(
-                  'Enable automatic login and background catch-up sync for this room.',
-                ),
+                title: Text(context.l10n.contacts_roomAutoSyncTitle),
+                subtitle: Text(context.l10n.contacts_roomAutoSyncSubtitle),
                 value: roomSyncService.isRoomAutoSyncEnabled(
                   contact.publicKeyHex,
                 ),
@@ -1250,15 +1248,24 @@ class _ContactTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final roomSync = context.watch<RoomSyncService>();
     final roomStatus = contact.type == advTypeRoom
-        ? roomSync.roomStatusLabel(contact.publicKeyHex)
+        ? roomSync.roomStatus(contact.publicKeyHex)
         : null;
+    final roomStatusLabel = roomStatus == null
+        ? null
+        : _roomStatusLabel(context, roomStatus);
     final roomStatusColor = (() {
       if (roomStatus == null) return Colors.grey[600];
-      if (roomStatus.contains('Syncing')) return Colors.blue[700];
-      if (roomStatus.contains('synced')) return Colors.green[700];
-      if (roomStatus.contains('disabled')) return Colors.grey[700];
-      if (roomStatus.contains('Not logged in')) return Colors.grey[700];
-      return Colors.orange[700];
+      switch (roomStatus) {
+        case RoomSyncStatus.syncing:
+          return Colors.blue[700];
+        case RoomSyncStatus.connectedSynced:
+          return Colors.green[700];
+        case RoomSyncStatus.disabled:
+        case RoomSyncStatus.notLoggedIn:
+          return Colors.grey[700];
+        default:
+          return Colors.orange[700];
+      }
     })();
 
     return ListTile(
@@ -1271,9 +1278,9 @@ class _ContactTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(contact.pathLabel),
-          if (roomStatus != null)
+          if (roomStatusLabel != null)
             Text(
-              roomStatus,
+              roomStatusLabel,
               style: TextStyle(fontSize: 12, color: roomStatusColor),
             ),
           Text(contact.shortPubKeyHex, style: TextStyle(fontSize: 12)),
@@ -1375,6 +1382,27 @@ class _ContactTile extends StatelessWidget {
     return days == 1
         ? context.l10n.contacts_lastSeenDayAgo
         : context.l10n.contacts_lastSeenDaysAgo(days);
+  }
+
+  String _roomStatusLabel(BuildContext context, RoomSyncStatus status) {
+    switch (status) {
+      case RoomSyncStatus.off:
+        return context.l10n.roomSync_statusOff;
+      case RoomSyncStatus.disabled:
+        return context.l10n.roomSync_statusDisabled;
+      case RoomSyncStatus.syncing:
+        return context.l10n.roomSync_statusSyncing;
+      case RoomSyncStatus.connectedWaiting:
+        return context.l10n.roomSync_statusConnectedWaiting;
+      case RoomSyncStatus.connectedStale:
+        return context.l10n.roomSync_statusConnectedStale;
+      case RoomSyncStatus.connectedSynced:
+        return context.l10n.roomSync_statusConnectedSynced;
+      case RoomSyncStatus.notLoggedIn:
+        return context.l10n.roomSync_statusNotLoggedIn;
+      case RoomSyncStatus.notSynced:
+        return context.l10n.roomSync_statusNotSynced;
+    }
   }
 }
 

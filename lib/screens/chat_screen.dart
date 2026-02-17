@@ -101,7 +101,10 @@ class _ChatScreenState extends State<ChatScreen> {
             final unreadLabel = context.l10n.chat_unread(unreadCount);
             final pathLabel = _currentPathLabel(contact);
             final roomStatus = contact.type == advTypeRoom
-                ? roomSync.roomStatusLabel(contact.publicKeyHex)
+                ? _roomStatusLabel(
+                    context,
+                    roomSync.roomStatus(contact.publicKeyHex),
+                  )
                 : null;
 
             // Show path details if we have path data (from device or override)
@@ -759,6 +762,27 @@ class _ChatScreenState extends State<ChatScreen> {
     if (contact.pathLength < 0) return context.l10n.chat_floodAuto;
     if (contact.pathLength == 0) return context.l10n.chat_direct;
     return context.l10n.chat_hopsCount(contact.pathLength);
+  }
+
+  String _roomStatusLabel(BuildContext context, RoomSyncStatus status) {
+    switch (status) {
+      case RoomSyncStatus.off:
+        return context.l10n.roomSync_statusOff;
+      case RoomSyncStatus.disabled:
+        return context.l10n.roomSync_statusDisabled;
+      case RoomSyncStatus.syncing:
+        return context.l10n.roomSync_statusSyncing;
+      case RoomSyncStatus.connectedWaiting:
+        return context.l10n.roomSync_statusConnectedWaiting;
+      case RoomSyncStatus.connectedStale:
+        return context.l10n.roomSync_statusConnectedStale;
+      case RoomSyncStatus.connectedSynced:
+        return context.l10n.roomSync_statusConnectedSynced;
+      case RoomSyncStatus.notLoggedIn:
+        return context.l10n.roomSync_statusNotLoggedIn;
+      case RoomSyncStatus.notSynced:
+        return context.l10n.roomSync_statusNotSynced;
+    }
   }
 
   Future<void> _notifyPathSet(
