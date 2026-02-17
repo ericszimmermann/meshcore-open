@@ -21,6 +21,12 @@ class AppSettings {
   final String? languageOverride; // null = system default
   final bool appDebugLogEnabled;
   final Map<String, String> batteryChemistryByDeviceId;
+  final bool roomSyncEnabled;
+  final bool roomSyncAutoLoginEnabled;
+  final int roomSyncIntervalSeconds;
+  final int roomSyncMaxIntervalSeconds;
+  final int roomSyncTimeoutSeconds;
+  final int roomSyncStaleMinutes;
 
   AppSettings({
     this.clearPathOnMaxRetry = false,
@@ -43,6 +49,12 @@ class AppSettings {
     this.languageOverride,
     this.appDebugLogEnabled = false,
     Map<String, String>? batteryChemistryByDeviceId,
+    this.roomSyncEnabled = true,
+    this.roomSyncAutoLoginEnabled = true,
+    this.roomSyncIntervalSeconds = 90,
+    this.roomSyncMaxIntervalSeconds = 600,
+    this.roomSyncTimeoutSeconds = 15,
+    this.roomSyncStaleMinutes = 15,
   }) : batteryChemistryByDeviceId = batteryChemistryByDeviceId ?? {};
 
   Map<String, dynamic> toJson() {
@@ -67,6 +79,12 @@ class AppSettings {
       'language_override': languageOverride,
       'app_debug_log_enabled': appDebugLogEnabled,
       'battery_chemistry_by_device_id': batteryChemistryByDeviceId,
+      'room_sync_enabled': roomSyncEnabled,
+      'room_sync_auto_login_enabled': roomSyncAutoLoginEnabled,
+      'room_sync_interval_seconds': roomSyncIntervalSeconds,
+      'room_sync_max_interval_seconds': roomSyncMaxIntervalSeconds,
+      'room_sync_timeout_seconds': roomSyncTimeoutSeconds,
+      'room_sync_stale_minutes': roomSyncStaleMinutes,
     };
   }
 
@@ -101,6 +119,14 @@ class AppSettings {
             (key, value) => MapEntry(key.toString(), value.toString()),
           ) ??
           {},
+      roomSyncEnabled: json['room_sync_enabled'] as bool? ?? true,
+      roomSyncAutoLoginEnabled:
+          json['room_sync_auto_login_enabled'] as bool? ?? true,
+      roomSyncIntervalSeconds: json['room_sync_interval_seconds'] as int? ?? 90,
+      roomSyncMaxIntervalSeconds:
+          json['room_sync_max_interval_seconds'] as int? ?? 600,
+      roomSyncTimeoutSeconds: json['room_sync_timeout_seconds'] as int? ?? 15,
+      roomSyncStaleMinutes: json['room_sync_stale_minutes'] as int? ?? 15,
     );
   }
 
@@ -125,6 +151,12 @@ class AppSettings {
     Object? languageOverride = _unset,
     bool? appDebugLogEnabled,
     Map<String, String>? batteryChemistryByDeviceId,
+    bool? roomSyncEnabled,
+    bool? roomSyncAutoLoginEnabled,
+    int? roomSyncIntervalSeconds,
+    int? roomSyncMaxIntervalSeconds,
+    int? roomSyncTimeoutSeconds,
+    int? roomSyncStaleMinutes,
   }) {
     return AppSettings(
       clearPathOnMaxRetry: clearPathOnMaxRetry ?? this.clearPathOnMaxRetry,
@@ -154,6 +186,16 @@ class AppSettings {
       appDebugLogEnabled: appDebugLogEnabled ?? this.appDebugLogEnabled,
       batteryChemistryByDeviceId:
           batteryChemistryByDeviceId ?? this.batteryChemistryByDeviceId,
+      roomSyncEnabled: roomSyncEnabled ?? this.roomSyncEnabled,
+      roomSyncAutoLoginEnabled:
+          roomSyncAutoLoginEnabled ?? this.roomSyncAutoLoginEnabled,
+      roomSyncIntervalSeconds:
+          roomSyncIntervalSeconds ?? this.roomSyncIntervalSeconds,
+      roomSyncMaxIntervalSeconds:
+          roomSyncMaxIntervalSeconds ?? this.roomSyncMaxIntervalSeconds,
+      roomSyncTimeoutSeconds:
+          roomSyncTimeoutSeconds ?? this.roomSyncTimeoutSeconds,
+      roomSyncStaleMinutes: roomSyncStaleMinutes ?? this.roomSyncStaleMinutes,
     );
   }
 }

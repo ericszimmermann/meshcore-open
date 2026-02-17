@@ -645,6 +645,51 @@ class AppLocalizationsSk extends AppLocalizations {
       'Zabudované ladenie aplikácie je vypnuté.';
 
   @override
+  String get appSettings_roomSyncTitle => 'Room Sync';
+
+  @override
+  String get appSettings_roomSyncEnableTitle => 'Enable room auto-sync';
+
+  @override
+  String get appSettings_roomSyncEnableSubtitle =>
+      'Automatically keep room-server backlog synced while connected.';
+
+  @override
+  String get appSettings_roomSyncAutoLoginTitle =>
+      'Auto-login saved room sessions';
+
+  @override
+  String get appSettings_roomSyncAutoLoginSubtitle =>
+      'On reconnect, login to room servers with saved passwords.';
+
+  @override
+  String get appSettings_roomSyncBaseIntervalTitle => 'Base sync interval';
+
+  @override
+  String get appSettings_roomSyncBaseIntervalDialog =>
+      'Base sync interval (seconds)';
+
+  @override
+  String get appSettings_roomSyncMaxBackoffTitle => 'Max backoff interval';
+
+  @override
+  String get appSettings_roomSyncMaxBackoffDialog =>
+      'Max backoff interval (seconds)';
+
+  @override
+  String get appSettings_roomSyncTimeoutTitle => 'Sync timeout';
+
+  @override
+  String get appSettings_roomSyncTimeoutDialog => 'Sync timeout (seconds)';
+
+  @override
+  String get appSettings_roomSyncStaleAfterTitle => 'Mark room stale after';
+
+  @override
+  String get appSettings_roomSyncStaleAfterDialog =>
+      'Stale threshold (minutes)';
+
+  @override
   String get contacts_title => 'Kontakty';
 
   @override
@@ -680,6 +725,13 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get contacts_roomLogin => 'Prihlásenie do miestnosti';
+
+  @override
+  String get contacts_roomAutoSyncTitle => 'Auto-sync this room';
+
+  @override
+  String get contacts_roomAutoSyncSubtitle =>
+      'Enable automatic login and background catch-up sync for this room.';
 
   @override
   String get contacts_openChat => 'Otvorené Chat';
@@ -2677,6 +2729,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get listFilter_all => 'Všetko';
 
   @override
+  String get listFilter_favorites => 'Favorites';
+
+  @override
   String get listFilter_users => 'Používatelia';
 
   @override
@@ -2781,6 +2836,30 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get contacts_contactAdvertCopyFailed =>
       'Kopírovanie inzerátu do schránky zlyhalo.';
+
+  @override
+  String get roomSync_statusOff => 'Room sync off';
+
+  @override
+  String get roomSync_statusDisabled => 'Sync disabled';
+
+  @override
+  String get roomSync_statusSyncing => 'Syncing...';
+
+  @override
+  String get roomSync_statusConnectedWaiting => 'Connected, waiting sync';
+
+  @override
+  String get roomSync_statusConnectedStale => 'Connected, stale';
+
+  @override
+  String get roomSync_statusConnectedSynced => 'Connected, synced';
+
+  @override
+  String get roomSync_statusNotLoggedIn => 'Not logged in';
+
+  @override
+  String get roomSync_statusNotSynced => 'Not synced';
 
   @override
   String get notification_activityTitle => 'Aktivita MeshCore';

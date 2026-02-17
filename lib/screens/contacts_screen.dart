@@ -23,6 +23,7 @@ import '../widgets/quick_switch_bar.dart';
 import '../widgets/repeater_login_dialog.dart';
 import '../widgets/room_login_dialog.dart';
 import '../widgets/unread_badge.dart';
+import '../services/room_sync_service.dart';
 import 'channels_screen.dart';
 import 'chat_screen.dart';
 import 'map_screen.dart';
@@ -371,6 +372,7 @@ class _ContactsScreenState extends State<ContactsScreen>
 
   Widget _buildContactsBody(BuildContext context, MeshCoreConnector connector) {
     final contacts = connector.contacts;
+    final hasRoomServers = contacts.any((c) => c.type == advTypeRoom);
 
     if (contacts.isEmpty && connector.isLoadingContacts && _groups.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -433,6 +435,11 @@ class _ContactsScreenState extends State<ContactsScreen>
             },
           ),
         ),
+        if (hasRoomServers)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+            child: _buildRoomSyncLegend(context),
+          ),
         Expanded(
           child: filteredAndSorted.isEmpty && filteredGroups.isEmpty
               ? Center(
@@ -468,6 +475,7 @@ class _ContactsScreenState extends State<ContactsScreen>
                         contact: contact,
                         lastSeen: _resolveLastSeen(contact),
                         unreadCount: unreadCount,
+                        isFavorite: contact.isFavorite,
                         onTap: () => _openChat(context, contact),
                         onLongPress: () =>
                             _showContactOptions(context, connector, contact),
@@ -477,6 +485,53 @@ class _ContactsScreenState extends State<ContactsScreen>
                 ),
         ),
       ],
+    );
+  }
+
+  Widget _buildRoomSyncLegend(BuildContext context) {
+    final textColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 8,
+        children: [
+          _RoomSyncLegendItem(
+            icon: Icons.check_circle_outline,
+            label: context.l10n.roomSync_statusConnectedSynced,
+            color: Colors.green[700]!,
+            textColor: textColor,
+          ),
+          _RoomSyncLegendItem(
+            icon: Icons.sync,
+            label: context.l10n.roomSync_statusSyncing,
+            color: Colors.blue[700]!,
+            textColor: textColor,
+          ),
+          _RoomSyncLegendItem(
+            icon: Icons.warning_amber_outlined,
+            label: context.l10n.roomSync_statusConnectedStale,
+            color: Colors.orange[700]!,
+            textColor: textColor,
+          ),
+          _RoomSyncLegendItem(
+            icon: Icons.sync_disabled,
+            label: context.l10n.roomSync_statusDisabled,
+            color: Colors.grey[700]!,
+            textColor: textColor,
+          ),
+          _RoomSyncLegendItem(
+            icon: Icons.link_off,
+            label: context.l10n.roomSync_statusNotLoggedIn,
+            color: Colors.grey[700]!,
+            textColor: textColor,
+          ),
+        ],
+      ),
     );
   }
 
@@ -504,6 +559,7 @@ class _ContactsScreenState extends State<ContactsScreen>
         })
         .where((group) {
           if (_typeFilter == ContactTypeFilter.all) return true;
+          if (_typeFilter == ContactTypeFilter.favorites) return false;
           for (final key in group.memberKeys) {
             final contact = contactsByKey[key];
             if (contact != null && _matchesTypeFilter(contact)) return true;
@@ -578,6 +634,8 @@ class _ContactsScreenState extends State<ContactsScreen>
     switch (_typeFilter) {
       case ContactTypeFilter.all:
         return true;
+      case ContactTypeFilter.favorites:
+        return contact.isFavorite;
       case ContactTypeFilter.users:
         return contact.type == advTypeChat;
       case ContactTypeFilter.repeaters:
@@ -968,6 +1026,8 @@ class _ContactsScreenState extends State<ContactsScreen>
   ) {
     final isRepeater = contact.type == advTypeRepeater;
     final isRoom = contact.type == advTypeRoom;
+    final isFavorite = contact.isFavorite;
+    final roomSyncService = context.read<RoomSyncService>();
 
     showModalBottomSheet(
       context: context,
@@ -1031,6 +1091,20 @@ class _ContactsScreenState extends State<ContactsScreen>
                   _showRoomLogin(context, contact, RoomLoginDestination.chat);
                 },
               ),
+              SwitchListTile(
+                secondary: const Icon(Icons.sync),
+                title: Text(context.l10n.contacts_roomAutoSyncTitle),
+                subtitle: Text(context.l10n.contacts_roomAutoSyncSubtitle),
+                value: roomSyncService.isRoomAutoSyncEnabled(
+                  contact.publicKeyHex,
+                ),
+                onChanged: (enabled) async {
+                  await roomSyncService.setRoomAutoSyncEnabled(
+                    contact.publicKeyHex,
+                    enabled,
+                  );
+                },
+              ),
               ListTile(
                 leading: const Icon(
                   Icons.room_preferences,
@@ -1074,6 +1148,21 @@ class _ContactsScreenState extends State<ContactsScreen>
                 },
               ),
             ],
+            ListTile(
+              leading: Icon(
+                isFavorite ? Icons.star : Icons.star_border,
+                color: Colors.amber[700],
+              ),
+              title: Text(
+                isFavorite
+                    ? '${context.l10n.common_remove} ${context.l10n.listFilter_favorites}'
+                    : '${context.l10n.common_add} ${context.l10n.listFilter_favorites}',
+              ),
+              onTap: () async {
+                Navigator.pop(sheetContext);
+                await connector.setContactFavorite(contact, !isFavorite);
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.copy),
               title: Text(context.l10n.contacts_ShareContact),
@@ -1142,6 +1231,7 @@ class _ContactTile extends StatelessWidget {
   final Contact contact;
   final DateTime lastSeen;
   final int unreadCount;
+  final bool isFavorite;
   final VoidCallback onTap;
   final VoidCallback onLongPress;
 
@@ -1149,12 +1239,35 @@ class _ContactTile extends StatelessWidget {
     required this.contact,
     required this.lastSeen,
     required this.unreadCount,
+    required this.isFavorite,
     required this.onTap,
     required this.onLongPress,
   });
 
   @override
   Widget build(BuildContext context) {
+    final roomSync = context.watch<RoomSyncService>();
+    final roomStatus = contact.type == advTypeRoom
+        ? roomSync.roomStatus(contact.publicKeyHex)
+        : null;
+    final roomStatusLabel = roomStatus == null
+        ? null
+        : _roomStatusLabel(context, roomStatus);
+    final roomStatusColor = (() {
+      if (roomStatus == null) return Colors.grey[600];
+      switch (roomStatus) {
+        case RoomSyncStatus.syncing:
+          return Colors.blue[700];
+        case RoomSyncStatus.connectedSynced:
+          return Colors.green[700];
+        case RoomSyncStatus.disabled:
+        case RoomSyncStatus.notLoggedIn:
+          return Colors.grey[700];
+        default:
+          return Colors.orange[700];
+      }
+    })();
+
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: _getTypeColor(contact.type),
@@ -1165,6 +1278,11 @@ class _ContactTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(contact.pathLabel),
+          if (roomStatusLabel != null)
+            Text(
+              roomStatusLabel,
+              style: TextStyle(fontSize: 12, color: roomStatusColor),
+            ),
           Text(contact.shortPubKeyHex, style: TextStyle(fontSize: 12)),
         ],
       ),
@@ -1191,6 +1309,9 @@ class _ContactTile extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (isFavorite)
+                  Icon(Icons.star, size: 14, color: Colors.amber[700]),
+                if (isFavorite && contact.hasLocation) const SizedBox(width: 2),
                 if (contact.hasLocation)
                   Icon(Icons.location_on, size: 14, color: Colors.grey[400]),
               ],
@@ -1261,5 +1382,52 @@ class _ContactTile extends StatelessWidget {
     return days == 1
         ? context.l10n.contacts_lastSeenDayAgo
         : context.l10n.contacts_lastSeenDaysAgo(days);
+  }
+
+  String _roomStatusLabel(BuildContext context, RoomSyncStatus status) {
+    switch (status) {
+      case RoomSyncStatus.off:
+        return context.l10n.roomSync_statusOff;
+      case RoomSyncStatus.disabled:
+        return context.l10n.roomSync_statusDisabled;
+      case RoomSyncStatus.syncing:
+        return context.l10n.roomSync_statusSyncing;
+      case RoomSyncStatus.connectedWaiting:
+        return context.l10n.roomSync_statusConnectedWaiting;
+      case RoomSyncStatus.connectedStale:
+        return context.l10n.roomSync_statusConnectedStale;
+      case RoomSyncStatus.connectedSynced:
+        return context.l10n.roomSync_statusConnectedSynced;
+      case RoomSyncStatus.notLoggedIn:
+        return context.l10n.roomSync_statusNotLoggedIn;
+      case RoomSyncStatus.notSynced:
+        return context.l10n.roomSync_statusNotSynced;
+    }
+  }
+}
+
+class _RoomSyncLegendItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final Color textColor;
+
+  const _RoomSyncLegendItem({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.textColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 15, color: color),
+        const SizedBox(width: 4),
+        Text(label, style: TextStyle(fontSize: 12, color: textColor)),
+      ],
+    );
   }
 }

@@ -1294,6 +1294,84 @@ abstract class AppLocalizations {
   /// **'App debug logging disabled'**
   String get appSettings_appDebugLoggingDisabled;
 
+  /// No description provided for @appSettings_roomSyncTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Room Sync'**
+  String get appSettings_roomSyncTitle;
+
+  /// No description provided for @appSettings_roomSyncEnableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable room auto-sync'**
+  String get appSettings_roomSyncEnableTitle;
+
+  /// No description provided for @appSettings_roomSyncEnableSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically keep room-server backlog synced while connected.'**
+  String get appSettings_roomSyncEnableSubtitle;
+
+  /// No description provided for @appSettings_roomSyncAutoLoginTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-login saved room sessions'**
+  String get appSettings_roomSyncAutoLoginTitle;
+
+  /// No description provided for @appSettings_roomSyncAutoLoginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On reconnect, login to room servers with saved passwords.'**
+  String get appSettings_roomSyncAutoLoginSubtitle;
+
+  /// No description provided for @appSettings_roomSyncBaseIntervalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Base sync interval'**
+  String get appSettings_roomSyncBaseIntervalTitle;
+
+  /// No description provided for @appSettings_roomSyncBaseIntervalDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Base sync interval (seconds)'**
+  String get appSettings_roomSyncBaseIntervalDialog;
+
+  /// No description provided for @appSettings_roomSyncMaxBackoffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Max backoff interval'**
+  String get appSettings_roomSyncMaxBackoffTitle;
+
+  /// No description provided for @appSettings_roomSyncMaxBackoffDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Max backoff interval (seconds)'**
+  String get appSettings_roomSyncMaxBackoffDialog;
+
+  /// No description provided for @appSettings_roomSyncTimeoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync timeout'**
+  String get appSettings_roomSyncTimeoutTitle;
+
+  /// No description provided for @appSettings_roomSyncTimeoutDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync timeout (seconds)'**
+  String get appSettings_roomSyncTimeoutDialog;
+
+  /// No description provided for @appSettings_roomSyncStaleAfterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark room stale after'**
+  String get appSettings_roomSyncStaleAfterTitle;
+
+  /// No description provided for @appSettings_roomSyncStaleAfterDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Stale threshold (minutes)'**
+  String get appSettings_roomSyncStaleAfterDialog;
+
   /// No description provided for @contacts_title.
   ///
   /// In en, this message translates to:
@@ -1359,6 +1437,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Room Server Login'**
   String get contacts_roomLogin;
+
+  /// No description provided for @contacts_roomAutoSyncTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-sync this room'**
+  String get contacts_roomAutoSyncTitle;
+
+  /// No description provided for @contacts_roomAutoSyncSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable automatic login and background catch-up sync for this room.'**
+  String get contacts_roomAutoSyncSubtitle;
 
   /// No description provided for @contacts_openChat.
   ///
@@ -4712,6 +4802,12 @@ abstract class AppLocalizations {
   /// **'All'**
   String get listFilter_all;
 
+  /// No description provided for @listFilter_favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get listFilter_favorites;
+
   /// No description provided for @listFilter_users.
   ///
   /// In en, this message translates to:
@@ -4909,6 +5005,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copying advert to Clipboard failed.'**
   String get contacts_contactAdvertCopyFailed;
+
+  /// No description provided for @roomSync_statusOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Room sync off'**
+  String get roomSync_statusOff;
+
+  /// No description provided for @roomSync_statusDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync disabled'**
+  String get roomSync_statusDisabled;
+
+  /// No description provided for @roomSync_statusSyncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing...'**
+  String get roomSync_statusSyncing;
+
+  /// No description provided for @roomSync_statusConnectedWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected, waiting sync'**
+  String get roomSync_statusConnectedWaiting;
+
+  /// No description provided for @roomSync_statusConnectedStale.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected, stale'**
+  String get roomSync_statusConnectedStale;
+
+  /// No description provided for @roomSync_statusConnectedSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected, synced'**
+  String get roomSync_statusConnectedSynced;
+
+  /// No description provided for @roomSync_statusNotLoggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Not logged in'**
+  String get roomSync_statusNotLoggedIn;
+
+  /// No description provided for @roomSync_statusNotSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Not synced'**
+  String get roomSync_statusNotSynced;
 
   /// No description provided for @notification_activityTitle.
   ///
