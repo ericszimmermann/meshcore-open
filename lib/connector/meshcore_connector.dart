@@ -208,8 +208,6 @@ class MeshCoreConnector extends ChangeNotifier {
   int? get batteryMillivolts => _batteryMillivolts;
   int get maxContacts => _maxContacts;
   int get maxChannels => _maxChannels;
-  int? get deviceProtocolVersion => _firmwareVerCode;
-  bool get supportsFloodScope => (_firmwareVerCode ?? 0) >= 8;
   bool get isSyncingQueuedMessages => _isSyncingQueuedMessages;
   bool get isSyncingChannels => _isSyncingChannels;
   int get channelSyncProgress =>
@@ -1756,6 +1754,7 @@ class MeshCoreConnector extends ChangeNotifier {
       case respCodeCustomVars:
         _handleCustomVars(frame);
         break;
+      // RESP_CODE_ERR is a defined firmware response (code 1), not an unknown frame.
       case respCodeErr:
         _handleErrorFrame(frame);
         break;
