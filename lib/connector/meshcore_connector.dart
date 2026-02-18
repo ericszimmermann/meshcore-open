@@ -105,8 +105,6 @@ class MeshCoreConnector extends ChangeNotifier {
   static const int _defaultMaxChannels = 8;
   int _maxContacts = _defaultMaxContacts;
   int _maxChannels = _defaultMaxChannels;
-  int? _deviceProtocolVersion;
-  String? _activeFloodScopeTag;
   bool _isSyncingQueuedMessages = false;
   bool _queuedMessageSyncInFlight = false;
   bool _didInitialQueueSync = false;
@@ -210,8 +208,8 @@ class MeshCoreConnector extends ChangeNotifier {
   int? get batteryMillivolts => _batteryMillivolts;
   int get maxContacts => _maxContacts;
   int get maxChannels => _maxChannels;
-  int? get deviceProtocolVersion => _deviceProtocolVersion;
-  bool get supportsFloodScope => (_deviceProtocolVersion ?? 0) >= 8;
+  int? get deviceProtocolVersion => _firmwareVerCode;
+  bool get supportsFloodScope => (_firmwareVerCode ?? 0) >= 8;
   bool get isSyncingQueuedMessages => _isSyncingQueuedMessages;
   bool get isSyncingChannels => _isSyncingChannels;
   int get channelSyncProgress =>
@@ -931,8 +929,6 @@ class MeshCoreConnector extends ChangeNotifier {
     _awaitingSelfInfo = false;
     _maxContacts = _defaultMaxContacts;
     _maxChannels = _defaultMaxChannels;
-    _deviceProtocolVersion = null;
-    _activeFloodScopeTag = null;
     _isSyncingQueuedMessages = false;
     _queuedMessageSyncInFlight = false;
     _didInitialQueueSync = false;
@@ -1845,7 +1841,6 @@ class MeshCoreConnector extends ChangeNotifier {
   void _handleDeviceInfo(Uint8List frame) {
     if (frame.length < 4) return;
     _firmwareVerCode = frame[1];
-    _deviceProtocolVersion = frame[1];
 
     // Parse client_repeat from firmware v9+ (byte 80)
     if (frame.length >= 81) {
@@ -3258,8 +3253,6 @@ class MeshCoreConnector extends ChangeNotifier {
     // They're only cleared on manual disconnect via disconnect() method
     _maxContacts = _defaultMaxContacts;
     _maxChannels = _defaultMaxChannels;
-    _deviceProtocolVersion = null;
-    _activeFloodScopeTag = null;
     _isSyncingQueuedMessages = false;
     _queuedMessageSyncInFlight = false;
     _isSyncingChannels = false;
