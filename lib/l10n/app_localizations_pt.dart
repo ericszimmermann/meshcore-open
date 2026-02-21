@@ -325,6 +325,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Um cliente Flutter de código aberto para dispositivos de rede mesh LoRa Core da MeshCore.';
 
   @override
+  String get settings_aboutOpenMeteoAttribution =>
+      'Dados de elevação LOS: Open-Meteo (CC BY 4.0)';
+
+  @override
   String get settings_infoName => 'Nome';
 
   @override
@@ -619,6 +623,15 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get appSettings_offlineMapCache => 'Cache de Mapa Offline';
+
+  @override
+  String get appSettings_unitsTitle => 'Unidades';
+
+  @override
+  String get appSettings_unitsMetric => 'Métrico (m/km)';
+
+  @override
+  String get appSettings_unitsImperial => 'Imperial (ft/mi)';
 
   @override
   String get appSettings_noAreaSelected => 'Nenhuma área selecionada';
@@ -1239,6 +1252,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get map_title => 'Mapa de Nós';
+
+  @override
+  String get map_lineOfSight => 'Linha de visão';
+
+  @override
+  String get map_losScreenTitle => 'Linha de visão';
 
   @override
   String get map_noNodesWithLocation =>
@@ -2722,6 +2741,116 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get pathTrace_clearTooltip => 'Limpar caminho';
+
+  @override
+  String get losSelectStartEnd => 'Selecione nós iniciais e finais para LOS.';
+
+  @override
+  String losRunFailed(String error) {
+    return 'Falha na verificação da linha de visão: $error';
+  }
+
+  @override
+  String get losClearAllPoints => 'Limpe todos os pontos';
+
+  @override
+  String get losRunToViewElevationProfile =>
+      'Execute o LOS para visualizar o perfil de elevação';
+
+  @override
+  String get losMenuTitle => 'Menu LOS';
+
+  @override
+  String get losMenuSubtitle =>
+      'Toque nos nós ou mantenha pressionado o mapa para obter pontos personalizados';
+
+  @override
+  String get losShowDisplayNodes => 'Mostrar nós de exibição';
+
+  @override
+  String get losCustomPoints => 'Pontos personalizados';
+
+  @override
+  String losCustomPointLabel(int index) {
+    return '$index personalizado';
+  }
+
+  @override
+  String get losPointA => 'Ponto A';
+
+  @override
+  String get losPointB => 'Ponto B';
+
+  @override
+  String losAntennaA(String value, String unit) {
+    return 'Antena A: $value $unit';
+  }
+
+  @override
+  String losAntennaB(String value, String unit) {
+    return 'Antena B: $value $unit';
+  }
+
+  @override
+  String get losRun => 'Executar LOS';
+
+  @override
+  String get losNoElevationData => 'Sem dados de elevação';
+
+  @override
+  String losProfileClear(
+    String distance,
+    String distanceUnit,
+    String clearance,
+    String heightUnit,
+  ) {
+    return '$distance $distanceUnit, limpar LOS, liberação mínima $clearance $heightUnit';
+  }
+
+  @override
+  String losProfileBlocked(
+    String distance,
+    String distanceUnit,
+    String obstruction,
+    String heightUnit,
+  ) {
+    return '$distance $distanceUnit, bloqueado por $obstruction $heightUnit';
+  }
+
+  @override
+  String get losStatusChecking => 'LOS: verificando...';
+
+  @override
+  String get losStatusNoData => 'LOS: sem dados';
+
+  @override
+  String losStatusSummary(int clear, int total, int blocked, int unknown) {
+    return 'LOS: $clear/$total limpo, $blocked bloqueado, $unknown desconhecido';
+  }
+
+  @override
+  String get losErrorElevationUnavailable =>
+      'Dados de elevação indisponíveis para uma ou mais amostras.';
+
+  @override
+  String get losErrorInvalidInput =>
+      'Dados de pontos/elevação inválidos para cálculo de LOS.';
+
+  @override
+  String get losRenameCustomPoint => 'Renomear ponto personalizado';
+
+  @override
+  String get losPointName => 'Nome do ponto';
+
+  @override
+  String get losShowPanelTooltip => 'Mostrar painel LOS';
+
+  @override
+  String get losHidePanelTooltip => 'Ocultar painel LOS';
+
+  @override
+  String get losElevationAttribution =>
+      'Dados de elevação: Open-Meteo (CC BY 4.0)';
 
   @override
   String get contacts_pathTrace => 'Traçado de Caminho';
