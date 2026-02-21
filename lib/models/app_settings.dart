@@ -34,6 +34,7 @@ class AppSettings {
   final String? languageOverride; // null = system default
   final bool appDebugLogEnabled;
   final Map<String, String> batteryChemistryByDeviceId;
+  final Map<String, String> batteryChemistryByRepeaterId;
   final UnitSystem unitSystem;
 
   AppSettings({
@@ -57,8 +58,10 @@ class AppSettings {
     this.languageOverride,
     this.appDebugLogEnabled = false,
     Map<String, String>? batteryChemistryByDeviceId,
+    Map<String, String>? batteryChemistryByRepeaterId,
     this.unitSystem = UnitSystem.metric,
-  }) : batteryChemistryByDeviceId = batteryChemistryByDeviceId ?? {};
+  }) : batteryChemistryByDeviceId = batteryChemistryByDeviceId ?? {},
+       batteryChemistryByRepeaterId = batteryChemistryByRepeaterId ?? {};
 
   Map<String, dynamic> toJson() {
     return {
@@ -82,6 +85,7 @@ class AppSettings {
       'language_override': languageOverride,
       'app_debug_log_enabled': appDebugLogEnabled,
       'battery_chemistry_by_device_id': batteryChemistryByDeviceId,
+      'battery_chemistry_by_repeater_id': batteryChemistryByRepeaterId,
       'unit_system': unitSystem.value,
     };
   }
@@ -124,9 +128,12 @@ class AppSettings {
             (key, value) => MapEntry(key.toString(), value.toString()),
           ) ??
           {},
-      unitSystem: parseUnitSystem(
-        json['unit_system'] ?? json['los_unit_system'],
-      ),
+      batteryChemistryByRepeaterId:
+          (json['battery_chemistry_by_repeater_id'] as Map?)?.map(
+            (key, value) => MapEntry(key.toString(), value.toString()),
+          ) ??
+          {},
+      unitSystem: parseUnitSystem(json['unit_system']),
     );
   }
 
@@ -151,6 +158,7 @@ class AppSettings {
     Object? languageOverride = _unset,
     bool? appDebugLogEnabled,
     Map<String, String>? batteryChemistryByDeviceId,
+    Map<String, String>? batteryChemistryByRepeaterId,
     UnitSystem? unitSystem,
   }) {
     return AppSettings(
@@ -181,6 +189,8 @@ class AppSettings {
       appDebugLogEnabled: appDebugLogEnabled ?? this.appDebugLogEnabled,
       batteryChemistryByDeviceId:
           batteryChemistryByDeviceId ?? this.batteryChemistryByDeviceId,
+      batteryChemistryByRepeaterId:
+          batteryChemistryByRepeaterId ?? this.batteryChemistryByRepeaterId,
       unitSystem: unitSystem ?? this.unitSystem,
     );
   }

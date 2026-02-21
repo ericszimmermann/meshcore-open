@@ -29,6 +29,7 @@ import '../storage/contact_store.dart';
 import '../storage/message_store.dart';
 import '../storage/unread_store.dart';
 import '../utils/app_logger.dart';
+import '../utils/battery_utils.dart';
 import 'meshcore_protocol.dart';
 
 class MeshCoreUuids {
@@ -79,6 +80,18 @@ enum MeshCoreConnectionState {
   connecting,
   connected,
   disconnecting,
+}
+
+class RepeaterBatterySnapshot {
+  final int millivolts;
+  final DateTime updatedAt;
+  final String source;
+
+  const RepeaterBatterySnapshot({
+    required this.millivolts,
+    required this.updatedAt,
+    required this.source,
+  });
 }
 
 class MeshCoreConnector extends ChangeNotifier {
@@ -187,6 +200,7 @@ class MeshCoreConnector extends ChangeNotifier {
   final Map<String, bool> _contactSmazEnabled = {};
   final Set<String> _knownContactKeys = {};
   final Map<String, int> _contactUnreadCount = {};
+  final Map<String, RepeaterBatterySnapshot> _repeaterBatterySnapshots = {};
   bool _unreadStateLoaded = false;
   final Map<String, _RepeaterAckContext> _pendingRepeaterAcks = {};
   String? _activeContactKey;
@@ -254,36 +268,37 @@ class MeshCoreConnector extends ChangeNotifier {
       : 0;
   int? get batteryPercent => _batteryMillivolts == null
       ? null
-      : _estimateBatteryPercent(
+      : estimateBatteryPercentFromMillivolts(
           _batteryMillivolts!,
           _batteryChemistryForDevice(),
         );
+  RepeaterBatterySnapshot? getRepeaterBatterySnapshot(String contactKeyHex) =>
+      _repeaterBatterySnapshots[contactKeyHex];
+  int? getRepeaterBatteryMillivolts(String contactKeyHex) =>
+      _repeaterBatterySnapshots[contactKeyHex]?.millivolts;
+
+  void updateRepeaterBatterySnapshot(
+    String contactKeyHex,
+    int millivolts, {
+    String source = 'unknown',
+  }) {
+    if (contactKeyHex.isEmpty || millivolts <= 0) return;
+    final previous = _repeaterBatterySnapshots[contactKeyHex];
+    final snapshot = RepeaterBatterySnapshot(
+      millivolts: millivolts,
+      updatedAt: DateTime.now(),
+      source: source,
+    );
+    _repeaterBatterySnapshots[contactKeyHex] = snapshot;
+    if (previous?.millivolts != millivolts) {
+      notifyListeners();
+    }
+  }
 
   String _batteryChemistryForDevice() {
     final deviceId = _device?.remoteId.toString();
     if (deviceId == null || _appSettingsService == null) return 'nmc';
     return _appSettingsService!.batteryChemistryForDevice(deviceId);
-  }
-
-  int _estimateBatteryPercent(int millivolts, String chemistry) {
-    final range = _batteryVoltageRange(chemistry);
-    final minMv = range.$1;
-    final maxMv = range.$2;
-    if (millivolts <= minMv) return 0;
-    if (millivolts >= maxMv) return 100;
-    return (((millivolts - minMv) * 100) / (maxMv - minMv)).round();
-  }
-
-  (int, int) _batteryVoltageRange(String chemistry) {
-    switch (chemistry) {
-      case 'lifepo4':
-        return (2600, 3650);
-      case 'lipo':
-        return (3000, 4200);
-      case 'nmc':
-      default:
-        return (3000, 4200);
-    }
   }
 
   List<Message> getMessages(Contact contact) {
@@ -961,6 +976,7 @@ class MeshCoreConnector extends ChangeNotifier {
     _clientRepeat = null;
     _firmwareVerCode = null;
     _batteryMillivolts = null;
+    _repeaterBatterySnapshots.clear();
     _batteryRequested = false;
     _awaitingSelfInfo = false;
     _maxContacts = _defaultMaxContacts;
