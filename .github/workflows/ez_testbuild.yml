@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - ez_testbuild
+      - ez_testbuild*
   pull_request:
 
 jobs:
