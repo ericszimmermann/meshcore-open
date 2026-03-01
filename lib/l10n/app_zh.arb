@@ -1825,6 +1825,6 @@
   "discoveredContacts_addContact": "添加联系人",
   "discoveredContacts_noMatching": "没有匹配的联系人",
   "discoveredContacts_Title": "已发现的联系人",
-  "contactsSettings_overwriteOldestSubtitle": "启用时，伴侣将在联系人列表满时覆盖最老的未收藏的联系人。",
-  "discoveredContacts_copyContact": "复制联系人到剪贴板"
+  "discoveredContacts_copyContact": "复制联系人到剪贴板",
+  "contactsSettings_overwriteOldestSubtitle": "当联系人列表已满时，将替换最老的非收藏联系人。"
 }

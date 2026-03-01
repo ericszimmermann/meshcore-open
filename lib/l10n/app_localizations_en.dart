@@ -3116,7 +3116,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'When enabled, the companion will overwrite the oldest contact not favoriteited when the contact list is full.';
+      'When the contact list is full, the oldest non-favorited contact will be replaced.';
 
   @override
   String get discoveredContacts_Title => 'Discovered Contacts';

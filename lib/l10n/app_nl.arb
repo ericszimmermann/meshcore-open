@@ -1819,7 +1819,7 @@
   "discoveredContacts_copyContact": "Kopieer contact naar klembord",
   "discoveredContacts_deleteContact": "Contact verwijderen",
   "discoveredContacts_Title": "Ontdekte contacten",
-  "contactsSettings_overwriteOldestSubtitle": "Wanneer ingeschakeld, overschrijft de companion het oudste contact dat niet is gemarkeerd als favoriet wanneer de contactenlijst vol is.",
   "discoveredContacts_contactAdded": "Contact toegevoegd",
-  "discoveredContacts_searchHint": "Ontdekte contacten zoeken"
+  "discoveredContacts_searchHint": "Ontdekte contacten zoeken",
+  "contactsSettings_overwriteOldestSubtitle": "Wanneer de contactenlijst vol is, wordt de oudste niet-favoriete contactpersoon vervangen."
 }

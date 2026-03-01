@@ -1810,7 +1810,6 @@
   "contactsSettings_autoAddRoomServersTitle": "Adicionar automaticamente servidores de sala",
   "contactsSettings_overwriteOldestTitle": "Sobrescrever o Mais Antigo",
   "contactsSettings_autoAddSensorsTitle": "Adicionar sensores automaticamente",
-  "contactsSettings_overwriteOldestSubtitle": "Quando ativado, o acompanhante substituirá o contato mais antigo não favoritado quando a lista de contatos estiver cheia.",
   "discoveredContacts_Title": "Contatos Descobertos",
   "contactsSettings_autoAddUsersSubtitle": "Permitir que o companheiro adicione automaticamente os usuários descobertos.",
   "contactsSettings_autoAddRepeatersTitle": "Adicionar repetidores automaticamente",
@@ -1821,5 +1820,6 @@
   "discoveredContacts_copyContact": "Copiar Contato para a área de transferência",
   "discoveredContacts_deleteContact": "Excluir Contato",
   "discoveredContacts_contactAdded": "Contato adicionado",
-  "discoveredContacts_addContact": "Adicionar Contato"
+  "discoveredContacts_addContact": "Adicionar Contato",
+  "contactsSettings_overwriteOldestSubtitle": "Quando a lista de contatos estiver cheia, o contato mais antigo não favoritado será substituído."
 }

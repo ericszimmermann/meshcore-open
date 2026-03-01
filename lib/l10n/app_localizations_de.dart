@@ -3177,7 +3177,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'Wenn aktiviert, überschreibt der Begleiter den ältesten nicht favorisierten Kontakt, wenn die Kontaktliste voll ist.';
+      'Wenn die Kontaktliste voll ist, wird der älteste nicht favorisierte Kontakt ersetzt.';
 
   @override
   String get discoveredContacts_Title => 'Entdeckte Kontakte';

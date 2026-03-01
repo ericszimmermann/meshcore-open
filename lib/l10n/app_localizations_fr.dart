@@ -3190,7 +3190,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'Lorsqu\'il est activé, le compagnon écrasera l\'ancien contact non favori lorsque la liste de contacts est pleine.';
+      'Lorsque la liste de contacts est pleine, le contact le plus ancien non favori sera remplacé.';
 
   @override
   String get discoveredContacts_Title => 'Contacts découverts';

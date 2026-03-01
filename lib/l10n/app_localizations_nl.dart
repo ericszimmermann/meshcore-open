@@ -3158,7 +3158,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'Wanneer ingeschakeld, overschrijft de companion het oudste contact dat niet is gemarkeerd als favoriet wanneer de contactenlijst vol is.';
+      'Wanneer de contactenlijst vol is, wordt de oudste niet-favoriete contactpersoon vervangen.';
 
   @override
   String get discoveredContacts_Title => 'Ontdekte contacten';

@@ -2935,7 +2935,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      '启用时，伴侣将在联系人列表满时覆盖最老的未收藏的联系人。';
+      '当联系人列表已满时，将替换最老的非收藏联系人。';
 
   @override
   String get discoveredContacts_Title => '已发现的联系人';

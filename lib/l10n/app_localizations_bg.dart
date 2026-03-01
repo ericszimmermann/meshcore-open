@@ -3167,7 +3167,7 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'Когато е активиран, компаньонът ще презапише най-стария контакт, който не е отбелязан като любим, когато списъкът с контакти е пълен.';
+      'Когато списъкът с контакти е пълен, най-старият неключов контакт ще бъде заменен.';
 
   @override
   String get discoveredContacts_Title => 'Открити контакти';

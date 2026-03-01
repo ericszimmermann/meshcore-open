@@ -1818,8 +1818,8 @@
   "discoveredContacts_searchHint": "Sök uppfunna kontakter",
   "discoveredContacts_deleteContact": "Ta bort kontakt",
   "discoveredContacts_Title": "Upptäckta kontakter",
-  "contactsSettings_overwriteOldestSubtitle": "När den är aktiverad kommer medhjälparen att skriva över den äldsta kontakten som inte är favoritmarkerad när kontaktnamnslistan är full",
   "discoveredContacts_contactAdded": "Kontakt tillagd",
   "discoveredContacts_addContact": "Lägg till kontakt",
-  "discoveredContacts_copyContact": "Kopiera kontakt till urklipp"
+  "discoveredContacts_copyContact": "Kopiera kontakt till urklipp",
+  "contactsSettings_overwriteOldestSubtitle": "När kontaktlistan är full ersätts den äldsta icke-favoriterade kontakten."
 }

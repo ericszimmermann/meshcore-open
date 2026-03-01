@@ -3167,7 +3167,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'Quando ativado, o acompanhante substituirá o contato mais antigo não favoritado quando a lista de contatos estiver cheia.';
+      'Quando a lista de contatos estiver cheia, o contato mais antigo não favoritado será substituído.';
 
   @override
   String get discoveredContacts_Title => 'Contatos Descobertos';

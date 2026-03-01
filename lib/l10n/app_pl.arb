@@ -1818,8 +1818,8 @@
   "discoveredContacts_copyContact": "Kopiuj kontakt do schowka",
   "contactsSettings_overwriteOldestTitle": "Nadpisz najstarszy",
   "discoveredContacts_Title": "Odkryte Kontakty",
-  "contactsSettings_overwriteOldestSubtitle": "Gdy jest włączone, companion zastępuje najstarszy kontakt nie ulubiony, gdy lista kontaktów jest pełna.",
   "contactsSettings_autoAddSensorsSubtitle": "Zezwól towarzyszowi na automatyczne dodawanie wykrytych czujników.",
   "discoveredContacts_noMatching": "Brak pasujących kontaktów",
-  "discoveredContacts_deleteContact": "Usuń kontakt"
+  "discoveredContacts_deleteContact": "Usuń kontakt",
+  "contactsSettings_overwriteOldestSubtitle": "Gdy lista kontaktów jest pełna, najstarszy nieulubiony kontakt zostanie zastąpiony."
 }

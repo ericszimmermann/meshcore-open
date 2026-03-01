@@ -3172,7 +3172,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'Quando abilitato, il companion sovrascriverà il contatto più vecchio non preferito quando l\'elenco dei contatti è pieno.';
+      'Quando l\'elenco dei contatti è pieno, il contatto più vecchio non tra i preferiti verrà sostituito.';
 
   @override
   String get discoveredContacts_Title => 'Contatti scoperti';

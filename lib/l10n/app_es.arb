@@ -1847,7 +1847,7 @@
   "discoveredContacts_copyContact": "Copiar contacto al portapapeles",
   "discoveredContacts_deleteContact": "Eliminar contacto",
   "discoveredContacts_Title": "Contactos descubiertos",
-  "contactsSettings_overwriteOldestSubtitle": "Cuando se habilita, el compañero sobrescribirá el contacto más antiguo no favorito cuando la lista de contactos esté llena.",
   "discoveredContacts_searchHint": "Buscar contactos descubiertos",
-  "discoveredContacts_addContact": "Agregar contacto"
+  "discoveredContacts_addContact": "Agregar contacto",
+  "contactsSettings_overwriteOldestSubtitle": "Cuando la lista de contactos esté llena, se reemplazará el contacto no favorito más antiguo."
 }

@@ -1817,9 +1817,9 @@
   "discoveredContacts_contactAdded": "Kontakt bol pridaný",
   "discoveredContacts_copyContact": "Kopírovať kontakt do schránky",
   "discoveredContacts_deleteContact": "Zmazať kontakt",
-  "contactsSettings_overwriteOldestSubtitle": "Keď je povolené, spoločník prepíše najstarší kontakt, ktorý nie je označený ako obľúbený, keď je zoznam kontaktov plný.",
   "contactsSettings_autoAddSensorsSubtitle": "Povoliť spoločníkovi automaticky pridávať objavené senzory.",
   "discoveredContacts_Title": "Objavené kontakty",
   "contactsSettings_overwriteOldestTitle": "Prepísať najstaršie",
-  "discoveredContacts_addContact": "Pridať kontakt"
+  "discoveredContacts_addContact": "Pridať kontakt",
+  "contactsSettings_overwriteOldestSubtitle": "Keď je zoznam kontaktov plný, bude nahradený najstarší neoznačený kontakt."
 }

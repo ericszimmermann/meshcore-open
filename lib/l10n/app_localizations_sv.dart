@@ -3136,7 +3136,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'När den är aktiverad kommer medhjälparen att skriva över den äldsta kontakten som inte är favoritmarkerad när kontaktnamnslistan är full';
+      'När kontaktlistan är full ersätts den äldsta icke-favoriterade kontakten.';
 
   @override
   String get discoveredContacts_Title => 'Upptäckta kontakter';

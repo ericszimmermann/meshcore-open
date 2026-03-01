@@ -1848,6 +1848,6 @@
   "discoveredContacts_Title": "Entdeckte Kontakte",
   "discoveredContacts_copyContact": "Kontakt in die Zwischenablage kopieren",
   "contactsSettings_overwriteOldestTitle": "Überschreiben des Ältesten",
-  "contactsSettings_overwriteOldestSubtitle": "Wenn aktiviert, überschreibt der Begleiter den ältesten nicht favorisierten Kontakt, wenn die Kontaktliste voll ist.",
-  "contactsSettings_autoAddSensorsSubtitle": "Ermöglichen Sie dem Begleiter, automatisch entdeckte Sensoren hinzuzufügen"
+  "contactsSettings_autoAddSensorsSubtitle": "Ermöglichen Sie dem Begleiter, automatisch entdeckte Sensoren hinzuzufügen",
+  "contactsSettings_overwriteOldestSubtitle": "Wenn die Kontaktliste voll ist, wird der älteste nicht favorisierte Kontakt ersetzt."
 }

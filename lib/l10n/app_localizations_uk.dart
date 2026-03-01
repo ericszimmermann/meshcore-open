@@ -3185,7 +3185,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'Коли увімкнено, супровід переганяє найстарший контакт, який не доданий до улюблених, коли список контактів повний.';
+      'Коли список контактів заповнений, найстарший контакт без позначки улюбленого буде замінений.';
 
   @override
   String get discoveredContacts_Title => 'Виявлені контакти';

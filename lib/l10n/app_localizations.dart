@@ -5468,7 +5468,7 @@ abstract class AppLocalizations {
   /// No description provided for @contactsSettings_overwriteOldestSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'When enabled, the companion will overwrite the oldest contact not favoriteited when the contact list is full.'**
+  /// **'When the contact list is full, the oldest non-favorited contact will be replaced.'**
   String get contactsSettings_overwriteOldestSubtitle;
 
   /// No description provided for @discoveredContacts_Title.

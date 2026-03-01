@@ -3179,7 +3179,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'При включении компаньон будет перезаписывать самый старый контакт, не отмеченный как любимый, когда список контактов полон.';
+      'Когда список контактов заполнен, будет заменен самый старый контакт, который не находится в избранном.';
 
   @override
   String get discoveredContacts_Title => 'Обнаруженные контакты';

@@ -1816,10 +1816,10 @@
   "discoveredContacts_contactAdded": "Контакт додано",
   "contactsSettings_autoAddSensorsSubtitle": "Дозволити супровіднику автоматично додавати виявлені сенсори",
   "contactsSettings_overwriteOldestTitle": "Перезаписати найстаріше",
-  "contactsSettings_overwriteOldestSubtitle": "Коли увімкнено, супровід переганяє найстарший контакт, який не доданий до улюблених, коли список контактів повний.",
   "discoveredContacts_Title": "Виявлені контакти",
   "discoveredContacts_noMatching": "Відповідних контактів не знайдено",
   "discoveredContacts_deleteContact": "Видалити контакт",
   "discoveredContacts_copyContact": "Копіювати контакт у буфер обміну",
-  "discoveredContacts_addContact": "Додати контакт"
+  "discoveredContacts_addContact": "Додати контакт",
+  "contactsSettings_overwriteOldestSubtitle": "Коли список контактів заповнений, найстарший контакт без позначки улюбленого буде замінений."
 }

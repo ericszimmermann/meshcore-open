@@ -1852,7 +1852,7 @@
   "contactsSettings_autoAddSensorsTitle": "Auto-add sensors",
   "contactsSettings_autoAddSensorsSubtitle": "Allow the companion to automatically add discovered sensors.",
   "contactsSettings_overwriteOldestTitle": "Overwrite Oldest",
-  "contactsSettings_overwriteOldestSubtitle": "When enabled, the companion will overwrite the oldest contact not favoriteited when the contact list is full.",
+  "contactsSettings_overwriteOldestSubtitle": "When the contact list is full, the oldest non-favorited contact will be replaced.",
   "discoveredContacts_Title": "Discovered Contacts",
   "discoveredContacts_noMatching": "No matching contacts",
   "discoveredContacts_searchHint": "Search discovered contacts",

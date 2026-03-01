@@ -3171,7 +3171,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'Gdy jest włączone, companion zastępuje najstarszy kontakt nie ulubiony, gdy lista kontaktów jest pełna.';
+      'Gdy lista kontaktów jest pełna, najstarszy nieulubiony kontakt zostanie zastąpiony.';
 
   @override
   String get discoveredContacts_Title => 'Odkryte Kontakty';

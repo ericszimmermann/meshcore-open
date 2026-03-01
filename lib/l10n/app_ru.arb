@@ -1053,7 +1053,6 @@
   "contactsSettings_overwriteOldestTitle": "Перезаписать самое старое",
   "contactsSettings_autoAddRepeatersTitle": "Автоматически добавлять ретрансляторы",
   "contactsSettings_autoAddRepeatersSubtitle": "Разрешить спутнику автоматически добавлять обнаруженные ретрансляторы",
-  "contactsSettings_overwriteOldestSubtitle": "При включении компаньон будет перезаписывать самый старый контакт, не отмеченный как любимый, когда список контактов полон.",
   "contactsSettings_autoAddRoomServersSubtitle": "Разрешить компаньону автоматически добавлять обнаруженные сервера комнат.",
   "discoveredContacts_noMatching": "Нет совпадающих контактов",
   "discoveredContacts_searchHint": "Найденные контакты поиска",
@@ -1061,5 +1060,6 @@
   "discoveredContacts_copyContact": "Копировать контакт в буфер обмена",
   "discoveredContacts_addContact": "Добавить контакт",
   "discoveredContacts_Title": "Обнаруженные контакты",
-  "discoveredContacts_deleteContact": "Удалить контакт"
+  "discoveredContacts_deleteContact": "Удалить контакт",
+  "contactsSettings_overwriteOldestSubtitle": "Когда список контактов заполнен, будет заменен самый старый контакт, который не находится в избранном."
 }

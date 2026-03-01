@@ -3169,7 +3169,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'Cuando se habilita, el compañero sobrescribirá el contacto más antiguo no favorito cuando la lista de contactos esté llena.';
+      'Cuando la lista de contactos esté llena, se reemplazará el contacto no favorito más antiguo.';
 
   @override
   String get discoveredContacts_Title => 'Contactos descubiertos';

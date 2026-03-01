@@ -1818,8 +1818,8 @@
   "discoveredContacts_contactAdded": "Kontakt dodan",
   "discoveredContacts_copyContact": "Kopiraj stik v odložišče",
   "contactsSettings_overwriteOldestTitle": "Prepiši najstarejše",
-  "contactsSettings_overwriteOldestSubtitle": "Ko je omogočen, bo spremljevalec prepisal najstarejši stik, ki ni označen kot najljubši, ko je seznam stikov poln.",
   "discoveredContacts_Title": "Odkriti stiki",
   "discoveredContacts_searchHint": "Najdeni stiki po iskanju",
-  "discoveredContacts_deleteContact": "Izbriši stik"
+  "discoveredContacts_deleteContact": "Izbriši stik",
+  "contactsSettings_overwriteOldestSubtitle": "Ko je seznam stikov poln, bo najstarejši nestarševski stik zamenjan."
 }

@@ -1819,7 +1819,7 @@
   "discoveredContacts_deleteContact": "Supprimer le contact",
   "contactsSettings_overwriteOldestTitle": "Écraser le plus ancien",
   "contactsSettings_autoAddSensorsSubtitle": "Autoriser le compagnon à ajouter automatiquement les capteurs découverts.",
-  "contactsSettings_overwriteOldestSubtitle": "Lorsqu'il est activé, le compagnon écrasera l'ancien contact non favori lorsque la liste de contacts est pleine.",
   "discoveredContacts_Title": "Contacts découverts",
-  "discoveredContacts_searchHint": "Rechercher des contacts découverts"
+  "discoveredContacts_searchHint": "Rechercher des contacts découverts",
+  "contactsSettings_overwriteOldestSubtitle": "Lorsque la liste de contacts est pleine, le contact le plus ancien non favori sera remplacé."
 }

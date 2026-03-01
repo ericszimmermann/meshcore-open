@@ -3153,7 +3153,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'Keď je povolené, spoločník prepíše najstarší kontakt, ktorý nie je označený ako obľúbený, keď je zoznam kontaktov plný.';
+      'Keď je zoznam kontaktov plný, bude nahradený najstarší neoznačený kontakt.';
 
   @override
   String get discoveredContacts_Title => 'Objavené kontakty';

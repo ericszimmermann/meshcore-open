@@ -3157,7 +3157,7 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
-      'Ko je omogočen, bo spremljevalec prepisal najstarejši stik, ki ni označen kot najljubši, ko je seznam stikov poln.';
+      'Ko je seznam stikov poln, bo najstarejši nestarševski stik zamenjan.';
 
   @override
   String get discoveredContacts_Title => 'Odkriti stiki';
