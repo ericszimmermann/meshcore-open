@@ -109,6 +109,33 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scanner_title => '连接设备';
 
   @override
+  String get connectionChoiceTitle => '选择您的连接方式';
+
+  @override
+  String get connectionChoiceSubtitle => '请选择您希望如何访问 MeshCore 设备的选项。';
+
+  @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => '蓝牙';
+
+  @override
+  String get usbScreenTitle => 'USB 连接即将推出';
+
+  @override
+  String get usbScreenSubtitle => '我们正在构建一个基于串行的连接路径，用于Android和桌面设备。';
+
+  @override
+  String get usbScreenStatus => '即将推出';
+
+  @override
+  String get usbScreenNote => '一旦USB支持功能上线，您就可以选择一个串口，并直接连接到您的MeshCore设备。';
+
+  @override
+  String get usbScreenEmptyState => '未找到任何 USB 设备。请插入一个，然后刷新。';
+
+  @override
   String get scanner_scanning => '正在搜索设备...';
 
   @override

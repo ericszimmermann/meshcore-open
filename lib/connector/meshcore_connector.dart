@@ -20,6 +20,7 @@ import '../services/path_history_service.dart';
 import '../services/app_settings_service.dart';
 import '../services/background_service.dart';
 import '../services/notification_service.dart';
+import '../services/usb_serial_service.dart';
 import '../storage/channel_message_store.dart';
 import '../storage/channel_order_store.dart';
 import '../storage/channel_settings_store.dart';
@@ -82,6 +83,8 @@ enum MeshCoreConnectionState {
   disconnecting,
 }
 
+enum MeshCoreTransportType { bluetooth, usb }
+
 class RepeaterBatterySnapshot {
   final int millivolts;
   final DateTime updatedAt;
@@ -108,6 +111,10 @@ class MeshCoreConnector extends ChangeNotifier {
   String? _lastDeviceId;
   String? _lastDeviceDisplayName;
   bool _manualDisconnect = false;
+  final UsbSerialService _usbSerialService = UsbSerialService();
+  StreamSubscription<Uint8List>? _usbFrameSubscription;
+  MeshCoreTransportType _activeTransport = MeshCoreTransportType.bluetooth;
+  String? _activeUsbPort;
 
   final List<ScanResult> _scanResults = [];
   final List<Contact> _contacts = [];
@@ -154,6 +161,8 @@ class MeshCoreConnector extends ChangeNotifier {
   bool _hasLoadedChannels = false;
   bool _batteryRequested = false;
   bool _awaitingSelfInfo = false;
+  bool _hasReceivedDeviceInfo = false;
+  bool _pendingInitialChannelSync = false;
   bool _preserveContactsOnRefresh = false;
   static const int _defaultMaxContacts = 32;
   static const int _defaultMaxChannels = 8;
@@ -216,6 +225,12 @@ class MeshCoreConnector extends ChangeNotifier {
   BluetoothDevice? get device => _device;
   String? get deviceId => _deviceId;
   String get deviceIdLabel => _deviceId ?? 'Unknown';
+
+  MeshCoreTransportType get activeTransport => _activeTransport;
+  String? get activeUsbPort => _activeUsbPort;
+  bool get isUsbTransportConnected =>
+      _state == MeshCoreConnectionState.connected &&
+      _activeTransport == MeshCoreTransportType.usb;
 
   String get deviceDisplayName {
     if (_selfName != null && _selfName!.isNotEmpty) {
@@ -742,11 +757,16 @@ class MeshCoreConnector extends ChangeNotifier {
     }
   }
 
+  Future<List<String>> listUsbPorts() => _usbSerialService.listPorts();
+
   Future<void> connect(BluetoothDevice device, {String? displayName}) async {
     if (_state == MeshCoreConnectionState.connecting ||
         _state == MeshCoreConnectionState.connected) {
       return;
     }
+
+    _activeTransport = MeshCoreTransportType.bluetooth;
+    _activeUsbPort = null;
 
     await stopScan();
     _setState(MeshCoreConnectionState.connecting);
@@ -832,6 +852,8 @@ class MeshCoreConnector extends ChangeNotifier {
       );
 
       _setState(MeshCoreConnectionState.connected);
+      _hasReceivedDeviceInfo = false;
+      _pendingInitialChannelSync = true;
 
       await _requestDeviceInfo();
       _startBatteryPolling();
@@ -845,11 +867,65 @@ class MeshCoreConnector extends ChangeNotifier {
 
       // Keep device clock aligned on every connection.
       await syncTime();
-
-      // Fetch channels so we can track unread counts for incoming messages
-      unawaited(getChannels());
     } catch (e) {
       debugPrint("Connection error: $e");
+      await disconnect(manual: false);
+      rethrow;
+    }
+  }
+
+  Future<void> connectUsb({
+    required String portName,
+    int baudRate = 115200,
+  }) async {
+    if (_state == MeshCoreConnectionState.connecting ||
+        _state == MeshCoreConnectionState.connected) {
+      return;
+    }
+
+    _activeTransport = MeshCoreTransportType.bluetooth;
+    _activeUsbPort = null;
+
+    await stopScan();
+    _cancelReconnectTimer();
+    _manualDisconnect = false;
+    _activeTransport = MeshCoreTransportType.usb;
+    _activeUsbPort = portName;
+    unawaited(_backgroundService?.start());
+    _setState(MeshCoreConnectionState.connecting);
+
+    try {
+      await _usbFrameSubscription?.cancel();
+      _usbFrameSubscription = null;
+      await _usbSerialService.connect(portName: portName, baudRate: baudRate);
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      _usbFrameSubscription = _usbSerialService.frameStream.listen(
+        _handleFrame,
+        onError: (error, stackTrace) {
+          debugPrint('USB transport error: $error');
+          unawaited(disconnect(manual: false));
+        },
+        onDone: () {
+          unawaited(disconnect(manual: false));
+        },
+      );
+
+      _setState(MeshCoreConnectionState.connected);
+      _hasReceivedDeviceInfo = false;
+      _pendingInitialChannelSync = true;
+      await _requestDeviceInfo();
+      _startBatteryPolling();
+      final gotSelfInfo = await _waitForSelfInfo(
+        timeout: const Duration(seconds: 3),
+      );
+      if (!gotSelfInfo) {
+        await refreshDeviceInfo();
+        await _waitForSelfInfo(timeout: const Duration(seconds: 3));
+      }
+
+      await syncTime();
+    } catch (error) {
+      debugPrint('USB connection error: $error');
       await disconnect(manual: false);
       rethrow;
     }
@@ -886,7 +962,10 @@ class MeshCoreConnector extends ChangeNotifier {
     return result;
   }
 
-  bool get _shouldAutoReconnect => !_manualDisconnect && _lastDeviceId != null;
+  bool get _shouldAutoReconnect =>
+      !_manualDisconnect &&
+      _lastDeviceId != null &&
+      _activeTransport == MeshCoreTransportType.bluetooth;
 
   void _cancelReconnectTimer() {
     _reconnectTimer?.cancel();
@@ -930,6 +1009,7 @@ class MeshCoreConnector extends ChangeNotifier {
 
   Future<void> disconnect({bool manual = true}) async {
     if (_state == MeshCoreConnectionState.disconnecting) return;
+    final transportAtDisconnect = _activeTransport;
 
     if (manual) {
       _manualDisconnect = true;
@@ -940,6 +1020,10 @@ class MeshCoreConnector extends ChangeNotifier {
     }
     _setState(MeshCoreConnectionState.disconnecting);
     _stopBatteryPolling();
+
+    await _usbFrameSubscription?.cancel();
+    _usbFrameSubscription = null;
+    await _usbSerialService.disconnect();
 
     await _notifySubscription?.cancel();
     _notifySubscription = null;
@@ -980,6 +1064,8 @@ class MeshCoreConnector extends ChangeNotifier {
     _repeaterBatterySnapshots.clear();
     _batteryRequested = false;
     _awaitingSelfInfo = false;
+    _hasReceivedDeviceInfo = false;
+    _pendingInitialChannelSync = false;
     _maxContacts = _defaultMaxContacts;
     _maxChannels = _defaultMaxChannels;
     _isSyncingQueuedMessages = false;
@@ -993,8 +1079,11 @@ class MeshCoreConnector extends ChangeNotifier {
     _pendingGenericAckQueue.clear();
     _reactionSendQueueSequence = 0;
 
+    _activeTransport = MeshCoreTransportType.bluetooth;
+    _activeUsbPort = null;
+
     _setState(MeshCoreConnectionState.disconnected);
-    if (!manual) {
+    if (!manual && transportAtDisconnect == MeshCoreTransportType.bluetooth) {
       _scheduleReconnect();
     }
   }
@@ -1004,24 +1093,29 @@ class MeshCoreConnector extends ChangeNotifier {
     String? channelSendQueueId,
     bool expectsGenericAck = false,
   }) async {
-    if (!isConnected || _rxCharacteristic == null) {
+    if (!isConnected) {
       throw Exception("Not connected to a MeshCore device");
     }
-
     _bleDebugLogService?.logFrame(data, outgoing: true);
 
-    // Prefer write without response when supported; fall back to write with response.
-    final properties = _rxCharacteristic!.properties;
-    final canWriteWithoutResponse = properties.writeWithoutResponse;
-    final canWriteWithResponse = properties.write;
-    if (!canWriteWithoutResponse && !canWriteWithResponse) {
-      throw Exception("MeshCore RX characteristic does not support write");
+    if (_activeTransport == MeshCoreTransportType.usb) {
+      await _usbSerialService.write(data);
+    } else {
+      if (_rxCharacteristic == null) {
+        throw Exception("MeshCore RX characteristic does not support write");
+      }
+      // Prefer write without response when supported; fall back to write with response.
+      final properties = _rxCharacteristic!.properties;
+      final canWriteWithoutResponse = properties.writeWithoutResponse;
+      final canWriteWithResponse = properties.write;
+      if (!canWriteWithoutResponse && !canWriteWithResponse) {
+        throw Exception("MeshCore RX characteristic does not support write");
+      }
+      await _rxCharacteristic!.write(
+        data.toList(),
+        withoutResponse: canWriteWithoutResponse,
+      );
     }
-
-    await _rxCharacteristic!.write(
-      data.toList(),
-      withoutResponse: canWriteWithoutResponse,
-    );
     _trackPendingGenericAck(
       data,
       channelSendQueueId: channelSendQueueId,
@@ -2000,10 +2094,12 @@ class MeshCoreConnector extends ChangeNotifier {
 
     // Auto-fetch contacts after getting self info
     getContacts();
+    _maybeStartInitialChannelSync();
   }
 
   void _handleDeviceInfo(Uint8List frame) {
     if (frame.length < 4) return;
+    _hasReceivedDeviceInfo = true;
     _firmwareVerCode = frame[1];
 
     // Parse client_repeat from firmware v9+ (byte 80)
@@ -2027,12 +2123,25 @@ class MeshCoreConnector extends ChangeNotifier {
       if (nextMaxChannels > previousMaxChannels) {
         unawaited(loadChannelSettings(maxChannels: nextMaxChannels));
         unawaited(loadAllChannelMessages(maxChannels: nextMaxChannels));
-        if (isConnected) {
+        if (isConnected && !_pendingInitialChannelSync) {
           unawaited(getChannels(maxChannels: nextMaxChannels));
         }
       }
     }
     notifyListeners();
+    _maybeStartInitialChannelSync();
+  }
+
+  void _maybeStartInitialChannelSync() {
+    if (!_pendingInitialChannelSync || !isConnected) {
+      return;
+    }
+    if (_selfPublicKey == null || !_hasReceivedDeviceInfo) {
+      return;
+    }
+
+    _pendingInitialChannelSync = false;
+    unawaited(getChannels(maxChannels: _maxChannels));
   }
 
   void _handleNoMoreMessages() {
@@ -3591,6 +3700,8 @@ class MeshCoreConnector extends ChangeNotifier {
     _txCharacteristic = null;
     // Preserve deviceId and displayName for UI display during reconnection
     // They're only cleared on manual disconnect via disconnect() method
+    _hasReceivedDeviceInfo = false;
+    _pendingInitialChannelSync = false;
     _maxContacts = _defaultMaxContacts;
     _maxChannels = _defaultMaxChannels;
     _isSyncingQueuedMessages = false;
@@ -3671,10 +3782,12 @@ class MeshCoreConnector extends ChangeNotifier {
   void dispose() {
     _scanSubscription?.cancel();
     _connectionSubscription?.cancel();
+    _usbFrameSubscription?.cancel();
     _notifySubscription?.cancel();
     _reconnectTimer?.cancel();
     _batteryPollTimer?.cancel();
     _receivedFramesController.close();
+    _usbSerialService.dispose();
 
     // Flush pending unread writes before disposal
     _unreadStore.flush();

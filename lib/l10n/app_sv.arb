@@ -1801,5 +1801,14 @@
   "contacts_searchRepeaters": "Sök {number}{str} upprepningsenheter...",
   "contacts_searchFavorites": "Sök {number}{str} Favoriter...",
   "contacts_searchUsers": "Sök {number}{str} användare...",
-  "contacts_searchRoomServers": "Sök {number}{str} Room-servrar..."
+  "contacts_searchRoomServers": "Sök {number}{str} Room-servrar...",
+  "connectionChoiceUsbLabel": "USB",
+  "connectionChoiceBluetoothLabel": "Bluetooth",
+  "connectionChoiceSubtitle": "Välj hur du vill komma åt din MeshCore-enhet.",
+  "connectionChoiceTitle": "Välj din anslutningsmetod",
+  "usbScreenTitle": "USB-anslutning kommer snart",
+  "usbScreenSubtitle": "Vi skapar en seriebaserad anslutningsväg för både Android- och skrivbordsenheter.",
+  "usbScreenStatus": "Kommer snart",
+  "usbScreenNote": "När USB-stöd är implementerat, kommer du att välja en seriell port och ansluta direkt till din MeshCore-enhet.",
+  "usbScreenEmptyState": "Inga USB-enheter hittades. Anslut en och uppdatera."
 }

@@ -1829,5 +1829,14 @@
   "contacts_searchRepeaters": "Suche {number}{str} Repeater...",
   "contacts_searchFavorites": "Suche {number}{str} Favoriten...",
   "contacts_searchUsers": "Suche {number}{str} Benutzer...",
-  "contacts_searchRoomServers": "Suche {number}{str} Raumserver..."
+  "contacts_searchRoomServers": "Suche {number}{str} Raumserver...",
+  "connectionChoiceSubtitle": "Wählen Sie, wie Sie Ihr MeshCore-Gerät erreichen möchten.",
+  "connectionChoiceUsbLabel": "USB",
+  "connectionChoiceBluetoothLabel": "Bluetooth",
+  "connectionChoiceTitle": "Wählen Sie Ihre bevorzugte Verbindungsmethode.",
+  "usbScreenTitle": "Die USB-Verbindung wird bald verfügbar sein.",
+  "usbScreenSubtitle": "Wir entwickeln eine Verbindung, die sowohl für Android- als auch für Desktop-Geräte geeignet ist und auf einer seriellen Schnittstelle basiert.",
+  "usbScreenStatus": "Bald verfügbar",
+  "usbScreenNote": "Sobald die USB-Unterstützung implementiert ist, wählen Sie einen seriellen Anschluss und verbinden Sie ihn direkt mit Ihrem MeshCore-Gerät.",
+  "usbScreenEmptyState": "Keine USB-Geräte gefunden. Schließen Sie eines an und aktualisieren Sie."
 }

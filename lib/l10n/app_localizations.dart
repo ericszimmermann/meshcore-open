@@ -316,6 +316,60 @@ abstract class AppLocalizations {
   /// **'MeshCore Open'**
   String get scanner_title;
 
+  /// No description provided for @connectionChoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your connection method'**
+  String get connectionChoiceTitle;
+
+  /// No description provided for @connectionChoiceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select how you would like to reach your MeshCore device.'**
+  String get connectionChoiceSubtitle;
+
+  /// No description provided for @connectionChoiceUsbLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'USB'**
+  String get connectionChoiceUsbLabel;
+
+  /// No description provided for @connectionChoiceBluetoothLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bluetooth'**
+  String get connectionChoiceBluetoothLabel;
+
+  /// No description provided for @usbScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect over USB'**
+  String get usbScreenTitle;
+
+  /// No description provided for @usbScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a detected serial device and connect directly to your MeshCore node.'**
+  String get usbScreenSubtitle;
+
+  /// No description provided for @usbScreenStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a USB device'**
+  String get usbScreenStatus;
+
+  /// No description provided for @usbScreenNote.
+  ///
+  /// In en, this message translates to:
+  /// **'USB serial is active on supported Android devices and desktop platforms.'**
+  String get usbScreenNote;
+
+  /// No description provided for @usbScreenEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'No USB devices found. Plug one in and refresh.'**
+  String get usbScreenEmptyState;
+
   /// No description provided for @scanner_scanning.
   ///
   /// In en, this message translates to:

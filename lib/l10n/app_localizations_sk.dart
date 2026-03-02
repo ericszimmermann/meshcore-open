@@ -109,6 +109,37 @@ class AppLocalizationsSk extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceTitle => 'Vyberte si metódu prepojenia.';
+
+  @override
+  String get connectionChoiceSubtitle =>
+      'Vyberte si, ako chcete dosiahnuť váš zariadenie MeshCore.';
+
+  @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Pripojenie cez USB bude k dispozícii čoskoro.';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Vytvárajeme komunikačný systém založený na sériovej komunikácii pre Android a stolné počítače.';
+
+  @override
+  String get usbScreenStatus => 'Čoskoro';
+
+  @override
+  String get usbScreenNote =>
+      'Po implementácii podpory pre USB, budete môcť vybrať sériový port a priamo sa pripojiť k vašmu zariadeniu MeshCore.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'Nenašli sa žiadne USB zariadenia. Pripojte jedno a obnovte.';
+
+  @override
   String get scanner_scanning => 'Skrívania zariadení...';
 
   @override

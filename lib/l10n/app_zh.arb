@@ -1806,5 +1806,14 @@
   "contacts_searchRepeaters": "搜索 {number}{str} 重复器...",
   "contacts_searchContactsNoNumber": "搜索联系人...",
   "contacts_searchRoomServers": "搜索 {number}{str} 房间服务器...",
-  "contacts_searchFavorites": "搜索 {number}{str} 收藏..."
+  "contacts_searchFavorites": "搜索 {number}{str} 收藏...",
+  "connectionChoiceSubtitle": "请选择您希望如何访问 MeshCore 设备的选项。",
+  "connectionChoiceBluetoothLabel": "蓝牙",
+  "connectionChoiceTitle": "选择您的连接方式",
+  "connectionChoiceUsbLabel": "USB",
+  "usbScreenTitle": "USB 连接即将推出",
+  "usbScreenSubtitle": "我们正在构建一个基于串行的连接路径，用于Android和桌面设备。",
+  "usbScreenStatus": "即将推出",
+  "usbScreenNote": "一旦USB支持功能上线，您就可以选择一个串口，并直接连接到您的MeshCore设备。",
+  "usbScreenEmptyState": "未找到任何 USB 设备。请插入一个，然后刷新。"
 }

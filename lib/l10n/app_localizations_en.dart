@@ -109,6 +109,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceTitle => 'Choose your connection method';
+
+  @override
+  String get connectionChoiceSubtitle =>
+      'Select how you would like to reach your MeshCore device.';
+
+  @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Connect over USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Choose a detected serial device and connect directly to your MeshCore node.';
+
+  @override
+  String get usbScreenStatus => 'Select a USB device';
+
+  @override
+  String get usbScreenNote =>
+      'USB serial is active on supported Android devices and desktop platforms.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'No USB devices found. Plug one in and refresh.';
+
+  @override
   String get scanner_scanning => 'Scanning for devices...';
 
   @override

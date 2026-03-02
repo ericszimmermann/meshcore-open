@@ -20,6 +20,7 @@ class ScannerScreen extends StatefulWidget {
 
 class _ScannerScreenState extends State<ScannerScreen> {
   bool _changedNavigation = false;
+  late final MeshCoreConnector _connector;
   late final VoidCallback _connectionListener;
   BluetoothAdapterState _bluetoothState = BluetoothAdapterState.unknown;
   late StreamSubscription<BluetoothAdapterState> _bluetoothStateSubscription;
@@ -27,12 +28,12 @@ class _ScannerScreenState extends State<ScannerScreen> {
   @override
   void initState() {
     super.initState();
-    final connector = Provider.of<MeshCoreConnector>(context, listen: false);
+    _connector = Provider.of<MeshCoreConnector>(context, listen: false);
 
     _connectionListener = () {
-      if (connector.state == MeshCoreConnectionState.disconnected) {
+      if (_connector.state == MeshCoreConnectionState.disconnected) {
         _changedNavigation = false;
-      } else if (connector.state == MeshCoreConnectionState.connected &&
+      } else if (_connector.state == MeshCoreConnectionState.connected &&
           !_changedNavigation) {
         _changedNavigation = true;
         if (mounted) {
@@ -43,7 +44,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
       }
     };
 
-    connector.addListener(_connectionListener);
+    _connector.addListener(_connectionListener);
 
     _bluetoothStateSubscription = FlutterBluePlus.adapterState.listen(
       (state) {
@@ -53,7 +54,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
           });
           // Cancel scan if Bluetooth turns off while scanning
           if (state != BluetoothAdapterState.on) {
-            unawaited(connector.stopScan());
+            unawaited(_connector.stopScan());
           }
         }
       },
@@ -65,16 +66,25 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   @override
   void dispose() {
-    final connector = Provider.of<MeshCoreConnector>(context, listen: false);
-    connector.removeListener(_connectionListener);
+    _connector.removeListener(_connectionListener);
     unawaited(_bluetoothStateSubscription.cancel());
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final canPop = Navigator.of(context).canPop();
     return Scaffold(
       appBar: AppBar(
+        leading: canPop
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  debugPrint('ScannerScreen: back button pressed');
+                  Navigator.of(context).maybePop();
+                },
+              )
+            : null,
         title: AdaptiveAppBarTitle(context.l10n.scanner_title),
         centerTitle: true,
         automaticallyImplyLeading: false,

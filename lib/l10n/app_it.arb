@@ -1801,5 +1801,14 @@
   "contacts_searchFavorites": "Cerca {number}{str} Preferiti...",
   "contacts_unread": "Non letti",
   "contacts_searchRepeaters": "Cerca {number}{str} Ripetitori...",
-  "contacts_searchRoomServers": "Cerca {number}{str} server Room..."
+  "contacts_searchRoomServers": "Cerca {number}{str} server Room...",
+  "connectionChoiceTitle": "Scegli il metodo di connessione che preferisci.",
+  "connectionChoiceSubtitle": "Seleziona il metodo che preferisci per accedere al tuo dispositivo MeshCore.",
+  "connectionChoiceBluetoothLabel": "Bluetooth",
+  "connectionChoiceUsbLabel": "USB",
+  "usbScreenTitle": "La connessione USB sarà disponibile a breve.",
+  "usbScreenSubtitle": "Stiamo sviluppando un percorso di connessione basato su serie per Android e per i desktop.",
+  "usbScreenStatus": "Arriverà presto",
+  "usbScreenNote": "Una volta che il supporto USB sarà disponibile, selezionerete una porta seriale e vi connetterete direttamente al vostro dispositivo MeshCore.",
+  "usbScreenEmptyState": "Nessun dispositivo USB rilevato. Collegare uno e riavviare."
 }

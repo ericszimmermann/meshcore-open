@@ -1,5 +1,313 @@
 package com.meshcore.meshcore_open
 
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.hardware.usb.UsbDevice
+import android.hardware.usb.UsbDeviceConnection
+import android.hardware.usb.UsbManager
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import com.hoho.android.usbserial.driver.UsbSerialDriver
+import com.hoho.android.usbserial.driver.UsbSerialPort
+import com.hoho.android.usbserial.driver.UsbSerialProber
+import com.hoho.android.usbserial.util.SerialInputOutputManager
 import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+import java.util.Locale
 
-class MainActivity : FlutterActivity()
+class MainActivity : FlutterActivity() {
+    private val usbMethodChannelName = "meshcore_open/android_usb_serial"
+    private val usbEventChannelName = "meshcore_open/android_usb_serial_events"
+    private val usbPermissionAction = "com.meshcore.meshcore_open.USB_PERMISSION"
+
+    private lateinit var usbManager: UsbManager
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    private var eventSink: EventChannel.EventSink? = null
+    private var usbConnection: UsbDeviceConnection? = null
+    private var usbPort: UsbSerialPort? = null
+    private var ioManager: SerialInputOutputManager? = null
+
+    private var pendingConnectResult: MethodChannel.Result? = null
+    private var pendingConnectPortName: String? = null
+    private var pendingConnectBaudRate: Int = 115200
+
+    private val permissionReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action != usbPermissionAction) {
+                    return
+                }
+
+                val result = pendingConnectResult
+                val portName = pendingConnectPortName
+                pendingConnectResult = null
+                pendingConnectPortName = null
+
+                if (result == null || portName == null) {
+                    return
+                }
+
+                val granted =
+                    intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
+                if (!granted) {
+                    result.error("usb_permission_denied", "USB permission denied", null)
+                    return
+                }
+
+                val device = findUsbDevice(portName)
+                if (device == null) {
+                    result.error(
+                        "usb_device_missing",
+                        "USB device no longer available for $portName",
+                        null,
+                    )
+                    return
+                }
+
+                openUsbDevice(device, pendingConnectBaudRate, result)
+            }
+        }
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+
+        usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
+        registerUsbPermissionReceiver()
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, usbMethodChannelName)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "listPorts" -> result.success(listUsbPorts())
+                    "connect" -> handleUsbConnect(call, result)
+                    "write" -> handleUsbWrite(call, result)
+                    "disconnect" -> {
+                        closeUsbConnection()
+                        result.success(null)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, usbEventChannelName)
+            .setStreamHandler(
+                object : EventChannel.StreamHandler {
+                    override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
+                        eventSink = events
+                    }
+
+                    override fun onCancel(arguments: Any?) {
+                        eventSink = null
+                    }
+                },
+            )
+    }
+
+    override fun onDestroy() {
+        closeUsbConnection()
+        unregisterReceiver(permissionReceiver)
+        super.onDestroy()
+    }
+
+    private fun registerUsbPermissionReceiver() {
+        val filter = IntentFilter(usbPermissionAction)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(permissionReceiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            @Suppress("DEPRECATION")
+            registerReceiver(permissionReceiver, filter)
+        }
+    }
+
+    private fun listUsbPorts(): List<String> {
+        val drivers = UsbSerialProber.getDefaultProber().findAllDrivers(usbManager)
+        return drivers.map { driver ->
+            val device = driver.device
+            val productName = device.productName ?: "USB Serial Device"
+            val vendorProduct =
+                String.format(
+                    Locale.US,
+                    "VID:%04X PID:%04X",
+                    device.vendorId,
+                    device.productId,
+                )
+            "${device.deviceName} - $productName - $vendorProduct"
+        }
+    }
+
+    private fun handleUsbConnect(call: MethodCall, result: MethodChannel.Result) {
+        val portName = call.argument<String>("portName")
+        val baudRate = call.argument<Int>("baudRate") ?: 115200
+        if (portName.isNullOrBlank()) {
+            result.error("usb_invalid_port", "Port name is required", null)
+            return
+        }
+
+        val device = findUsbDevice(portName)
+        if (device == null) {
+            result.error("usb_device_missing", "USB device not found for $portName", null)
+            return
+        }
+
+        if (usbManager.hasPermission(device)) {
+            openUsbDevice(device, baudRate, result)
+            return
+        }
+
+        if (pendingConnectResult != null) {
+            result.error("usb_busy", "Another USB permission request is already pending", null)
+            return
+        }
+
+        pendingConnectResult = result
+        pendingConnectPortName = portName
+        pendingConnectBaudRate = baudRate
+
+        val permissionIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            Intent(usbPermissionAction).setPackage(packageName),
+            pendingIntentFlags(),
+        )
+        usbManager.requestPermission(device, permissionIntent)
+    }
+
+    private fun handleUsbWrite(call: MethodCall, result: MethodChannel.Result) {
+        val data = call.argument<ByteArray>("data")
+        val port = usbPort
+        if (data == null) {
+            result.error("usb_invalid_data", "Data is required", null)
+            return
+        }
+        if (port == null) {
+            result.error("usb_not_connected", "USB serial port is not connected", null)
+            return
+        }
+
+        try {
+            port.write(data, 1000)
+            result.success(null)
+        } catch (error: Exception) {
+            result.error("usb_write_failed", error.message, null)
+        }
+    }
+
+    private fun findUsbDevice(portName: String): UsbDevice? {
+        return usbManager.deviceList.values.firstOrNull { it.deviceName == portName }
+    }
+
+    private fun openUsbDevice(
+        device: UsbDevice,
+        baudRate: Int,
+        result: MethodChannel.Result,
+    ) {
+        try {
+            closeUsbConnection()
+
+            val driver = UsbSerialProber.getDefaultProber().probeDevice(device)
+            if (driver == null) {
+                result.error("usb_driver_missing", "No USB serial driver for ${device.deviceName}", null)
+                return
+            }
+
+            val connection = usbManager.openDevice(device)
+            if (connection == null) {
+                result.error(
+                    "usb_open_failed",
+                    "UsbManager could not open ${device.deviceName}",
+                    null,
+                )
+                return
+            }
+
+            val port = firstPort(driver)
+            if (port == null) {
+                connection.close()
+                result.error("usb_port_missing", "No USB serial port exposed by ${device.deviceName}", null)
+                return
+            }
+
+            port.open(connection)
+            port.setParameters(
+                baudRate,
+                8,
+                UsbSerialPort.STOPBITS_1,
+                UsbSerialPort.PARITY_NONE,
+            )
+            port.rts = false
+            port.dtr = true
+
+            usbConnection = connection
+            usbPort = port
+
+            ioManager =
+                SerialInputOutputManager(
+                    port,
+                    object : SerialInputOutputManager.Listener {
+                        override fun onNewData(data: ByteArray) {
+                            mainHandler.post {
+                                eventSink?.success(data)
+                            }
+                        }
+
+                        override fun onRunError(e: Exception) {
+                            mainHandler.post {
+                                eventSink?.error(
+                                    "usb_io_error",
+                                    e.message ?: "USB serial I/O error",
+                                    null,
+                                )
+                            }
+                            closeUsbConnection()
+                        }
+                    },
+                ).also { manager ->
+                    manager.start()
+                }
+
+            result.success(null)
+        } catch (error: Exception) {
+            closeUsbConnection()
+            result.error("usb_connect_failed", error.message, null)
+        }
+    }
+
+    private fun firstPort(driver: UsbSerialDriver): UsbSerialPort? {
+        return driver.ports.firstOrNull()
+    }
+
+    private fun closeUsbConnection() {
+        try {
+            ioManager?.stop()
+        } catch (_: Exception) {
+        }
+        ioManager = null
+
+        try {
+            usbPort?.close()
+        } catch (_: Exception) {
+        }
+        usbPort = null
+
+        try {
+            usbConnection?.close()
+        } catch (_: Exception) {
+        }
+        usbConnection = null
+    }
+
+    private fun pendingIntentFlags(): Int {
+        var flags = PendingIntent.FLAG_UPDATE_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            flags = flags or PendingIntent.FLAG_MUTABLE
+        }
+        return flags
+    }
+}

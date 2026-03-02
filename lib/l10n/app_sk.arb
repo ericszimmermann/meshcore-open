@@ -1801,5 +1801,14 @@
   "contacts_searchRepeaters": "Hľadať {number}{str} opakovače...",
   "contacts_searchUsers": "Hľadať {number}{str} používateľov...",
   "contacts_searchContactsNoNumber": "Hľadať kontakty...",
-  "contacts_unread": "Neprečítané"
+  "contacts_unread": "Neprečítané",
+  "connectionChoiceBluetoothLabel": "Bluetooth",
+  "connectionChoiceUsbLabel": "USB",
+  "connectionChoiceTitle": "Vyberte si metódu prepojenia.",
+  "connectionChoiceSubtitle": "Vyberte si, ako chcete dosiahnuť váš zariadenie MeshCore.",
+  "usbScreenTitle": "Pripojenie cez USB bude k dispozícii čoskoro.",
+  "usbScreenSubtitle": "Vytvárajeme komunikačný systém založený na sériovej komunikácii pre Android a stolné počítače.",
+  "usbScreenStatus": "Čoskoro",
+  "usbScreenNote": "Po implementácii podpory pre USB, budete môcť vybrať sériový port a priamo sa pripojiť k vašmu zariadeniu MeshCore.",
+  "usbScreenEmptyState": "Nenašli sa žiadne USB zariadenia. Pripojte jedno a obnovte."
 }

@@ -1801,5 +1801,14 @@
   "contacts_searchFavorites": "Wyszukaj {number}{str} ulubione...",
   "contacts_searchRoomServers": "Wyszukaj {number}{str} serwerów Room...",
   "contacts_searchUsers": "Wyszukaj {number}{str} Użytkowników...",
-  "contacts_searchRepeaters": "Wyszukaj {number}{str} powtórników..."
+  "contacts_searchRepeaters": "Wyszukaj {number}{str} powtórników...",
+  "connectionChoiceBluetoothLabel": "Bluetooth",
+  "connectionChoiceSubtitle": "Wybierz, w jaki sposób chcesz uzyskać dostęp do swojego urządzenia MeshCore.",
+  "connectionChoiceTitle": "Wybierz metodę połączenia.",
+  "connectionChoiceUsbLabel": "USB",
+  "usbScreenTitle": "Połączenie USB będzie dostępne wkrótce.",
+  "usbScreenSubtitle": "Tworzymy ścieżkę połączenia opartą na protokole szeregowym, przeznaczoną zarówno dla urządzeń z systemem Android, jak i dla komputerów stacjonarnych.",
+  "usbScreenStatus": "Wkrótce",
+  "usbScreenNote": "Po wdrożeniu wsparcia dla USB, wybierzesz port szeregowy i połączysz się bezpośrednio z urządzeniem MeshCore.",
+  "usbScreenEmptyState": "Nie znaleziono żadnych urządzeń USB. Podłącz jedno i zaktualizuj."
 }

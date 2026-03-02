@@ -1041,5 +1041,14 @@
   "contacts_unread": "Непрочитанное",
   "contacts_searchRoomServers": "Поиск {number}{str} серверов комнат...",
   "contacts_searchFavorites": "Поиск {number}{str} избранного...",
-  "contacts_searchUsers": "Поиск {number}{str} пользователей..."
+  "contacts_searchUsers": "Поиск {number}{str} пользователей...",
+  "connectionChoiceSubtitle": "Выберите, каким способом вы хотите получить свой устройство MeshCore.",
+  "connectionChoiceTitle": "Выберите способ подключения",
+  "connectionChoiceUsbLabel": "USB",
+  "connectionChoiceBluetoothLabel": "Bluetooth",
+  "usbScreenTitle": "Подключение через USB будет доступно в ближайшее время.",
+  "usbScreenSubtitle": "Мы создаем последовательную схему подключения для устройств на базе Android и настольных компьютеров.",
+  "usbScreenStatus": "Скоро",
+  "usbScreenNote": "Как только появится поддержка USB, вы сможете выбрать последовательный порт и напрямую подключиться к вашему устройству MeshCore.",
+  "usbScreenEmptyState": "Не обнаружено никаких устройств USB. Подключите одно из них и обновите список."
 }

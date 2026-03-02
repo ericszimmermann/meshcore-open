@@ -1801,5 +1801,14 @@
   "contacts_searchRoomServers": "Išči {number}{str} strežnikov sob...",
   "contacts_searchContactsNoNumber": "Iskanje stikov...",
   "contacts_searchRepeaters": "Išči {number}{str} ponavljalnike...",
-  "contacts_searchUsers": "Išči {number}{str} uporabnikov..."
+  "contacts_searchUsers": "Išči {number}{str} uporabnikov...",
+  "connectionChoiceBluetoothLabel": "Bluetooth",
+  "connectionChoiceUsbLabel": "USB",
+  "connectionChoiceTitle": "Izberite svoj način povezave.",
+  "connectionChoiceSubtitle": "Izberite, kako želite dostopati do svojega naprave MeshCore.",
+  "usbScreenTitle": "Vnos preko USB-ja bo v kratkem na voljo.",
+  "usbScreenSubtitle": "Gradimo pot za serijsko povezavo za Android in računalnike.",
+  "usbScreenStatus": "Čez kratko časa",
+  "usbScreenNote": "Ko bo podpora za USB na voljo, boste izbrali serijsko vrata in se neposredno povezali z vašim napravem MeshCore.",
+  "usbScreenEmptyState": "Niti en USB naprave niso bilo najdeno. Povežite eno in posodobite."
 }
