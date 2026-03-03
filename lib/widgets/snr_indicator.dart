@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
+
 import '../connector/meshcore_connector.dart';
+import '../connector/meshcore_protocol.dart';
 import '../l10n/l10n.dart';
+import '../models/contact.dart';
+import 'signal_ui.dart';
 
 class SNRUi {
   final IconData icon;
@@ -38,28 +43,19 @@ SNRUi snrUiFromSNR(double? snr, int? spreadingFactor) {
 
   final snrLevels = getSNRfromSF(spreadingFactor);
 
-  IconData icon;
-  Color color;
   String text = '${snr.toStringAsFixed(1)} dB';
+  final tier = snr >= snrLevels[0]
+      ? 0
+      : snr >= snrLevels[1]
+      ? 1
+      : snr >= snrLevels[2]
+      ? 2
+      : snr >= snrLevels[3]
+      ? 3
+      : 4;
+  final signalUi = signalUiForStrengthTier(tier);
 
-  if (snr >= snrLevels[0]) {
-    icon = Icons.signal_cellular_alt;
-    color = Colors.green;
-  } else if (snr >= snrLevels[1]) {
-    icon = Icons.signal_cellular_alt;
-    color = Colors.lightGreen;
-  } else if (snr >= snrLevels[2]) {
-    icon = Icons.signal_cellular_alt;
-    color = Colors.yellow;
-  } else if (snr >= snrLevels[3]) {
-    icon = Icons.signal_cellular_alt_2_bar;
-    color = Colors.orange;
-  } else {
-    icon = Icons.signal_cellular_alt_1_bar;
-    color = Colors.red;
-  }
-
-  return SNRUi(icon, color, text);
+  return SNRUi(signalUi.icon, signalUi.color, text);
 }
 
 class SNRIndicator extends StatefulWidget {
@@ -72,6 +68,49 @@ class SNRIndicator extends StatefulWidget {
 }
 
 class _SNRIndicatorState extends State<SNRIndicator> {
+  Contact? _selectBestRepeaterContactForPrefix(int pubkeyFirstByte) {
+    final candidates = widget.connector.contacts
+        .where(
+          (c) =>
+              c.publicKey.isNotEmpty &&
+              c.publicKey.first == pubkeyFirstByte &&
+              c.type == advTypeRepeater &&
+              c.hasLocation,
+        )
+        .toList();
+
+    if (candidates.isEmpty) {
+      return null;
+    }
+
+    final selfLat = widget.connector.selfLatitude;
+    final selfLon = widget.connector.selfLongitude;
+
+    if (selfLat == null || selfLon == null) {
+      candidates.sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
+      return candidates.first;
+    }
+
+    final distance = Distance();
+    final selfPoint = LatLng(selfLat, selfLon);
+
+    Contact best = candidates.first;
+    double bestDistance = double.infinity;
+
+    for (final c in candidates) {
+      final d = distance(
+        selfPoint,
+        LatLng(c.latitude!, c.longitude!),
+      );
+      if (d < bestDistance) {
+        bestDistance = d;
+        best = c;
+      }
+    }
+
+    return best;
+  }
+
   @override
   Widget build(BuildContext context) {
     final directRepeaters = widget.connector.directRepeaters;
@@ -168,10 +207,9 @@ class _SNRIndicatorState extends State<SNRIndicator> {
                   widget.connector.currentSf,
                 );
 
-                final name = widget.connector.contacts
-                    .where((c) => c.publicKey.first == repeater.pubkeyFirstByte)
-                    .map((c) => c.name)
-                    .firstOrNull;
+                final contact =
+                    _selectBestRepeaterContactForPrefix(repeater.pubkeyFirstByte);
+                final name = contact?.name;
 
                 return Column(
                   children: [

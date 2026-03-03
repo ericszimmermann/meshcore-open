@@ -1609,6 +1609,8 @@
   "map_removeLast": "移除最后一个",
   "map_runTrace": "运行路径追踪",
   "scanner_bluetoothOffMessage": "请开启蓝牙以搜索设备",
+  "scanner_chromeRequired": "需要 Chrome 浏览器",
+  "scanner_chromeRequiredMessage": "此 Web 应用程序需要 Google Chrome 或基于 Chromium 的浏览器以支持蓝牙。",
   "scanner_bluetoothOff": "蓝牙已关闭",
   "scanner_enableBluetooth": "启用蓝牙",
   "snrIndicator_lastSeen": "最近访问",

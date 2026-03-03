@@ -40,11 +40,13 @@ class PathTraceData {
   final Uint8List pathData;
   final List<double> snrData;
   final Map<int, Contact> pathContacts;
+  final List<Contact?> hopContacts;
 
   PathTraceData({
     required this.pathData,
     required this.snrData,
     required this.pathContacts,
+    required this.hopContacts,
   });
 }
 
@@ -86,6 +88,173 @@ class _PathTraceMapScreenState extends State<PathTraceMapScreen> {
   ValueKey<String> _mapKey = const ValueKey('initial');
   double _pathDistanceMeters = 0.0;
   bool _showNodeLabels = true;
+
+  LatLng? _middleLocation(LatLng a, LatLng b) {
+    var avgLon = (a.longitude + b.longitude) / 2;
+    var avgLat = (a.latitude + b.latitude) / 2;
+
+    final crossesDateline =
+        (a.longitude < -150 && b.longitude > 150) ||
+        (a.longitude > 150 && b.longitude < -150);
+
+    if (crossesDateline) {
+      avgLon = (a.longitude + b.longitude) / 2;
+      avgLat = (a.latitude + b.latitude) / 2;
+      if (avgLon <= 0) {
+        avgLon += 180.0;
+      } else {
+        avgLon -= 180.0;
+      }
+    }
+
+    return LatLng(avgLat, avgLon);
+  }
+
+  Map<int, List<Contact>> _buildCandidatesByPrefix(
+    MeshCoreConnector connector,
+  ) {
+    final Map<int, List<Contact>> result = {};
+
+    for (final contact in connector.contacts.where(
+      (c) => c.type != advTypeChat && c.hasLocation,
+    )) {
+      if (contact.publicKey.isEmpty) continue;
+      final prefix = contact.publicKey.first;
+      result.putIfAbsent(prefix, () => []).add(contact);
+    }
+
+    return result;
+  }
+
+  Map<int, Contact> _selectBaseContactPerPrefix(
+    MeshCoreConnector connector,
+    Map<int, List<Contact>> candidatesByPrefix,
+  ) {
+    final Map<int, Contact> result = {};
+    final selfLat = connector.selfLatitude;
+    final selfLon = connector.selfLongitude;
+
+    for (final entry in candidatesByPrefix.entries) {
+      final candidates = entry.value;
+      if (candidates.isEmpty) continue;
+      if (selfLat == null || selfLon == null) {
+        candidates.sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
+        result[entry.key] = candidates.first;
+        continue;
+      }
+
+      final distance = Distance();
+      final selfPoint = LatLng(selfLat, selfLon);
+      Contact best = candidates.first;
+      double bestDistance = double.infinity;
+
+      for (final c in candidates) {
+        final d = distance(
+          selfPoint,
+          LatLng(c.latitude!, c.longitude!),
+        );
+        if (d < bestDistance) {
+          bestDistance = d;
+          best = c;
+        }
+      }
+
+      result[entry.key] = best;
+    }
+
+    return result;
+  }
+
+  List<Contact?> _selectHopContacts(
+    MeshCoreConnector connector,
+    Uint8List pathData,
+    Map<int, List<Contact>> candidatesByPrefix,
+    Map<int, Contact> baseByPrefix,
+  ) {
+    final List<Contact?> hopContacts =
+        List<Contact?>.filled(pathData.length, null);
+    final selfLat = connector.selfLatitude;
+    final selfLon = connector.selfLongitude;
+    final distance = Distance();
+
+    LatLng? selfPoint;
+    if (selfLat != null && selfLon != null) {
+      selfPoint = LatLng(selfLat, selfLon);
+    }
+
+    for (int i = 0; i < pathData.length; i++) {
+      final prefix = pathData[i];
+      final candidates = candidatesByPrefix[prefix];
+      if (candidates == null || candidates.isEmpty) {
+        continue;
+      }
+      if (candidates.length == 1) {
+        hopContacts[i] = candidates.first;
+        continue;
+      }
+
+      LatLng? prevLoc;
+      if (i == 0) {
+        prevLoc = selfPoint;
+      } else {
+        final prevPrefix = pathData[i - 1];
+        final prevContact = baseByPrefix[prevPrefix];
+        if (prevContact != null &&
+            prevContact.latitude != null &&
+            prevContact.longitude != null) {
+          prevLoc = LatLng(prevContact.latitude!, prevContact.longitude!);
+        }
+      }
+
+      LatLng? nextLoc;
+      if (i < pathData.length - 1) {
+        final nextPrefix = pathData[i + 1];
+        final nextContact = baseByPrefix[nextPrefix];
+        if (nextContact != null &&
+            nextContact.latitude != null &&
+            nextContact.longitude != null) {
+          nextLoc = LatLng(nextContact.latitude!, nextContact.longitude!);
+        }
+      }
+
+      LatLng? poi;
+      if (prevLoc != null && nextLoc != null) {
+        poi = _middleLocation(prevLoc, nextLoc);
+      } else if (prevLoc != null) {
+        poi = prevLoc;
+      } else if (nextLoc != null) {
+        poi = nextLoc;
+      } else {
+        poi = selfPoint;
+      }
+
+      if (poi == null) {
+        hopContacts[i] = baseByPrefix[prefix] ?? candidates.first;
+        continue;
+      }
+
+      Contact best = candidates.first;
+      double bestDistance = double.infinity;
+
+      for (final c in candidates) {
+        if (!c.hasLocation || c.latitude == null || c.longitude == null) {
+          continue;
+        }
+        final d = distance(
+          poi,
+          LatLng(c.latitude!, c.longitude!),
+        );
+        if (d < bestDistance) {
+          bestDistance = d;
+          best = c;
+        }
+      }
+
+      hopContacts[i] = best;
+    }
+
+    return hopContacts;
+  }
 
   String _formatPathPrefixes(Uint8List pathBytes) {
     return pathBytes
@@ -227,19 +396,19 @@ class _PathTraceMapScreenState extends State<PathTraceMapScreen> {
           .map((snr) => snr.toSigned(8).toDouble() / 4)
           .toList();
 
-      Map<int, Contact> pathContacts = {};
+      final candidatesByPrefix = _buildCandidatesByPrefix(connector);
+      final baseByPrefix =
+          _selectBaseContactPerPrefix(connector, candidatesByPrefix);
+      final hopContacts = _selectHopContacts(
+        connector,
+        pathData,
+        candidatesByPrefix,
+        baseByPrefix,
+      );
 
-      connector.contacts.where((c) => c.type != advTypeChat).forEach((
-        repeater,
-      ) {
-        for (var repeaterData in pathData) {
-          if (listEquals(
-            repeater.publicKey.sublist(0, 1),
-            Uint8List.fromList([repeaterData]),
-          )) {
-            pathContacts[repeaterData] = repeater;
-          }
-        }
+      final Map<int, Contact> pathContacts = {};
+      baseByPrefix.forEach((key, value) {
+        pathContacts[key] = value;
       });
 
       setState(() {
@@ -249,11 +418,16 @@ class _PathTraceMapScreenState extends State<PathTraceMapScreen> {
           pathData: pathData,
           snrData: snrData,
           pathContacts: pathContacts,
+          hopContacts: hopContacts,
         );
         _points = <LatLng>[];
-        _points.add(LatLng(connector.selfLatitude!, connector.selfLongitude!));
-        for (final hop in _traceData!.pathData) {
-          final contact = _traceData!.pathContacts[hop];
+        if (connector.selfLatitude != null && connector.selfLongitude != null) {
+          _points.add(
+            LatLng(connector.selfLatitude!, connector.selfLongitude!),
+          );
+        }
+        for (int i = 0; i < _traceData!.pathData.length; i++) {
+          final contact = _traceData!.hopContacts[i];
           if (contact != null &&
               contact.hasLocation &&
               contact.latitude != null &&
@@ -380,8 +554,8 @@ class _PathTraceMapScreenState extends State<PathTraceMapScreen> {
     required bool showLabels,
   }) {
     final markers = <Marker>[];
-    for (final hop in pathData) {
-      final contact = _traceData!.pathContacts[hop];
+    for (int i = 0; i < pathData.length; i++) {
+      final contact = _traceData!.hopContacts[i];
       if (contact == null || !contact.hasLocation) continue;
       final point = LatLng(contact.latitude!, contact.longitude!);
       markers.add(

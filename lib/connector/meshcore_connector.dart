@@ -750,17 +750,13 @@ class MeshCoreConnector extends ChangeNotifier {
 
     _scanSubscription = FlutterBluePlus.scanResults.listen((results) {
       _scanResults.clear();
-      for (var result in results) {
-        if (result.device.platformName.startsWith("MeshCore-") ||
-            result.advertisementData.advName.startsWith("MeshCore-") ||
-            result.advertisementData.advName.startsWith("Whisper-")) {
-          _scanResults.add(result);
-        }
-      }
+      _scanResults.addAll(results);
       notifyListeners();
     });
 
     await FlutterBluePlus.startScan(
+      withKeywords: ["MeshCore-", "Whisper-"],
+      webOptionalServices: [Guid(MeshCoreUuids.service)],
       timeout: timeout,
       androidScanMode: AndroidScanMode.lowLatency,
     );
