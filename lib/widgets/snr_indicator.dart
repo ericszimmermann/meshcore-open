@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
+
 import '../connector/meshcore_connector.dart';
+import '../connector/meshcore_protocol.dart';
 import '../l10n/l10n.dart';
+import '../models/contact.dart';
 import 'signal_ui.dart';
 
 class SNRUi {
@@ -64,6 +68,49 @@ class SNRIndicator extends StatefulWidget {
 }
 
 class _SNRIndicatorState extends State<SNRIndicator> {
+  Contact? _selectBestRepeaterContactForPrefix(int pubkeyFirstByte) {
+    final candidates = widget.connector.contacts
+        .where(
+          (c) =>
+              c.publicKey.isNotEmpty &&
+              c.publicKey.first == pubkeyFirstByte &&
+              c.type == advTypeRepeater &&
+              c.hasLocation,
+        )
+        .toList();
+
+    if (candidates.isEmpty) {
+      return null;
+    }
+
+    final selfLat = widget.connector.selfLatitude;
+    final selfLon = widget.connector.selfLongitude;
+
+    if (selfLat == null || selfLon == null) {
+      candidates.sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
+      return candidates.first;
+    }
+
+    final distance = Distance();
+    final selfPoint = LatLng(selfLat, selfLon);
+
+    Contact best = candidates.first;
+    double bestDistance = double.infinity;
+
+    for (final c in candidates) {
+      final d = distance(
+        selfPoint,
+        LatLng(c.latitude!, c.longitude!),
+      );
+      if (d < bestDistance) {
+        bestDistance = d;
+        best = c;
+      }
+    }
+
+    return best;
+  }
+
   @override
   Widget build(BuildContext context) {
     final directRepeaters = widget.connector.directRepeaters;
@@ -160,10 +207,9 @@ class _SNRIndicatorState extends State<SNRIndicator> {
                   widget.connector.currentSf,
                 );
 
-                final name = widget.connector.contacts
-                    .where((c) => c.publicKey.first == repeater.pubkeyFirstByte)
-                    .map((c) => c.name)
-                    .firstOrNull;
+                final contact =
+                    _selectBestRepeaterContactForPrefix(repeater.pubkeyFirstByte);
+                final name = contact?.name;
 
                 return Column(
                   children: [
