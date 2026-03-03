@@ -115,12 +115,42 @@ class _PathTraceMapScreenState extends State<PathTraceMapScreen> {
   ) {
     final Map<int, List<Contact>> result = {};
 
-    for (final contact in connector.contacts.where(
+    // Regular contacts with location are the primary source.
+    final contactsWithLocation = connector.contacts.where(
       (c) => c.type != advTypeChat && c.hasLocation,
-    )) {
+    );
+
+    // Track known contact keys so discovery entries don't duplicate them.
+    final knownContactKeys =
+        connector.contacts.map((c) => c.publicKeyHex).toSet();
+
+    for (final contact in contactsWithLocation) {
       if (contact.publicKey.isEmpty) continue;
       final prefix = contact.publicKey.first;
       result.putIfAbsent(prefix, () => []).add(contact);
+    }
+
+    // Fold in discovered contacts that have location, are not chats,
+    // and are not already present as full contacts.
+    for (final discovered in connector.discoveredContacts) {
+      if (discovered.type == advTypeChat) continue;
+      if (!discovered.hasLocation) continue;
+      if (knownContactKeys.contains(discovered.publicKeyHex)) continue;
+      if (discovered.publicKey.isEmpty) continue;
+
+      final syntheticContact = Contact(
+        publicKey: discovered.publicKey,
+        name: discovered.name,
+        type: discovered.type,
+        pathLength: discovered.pathLength,
+        path: discovered.path,
+        latitude: discovered.latitude,
+        longitude: discovered.longitude,
+        lastSeen: discovered.lastSeen,
+      );
+
+      final prefix = syntheticContact.publicKey.first;
+      result.putIfAbsent(prefix, () => []).add(syntheticContact);
     }
 
     return result;

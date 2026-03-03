@@ -148,17 +148,62 @@ class _MapScreenState extends State<MapScreen> {
         final keyPrefix = settings.mapKeyPrefix.trim();
         final filteredByKeyPrefix =
             (settings.mapKeyPrefixEnabled && keyPrefix.isNotEmpty)
-            ? filteredByTime.where((c) {
-                return c.publicKeyHex.toLowerCase().startsWith(
-                  keyPrefix.toLowerCase(),
-                );
-              }).toList()
-            : filteredByTime;
+                ? filteredByTime.where((c) {
+                    return c.publicKeyHex.toLowerCase().startsWith(
+                      keyPrefix.toLowerCase(),
+                    );
+                  }).toList()
+                : filteredByTime;
 
-        // Filter by location
+        // Filter by location (regular contacts).
         final contactsWithLocation = filteredByKeyPrefix
             .where((c) => c.hasLocation)
             .toList();
+
+        // Also fold in discovered contacts so nodes that haven't been
+        // imported yet can still appear on the map, without duplicating
+        // ones that already exist as full contacts.
+        final knownContactKeys =
+            contacts.map((c) => c.publicKeyHex).toSet();
+
+        final discoveredWithLocation =
+            connector.discoveredContacts.where((d) {
+          if (!d.hasLocation) return false;
+          if (settings.mapTimeFilterHours != 0) {
+            final hoursSinceLastSeen =
+                now.difference(d.lastSeen).inHours;
+            if (hoursSinceLastSeen > settings.mapTimeFilterHours) {
+              return false;
+            }
+          }
+          if (settings.mapKeyPrefixEnabled &&
+              keyPrefix.isNotEmpty &&
+              !d.publicKeyHex
+                  .toLowerCase()
+                  .startsWith(keyPrefix.toLowerCase())) {
+            return false;
+          }
+          if (knownContactKeys.contains(d.publicKeyHex)) {
+            return false;
+          }
+          return true;
+        }).map(
+          (d) => Contact(
+            publicKey: d.publicKey,
+            name: d.name,
+            type: d.type,
+            pathLength: d.pathLength,
+            path: d.path,
+            latitude: d.latitude,
+            longitude: d.longitude,
+            lastSeen: d.lastSeen,
+          ),
+        ).toList();
+
+        final allMapContacts = <Contact>[
+          ...contactsWithLocation,
+          ...discoveredWithLocation,
+        ];
 
         _polylines.clear();
         _polylines.addAll(
@@ -177,13 +222,13 @@ class _MapScreenState extends State<MapScreen> {
         LatLng center = const LatLng(0, 0);
         double initialZoom = 10.0;
         final hasMapContent =
-            contactsWithLocation.isNotEmpty ||
+            allMapContacts.isNotEmpty ||
             sharedMarkers.isNotEmpty ||
             _isSelectingPoi ||
             highlightPosition != null;
-        if (contactsWithLocation.isNotEmpty || sharedMarkers.isNotEmpty) {
+        if (allMapContacts.isNotEmpty || sharedMarkers.isNotEmpty) {
           final allPoints = [
-            ...contactsWithLocation.map(
+            ...allMapContacts.map(
               (c) => LatLng(c.latitude!, c.longitude!),
             ),
             ...sharedMarkers.map((m) => m.position),
@@ -298,7 +343,7 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                         );
                       }
-                      for (final c in contactsWithLocation) {
+                      for (final c in allMapContacts) {
                         candidates.add(
                           LineOfSightEndpoint(
                             label: c.name,
@@ -431,7 +476,7 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                           ),
                         ..._buildMarkers(
-                          contactsWithLocation,
+                          allMapContacts,
                           settings,
                           showLabels: _showNodeLabels,
                         ),
@@ -486,7 +531,7 @@ class _MapScreenState extends State<MapScreen> {
                 ),
                 if (!_isBuildingPathTrace)
                   _buildLegend(
-                    contactsWithLocation,
+                    allMapContacts,
                     settings,
                     sharedMarkers.length,
                   ),

@@ -74,10 +74,36 @@ class _SNRIndicatorState extends State<SNRIndicator> {
           (c) =>
               c.publicKey.isNotEmpty &&
               c.publicKey.first == pubkeyFirstByte &&
-              c.type == advTypeRepeater &&
-              c.hasLocation,
+              c.pathLength <= 0,
         )
         .toList();
+
+    // Also consider discovered repeaters so we can still show a name/location
+    // even if the repeater hasn't been imported as a full contact yet.
+    final knownContactKeys =
+        widget.connector.contacts.map((c) => c.publicKeyHex).toSet();
+
+    final discoveredRepeaterContacts =
+        widget.connector.discoveredContacts.where((d) {
+      if (d.pathLength > 0) return false;
+      if (d.publicKey.isEmpty) return false;
+      if (d.publicKey.first != pubkeyFirstByte) return false;
+      if (knownContactKeys.contains(d.publicKeyHex)) return false;
+      return true;
+    }).map(
+      (d) => Contact(
+        publicKey: d.publicKey,
+        name: d.name,
+        type: d.type,
+        pathLength: d.pathLength,
+        path: d.path,
+        latitude: d.latitude,
+        longitude: d.longitude,
+        lastSeen: d.lastSeen,
+      ),
+    );
+
+    candidates.addAll(discoveredRepeaterContacts);
 
     if (candidates.isEmpty) {
       return null;
