@@ -1507,7 +1507,7 @@ abstract class AppLocalizations {
   /// No description provided for @contacts_lastSeenMinsAgo.
   ///
   /// In en, this message translates to:
-  /// **'- {minutes} min.'**
+  /// **'~ {minutes} min.'**
   String contacts_lastSeenMinsAgo(int minutes);
 
   /// No description provided for @contacts_lastSeenHourAgo.

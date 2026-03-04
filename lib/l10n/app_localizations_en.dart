@@ -772,7 +772,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String contacts_lastSeenMinsAgo(int minutes) {
-    return '- $minutes min.';
+    return '~ $minutes min.';
   }
 
   @override

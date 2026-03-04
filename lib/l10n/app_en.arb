@@ -367,7 +367,7 @@
   "contacts_noContactsMatchFilter": "No contacts match your filter",
   "contacts_noMembers": "No members",
   "contacts_lastSeenNow": "recently",
-  "contacts_lastSeenMinsAgo": "- {minutes} min.",
+  "contacts_lastSeenMinsAgo": "~ {minutes} min.",
   "@contacts_lastSeenMinsAgo": {
     "placeholders": {
       "minutes": {
