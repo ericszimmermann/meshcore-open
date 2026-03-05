@@ -76,7 +76,11 @@ class _SNRIndicatorState extends State<SNRIndicator> {
 
     if (candidates.isEmpty) return null;
     candidates.sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
-    candidates.sort((a, b) => b.isFavorite.compareTo(a.isFavorite));
+    candidates.sort((a, b) {
+      final favA = a.isFavorite ? 1 : 0;
+      final favB = b.isFavorite ? 1 : 0;
+      return favB.compareTo(favA);
+    });
 
     final selfLat = widget.connector.selfLatitude;
     final selfLon = widget.connector.selfLongitude;
