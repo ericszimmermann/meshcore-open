@@ -16,6 +16,7 @@ import '../l10n/l10n.dart';
 import '../models/channel_message.dart';
 import '../models/app_settings.dart';
 import '../models/contact.dart';
+import '../models/discovery_contact.dart';
 import '../widgets/adaptive_app_bar_title.dart';
 
 class ChannelMessagePathScreen extends StatelessWidget {
@@ -32,6 +33,19 @@ class ChannelMessagePathScreen extends StatelessWidget {
     return Consumer<MeshCoreConnector>(
       builder: (context, connector, _) {
         final l10n = context.l10n;
+        final contacts = connector.contacts;
+        final discoveredContacts = connector.discoveredContacts;
+        final knownContactKeys = connector.knownContactKeys;
+        final discoveredForMap = discoveredContacts
+            .where((d) => !knownContactKeys.contains(d.publicKeyHex))
+            .toList();
+        final virtualContacts = discoveredForMap
+            .map(_contactFromDiscovery)
+            .where(
+              (vc) => !contacts.any((c) => c.publicKeyHex == vc.publicKeyHex),
+            )
+            .toList();
+        final allContacts = <Contact>[...contacts, ...virtualContacts];
         final primaryPathTmp = _selectPrimaryPath(
           message.pathBytes,
           message.pathVariants,
@@ -41,7 +55,7 @@ class ChannelMessagePathScreen extends StatelessWidget {
             ? Uint8List.fromList(primaryPathTmp.reversed.toList())
             : primaryPathTmp;
 
-        final hops = _buildPathHops(primaryPath, connector.contacts, l10n);
+        final hops = _buildPathHops(primaryPath, allContacts, l10n);
         final hasHopDetails = primaryPath.isNotEmpty;
         final observedLabel = _formatObservedHops(
           primaryPath.length,
@@ -343,6 +357,19 @@ class _ChannelMessagePathMapScreenState
         final settings = context.watch<AppSettingsService>().settings;
         final isImperial = settings.unitSystem == UnitSystem.imperial;
         final tileCache = context.read<MapTileCacheService>();
+        final contacts = connector.contacts;
+        final discoveredContacts = connector.discoveredContacts;
+        final knownContactKeys = connector.knownContactKeys;
+        final discoveredForMap = discoveredContacts
+            .where((d) => !knownContactKeys.contains(d.publicKeyHex))
+            .toList();
+        final virtualContacts = discoveredForMap
+            .map(_contactFromDiscovery)
+            .where(
+              (vc) => !contacts.any((c) => c.publicKeyHex == vc.publicKeyHex),
+            )
+            .toList();
+        final allContacts = <Contact>[...contacts, ...virtualContacts];
         final primaryPath = _selectPrimaryPath(
           widget.message.pathBytes,
           widget.message.pathVariants,
@@ -364,11 +391,7 @@ class _ChannelMessagePathMapScreenState
             : selectedPathTmp;
 
         final selectedIndex = _indexForPath(selectedPath, observedPaths);
-        final hops = _buildPathHops(
-          selectedPath,
-          connector.contacts,
-          context.l10n,
-        );
+        final hops = _buildPathHops(selectedPath, allContacts, context.l10n);
 
         final points = <LatLng>[];
 
@@ -785,6 +808,20 @@ class _ObservedPath {
   final bool isPrimary;
 
   const _ObservedPath({required this.pathBytes, required this.isPrimary});
+}
+
+Contact _contactFromDiscovery(DiscoveryContact contact) {
+  return Contact(
+    publicKey: contact.publicKey,
+    name: contact.name,
+    type: contact.type,
+    flags: 0,
+    pathLength: contact.pathLength,
+    path: contact.path,
+    latitude: contact.latitude,
+    longitude: contact.longitude,
+    lastSeen: contact.lastSeen,
+  );
 }
 
 List<_PathHop> _buildPathHops(
