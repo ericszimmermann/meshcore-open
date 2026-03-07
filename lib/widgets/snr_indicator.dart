@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
+
 import '../connector/meshcore_connector.dart';
 import '../l10n/l10n.dart';
+import '../utils/location_utils.dart';
 import 'signal_ui.dart';
 
 class SNRUi {
@@ -160,10 +163,22 @@ class _SNRIndicatorState extends State<SNRIndicator> {
                   widget.connector.currentSf,
                 );
 
-                final name = widget.connector.contacts
-                    .where((c) => c.publicKey.first == repeater.pubkeyFirstByte)
-                    .map((c) => c.name)
-                    .firstOrNull;
+                final selfLat = widget.connector.selfLatitude;
+                final selfLon = widget.connector.selfLongitude;
+
+                LatLng? selfPoint;
+                if (selfLat != null && selfLon != null) {
+                  selfPoint = LatLng(selfLat, selfLon);
+                }
+
+                final contact = selectBestRepeaterContactForPrefix(
+                  widget.connector.contacts,
+                  repeater.pubkeyFirstByte,
+                  searchPoint: selfPoint,
+                  preferFavorites: true,
+                );
+
+                final name = contact?.name;
 
                 return Column(
                   children: [
