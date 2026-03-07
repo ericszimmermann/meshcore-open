@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../connector/meshcore_connector.dart';
 import '../l10n/l10n.dart';
+import '../models/contact.dart';
 import '../utils/location_utils.dart';
 import 'signal_ui.dart';
 
@@ -162,8 +163,24 @@ class _SNRIndicatorState extends State<SNRIndicator> {
                   widget.connector.currentSf,
                 );
 
+                final allRepeaterContacts = <Contact>[
+                  ...widget.connector.contacts,
+                  ...widget.connector.discoveredContacts.map(
+                    (d) => Contact(
+                      publicKey: d.publicKey,
+                      name: d.name,
+                      type: d.type,
+                      pathLength: d.pathLength,
+                      path: d.path,
+                      latitude: d.latitude,
+                      longitude: d.longitude,
+                      lastSeen: d.lastSeen,
+                    ),
+                  ),
+                ];
+
                 final contact = selectBestRepeaterContactForPrefix(
-                  widget.connector.contacts,
+                  allRepeaterContacts,
                   repeater.pubkeyFirstByte,
                 );
                 final name = contact?.name;
