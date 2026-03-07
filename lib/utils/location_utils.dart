@@ -7,7 +7,7 @@ Contact? selectBestRepeaterContactForPrefix(
   List<Contact> contacts,
   int pubkeyFirstByte, {
   LatLng? searchPoint,
-  bool preferFavorites = false,
+  bool? preferFavorites = false,
 }) {
   final candidates = contacts
       .where(
