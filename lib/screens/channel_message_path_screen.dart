@@ -10,13 +10,13 @@ import 'package:provider/provider.dart';
 import '../connector/meshcore_connector.dart';
 import '../services/map_tile_cache_service.dart';
 import '../services/app_settings_service.dart';
-import '../connector/meshcore_protocol.dart';
 import '../l10n/app_localizations.dart';
 import '../l10n/l10n.dart';
 import '../models/channel_message.dart';
 import '../models/app_settings.dart';
 import '../models/contact.dart';
 import '../models/discovery_contact.dart';
+import '../utils/location_utils.dart';
 import '../widgets/adaptive_app_bar_title.dart';
 
 class ChannelMessagePathScreen extends StatelessWidget {
@@ -33,19 +33,6 @@ class ChannelMessagePathScreen extends StatelessWidget {
     return Consumer<MeshCoreConnector>(
       builder: (context, connector, _) {
         final l10n = context.l10n;
-        final contacts = connector.contacts;
-        final discoveredContacts = connector.discoveredContacts;
-        final knownContactKeys = connector.knownContactKeys;
-        final discoveredForMap = discoveredContacts
-            .where((d) => !knownContactKeys.contains(d.publicKeyHex))
-            .toList();
-        final virtualContacts = discoveredForMap
-            .map(_contactFromDiscovery)
-            .where(
-              (vc) => !contacts.any((c) => c.publicKeyHex == vc.publicKeyHex),
-            )
-            .toList();
-        final allContacts = <Contact>[...contacts, ...virtualContacts];
         final primaryPathTmp = _selectPrimaryPath(
           message.pathBytes,
           message.pathVariants,
@@ -55,7 +42,12 @@ class ChannelMessagePathScreen extends StatelessWidget {
             ? Uint8List.fromList(primaryPathTmp.reversed.toList())
             : primaryPathTmp;
 
-        final hops = _buildPathHops(primaryPath, allContacts, l10n);
+        final hops = _buildPathHops(
+          primaryPath,
+          connector,
+          message.isOutgoing,
+          l10n,
+        );
         final hasHopDetails = primaryPath.isNotEmpty;
         final observedLabel = _formatObservedHops(
           primaryPath.length,
@@ -357,19 +349,6 @@ class _ChannelMessagePathMapScreenState
         final settings = context.watch<AppSettingsService>().settings;
         final isImperial = settings.unitSystem == UnitSystem.imperial;
         final tileCache = context.read<MapTileCacheService>();
-        final contacts = connector.contacts;
-        final discoveredContacts = connector.discoveredContacts;
-        final knownContactKeys = connector.knownContactKeys;
-        final discoveredForMap = discoveredContacts
-            .where((d) => !knownContactKeys.contains(d.publicKeyHex))
-            .toList();
-        final virtualContacts = discoveredForMap
-            .map(_contactFromDiscovery)
-            .where(
-              (vc) => !contacts.any((c) => c.publicKeyHex == vc.publicKeyHex),
-            )
-            .toList();
-        final allContacts = <Contact>[...contacts, ...virtualContacts];
         final primaryPath = _selectPrimaryPath(
           widget.message.pathBytes,
           widget.message.pathVariants,
@@ -391,7 +370,12 @@ class _ChannelMessagePathMapScreenState
             : selectedPathTmp;
 
         final selectedIndex = _indexForPath(selectedPath, observedPaths);
-        final hops = _buildPathHops(selectedPath, allContacts, context.l10n);
+        final hops = _buildPathHops(
+          selectedPath,
+          connector,
+          widget.message.isOutgoing,
+          context.l10n,
+        );
 
         final points = <LatLng>[];
 
@@ -826,48 +810,90 @@ Contact _contactFromDiscovery(DiscoveryContact contact) {
 
 List<_PathHop> _buildPathHops(
   Uint8List pathBytes,
-  List<Contact> contacts,
+  MeshCoreConnector connector,
+  bool isOutgoing,
   AppLocalizations l10n,
 ) {
   final hops = <_PathHop>[];
-  for (var i = 0; i < pathBytes.length; i++) {
-    final prefix = pathBytes[i];
-    final contact = _matchContactForPrefix(contacts, prefix);
-    hops.add(
-      _PathHop(
-        index: i + 1,
-        prefix: prefix,
-        contact: contact,
-        position: _resolvePosition(contact),
-        l10n: l10n,
-      ),
-    );
+  final selfLat = connector.selfLatitude;
+  final selfLon = connector.selfLongitude;
+
+  LatLng? searchPoint;
+  if (selfLat != null && selfLon != null) {
+    searchPoint = LatLng(selfLat, selfLon);
+  }
+
+  final contacts = connector.contacts;
+  final discoveredContacts = connector.discoveredContacts;
+  final knownContactKeys = connector.knownContactKeys;
+  final discoveredForMap = discoveredContacts
+      .where((d) => !knownContactKeys.contains(d.publicKeyHex))
+      .toList();
+  final virtualContacts = discoveredForMap
+      .map(_contactFromDiscovery)
+      .where((vc) => !contacts.any((c) => c.publicKeyHex == vc.publicKeyHex))
+      .toList();
+  final allContacts = <Contact>[...contacts, ...virtualContacts];
+
+  if (isOutgoing) {
+    for (var i = 0; i < pathBytes.length; i++) {
+      final prefix = pathBytes[i];
+
+      final contact = selectBestRepeaterContactForPrefix(
+        allContacts,
+        prefix,
+        searchPoint: searchPoint,
+        preferFavorites: false,
+      );
+
+      if (contact != null && contact.hasLocation) {
+        searchPoint = LatLng(contact.latitude!, contact.longitude!);
+      }
+
+      hops.add(
+        _PathHop(
+          index: i + 1,
+          prefix: prefix,
+          contact: contact,
+          position: _resolvePosition(contact),
+          l10n: l10n,
+        ),
+      );
+    }
+  } else {
+    // Temporary list to hold hops in reverse
+    final tempHops = <_PathHop>[];
+    // Iterate backwards through pathBytes
+    for (var i = pathBytes.length - 1; i >= 0; i--) {
+      final prefix = pathBytes[i];
+
+      final contact = selectBestRepeaterContactForPrefix(
+        allContacts,
+        prefix,
+        searchPoint: searchPoint,
+        preferFavorites: false,
+      );
+
+      if (contact != null && contact.hasLocation) {
+        searchPoint = LatLng(contact.latitude!, contact.longitude!);
+      }
+
+      // Add to temporary list
+      tempHops.add(
+        _PathHop(
+          index: pathBytes.length - i, // Calculate index to maintain order
+          prefix: prefix,
+          contact: contact,
+          position: _resolvePosition(contact),
+          l10n: l10n,
+        ),
+      );
+    }
+
+    // Reverse the temporary list to maintain the correct order in hops
+    hops.addAll(tempHops.reversed);
   }
   return hops;
-}
-
-Contact? _matchContactForPrefix(List<Contact> contacts, int prefix) {
-  final matches = contacts
-      .where(
-        (contact) =>
-            (contact.type == advTypeRepeater || contact.type == advTypeRoom) &&
-            contact.publicKey.isNotEmpty &&
-            contact.publicKey[0] == prefix,
-      )
-      .toList();
-  if (matches.isEmpty) return null;
-
-  Contact? pickWhere(bool Function(Contact) predicate) {
-    for (final contact in matches) {
-      if (predicate(contact)) return contact;
-    }
-    return null;
-  }
-
-  return pickWhere((c) => c.type == advTypeRepeater && _hasValidLocation(c)) ??
-      pickWhere((c) => c.type == advTypeRepeater) ??
-      pickWhere(_hasValidLocation) ??
-      matches.first;
 }
 
 LatLng? _resolvePosition(Contact? contact) {
