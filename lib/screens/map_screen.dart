@@ -145,7 +145,10 @@ class _MapScreenState extends State<MapScreen> {
         final discoveredContacts = connector.discoveredContacts;
         final knownContactKeys = connector.knownContactKeys;
         final discoveredForMap = discoveredContacts
-            .where((d) => !knownContactKeys.contains(d.publicKeyHex))
+            .where(
+              (d) =>
+                  !knownContactKeys.contains(d.publicKeyHex) && !d.hasLocation,
+            )
             .toList();
         final discoveredKeys = discoveredForMap
             .map((d) => d.publicKeyHex)
@@ -610,6 +613,11 @@ class _MapScreenState extends State<MapScreen> {
     for (final contact in allContacts) {
       if (contact.hasLocation) continue;
 
+      // Skip contacts with no path information at all (no device path, no
+      // history). Without any path bytes we have no basis to guess location.
+      final recentPaths = pathHistory.getRecentPaths(contact.publicKeyHex);
+      if (contact.path.isEmpty && recentPaths.isEmpty) continue;
+
       final anchorSet = <LatLng>{};
 
       // Collect the contact-side (last-hop) repeater from every known path.
@@ -618,9 +626,7 @@ class _MapScreenState extends State<MapScreen> {
       // earlier bytes would anchor against our own side of the network.
       final pathSets = <List<int>>[
         contact.path.toList(),
-        ...pathHistory
-            .getRecentPaths(contact.publicKeyHex)
-            .map((r) => r.pathBytes),
+        ...recentPaths.map((r) => r.pathBytes),
       ];
       final lastHopBytes = <int>{};
       for (final pathBytes in pathSets) {

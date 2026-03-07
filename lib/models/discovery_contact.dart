@@ -47,7 +47,11 @@ class DiscoveryContact {
     return '$pathLength hops';
   }
 
-  bool get hasLocation => latitude != null && longitude != null;
+  bool get hasLocation {
+    if (latitude == null || longitude == null) return false;
+    if (latitude == 0 && longitude == 0) return false;
+    return true;
+  }
 
   DiscoveryContact copyWith({
     Uint8List? rawPacket,
