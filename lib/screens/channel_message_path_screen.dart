@@ -809,34 +809,9 @@ List<_PathHop> _buildPathHops(
   }
 
   if (isOutgoing) {
-    for (var i = 0; i < pathBytes.length; i++) {
-      final prefix = pathBytes[i];
-
-      final contact = selectBestRepeaterContactForPrefix(
-        connector.contacts,
-        prefix,
-        searchPoint: searchPoint,
-        preferFavorites: false,
-      );
-
-      if (contact != null && contact.hasLocation) {
-        searchPoint = LatLng(contact.latitude!, contact.longitude!);
-      }
-
-      hops.add(
-        _PathHop(
-          index: i + 1,
-          prefix: prefix,
-          contact: contact,
-          position: _resolvePosition(contact),
-          l10n: l10n,
-        ),
-      );
-    }
-  } else {
     // Temporary list to hold hops in reverse
     final tempHops = <_PathHop>[];
-    // Iterate backwards through pathBytes
+    // Iterate backwards through pathBytes since we start with own location.
     for (var i = pathBytes.length - 1; i >= 0; i--) {
       final prefix = pathBytes[i];
 
@@ -862,9 +837,33 @@ List<_PathHop> _buildPathHops(
         ),
       );
     }
-
     // Reverse the temporary list to maintain the correct order in hops
     hops.addAll(tempHops.reversed);
+  } else {
+    for (var i = 0; i < pathBytes.length; i++) {
+      final prefix = pathBytes[i];
+
+      final contact = selectBestRepeaterContactForPrefix(
+        connector.contacts,
+        prefix,
+        searchPoint: searchPoint,
+        preferFavorites: false,
+      );
+
+      if (contact != null && contact.hasLocation) {
+        searchPoint = LatLng(contact.latitude!, contact.longitude!);
+      }
+
+      hops.add(
+        _PathHop(
+          index: i + 1,
+          prefix: prefix,
+          contact: contact,
+          position: _resolvePosition(contact),
+          l10n: l10n,
+        ),
+      );
+    }
   }
   return hops;
 }
