@@ -322,6 +322,150 @@ abstract class AppLocalizations {
   /// **'MeshCore Open'**
   String get scanner_title;
 
+  /// No description provided for @connectionChoiceUsbLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'USB'**
+  String get connectionChoiceUsbLabel;
+
+  /// No description provided for @connectionChoiceBluetoothLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bluetooth'**
+  String get connectionChoiceBluetoothLabel;
+
+  /// No description provided for @usbScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect over USB'**
+  String get usbScreenTitle;
+
+  /// No description provided for @usbScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a detected serial device and connect directly to your MeshCore node.'**
+  String get usbScreenSubtitle;
+
+  /// No description provided for @usbScreenStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a USB device'**
+  String get usbScreenStatus;
+
+  /// No description provided for @usbScreenNote.
+  ///
+  /// In en, this message translates to:
+  /// **'USB serial is active on supported Android devices and desktop platforms.'**
+  String get usbScreenNote;
+
+  /// No description provided for @usbScreenEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'No USB devices found. Plug one in and refresh.'**
+  String get usbScreenEmptyState;
+
+  /// No description provided for @usbErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'USB permission was denied.'**
+  String get usbErrorPermissionDenied;
+
+  /// No description provided for @usbErrorDeviceMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected USB device is no longer available.'**
+  String get usbErrorDeviceMissing;
+
+  /// No description provided for @usbErrorInvalidPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a valid USB device.'**
+  String get usbErrorInvalidPort;
+
+  /// No description provided for @usbErrorBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Another USB connection request is already in progress.'**
+  String get usbErrorBusy;
+
+  /// No description provided for @usbErrorNotConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'No USB device is connected.'**
+  String get usbErrorNotConnected;
+
+  /// No description provided for @usbErrorOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open the selected USB device.'**
+  String get usbErrorOpenFailed;
+
+  /// No description provided for @usbErrorConnectFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to the selected USB device.'**
+  String get usbErrorConnectFailed;
+
+  /// No description provided for @usbErrorUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'USB serial is not supported on this platform.'**
+  String get usbErrorUnsupported;
+
+  /// No description provided for @usbErrorAlreadyActive.
+  ///
+  /// In en, this message translates to:
+  /// **'A USB connection is already active.'**
+  String get usbErrorAlreadyActive;
+
+  /// No description provided for @usbErrorNoDeviceSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No USB device was selected.'**
+  String get usbErrorNoDeviceSelected;
+
+  /// No description provided for @usbErrorPortClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'The USB connection is not open.'**
+  String get usbErrorPortClosed;
+
+  /// No description provided for @usbErrorConnectTimedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timed out. Make sure the device has USB Companion firmware.'**
+  String get usbErrorConnectTimedOut;
+
+  /// No description provided for @usbFallbackDeviceName.
+  ///
+  /// In en, this message translates to:
+  /// **'Web Serial Device'**
+  String get usbFallbackDeviceName;
+
+  /// No description provided for @usbStatus_notConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a USB device'**
+  String get usbStatus_notConnected;
+
+  /// No description provided for @usbStatus_connecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to USB device...'**
+  String get usbStatus_connecting;
+
+  /// No description provided for @usbStatus_searching.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching for USB devices...'**
+  String get usbStatus_searching;
+
+  /// No description provided for @usbConnectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'USB connection failed: {error}'**
+  String usbConnectionFailed(String error);
+
   /// No description provided for @scanner_scanning.
   ///
   /// In en, this message translates to:

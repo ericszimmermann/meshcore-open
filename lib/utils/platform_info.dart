@@ -33,4 +33,15 @@ class PlatformInfo {
 
   /// Whether the app is running on a desktop platform (macOS, Windows, or Linux).
   static bool get isDesktop => isMacOS || isWindows || isLinux;
+
+  /// Whether the current platform supports a native USB serial backend.
+  static bool get supportsNativeUsbSerial =>
+      isAndroid || isWindows || isLinux || isMacOS;
+
+  /// Whether the current browser supports the Web Serial backend.
+  static bool get supportsWebSerial => isWeb && isChrome;
+
+  /// Whether USB serial is expected to be available on the current platform.
+  static bool get supportsUsbSerial =>
+      supportsNativeUsbSerial || supportsWebSerial;
 }

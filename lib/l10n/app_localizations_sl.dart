@@ -112,6 +112,89 @@ class AppLocalizationsSl extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Povežite preko USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Izberite zaznano serijsko napravo in se neposredno povežite z vašo MeshCore napravo.';
+
+  @override
+  String get usbScreenStatus => 'Izberite USB naprave';
+
+  @override
+  String get usbScreenNote =>
+      'USB serijska povezava je aktivna na podprtih napravah Android in na desktop platformah.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'Niti en USB naprave niso najdeni. Povežite eno in posodobite.';
+
+  @override
+  String get usbErrorPermissionDenied =>
+      'Dovoljenje za dostop preko USB-ja je bilo zavrnjeno.';
+
+  @override
+  String get usbErrorDeviceMissing => 'Izbrani USB napravej je več ne.';
+
+  @override
+  String get usbErrorInvalidPort => 'Izberite veljavno USB naprave.';
+
+  @override
+  String get usbErrorBusy => 'Že je v teku zahteva za povezavo preko USB.';
+
+  @override
+  String get usbErrorNotConnected => 'Ni priklopljenih USB naprave.';
+
+  @override
+  String get usbErrorOpenFailed =>
+      'Uspešno ni bilo mogo, da se odpre izbran naprave USB.';
+
+  @override
+  String get usbErrorConnectFailed =>
+      'Niso bilo mogoče uskladiti povezave z izbranim USB napom.';
+
+  @override
+  String get usbErrorUnsupported =>
+      'USB serijska komunikacija ni podprta na tej platformi.';
+
+  @override
+  String get usbErrorAlreadyActive => 'USB povezava je že aktivirana.';
+
+  @override
+  String get usbErrorNoDeviceSelected => 'Ni bilo izbranega USB naprave.';
+
+  @override
+  String get usbErrorPortClosed => 'USB povezava ni aktivirana.';
+
+  @override
+  String get usbErrorConnectTimedOut =>
+      'Vzpostavitve ni bilo mogo. Prosimo, da se prepričate, da ima naprave trenutno nameštan firmware USB Companion.';
+
+  @override
+  String get usbFallbackDeviceName =>
+      'Naprave za serijsko komunikacijo preko spleta';
+
+  @override
+  String get usbStatus_notConnected => 'Izberite USB naprave.';
+
+  @override
+  String get usbStatus_connecting => 'Povezava z USB napravo...';
+
+  @override
+  String get usbStatus_searching => 'Iskanje USB naprav...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'Napaka pri povezavi preko USB: $error';
+  }
+
+  @override
   String get scanner_scanning => 'Skeniram za naprave...';
 
   @override

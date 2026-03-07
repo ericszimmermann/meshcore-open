@@ -112,6 +112,89 @@ class AppLocalizationsNl extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Verbind via USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Selecteer een gedetecteerd seriële apparaat en verbind deze direct met uw MeshCore-node.';
+
+  @override
+  String get usbScreenStatus => 'Selecteer een USB-apparaat';
+
+  @override
+  String get usbScreenNote =>
+      'USB-serieel is actief op ondersteunde Android-apparaten en desktop-platforms.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'Geen USB-apparaten gevonden. Sluit er een aan en herlaad.';
+
+  @override
+  String get usbErrorPermissionDenied => 'Toegang via USB is geweigerd.';
+
+  @override
+  String get usbErrorDeviceMissing =>
+      'Het geselecteerde USB-apparaat is niet meer beschikbaar.';
+
+  @override
+  String get usbErrorInvalidPort => 'Selecteer een geldig USB-apparaat.';
+
+  @override
+  String get usbErrorBusy =>
+      'Een andere verzoek om een USB-verbinding is al in behandeling.';
+
+  @override
+  String get usbErrorNotConnected => 'Er is geen USB-apparaat aangesloten.';
+
+  @override
+  String get usbErrorOpenFailed =>
+      'Kon het geselecteerde USB-apparaat niet openen.';
+
+  @override
+  String get usbErrorConnectFailed =>
+      'Kon niet verbinding maken met het geselecteerde USB-apparaat.';
+
+  @override
+  String get usbErrorUnsupported =>
+      'USB-serieel is niet ondersteund op deze platform.';
+
+  @override
+  String get usbErrorAlreadyActive => 'Een USB-verbinding is al actief.';
+
+  @override
+  String get usbErrorNoDeviceSelected => 'Geen USB-apparaat is geselecteerd.';
+
+  @override
+  String get usbErrorPortClosed => 'De USB-verbinding is niet actief.';
+
+  @override
+  String get usbErrorConnectTimedOut =>
+      'Verbinding is verbroken. Zorg ervoor dat het apparaat de juiste USB-firmware heeft.';
+
+  @override
+  String get usbFallbackDeviceName => 'Web-serieapparaat';
+
+  @override
+  String get usbStatus_notConnected => 'Selecteer een USB-apparaat';
+
+  @override
+  String get usbStatus_connecting => 'Verbinding maken met USB-apparaat...';
+
+  @override
+  String get usbStatus_searching => 'Zoeken naar USB-apparaten...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'Fout bij de USB-verbinding: $error';
+  }
+
+  @override
   String get scanner_scanning => 'Scannen naar apparaten...';
 
   @override

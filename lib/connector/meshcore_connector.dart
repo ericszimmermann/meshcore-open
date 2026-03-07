@@ -21,6 +21,7 @@ import '../services/path_history_service.dart';
 import '../services/app_settings_service.dart';
 import '../services/background_service.dart';
 import '../services/notification_service.dart';
+import 'meshcore_connector_usb.dart';
 import '../storage/channel_message_store.dart';
 import '../storage/channel_order_store.dart';
 import '../storage/channel_settings_store.dart';
@@ -32,6 +33,7 @@ import '../storage/message_store.dart';
 import '../storage/unread_store.dart';
 import '../utils/app_logger.dart';
 import '../utils/battery_utils.dart';
+import '../utils/platform_info.dart';
 import 'meshcore_protocol.dart';
 
 class MeshCoreUuids {
@@ -84,6 +86,8 @@ enum MeshCoreConnectionState {
   disconnecting,
 }
 
+enum MeshCoreTransportType { bluetooth, usb }
+
 class RepeaterBatterySnapshot {
   final int millivolts;
   final DateTime updatedAt;
@@ -110,6 +114,9 @@ class MeshCoreConnector extends ChangeNotifier {
   String? _lastDeviceId;
   String? _lastDeviceDisplayName;
   bool _manualDisconnect = false;
+  final MeshCoreUsbManager _usbManager = MeshCoreUsbManager();
+  StreamSubscription<Uint8List>? _usbFrameSubscription;
+  MeshCoreTransportType _activeTransport = MeshCoreTransportType.bluetooth;
 
   final List<ScanResult> _scanResults = [];
   final List<Contact> _contacts = [];
@@ -160,6 +167,12 @@ class MeshCoreConnector extends ChangeNotifier {
   bool _hasLoadedChannels = false;
   bool _batteryRequested = false;
   bool _awaitingSelfInfo = false;
+  bool _hasReceivedDeviceInfo = false;
+  bool _pendingInitialChannelSync = false;
+  bool _pendingInitialContactsSync = false;
+  bool _bleInitialSyncStarted = false;
+  bool _pendingDeferredChannelSyncAfterContacts = false;
+  bool _webInitialHandshakeRequestSent = false;
   bool _preserveContactsOnRefresh = false;
   bool _autoAddUsers = false;
   bool _autoAddRepeaters = false;
@@ -235,6 +248,13 @@ class MeshCoreConnector extends ChangeNotifier {
   BluetoothDevice? get device => _device;
   String? get deviceId => _deviceId;
   String get deviceIdLabel => _deviceId ?? 'Unknown';
+
+  MeshCoreTransportType get activeTransport => _activeTransport;
+  String? get activeUsbPort => _usbManager.activePortKey;
+  String? get activeUsbPortDisplayLabel => _usbManager.activePortDisplayLabel;
+  bool get isUsbTransportConnected =>
+      _state == MeshCoreConnectionState.connected &&
+      _activeTransport == MeshCoreTransportType.usb;
 
   String get deviceDisplayName {
     if (_selfName != null && _selfName!.isNotEmpty) {
@@ -359,9 +379,48 @@ class MeshCoreConnector extends ChangeNotifier {
           ? allMessages.sublist(allMessages.length - _messageWindowSize)
           : allMessages;
 
-      _conversations[contactKeyHex] = windowedMessages;
+      final currentMessages =
+          _conversations[contactKeyHex] ?? const <Message>[];
+      final mergedMessages = <Message>[...windowedMessages];
+      final persistedKeyCounts = <String, int>{};
+      for (final message in windowedMessages) {
+        final key = _messageMergeKey(message);
+        persistedKeyCounts[key] = (persistedKeyCounts[key] ?? 0) + 1;
+      }
+      final currentKeyCounts = <String, int>{};
+
+      for (final message in currentMessages) {
+        final key = _messageMergeKey(message);
+        final currentCount = (currentKeyCounts[key] ?? 0) + 1;
+        currentKeyCounts[key] = currentCount;
+        final persistedCount = persistedKeyCounts[key] ?? 0;
+
+        // Preserve distinct duplicates without IDs (for example same text
+        // received multiple times in the same second) by only skipping the
+        // overlapping occurrences that already exist in persisted storage.
+        if (currentCount > persistedCount) {
+          mergedMessages.add(message);
+        }
+      }
+
+      // Re-sort after merging persisted and in-memory messages so the
+      // conversation window remains stable after optimistic inserts.
+      mergedMessages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+      final windowedMergedMessages = mergedMessages.length > _messageWindowSize
+          ? mergedMessages.sublist(mergedMessages.length - _messageWindowSize)
+          : mergedMessages;
+
+      _conversations[contactKeyHex] = windowedMergedMessages;
       notifyListeners();
     }
+  }
+
+  String _messageMergeKey(Message message) {
+    final messageId = message.messageId;
+    if (messageId != null && messageId.isNotEmpty) {
+      return 'id:$messageId';
+    }
+    return 'fallback:${message.senderKeyHex}:${message.isOutgoing}:${message.isCli}:${message.timestamp.millisecondsSinceEpoch}:${message.text}';
   }
 
   /// Load older messages for a contact (pagination)
@@ -599,6 +658,7 @@ class MeshCoreConnector extends ChangeNotifier {
     _bleDebugLogService = bleDebugLogService;
     _appDebugLogService = appDebugLogService;
     _backgroundService = backgroundService;
+    _usbManager.setDebugLogService(_appDebugLogService);
 
     // Initialize notification service
     _notificationService.initialize();
@@ -725,8 +785,18 @@ class MeshCoreConnector extends ChangeNotifier {
     _scanResults.clear();
     _setState(MeshCoreConnectionState.scanning);
 
-    // Ensure any previous scan is fully stopped
-    await FlutterBluePlus.stopScan();
+    // Ensure any previous scan is fully stopped. Guard with isScanningNow to
+    // avoid triggering stale native callbacks when no scan is active.
+    if (FlutterBluePlus.isScanningNow) {
+      try {
+        await FlutterBluePlus.stopScan();
+      } catch (e) {
+        _appDebugLogService?.warn(
+          'stopScan error in startScan (ignored): $e',
+          tag: 'BLE Scan',
+        );
+      }
+    }
     await _scanSubscription?.cancel();
 
     // On iOS/macOS, wait for Bluetooth to be powered on before scanning
@@ -757,19 +827,39 @@ class MeshCoreConnector extends ChangeNotifier {
       notifyListeners();
     });
 
-    await FlutterBluePlus.startScan(
-      withKeywords: ["MeshCore-", "Whisper-"],
-      webOptionalServices: [Guid(MeshCoreUuids.service)],
-      timeout: timeout,
-      androidScanMode: AndroidScanMode.lowLatency,
-    );
+    try {
+      await FlutterBluePlus.startScan(
+        withKeywords: ["MeshCore-", "Whisper-"],
+        webOptionalServices: [Guid(MeshCoreUuids.service)],
+        timeout: timeout,
+        androidScanMode: AndroidScanMode.lowLatency,
+      );
+    } catch (error) {
+      _appDebugLogService?.warn('Scan/picker failure: $error', tag: 'BLE Scan');
+      _setState(MeshCoreConnectionState.disconnected);
+      rethrow;
+    }
 
     await Future.delayed(timeout);
     await stopScan();
   }
 
   Future<void> stopScan() async {
-    await FlutterBluePlus.stopScan();
+    // Only call FlutterBluePlus.stopScan() when a scan is actually running.
+    // Calling it when idle triggers a native BLE completion callback even
+    // though no scan was started. After a hot restart Dart has already freed
+    // those callback handles, so the callback crashes with
+    // "Callback invoked after it has been deleted".
+    if (FlutterBluePlus.isScanningNow) {
+      try {
+        await FlutterBluePlus.stopScan();
+      } catch (e) {
+        _appDebugLogService?.warn(
+          'stopScan error (ignored): $e',
+          tag: 'BLE Scan',
+        );
+      }
+    }
     await _scanSubscription?.cancel();
     _scanSubscription = null;
 
@@ -778,11 +868,109 @@ class MeshCoreConnector extends ChangeNotifier {
     }
   }
 
+  Future<List<String>> listUsbPorts() => _usbManager.listPorts();
+
+  void setUsbRequestPortLabel(String label) {
+    _usbManager.setRequestPortLabel(label);
+  }
+
+  void setUsbFallbackDeviceName(String label) {
+    _usbManager.setFallbackDeviceName(label);
+  }
+
+  Future<void> connectUsb({
+    required String portName,
+    int baudRate = 115200,
+  }) async {
+    if (_state == MeshCoreConnectionState.connecting ||
+        _state == MeshCoreConnectionState.connected) {
+      _appDebugLogService?.warn(
+        'connectUsb ignored: already $_state',
+        tag: 'USB',
+      );
+      return;
+    }
+
+    _appDebugLogService?.info(
+      'connectUsb: port=$portName baud=$baudRate',
+      tag: 'USB',
+    );
+
+    await stopScan();
+    _cancelReconnectTimer();
+    _manualDisconnect = false;
+    _resetConnectionHandshakeState();
+    _activeTransport = MeshCoreTransportType.usb;
+    _setState(MeshCoreConnectionState.connecting);
+
+    try {
+      await _usbFrameSubscription?.cancel();
+      _usbFrameSubscription = null;
+      _appDebugLogService?.info('connectUsb: opening serial port…', tag: 'USB');
+      await _usbManager.connect(portName: portName, baudRate: baudRate);
+      _appDebugLogService?.info(
+        'connectUsb: serial port opened, label=${_usbManager.activePortDisplayLabel}',
+        tag: 'USB',
+      );
+      notifyListeners();
+      if (PlatformInfo.isWeb) {
+        await stopScan();
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      _usbFrameSubscription = _usbManager.frameStream.listen(
+        _handleFrame,
+        onError: (error, stackTrace) {
+          _appDebugLogService?.error('USB transport error: $error', tag: 'USB');
+          unawaited(disconnect(manual: false));
+        },
+        onDone: () {
+          _appDebugLogService?.warn('USB frame stream ended', tag: 'USB');
+          unawaited(disconnect(manual: false));
+        },
+      );
+
+      _setState(MeshCoreConnectionState.connected);
+      _pendingInitialChannelSync = true;
+      _appDebugLogService?.info(
+        'connectUsb: requesting device info…',
+        tag: 'USB',
+      );
+      await _requestDeviceInfo();
+      _startBatteryPolling();
+      var gotSelfInfo = await _waitForSelfInfo(
+        timeout: const Duration(seconds: 3),
+      );
+      if (!gotSelfInfo) {
+        _appDebugLogService?.warn(
+          'connectUsb: SELF_INFO timeout, retrying…',
+          tag: 'USB',
+        );
+        await refreshDeviceInfo();
+        gotSelfInfo = await _waitForSelfInfo(
+          timeout: const Duration(seconds: 3),
+        );
+      }
+      if (!gotSelfInfo) {
+        throw StateError('Timed out waiting for SELF_INFO during connect');
+      }
+
+      _appDebugLogService?.info('connectUsb: syncing time…', tag: 'USB');
+      await syncTime();
+      _appDebugLogService?.info('connectUsb: complete', tag: 'USB');
+    } catch (error) {
+      _appDebugLogService?.error('USB connection error: $error', tag: 'USB');
+      await disconnect(manual: false);
+      rethrow;
+    }
+  }
+
   Future<void> connect(BluetoothDevice device, {String? displayName}) async {
     if (_state == MeshCoreConnectionState.connecting ||
         _state == MeshCoreConnectionState.connected) {
       return;
     }
+
+    _activeTransport = MeshCoreTransportType.bluetooth;
 
     await stopScan();
     _setState(MeshCoreConnectionState.connecting);
@@ -798,31 +986,83 @@ class MeshCoreConnector extends ChangeNotifier {
     _lastDeviceDisplayName = _deviceDisplayName;
     _manualDisconnect = false;
     _cancelReconnectTimer();
+    _bleInitialSyncStarted = false;
+    if (PlatformInfo.isWeb) {
+      _resetConnectionHandshakeState();
+    }
     unawaited(_backgroundService?.start());
     notifyListeners();
 
     try {
+      final connectLabel = _deviceDisplayName ?? _deviceId;
+      _appDebugLogService?.info(
+        'Starting connect to $connectLabel',
+        tag: 'BLE Connect',
+      );
+      await _connectionSubscription?.cancel();
+      _connectionSubscription = null;
+      await _notifySubscription?.cancel();
+      _notifySubscription = null;
       _connectionSubscription = device.connectionState.listen((state) {
         if (state == BluetoothConnectionState.disconnected && isConnected) {
           _handleDisconnection();
         }
       });
 
-      await device.connect(
-        timeout: const Duration(seconds: 15),
-        mtu: null,
-        license: License.free,
-      );
-
-      // Request larger MTU for sending larger frames
       try {
-        final mtu = await device.requestMtu(185);
-        debugPrint('MTU set to: $mtu');
-      } catch (e) {
-        debugPrint('MTU request failed: $e, using default');
+        await device.connect(
+          timeout: const Duration(seconds: 15),
+          mtu: null,
+          license: License.free,
+        );
+      } catch (error) {
+        _appDebugLogService?.error(
+          'device.connect() failure: $error',
+          tag: 'BLE Connect',
+        );
+        rethrow;
       }
 
-      List<BluetoothService> services = await device.discoverServices();
+      // Request larger MTU only on native platforms; web does not support it.
+      if (!PlatformInfo.isWeb) {
+        try {
+          final mtu = await device.requestMtu(185);
+          _appDebugLogService?.info('MTU set to: $mtu', tag: 'BLE Connect');
+        } catch (e) {
+          _appDebugLogService?.warn(
+            'MTU request failed: $e, using default',
+            tag: 'BLE Connect',
+          );
+        }
+      }
+
+      late final List<BluetoothService> services;
+      try {
+        services = await device.discoverServices();
+      } catch (error) {
+        _appDebugLogService?.error(
+          'service discovery failure: $error',
+          tag: 'BLE Connect',
+        );
+        if (PlatformInfo.isWeb &&
+            error.toString().contains('GATT Server is disconnected')) {
+          // Chrome Web Bluetooth intermittently disconnects between connect()
+          // and service discovery; retry once to recover that transient state.
+          _appDebugLogService?.warn(
+            'retrying service discovery after transient web disconnect',
+            tag: 'BLE Connect',
+          );
+          await Future<void>.delayed(const Duration(milliseconds: 300));
+          await device.connect(
+            timeout: const Duration(seconds: 15),
+            mtu: null,
+            license: License.free,
+          );
+          services = await device.discoverServices();
+        } else {
+          rethrow;
+        }
+      }
 
       BluetoothService? uartService;
       for (var service in services) {
@@ -849,18 +1089,50 @@ class MeshCoreConnector extends ChangeNotifier {
         throw Exception("MeshCore characteristics not found");
       }
 
-      // Retry setNotifyValue with increasing delays
-      bool notifySet = false;
-      for (int attempt = 0; attempt < 3 && !notifySet; attempt++) {
-        try {
-          if (attempt > 0) {
-            await Future.delayed(Duration(milliseconds: 500 * attempt));
+      if (PlatformInfo.isWeb) {
+        _appDebugLogService?.info(
+          'Starting setNotifyValue(true)',
+          tag: 'BLE Connect',
+        );
+        _appDebugLogService?.info(
+          'Web: Calling setNotifyValue(true) without awaiting',
+          tag: 'BLE Connect',
+        );
+        unawaited(() async {
+          try {
+            await _txCharacteristic!.setNotifyValue(true);
+          } catch (error) {
+            _appDebugLogService?.warn(
+              'notify failure (web, ignored): $error',
+              tag: 'BLE Connect',
+            );
+            _appDebugLogService?.warn(
+              'Web setNotifyValue error (ignoring): $error',
+              tag: 'BLE Connect',
+            );
           }
-          await _txCharacteristic!.setNotifyValue(true);
-          notifySet = true;
-        } catch (e) {
-          debugPrint('setNotifyValue attempt ${attempt + 1}/3 failed: $e');
-          if (attempt == 2) rethrow;
+        }());
+        _appDebugLogService?.info(
+          'setNotifyValue(true) configuration completed',
+          tag: 'BLE Connect',
+        );
+      } else {
+        bool notifySet = false;
+        for (int attempt = 0; attempt < 3 && !notifySet; attempt++) {
+          try {
+            if (attempt > 0) {
+              await Future.delayed(Duration(milliseconds: 500 * attempt));
+            }
+            await _txCharacteristic!.setNotifyValue(true);
+            notifySet = true;
+          } catch (e) {
+            _appDebugLogService?.warn('notify failure: $e', tag: 'BLE Connect');
+            _appDebugLogService?.warn(
+              'setNotifyValue attempt ${attempt + 1}/3 failed: $e',
+              tag: 'BLE Connect',
+            );
+            if (attempt == 2) rethrow;
+          }
         }
       }
       _notifySubscription = _txCharacteristic!.onValueReceived.listen(
@@ -868,27 +1140,13 @@ class MeshCoreConnector extends ChangeNotifier {
       );
 
       _setState(MeshCoreConnectionState.connected);
-
-      await _requestDeviceInfo();
-      _startBatteryPolling();
-      final gotSelfInfo = await _waitForSelfInfo(
-        timeout: const Duration(seconds: 3),
-      );
-      if (!gotSelfInfo) {
-        await refreshDeviceInfo();
-        await _waitForSelfInfo(timeout: const Duration(seconds: 3));
+      if (_shouldGateInitialChannelSync) {
+        _hasReceivedDeviceInfo = false;
+        _pendingInitialChannelSync = true;
       }
-
-      // Keep device clock aligned on every connection.
-      await syncTime();
-
-      // Fetch channels so we can track unread counts for incoming messages
-      unawaited(getChannels());
-
-      // Load discovered contacts from storage
-      unawaited(loadDiscoveredContactCache());
+      await _startBleInitialSync();
     } catch (e) {
-      debugPrint("Connection error: $e");
+      _appDebugLogService?.error('Connection error: $e', tag: 'BLE Connect');
       await disconnect(manual: false);
       rethrow;
     }
@@ -925,7 +1183,55 @@ class MeshCoreConnector extends ChangeNotifier {
     return result;
   }
 
-  bool get _shouldAutoReconnect => !_manualDisconnect && _lastDeviceId != null;
+  Future<void> _startBleInitialSync() async {
+    if (_bleInitialSyncStarted ||
+        !isConnected ||
+        _activeTransport != MeshCoreTransportType.bluetooth) {
+      return;
+    }
+    _bleInitialSyncStarted = true;
+
+    await _requestDeviceInfo();
+    _startBatteryPolling();
+    unawaited(loadDiscoveredContactCache());
+
+    final gotSelfInfo = await _waitForSelfInfo(
+      timeout: const Duration(seconds: 3),
+    );
+    if (!gotSelfInfo) {
+      await refreshDeviceInfo();
+      await _waitForSelfInfo(timeout: const Duration(seconds: 3));
+    }
+
+    await syncTime();
+    unawaited(getChannels());
+  }
+
+  void _resetConnectionHandshakeState() {
+    _selfPublicKey = null;
+    _selfName = null;
+    _selfLatitude = null;
+    _selfLongitude = null;
+    _awaitingSelfInfo = false;
+    _webInitialHandshakeRequestSent = false;
+    _selfInfoRetryTimer?.cancel();
+    _selfInfoRetryTimer = null;
+    _hasReceivedDeviceInfo = false;
+    _pendingInitialChannelSync = false;
+    _pendingInitialContactsSync = false;
+    _bleInitialSyncStarted = false;
+    _pendingDeferredChannelSyncAfterContacts = false;
+  }
+
+  bool get _shouldAutoReconnect =>
+      !_manualDisconnect &&
+      _lastDeviceId != null &&
+      _activeTransport == MeshCoreTransportType.bluetooth;
+
+  bool get _shouldGateInitialChannelSync =>
+      _activeTransport == MeshCoreTransportType.usb ||
+      (_activeTransport == MeshCoreTransportType.bluetooth &&
+          PlatformInfo.isWeb);
 
   void _cancelReconnectTimer() {
     _reconnectTimer?.cancel();
@@ -969,6 +1275,15 @@ class MeshCoreConnector extends ChangeNotifier {
 
   Future<void> disconnect({bool manual = true}) async {
     if (_state == MeshCoreConnectionState.disconnecting) return;
+    final transportAtDisconnect = _activeTransport;
+    final transportLabel = transportAtDisconnect == MeshCoreTransportType.usb
+        ? 'USB'
+        : 'BLE';
+
+    _appDebugLogService?.info(
+      'Starting disconnect transport=$transportLabel manual=$manual',
+      tag: 'Connection',
+    );
 
     if (manual) {
       _manualDisconnect = true;
@@ -979,6 +1294,10 @@ class MeshCoreConnector extends ChangeNotifier {
     }
     _setState(MeshCoreConnectionState.disconnecting);
     _stopBatteryPolling();
+
+    await _usbFrameSubscription?.cancel();
+    _usbFrameSubscription = null;
+    await _usbManager.disconnect();
 
     await _notifySubscription?.cancel();
     _notifySubscription = null;
@@ -998,7 +1317,7 @@ class MeshCoreConnector extends ChangeNotifier {
       // Skip queued BLE operations so disconnect doesn't get stuck behind them.
       await _device?.disconnect(queue: false);
     } catch (e) {
-      debugPrint("Disconnect error: $e");
+      _appDebugLogService?.warn('Disconnect error: $e', tag: 'BLE Connect');
     }
 
     _device = null;
@@ -1020,6 +1339,9 @@ class MeshCoreConnector extends ChangeNotifier {
     _repeaterBatterySnapshots.clear();
     _batteryRequested = false;
     _awaitingSelfInfo = false;
+    _hasReceivedDeviceInfo = false;
+    _pendingInitialChannelSync = false;
+    _pendingInitialContactsSync = false;
     _maxContacts = _defaultMaxContacts;
     _maxChannels = _defaultMaxChannels;
     _isSyncingQueuedMessages = false;
@@ -1033,8 +1355,14 @@ class MeshCoreConnector extends ChangeNotifier {
     _pendingGenericAckQueue.clear();
     _reactionSendQueueSequence = 0;
 
+    _activeTransport = MeshCoreTransportType.bluetooth;
+
     _setState(MeshCoreConnectionState.disconnected);
-    if (!manual) {
+    _appDebugLogService?.info(
+      'Disconnect complete transport=$transportLabel manual=$manual',
+      tag: 'Connection',
+    );
+    if (!manual && transportAtDisconnect == MeshCoreTransportType.bluetooth) {
       _scheduleReconnect();
     }
   }
@@ -1044,24 +1372,29 @@ class MeshCoreConnector extends ChangeNotifier {
     String? channelSendQueueId,
     bool expectsGenericAck = false,
   }) async {
-    if (!isConnected || _rxCharacteristic == null) {
+    if (!isConnected) {
       throw Exception("Not connected to a MeshCore device");
     }
-
     _bleDebugLogService?.logFrame(data, outgoing: true);
 
-    // Prefer write without response when supported; fall back to write with response.
-    final properties = _rxCharacteristic!.properties;
-    final canWriteWithoutResponse = properties.writeWithoutResponse;
-    final canWriteWithResponse = properties.write;
-    if (!canWriteWithoutResponse && !canWriteWithResponse) {
-      throw Exception("MeshCore RX characteristic does not support write");
+    if (_activeTransport == MeshCoreTransportType.usb) {
+      await _usbManager.write(data);
+    } else {
+      if (_rxCharacteristic == null) {
+        throw Exception("MeshCore RX characteristic not available");
+      }
+      // Prefer write without response when supported; fall back to write with response.
+      final properties = _rxCharacteristic!.properties;
+      final canWriteWithoutResponse = properties.writeWithoutResponse;
+      final canWriteWithResponse = properties.write;
+      if (!canWriteWithoutResponse && !canWriteWithResponse) {
+        throw Exception("MeshCore RX characteristic does not support write");
+      }
+      await _rxCharacteristic!.write(
+        data.toList(),
+        withoutResponse: canWriteWithoutResponse,
+      );
     }
-
-    await _rxCharacteristic!.write(
-      data.toList(),
-      withoutResponse: canWriteWithoutResponse,
-    );
     _trackPendingGenericAck(
       data,
       channelSendQueueId: channelSendQueueId,
@@ -1094,7 +1427,18 @@ class MeshCoreConnector extends ChangeNotifier {
 
   Future<void> refreshDeviceInfo() async {
     if (!isConnected) return;
+    if (PlatformInfo.isWeb &&
+        _activeTransport == MeshCoreTransportType.bluetooth &&
+        _webInitialHandshakeRequestSent &&
+        _selfPublicKey == null) {
+      return;
+    }
     _awaitingSelfInfo = true;
+    if (PlatformInfo.isWeb &&
+        _activeTransport == MeshCoreTransportType.bluetooth &&
+        _selfPublicKey == null) {
+      _webInitialHandshakeRequestSent = true;
+    }
     await sendFrame(buildDeviceQueryFrame());
     await sendFrame(buildAppStartFrame());
     await requestBatteryStatus(force: true);
@@ -1106,7 +1450,18 @@ class MeshCoreConnector extends ChangeNotifier {
 
   Future<void> _requestDeviceInfo() async {
     if (!isConnected || _awaitingSelfInfo) return;
+    if (PlatformInfo.isWeb &&
+        _activeTransport == MeshCoreTransportType.bluetooth &&
+        _webInitialHandshakeRequestSent &&
+        _selfPublicKey == null) {
+      return;
+    }
     _awaitingSelfInfo = true;
+    if (PlatformInfo.isWeb &&
+        _activeTransport == MeshCoreTransportType.bluetooth &&
+        _selfPublicKey == null) {
+      _webInitialHandshakeRequestSent = true;
+    }
     await sendFrame(buildDeviceQueryFrame());
     await sendFrame(buildAppStartFrame());
     await sendFrame(buildGetCustomVarsFrame());
@@ -1117,6 +1472,28 @@ class MeshCoreConnector extends ChangeNotifier {
 
   void _scheduleSelfInfoRetry() {
     _selfInfoRetryTimer?.cancel();
+    if (PlatformInfo.isWeb &&
+        _activeTransport == MeshCoreTransportType.bluetooth) {
+      var attempts = 0;
+      const maxAttempts = 3;
+      _selfInfoRetryTimer = Timer.periodic(const Duration(seconds: 10), (
+        timer,
+      ) {
+        if (!isConnected || !_awaitingSelfInfo) {
+          timer.cancel();
+          return;
+        }
+        if (_isLoadingContacts || _isSyncingChannels || _channelSyncInFlight) {
+          return;
+        }
+        attempts += 1;
+        unawaited(sendFrame(buildAppStartFrame()));
+        if (attempts >= maxAttempts) {
+          timer.cancel();
+        }
+      });
+      return;
+    }
     _selfInfoRetryTimer = Timer.periodic(const Duration(milliseconds: 3500), (
       timer,
     ) {
@@ -1870,6 +2247,14 @@ class MeshCoreConnector extends ChangeNotifier {
       _hasLoadedChannels = true;
       _previousChannelsCache.clear();
     }
+
+    // Fallback: if contact sync was deferred waiting for channel 0 but
+    // channel sync finished without triggering it, start contacts now.
+    if (_pendingInitialContactsSync && isConnected) {
+      _pendingInitialContactsSync = false;
+      unawaited(getContacts());
+    }
+
     // Keep cache on failure/disconnection for future attempts
   }
 
@@ -1938,10 +2323,23 @@ class MeshCoreConnector extends ChangeNotifier {
         _preserveContactsOnRefresh = false;
         notifyListeners();
         unawaited(_persistContacts());
+        if (PlatformInfo.isWeb &&
+            _activeTransport == MeshCoreTransportType.bluetooth &&
+            _isSyncingChannels &&
+            !_channelSyncInFlight) {
+          unawaited(_requestNextChannel());
+        }
         if (!_didInitialQueueSync || _pendingQueueSync) {
           _didInitialQueueSync = true;
           _pendingQueueSync = false;
           unawaited(syncQueuedMessages(force: true));
+        }
+        if (_pendingDeferredChannelSyncAfterContacts &&
+            (_activeTransport == MeshCoreTransportType.bluetooth ||
+                _activeTransport == MeshCoreTransportType.usb)) {
+          _pendingDeferredChannelSyncAfterContacts = false;
+          _pendingInitialChannelSync = false;
+          unawaited(getChannels());
         }
         break;
       case respCodeContactMsgRecv:
@@ -2053,6 +2451,7 @@ class MeshCoreConnector extends ChangeNotifier {
     // [56] = sf
     // [57] = cr
     // [58+] = node_name
+    final wasAwaitingSelfInfo = _awaitingSelfInfo;
     final reader = BufferReader(frame);
     try {
       reader.skipBytes(2);
@@ -2063,7 +2462,6 @@ class MeshCoreConnector extends ChangeNotifier {
       _selfLongitude = reader.readInt32LE() / 1000000.0;
       _multiAcks = reader.readByte();
       _advertLocPolicy = reader.readByte();
-
       final telemetryFlag = reader.readByte();
       _telemetryModeBase = telemetryFlag & 0x03;
       _telemetryModeEnv = telemetryFlag >> 2 & 0x03;
@@ -2083,17 +2481,45 @@ class MeshCoreConnector extends ChangeNotifier {
         tag: 'Connector',
       );
     }
+    final selfName = _selfName?.trim();
+    if (_activeTransport == MeshCoreTransportType.usb &&
+        selfName != null &&
+        selfName.isNotEmpty) {
+      _usbManager.updateConnectedLabel(selfName);
+    }
     _awaitingSelfInfo = false;
     _selfInfoRetryTimer?.cancel();
     _selfInfoRetryTimer = null;
     notifyListeners();
 
-    // Auto-fetch contacts after getting self info
-    getContacts();
+    if (PlatformInfo.isWeb &&
+        _activeTransport == MeshCoreTransportType.bluetooth &&
+        !wasAwaitingSelfInfo) {
+      return;
+    }
+
+    // Auto-fetch contacts after getting self info. On web BLE, defer this
+    // until after channel 0 so startup writes stay serialized.
+    if (PlatformInfo.isWeb &&
+        _activeTransport == MeshCoreTransportType.bluetooth) {
+      _pendingInitialContactsSync = true;
+    } else if (_activeTransport == MeshCoreTransportType.usb) {
+      _pendingDeferredChannelSyncAfterContacts = true;
+      getContacts();
+    } else {
+      getContacts();
+    }
+    if (_shouldGateInitialChannelSync &&
+        _activeTransport != MeshCoreTransportType.usb) {
+      _maybeStartInitialChannelSync();
+    }
   }
 
   void _handleDeviceInfo(Uint8List frame) {
     if (frame.length < 4) return;
+    if (_shouldGateInitialChannelSync) {
+      _hasReceivedDeviceInfo = true;
+    }
     _firmwareVerCode = frame[1];
 
     // Parse client_repeat from firmware v9+ (byte 80)
@@ -2117,12 +2543,29 @@ class MeshCoreConnector extends ChangeNotifier {
       if (nextMaxChannels > previousMaxChannels) {
         unawaited(loadChannelSettings(maxChannels: nextMaxChannels));
         unawaited(loadAllChannelMessages(maxChannels: nextMaxChannels));
-        if (isConnected) {
+        if (isConnected &&
+            _selfPublicKey != null &&
+            (!_shouldGateInitialChannelSync || !_pendingInitialChannelSync)) {
           unawaited(getChannels(maxChannels: nextMaxChannels));
         }
       }
     }
     notifyListeners();
+    if (_shouldGateInitialChannelSync) {
+      _maybeStartInitialChannelSync();
+    }
+  }
+
+  void _maybeStartInitialChannelSync() {
+    if (!_pendingInitialChannelSync || !isConnected) {
+      return;
+    }
+    if (_selfPublicKey == null || !_hasReceivedDeviceInfo) {
+      return;
+    }
+
+    _pendingInitialChannelSync = false;
+    unawaited(getChannels(maxChannels: _maxChannels));
   }
 
   void _handleNoMoreMessages() {
@@ -3043,6 +3486,14 @@ class MeshCoreConnector extends ChangeNotifier {
 
         // Move to next channel
         _nextChannelIndexToRequest++;
+        if (PlatformInfo.isWeb &&
+            _activeTransport == MeshCoreTransportType.bluetooth &&
+            channel.index == 0 &&
+            _pendingInitialContactsSync) {
+          _pendingInitialContactsSync = false;
+          unawaited(getContacts());
+          return;
+        }
         unawaited(_requestNextChannel());
         return;
       } else {
@@ -3274,7 +3725,6 @@ class MeshCoreConnector extends ChangeNotifier {
       // For 1:1 chats, sender is implicit (null)
       String? senderName;
       if (isRoomServer && !msg.isOutgoing) {
-        // Resolve sender from the message's fourByteRoomContactKey
         final senderContact = _contacts.cast<Contact?>().firstWhere(
           (c) =>
               c != null &&
@@ -3704,6 +4154,9 @@ class MeshCoreConnector extends ChangeNotifier {
     _txCharacteristic = null;
     // Preserve deviceId and displayName for UI display during reconnection
     // They're only cleared on manual disconnect via disconnect() method
+    _hasReceivedDeviceInfo = false;
+    _pendingInitialChannelSync = false;
+    _pendingInitialContactsSync = false;
     _maxContacts = _defaultMaxContacts;
     _maxChannels = _defaultMaxChannels;
     _isSyncingQueuedMessages = false;
@@ -3818,11 +4271,13 @@ class MeshCoreConnector extends ChangeNotifier {
   void dispose() {
     _scanSubscription?.cancel();
     _connectionSubscription?.cancel();
+    _usbFrameSubscription?.cancel();
     _notifySubscription?.cancel();
     _notifyListenersTimer?.cancel();
     _reconnectTimer?.cancel();
     _batteryPollTimer?.cancel();
     _receivedFramesController.close();
+    _usbManager.dispose();
 
     // Flush pending unread writes before disposal
     _unreadStore.flush();

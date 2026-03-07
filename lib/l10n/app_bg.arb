@@ -1828,5 +1828,36 @@
   "discoveredContacts_deleteContactAllContent": "Сигурни ли сте, че искате да изтриете всички открити контакти?",
   "common_deleteAll": "Изтрий всичко",
   "map_guessedLocation": "Предполагано местоположение",
-  "map_showGuessedLocations": "Покажете местоположенията на предположените възли."
+  "map_showGuessedLocations": "Покажете местоположенията на предположените възли.",
+  "connectionChoiceUsbLabel": "USB",
+  "usbScreenTitle": "Свържете се чрез USB",
+  "connectionChoiceBluetoothLabel": "Bluetooth",
+  "usbScreenSubtitle": "Изберете открития сериен уред и свържете директно към вашия MeshCore възел.",
+  "usbScreenStatus": "Изберете USB устройство",
+  "usbScreenNote": "USB серийната връзка е активна на поддържаните Android устройства и настолни платформи.",
+  "usbScreenEmptyState": "Няма открити USB устройства. Включете едно и опитайте отново.",
+  "usbErrorPermissionDenied": "Не беше разрешено достъпът през USB.",
+  "usbErrorDeviceMissing": "Избраното USB устройство вече не е налично.",
+  "usbErrorInvalidPort": "Изберете валитно USB устройство.",
+  "usbErrorBusy": "Друг мол за свързване през USB вече е в процес на изпълнение.",
+  "usbErrorNotConnected": "Няма свързано USB устройство.",
+  "usbErrorOpenFailed": "Не успях да отворя избраното USB устройство.",
+  "usbErrorConnectFailed": "Не успях да се свържа с избраното USB устройство.",
+  "usbErrorUnsupported": "USB серийната комуникация не се поддържа на тази платформа.",
+  "usbErrorAlreadyActive": "USB връзката вече е активирана.",
+  "usbErrorNoDeviceSelected": "Няма избран USB устройство.",
+  "usbErrorPortClosed": "USB връзката не е активна.",
+  "usbFallbackDeviceName": "Устройство за четене на уеб серийни данни",
+  "@usbConnectionFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "usbStatus_connecting": "Свързване към USB устройство...",
+  "usbConnectionFailed": "Неуспешно свързване през USB: {error}",
+  "usbStatus_notConnected": "Изберете USB устройство",
+  "usbStatus_searching": "Търсене на USB устройства...",
+  "usbErrorConnectTimedOut": "Връзката прекъсна. Уверете се, че устройството има софтуер за USB връзка."
 }

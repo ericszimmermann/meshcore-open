@@ -112,6 +112,90 @@ class AppLocalizationsBg extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Свържете се чрез USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Изберете открития сериен уред и свържете директно към вашия MeshCore възел.';
+
+  @override
+  String get usbScreenStatus => 'Изберете USB устройство';
+
+  @override
+  String get usbScreenNote =>
+      'USB серийната връзка е активна на поддържаните Android устройства и настолни платформи.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'Няма открити USB устройства. Включете едно и опитайте отново.';
+
+  @override
+  String get usbErrorPermissionDenied => 'Не беше разрешено достъпът през USB.';
+
+  @override
+  String get usbErrorDeviceMissing =>
+      'Избраното USB устройство вече не е налично.';
+
+  @override
+  String get usbErrorInvalidPort => 'Изберете валитно USB устройство.';
+
+  @override
+  String get usbErrorBusy =>
+      'Друг мол за свързване през USB вече е в процес на изпълнение.';
+
+  @override
+  String get usbErrorNotConnected => 'Няма свързано USB устройство.';
+
+  @override
+  String get usbErrorOpenFailed =>
+      'Не успях да отворя избраното USB устройство.';
+
+  @override
+  String get usbErrorConnectFailed =>
+      'Не успях да се свържа с избраното USB устройство.';
+
+  @override
+  String get usbErrorUnsupported =>
+      'USB серийната комуникация не се поддържа на тази платформа.';
+
+  @override
+  String get usbErrorAlreadyActive => 'USB връзката вече е активирана.';
+
+  @override
+  String get usbErrorNoDeviceSelected => 'Няма избран USB устройство.';
+
+  @override
+  String get usbErrorPortClosed => 'USB връзката не е активна.';
+
+  @override
+  String get usbErrorConnectTimedOut =>
+      'Връзката прекъсна. Уверете се, че устройството има софтуер за USB връзка.';
+
+  @override
+  String get usbFallbackDeviceName =>
+      'Устройство за четене на уеб серийни данни';
+
+  @override
+  String get usbStatus_notConnected => 'Изберете USB устройство';
+
+  @override
+  String get usbStatus_connecting => 'Свързване към USB устройство...';
+
+  @override
+  String get usbStatus_searching => 'Търсене на USB устройства...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'Неуспешно свързване през USB: $error';
+  }
+
+  @override
   String get scanner_scanning => 'Сканиране за устройства...';
 
   @override

@@ -112,6 +112,80 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scanner_title => '连接设备';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => '蓝牙';
+
+  @override
+  String get usbScreenTitle => '通过USB连接';
+
+  @override
+  String get usbScreenSubtitle => '选择已检测到的串行设备，并直接连接到您的 MeshCore 节点。';
+
+  @override
+  String get usbScreenStatus => '选择一个 USB 设备';
+
+  @override
+  String get usbScreenNote => 'USB 串行接口在支持的 Android 设备和桌面平台上处于活动状态。';
+
+  @override
+  String get usbScreenEmptyState => '未找到任何 USB 设备。请插入一个，然后刷新。';
+
+  @override
+  String get usbErrorPermissionDenied => '拒绝了USB权限。';
+
+  @override
+  String get usbErrorDeviceMissing => '所选的USB设备已不再可用。';
+
+  @override
+  String get usbErrorInvalidPort => '选择一个有效的USB设备。';
+
+  @override
+  String get usbErrorBusy => '还有一个 USB 连接请求正在进行中。';
+
+  @override
+  String get usbErrorNotConnected => '没有连接任何USB设备。';
+
+  @override
+  String get usbErrorOpenFailed => '未能打开所选的USB设备。';
+
+  @override
+  String get usbErrorConnectFailed => '未能连接到所选的USB设备。';
+
+  @override
+  String get usbErrorUnsupported => '此平台不支持USB串行通信。';
+
+  @override
+  String get usbErrorAlreadyActive => 'USB 连接已建立。';
+
+  @override
+  String get usbErrorNoDeviceSelected => '未选择任何 USB 设备。';
+
+  @override
+  String get usbErrorPortClosed => 'USB 连接未建立。';
+
+  @override
+  String get usbErrorConnectTimedOut => '连接超时。请确保设备已安装 USB 伴侣固件。';
+
+  @override
+  String get usbFallbackDeviceName => 'Web 串流设备';
+
+  @override
+  String get usbStatus_notConnected => '选择一个 USB 设备';
+
+  @override
+  String get usbStatus_connecting => '连接USB设备...';
+
+  @override
+  String get usbStatus_searching => '正在搜索 USB 设备...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'USB 连接失败：$error';
+  }
+
+  @override
   String get scanner_scanning => '正在搜索设备...';
 
   @override

@@ -112,6 +112,88 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Connect over USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Choose a detected serial device and connect directly to your MeshCore node.';
+
+  @override
+  String get usbScreenStatus => 'Select a USB device';
+
+  @override
+  String get usbScreenNote =>
+      'USB serial is active on supported Android devices and desktop platforms.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'No USB devices found. Plug one in and refresh.';
+
+  @override
+  String get usbErrorPermissionDenied => 'USB permission was denied.';
+
+  @override
+  String get usbErrorDeviceMissing =>
+      'The selected USB device is no longer available.';
+
+  @override
+  String get usbErrorInvalidPort => 'Select a valid USB device.';
+
+  @override
+  String get usbErrorBusy =>
+      'Another USB connection request is already in progress.';
+
+  @override
+  String get usbErrorNotConnected => 'No USB device is connected.';
+
+  @override
+  String get usbErrorOpenFailed => 'Failed to open the selected USB device.';
+
+  @override
+  String get usbErrorConnectFailed =>
+      'Failed to connect to the selected USB device.';
+
+  @override
+  String get usbErrorUnsupported =>
+      'USB serial is not supported on this platform.';
+
+  @override
+  String get usbErrorAlreadyActive => 'A USB connection is already active.';
+
+  @override
+  String get usbErrorNoDeviceSelected => 'No USB device was selected.';
+
+  @override
+  String get usbErrorPortClosed => 'The USB connection is not open.';
+
+  @override
+  String get usbErrorConnectTimedOut =>
+      'Connection timed out. Make sure the device has USB Companion firmware.';
+
+  @override
+  String get usbFallbackDeviceName => 'Web Serial Device';
+
+  @override
+  String get usbStatus_notConnected => 'Select a USB device';
+
+  @override
+  String get usbStatus_connecting => 'Connecting to USB device...';
+
+  @override
+  String get usbStatus_searching => 'Searching for USB devices...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'USB connection failed: $error';
+  }
+
+  @override
   String get scanner_scanning => 'Scanning for devices...';
 
   @override

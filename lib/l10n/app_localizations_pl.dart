@@ -112,6 +112,92 @@ class AppLocalizationsPl extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Połącz przez USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Wybierz wykryty urządzenie szeregowe i podłącz je bezpośrednio do swojego węzła MeshCore.';
+
+  @override
+  String get usbScreenStatus => 'Wybierz urządzenie USB';
+
+  @override
+  String get usbScreenNote =>
+      'Port szeregowy USB jest aktywny na urządzeniach z systemem Android i platformach stacjonarnych, które go obsługują.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'Nie znaleziono żadnych urządzeń USB. Podłącz jedno i zaktualizuj.';
+
+  @override
+  String get usbErrorPermissionDenied =>
+      'Zostało odrzucone żądanie dostępu przez USB.';
+
+  @override
+  String get usbErrorDeviceMissing =>
+      'Wybór urządzenia USB już nie jest dostępny.';
+
+  @override
+  String get usbErrorInvalidPort => 'Wybierz prawidłowe urządzenie USB.';
+
+  @override
+  String get usbErrorBusy =>
+      'Kolejne żądanie połączenia przez USB jest już w trakcie realizacji.';
+
+  @override
+  String get usbErrorNotConnected => 'Brak podłączonego urządzenia USB.';
+
+  @override
+  String get usbErrorOpenFailed =>
+      'Nie udało się otworzyć wybranego urządzenia USB.';
+
+  @override
+  String get usbErrorConnectFailed =>
+      'Nie udało się połączyć z wybranym urządzeniem USB.';
+
+  @override
+  String get usbErrorUnsupported =>
+      'Port szeregowy USB nie jest obsługiwany na tym urządzeniu.';
+
+  @override
+  String get usbErrorAlreadyActive => 'Połączenie USB jest już aktywne.';
+
+  @override
+  String get usbErrorNoDeviceSelected =>
+      'Nie został wybrany żaden urządzenie USB.';
+
+  @override
+  String get usbErrorPortClosed => 'Połączenie USB nie jest aktywne.';
+
+  @override
+  String get usbErrorConnectTimedOut =>
+      'Połączenie nie zostało nawiązane. Upewnij się, że urządzenie posiada oprogramowanie \"USB Companion\".';
+
+  @override
+  String get usbFallbackDeviceName =>
+      'Urządzenie do komunikacji przez sieć (seria)';
+
+  @override
+  String get usbStatus_notConnected => 'Wybierz urządzenie USB';
+
+  @override
+  String get usbStatus_connecting => 'Połączenie z urządzeniem USB...';
+
+  @override
+  String get usbStatus_searching => 'Wyszukiwanie urządzeń USB...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'Błąd połączenia USB: $error';
+  }
+
+  @override
   String get scanner_scanning => 'Skanowanie urządzeń...';
 
   @override

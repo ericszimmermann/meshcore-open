@@ -112,6 +112,89 @@ class AppLocalizationsSv extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Anslut via USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Välj en detekterad seriell enhet och anslut direkt till din MeshCore-nod.';
+
+  @override
+  String get usbScreenStatus => 'Välj en USB-enhet';
+
+  @override
+  String get usbScreenNote =>
+      'USB-seriell kommunikation är aktiv på stödda Android-enheter och på skrivbordsplattformar.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'Inga USB-enheter hittades. Anslut en och uppdatera.';
+
+  @override
+  String get usbErrorPermissionDenied => 'Tillgången via USB nekas.';
+
+  @override
+  String get usbErrorDeviceMissing =>
+      'Den valda USB-enheten är inte längre tillgänglig.';
+
+  @override
+  String get usbErrorInvalidPort => 'Välj en giltig USB-enhet.';
+
+  @override
+  String get usbErrorBusy =>
+      'En annan förfrågan om USB-anslutning är redan pågående.';
+
+  @override
+  String get usbErrorNotConnected => 'Ingen USB-enhet är ansluten.';
+
+  @override
+  String get usbErrorOpenFailed =>
+      'Misslyckades med att öppna det valda USB-enheten.';
+
+  @override
+  String get usbErrorConnectFailed =>
+      'Kunde inte ansluta till det valda USB-enheten.';
+
+  @override
+  String get usbErrorUnsupported =>
+      'USB-seriell kommunikation stöds inte på denna plattform.';
+
+  @override
+  String get usbErrorAlreadyActive => 'En USB-anslutning är redan aktiv.';
+
+  @override
+  String get usbErrorNoDeviceSelected => 'Ingen USB-enhet valdes.';
+
+  @override
+  String get usbErrorPortClosed => 'USB-anslutningen är inte aktiv.';
+
+  @override
+  String get usbErrorConnectTimedOut =>
+      'Anslutningen har tidsutgått. Se till att enheten har rätt USB-firmware.';
+
+  @override
+  String get usbFallbackDeviceName => 'Web-serieenhet';
+
+  @override
+  String get usbStatus_notConnected => 'Välj en USB-enhet';
+
+  @override
+  String get usbStatus_connecting => 'Anslutning till USB-enhet...';
+
+  @override
+  String get usbStatus_searching => 'Söker efter USB-enheter...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'Fel vid USB-anslutning: $error';
+  }
+
+  @override
   String get scanner_scanning => 'Söker efter enheter...';
 
   @override

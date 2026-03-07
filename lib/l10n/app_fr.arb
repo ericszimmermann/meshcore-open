@@ -1828,5 +1828,36 @@
   "discoveredContacts_deleteContactAll": "Supprimer tous les contacts découverts",
   "discoveredContacts_deleteContactAllContent": "Êtes-vous sûr de vouloir supprimer tous les contacts découverts ?",
   "map_showGuessedLocations": "Afficher les emplacements des nœuds estimés",
-  "map_guessedLocation": "Lieu deviné"
+  "map_guessedLocation": "Lieu deviné",
+  "connectionChoiceUsbLabel": "USB",
+  "usbScreenTitle": "Connectez via USB",
+  "connectionChoiceBluetoothLabel": "Bluetooth",
+  "usbScreenSubtitle": "Sélectionnez un périphérique série détecté et connectez-vous directement à votre nœud MeshCore.",
+  "usbScreenStatus": "Sélectionnez un périphérique USB",
+  "usbScreenNote": "La communication série USB est active sur les appareils Android et les plateformes de bureau compatibles.",
+  "usbScreenEmptyState": "Aucun périphérique USB n'a été trouvé. Veuillez en brancher un et rafraîchir la page.",
+  "usbErrorPermissionDenied": "L'accès via USB a été refusé.",
+  "usbErrorDeviceMissing": "Le périphérique USB sélectionné n'est plus disponible.",
+  "usbErrorInvalidPort": "Sélectionnez un périphérique USB valide.",
+  "usbErrorBusy": "Une autre demande de connexion USB est déjà en cours.",
+  "usbErrorNotConnected": "Aucun appareil USB n'est connecté.",
+  "usbErrorOpenFailed": "Impossible d'ouvrir l'appareil USB sélectionné.",
+  "usbErrorConnectFailed": "Impossible de se connecter à l'appareil USB sélectionné.",
+  "usbErrorUnsupported": "La communication série USB n'est pas prise en charge sur cette plateforme.",
+  "usbErrorAlreadyActive": "Une connexion USB est déjà établie.",
+  "usbErrorNoDeviceSelected": "Aucun appareil USB n'a été sélectionné.",
+  "usbErrorPortClosed": "La connexion USB n'est pas établie.",
+  "usbFallbackDeviceName": "Dispositif de communication série sur le Web",
+  "@usbConnectionFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "usbStatus_notConnected": "Sélectionnez un périphérique USB",
+  "usbConnectionFailed": "Échec de la connexion USB : {error}",
+  "usbStatus_connecting": "Connexion au périphérique USB...",
+  "usbStatus_searching": "Recherche de périphériques USB...",
+  "usbErrorConnectTimedOut": "La connexion a expiré. Assurez-vous que l'appareil dispose du firmware USB Companion."
 }

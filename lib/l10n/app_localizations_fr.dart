@@ -112,6 +112,91 @@ class AppLocalizationsFr extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Connectez via USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Sélectionnez un périphérique série détecté et connectez-vous directement à votre nœud MeshCore.';
+
+  @override
+  String get usbScreenStatus => 'Sélectionnez un périphérique USB';
+
+  @override
+  String get usbScreenNote =>
+      'La communication série USB est active sur les appareils Android et les plateformes de bureau compatibles.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'Aucun périphérique USB n\'a été trouvé. Veuillez en brancher un et rafraîchir la page.';
+
+  @override
+  String get usbErrorPermissionDenied => 'L\'accès via USB a été refusé.';
+
+  @override
+  String get usbErrorDeviceMissing =>
+      'Le périphérique USB sélectionné n\'est plus disponible.';
+
+  @override
+  String get usbErrorInvalidPort => 'Sélectionnez un périphérique USB valide.';
+
+  @override
+  String get usbErrorBusy =>
+      'Une autre demande de connexion USB est déjà en cours.';
+
+  @override
+  String get usbErrorNotConnected => 'Aucun appareil USB n\'est connecté.';
+
+  @override
+  String get usbErrorOpenFailed =>
+      'Impossible d\'ouvrir l\'appareil USB sélectionné.';
+
+  @override
+  String get usbErrorConnectFailed =>
+      'Impossible de se connecter à l\'appareil USB sélectionné.';
+
+  @override
+  String get usbErrorUnsupported =>
+      'La communication série USB n\'est pas prise en charge sur cette plateforme.';
+
+  @override
+  String get usbErrorAlreadyActive => 'Une connexion USB est déjà établie.';
+
+  @override
+  String get usbErrorNoDeviceSelected =>
+      'Aucun appareil USB n\'a été sélectionné.';
+
+  @override
+  String get usbErrorPortClosed => 'La connexion USB n\'est pas établie.';
+
+  @override
+  String get usbErrorConnectTimedOut =>
+      'La connexion a expiré. Assurez-vous que l\'appareil dispose du firmware USB Companion.';
+
+  @override
+  String get usbFallbackDeviceName =>
+      'Dispositif de communication série sur le Web';
+
+  @override
+  String get usbStatus_notConnected => 'Sélectionnez un périphérique USB';
+
+  @override
+  String get usbStatus_connecting => 'Connexion au périphérique USB...';
+
+  @override
+  String get usbStatus_searching => 'Recherche de périphériques USB...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'Échec de la connexion USB : $error';
+  }
+
+  @override
   String get scanner_scanning => 'Recherche de périphériques...';
 
   @override

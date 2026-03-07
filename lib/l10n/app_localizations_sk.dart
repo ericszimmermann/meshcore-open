@@ -112,6 +112,91 @@ class AppLocalizationsSk extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Pripojte cez USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Vyberte detekovaný sériový zariadenie a pripojte ho priamo k vašej MeshCore uzlu.';
+
+  @override
+  String get usbScreenStatus => 'Vyberte USB zariadenie';
+
+  @override
+  String get usbScreenNote =>
+      'USB sériová komunikácia je aktívna na podporovaných zariadeniach s Androidom a na desktopových platformách.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'Nenašli sa žiadne USB zariadenia. Pripojte jedno a obnovte.';
+
+  @override
+  String get usbErrorPermissionDenied =>
+      'Žiadosť o prístup cez USB bola zamietnutá.';
+
+  @override
+  String get usbErrorDeviceMissing =>
+      'Vybrané USB zariadenie už nie je dostupné.';
+
+  @override
+  String get usbErrorInvalidPort => 'Vyberte platné USB zariadenie.';
+
+  @override
+  String get usbErrorBusy =>
+      'Ďalšia požiadavka na pripojenie cez USB je aktuálne v procese.';
+
+  @override
+  String get usbErrorNotConnected => 'Nie je pripojené žiadne USB zariadenie.';
+
+  @override
+  String get usbErrorOpenFailed =>
+      'Nepodarilo sa otvoriť vybrané USB zariadenie.';
+
+  @override
+  String get usbErrorConnectFailed =>
+      'Nepodarilo sa sa sa pripojiť k vybranému USB zariadeniu.';
+
+  @override
+  String get usbErrorUnsupported =>
+      'Podpora USB sériového rozhrania nie je na tejto platforme dostupná.';
+
+  @override
+  String get usbErrorAlreadyActive => 'Pripojenie cez USB je už aktivované.';
+
+  @override
+  String get usbErrorNoDeviceSelected =>
+      'Nebolo vybrané žiadne USB zariadenie.';
+
+  @override
+  String get usbErrorPortClosed => 'Pripojenie cez USB nie je aktivované.';
+
+  @override
+  String get usbErrorConnectTimedOut =>
+      'Pripojenie nebolo úspešné. Uistite sa, že zariadenie má nainštalovaný firmware USB Companion.';
+
+  @override
+  String get usbFallbackDeviceName => 'Webový sériový zariadenie';
+
+  @override
+  String get usbStatus_notConnected => 'Vyberte USB zariadenie';
+
+  @override
+  String get usbStatus_connecting => 'Pripojenie k USB zariadeniu...';
+
+  @override
+  String get usbStatus_searching => 'Hľadanie USB zariadení...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'Neúspešné pripojenie cez USB: $error';
+  }
+
+  @override
   String get scanner_scanning => 'Skrívania zariadení...';
 
   @override

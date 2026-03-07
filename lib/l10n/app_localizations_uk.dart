@@ -112,6 +112,90 @@ class AppLocalizationsUk extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Підключити через USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Виберіть виявлене серійне пристрій і підключіть його безпосередньо до вашого вузла MeshCore.';
+
+  @override
+  String get usbScreenStatus => 'Виберіть пристрій USB';
+
+  @override
+  String get usbScreenNote =>
+      'USB-серіальний інтерфейс активний на підтримуваних пристроях на базі Android та на десктопних платформах.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'Не знайдено жодних пристроїв USB. Підключіть один і перезавантажте.';
+
+  @override
+  String get usbErrorPermissionDenied =>
+      'Було відмовлено у наданні дозволу на використання USB.';
+
+  @override
+  String get usbErrorDeviceMissing => 'Вибране USB-пристрій більше недоступне.';
+
+  @override
+  String get usbErrorInvalidPort => 'Виберіть дійсний USB-пристрій.';
+
+  @override
+  String get usbErrorBusy =>
+      'Ще один запит на підключення через USB вже обробляється.';
+
+  @override
+  String get usbErrorNotConnected => 'Немає підключених пристроїв USB.';
+
+  @override
+  String get usbErrorOpenFailed => 'Не вдалося відкрити вибране USB-пристрій.';
+
+  @override
+  String get usbErrorConnectFailed =>
+      'Не вдалося підключитися до вибраного USB-пристрою.';
+
+  @override
+  String get usbErrorUnsupported =>
+      'Підтримка USB-серіального інтерфейсу не реалізована на цій платформі.';
+
+  @override
+  String get usbErrorAlreadyActive => 'USB-з\'єднання вже встановлено.';
+
+  @override
+  String get usbErrorNoDeviceSelected =>
+      'Не було вибрано жодного пристрою USB.';
+
+  @override
+  String get usbErrorPortClosed => 'З\'єднання USB не встановлено.';
+
+  @override
+  String get usbErrorConnectTimedOut =>
+      'З\'єднання не вдалося встановити. Переконайтеся, що пристрій має встановлене програмне забезпечення USB Companion.';
+
+  @override
+  String get usbFallbackDeviceName =>
+      'Пристрій для передачі даних по веб-серіалах';
+
+  @override
+  String get usbStatus_notConnected => 'Виберіть пристрій USB';
+
+  @override
+  String get usbStatus_connecting => 'Підключення до USB-пристрою...';
+
+  @override
+  String get usbStatus_searching => 'Пошук пристроїв USB...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'Не вдалося встановити з\'єднання через USB: $error';
+  }
+
+  @override
   String get scanner_scanning => 'Пошук пристроїв...';
 
   @override

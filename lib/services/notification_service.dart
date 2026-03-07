@@ -1,9 +1,11 @@
+import 'dart:io' show Platform, File;
 import 'dart:ui';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
 
 import '../l10n/app_localizations.dart';
+import '../utils/platform_info.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -63,13 +65,26 @@ class NotificationService {
       appUserModelId: 'org.meshcore.open.app',
       guid: 'e7ea8f85-72f5-4f36-91f6-038f740ccf86',
     );
+    const linuxSettings = LinuxInitializationSettings(
+      defaultActionName: 'Open notification',
+    );
 
     const initSettings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
       macOS: macSettings,
       windows: windowsSettings,
+      linux: linuxSettings,
     );
+
+    // On Linux, the notifications plugin opens a D-Bus session bus
+    // connection whose async subscription can throw an unhandled
+    // SocketException when the bus socket is missing (e.g. running as
+    // root or inside a container without a session bus).
+    if (PlatformInfo.isLinux && !_isDbusSessionAvailable()) {
+      debugPrint('Skipping notification init: D-Bus session bus unavailable');
+      return;
+    }
 
     try {
       await _notifications.initialize(
@@ -80,6 +95,15 @@ class NotificationService {
     } catch (e) {
       debugPrint('Error initializing notifications: $e');
     }
+  }
+
+  static bool _isDbusSessionAvailable() {
+    final addr = Platform.environment['DBUS_SESSION_BUS_ADDRESS'];
+    if (addr != null && addr.isNotEmpty) return true;
+    // Fallback: check the default socket for the current user.
+    final uid = Platform.environment['UID'] ?? Platform.environment['EUID'];
+    final path = '/run/user/${uid ?? '1000'}/bus';
+    return File(path).existsSync();
   }
 
   Future<bool> _ensureInitialized() async {

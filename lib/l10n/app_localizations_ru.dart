@@ -112,6 +112,92 @@ class AppLocalizationsRu extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Подключение через USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Выберите обнаруженное устройство с последовательным интерфейсом и подключите его напрямую к вашему узлу MeshCore.';
+
+  @override
+  String get usbScreenStatus => 'Выберите USB-устройство';
+
+  @override
+  String get usbScreenNote =>
+      'USB-серийный порт активен на поддерживаемых устройствах Android и на настольных платформах.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'Не обнаружено устройств USB. Подключите одно из них и обновите список.';
+
+  @override
+  String get usbErrorPermissionDenied =>
+      'Запрос на доступ через USB был отклонен.';
+
+  @override
+  String get usbErrorDeviceMissing =>
+      'Выбранное USB-устройство больше недоступно.';
+
+  @override
+  String get usbErrorInvalidPort => 'Выберите действительное USB-устройство.';
+
+  @override
+  String get usbErrorBusy =>
+      'Еще одно запрошенное соединение через USB уже находится в процессе.';
+
+  @override
+  String get usbErrorNotConnected => 'Ни одно USB-устройство не подключено.';
+
+  @override
+  String get usbErrorOpenFailed =>
+      'Не удалось открыть выбранное USB-устройство.';
+
+  @override
+  String get usbErrorConnectFailed =>
+      'Не удалось установить соединение с выбранным USB-устройством.';
+
+  @override
+  String get usbErrorUnsupported =>
+      'Поддержка последовательного USB отсутствует на данной платформе.';
+
+  @override
+  String get usbErrorAlreadyActive => 'USB-соединение уже установлено.';
+
+  @override
+  String get usbErrorNoDeviceSelected =>
+      'Не было выбрано ни одно устройство USB.';
+
+  @override
+  String get usbErrorPortClosed => 'USB-соединение не установлено.';
+
+  @override
+  String get usbErrorConnectTimedOut =>
+      'Соединение не установлено. Убедитесь, что устройство имеет установленное программное обеспечение USB Companion.';
+
+  @override
+  String get usbFallbackDeviceName =>
+      'Устройство для последовательного подключения к сети';
+
+  @override
+  String get usbStatus_notConnected => 'Выберите USB-устройство';
+
+  @override
+  String get usbStatus_connecting => 'Подключение к USB-устройству...';
+
+  @override
+  String get usbStatus_searching => 'Поиск USB-устройств...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'Не удалось установить соединение через USB: $error';
+  }
+
+  @override
   String get scanner_scanning => 'Поиск устройств...';
 
   @override

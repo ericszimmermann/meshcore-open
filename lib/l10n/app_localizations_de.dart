@@ -112,6 +112,91 @@ class AppLocalizationsDe extends AppLocalizations {
   String get scanner_title => 'MeshCore Open';
 
   @override
+  String get connectionChoiceUsbLabel => 'USB';
+
+  @override
+  String get connectionChoiceBluetoothLabel => 'Bluetooth';
+
+  @override
+  String get usbScreenTitle => 'Verbinden über USB';
+
+  @override
+  String get usbScreenSubtitle =>
+      'Wählen Sie ein erkannten serielles Gerät aus und verbinden Sie es direkt mit Ihrem MeshCore-Knoten.';
+
+  @override
+  String get usbScreenStatus => 'Wählen Sie ein USB-Gerät aus';
+
+  @override
+  String get usbScreenNote =>
+      'Die USB-Serielle Schnittstelle ist auf unterstützten Android-Geräten und Desktop-Plattformen aktiv.';
+
+  @override
+  String get usbScreenEmptyState =>
+      'Keine USB-Geräte gefunden. Schließen Sie eines an und aktualisieren Sie.';
+
+  @override
+  String get usbErrorPermissionDenied =>
+      'Die USB-Berechtigung wurde abgelehnt.';
+
+  @override
+  String get usbErrorDeviceMissing =>
+      'Das ausgewählte USB-Gerät ist nicht mehr verfügbar.';
+
+  @override
+  String get usbErrorInvalidPort => 'Wählen Sie ein gültiges USB-Gerät aus.';
+
+  @override
+  String get usbErrorBusy =>
+      'Eine weitere Anfrage für eine USB-Verbindung ist bereits in Bearbeitung.';
+
+  @override
+  String get usbErrorNotConnected => 'Es ist kein USB-Gerät angeschlossen.';
+
+  @override
+  String get usbErrorOpenFailed =>
+      'Fehlgeschlagen beim Öffnen des ausgewählten USB-Geräts.';
+
+  @override
+  String get usbErrorConnectFailed =>
+      'Keine Verbindung zum ausgewählten USB-Gerät hergestellt.';
+
+  @override
+  String get usbErrorUnsupported =>
+      'Die USB-Serielle Schnittstelle wird auf dieser Plattform nicht unterstützt.';
+
+  @override
+  String get usbErrorAlreadyActive =>
+      'Eine USB-Verbindung ist bereits hergestellt.';
+
+  @override
+  String get usbErrorNoDeviceSelected => 'Kein USB-Gerät wurde ausgewählt.';
+
+  @override
+  String get usbErrorPortClosed => 'Die USB-Verbindung ist nicht aktiv.';
+
+  @override
+  String get usbErrorConnectTimedOut =>
+      'Verbindung konnte nicht hergestellt werden. Stellen Sie sicher, dass das Gerät die entsprechende USB-Firmware enthält.';
+
+  @override
+  String get usbFallbackDeviceName => 'Web-Serielle Geräte';
+
+  @override
+  String get usbStatus_notConnected => 'Wählen Sie ein USB-Gerät aus';
+
+  @override
+  String get usbStatus_connecting => 'Verbindung zum USB-Gerät...';
+
+  @override
+  String get usbStatus_searching => 'Suche nach USB-Geräten...';
+
+  @override
+  String usbConnectionFailed(String error) {
+    return 'Fehler beim USB-Verbindungsaufbau: $error';
+  }
+
+  @override
   String get scanner_scanning => 'Scannen nach Geräten...';
 
   @override
