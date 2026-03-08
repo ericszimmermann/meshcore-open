@@ -14,7 +14,6 @@ import '../connector/meshcore_protocol.dart';
 import '../models/app_settings.dart';
 import '../models/channel.dart';
 import '../models/contact.dart';
-import '../models/discovery_contact.dart';
 import '../services/app_settings_service.dart';
 import '../services/path_history_service.dart';
 import '../services/map_marker_service.dart';
@@ -92,20 +91,6 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  Contact _contactFromDiscovery(DiscoveryContact contact) {
-    return Contact(
-      publicKey: contact.publicKey,
-      name: contact.name,
-      type: contact.type,
-      flags: 0,
-      pathLength: contact.pathLength,
-      path: contact.path,
-      latitude: contact.latitude,
-      longitude: contact.longitude,
-      lastSeen: contact.lastSeen,
-    );
-  }
-
   double _standardDeviation(List<double> values) {
     if (values.length <= 1) {
       return 0.0;
@@ -141,25 +126,25 @@ class _MapScreenState extends State<MapScreen> {
       builder: (context, connector, settingsService, pathHistory, child) {
         final tileCache = context.read<MapTileCacheService>();
         final settings = settingsService.settings;
-        final contacts = connector.contacts;
-        final discoveredContacts = connector.discoveredContacts;
-        final knownContactKeys = connector.knownContactKeys;
-        final discoveredForMap = discoveredContacts
-            .where(
-              (d) =>
-                  !knownContactKeys.contains(d.publicKeyHex) && !d.hasLocation,
-            )
-            .toList();
-        final discoveredKeys = discoveredForMap
+        final contacts = <Contact>[
+          ...connector.contacts,
+          ...connector.discoveredContacts.map(
+            (d) => Contact(
+              publicKey: d.publicKey,
+              name: d.name,
+              type: d.type,
+              pathLength: d.pathLength,
+              path: d.path,
+              latitude: d.latitude,
+              longitude: d.longitude,
+              lastSeen: d.lastSeen,
+            ),
+          ),
+        ];
+        final discoveredKeys = connector.discoveredContacts
             .map((d) => d.publicKeyHex)
             .toSet();
-        final virtualContacts = discoveredForMap
-            .map(_contactFromDiscovery)
-            .where(
-              (vc) => !contacts.any((c) => c.publicKeyHex == vc.publicKeyHex),
-            )
-            .toList();
-        final allContacts = <Contact>[...contacts, ...virtualContacts];
+
         final highlightPosition = widget.highlightPosition;
         final sharedMarkers = settings.mapShowMarkers
             ? _collectSharedMarkers(connector)
@@ -174,8 +159,8 @@ class _MapScreenState extends State<MapScreen> {
         // Filter by time
         final now = DateTime.now();
         final filteredByTime = settings.mapTimeFilterHours == 0
-            ? allContacts
-            : allContacts.where((c) {
+            ? contacts
+            : contacts.where((c) {
                 final hoursSinceLastSeen = now.difference(c.lastSeen).inHours;
                 return hoursSinceLastSeen <= settings.mapTimeFilterHours;
               }).toList();
@@ -198,7 +183,7 @@ class _MapScreenState extends State<MapScreen> {
 
         // All contacts with a known location — used as anchors regardless of
         // time/key-prefix filters so that repeaters are always available.
-        final allContactsWithLocation = allContacts
+        final allContactsWithLocation = contacts
             .where((c) => c.hasLocation)
             .toList();
 
