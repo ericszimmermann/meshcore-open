@@ -1117,6 +1117,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get chat_sendGif => 'GIF senden';
 
   @override
+  String get chat_shareLocation => 'Standort teilen';
+
+  @override
+  String get chat_locationUnavailable => 'Standort nicht verfügbar';
+
+  @override
   String get chat_reply => 'Beantworten';
 
   @override
@@ -1539,6 +1545,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get map_sharedPin => 'Gemeinsames Passwort';
+
+  @override
+  String get map_sharedAt => 'Gemeinsam';
 
   @override
   String get map_joinRoom => 'Beitreten Sie dem Raum';

@@ -1110,6 +1110,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get chat_sendGif => 'Надіслати GIF';
 
   @override
+  String get chat_shareLocation => 'Поділитися місцезнаходженням';
+
+  @override
+  String get chat_locationUnavailable => 'Місцезнаходження недоступне';
+
+  @override
   String get chat_reply => 'Відповісти';
 
   @override

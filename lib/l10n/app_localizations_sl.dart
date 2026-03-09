@@ -1106,6 +1106,12 @@ class AppLocalizationsSl extends AppLocalizations {
   String get chat_sendGif => 'Pošlji GIF';
 
   @override
+  String get chat_shareLocation => 'Deli lokacijo';
+
+  @override
+  String get chat_locationUnavailable => 'Lokacija ni na voljo';
+
+  @override
   String get chat_reply => 'Odgovori';
 
   @override
@@ -1525,6 +1531,9 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get map_sharedPin => 'Deljeno naslovno geslo';
+
+  @override
+  String get map_sharedAt => 'Deljeno';
 
   @override
   String get map_joinRoom => 'Pridružiti sobo';
