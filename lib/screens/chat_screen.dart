@@ -1171,7 +1171,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 title: Text(context.l10n.chat_addReaction),
                 onTap: () {
                   Navigator.pop(sheetContext);
-                  _showEmojiPicker(message, contact);
+                  _showReactionEmojiPicker(message, contact);
                 },
               ),
             ListTile(
@@ -1243,7 +1243,7 @@ class _ChatScreenState extends State<ChatScreen> {
     ).showSnackBar(SnackBar(content: Text(context.l10n.chat_retryingMessage)));
   }
 
-  void _showEmojiPicker(Message message, Contact senderContact) {
+  void _showReactionEmojiPicker(Message message, Contact senderContact) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
