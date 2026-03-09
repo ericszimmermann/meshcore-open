@@ -1337,7 +1337,10 @@ class _MapScreenState extends State<MapScreen> {
           children: [
             _buildInfoRow(context.l10n.map_from, marker.fromName),
             _buildInfoRow(context.l10n.map_source, marker.sourceLabel),
-            _buildInfoRow(context.l10n.map_sharedAt, _formatLastSeen(marker.timestamp)),
+            _buildInfoRow(
+              context.l10n.map_sharedAt,
+              _formatLastSeen(marker.timestamp),
+            ),
             _buildInfoRow(
               'Location',
               '${marker.position.latitude.toStringAsFixed(6)}, ${marker.position.longitude.toStringAsFixed(6)}',

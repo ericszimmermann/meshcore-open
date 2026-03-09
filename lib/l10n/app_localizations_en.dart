@@ -1098,6 +1098,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chat_sendGif => 'Send GIF';
 
   @override
+  String get chat_insertEmoji => 'Insert emoji';
+
+  @override
   String get chat_shareLocation => 'Share location';
 
   @override

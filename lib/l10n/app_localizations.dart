@@ -2074,6 +2074,12 @@ abstract class AppLocalizations {
   /// **'Send GIF'**
   String get chat_sendGif;
 
+  /// No description provided for @chat_insertEmoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Insert emoji'**
+  String get chat_insertEmoji;
+
   /// No description provided for @chat_shareLocation.
   ///
   /// In en, this message translates to:

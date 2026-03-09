@@ -837,9 +837,13 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
           final selection = currentValue.selection;
           final newText = selection.isValid
               ? currentValue.text.replaceRange(
-                  selection.start, selection.end, emoji)
+                  selection.start,
+                  selection.end,
+                  emoji,
+                )
               : currentValue.text + emoji;
-          final caret = (selection.isValid ? selection.start : currentValue.text.length) +
+          final caret =
+              (selection.isValid ? selection.start : currentValue.text.length) +
               emoji.length;
           _textController.value = currentValue.copyWith(
             text: newText,

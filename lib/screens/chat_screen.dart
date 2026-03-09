@@ -480,10 +480,10 @@ class _ChatScreenState extends State<ChatScreen> {
     final currentValue = _textController.value;
     final selection = currentValue.selection;
     final newText = selection.isValid
-        ? currentValue.text.replaceRange(
-            selection.start, selection.end, text)
+        ? currentValue.text.replaceRange(selection.start, selection.end, text)
         : currentValue.text + text;
-    final caret = (selection.isValid ? selection.start : currentValue.text.length) +
+    final caret =
+        (selection.isValid ? selection.start : currentValue.text.length) +
         text.length;
 
     _textController.value = currentValue.copyWith(
@@ -517,8 +517,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // Use the contact name + ISO timestamp as the marker label so the recipient
     // can see when the location was shared.
-    final label = '${widget.contact.name}: ${DateTime.now().toUtc().toIso8601String()}';
-    final markerText = 'm:${lat.toStringAsFixed(6)},${lon.toStringAsFixed(6)}|$label|loc';
+    final label =
+        '${widget.contact.name}: ${DateTime.now().toUtc().toIso8601String()}';
+    final markerText =
+        'm:${lat.toStringAsFixed(6)},${lon.toStringAsFixed(6)}|$label|loc';
     connector.sendMessage(widget.contact, markerText);
   }
 
