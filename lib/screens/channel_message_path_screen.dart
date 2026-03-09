@@ -871,7 +871,7 @@ List<_PathHop> _buildPathHops(
       // Add to temporary list
       tempHops.add(
         _PathHop(
-          index: pathBytes.length - i, // Calculate index to maintain order
+          index: i + 1, // Calculate index to maintain order
           prefix: prefix,
           contact: contact,
           position: _resolvePosition(contact),
