@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../connector/meshcore_connector.dart';
@@ -241,20 +242,6 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
     );
   }
 
-  Future<Directory> _getStorageDir() async {
-    // Try to use an external storage location where users can access files directly.
-    if (Platform.isAndroid) {
-      final dirs = await getExternalStorageDirectories(
-        type: StorageDirectory.downloads,
-      );
-      if (dirs != null && dirs.isNotEmpty) {
-        return dirs.first;
-      }
-    }
-    // Fallback for iOS (or if external storage isn't available) to app documents.
-    return await getApplicationDocumentsDirectory();
-  }
-
   Future<void> _exportDiscoveredContacts(
     BuildContext context,
     MeshCoreConnector connector,
@@ -265,12 +252,28 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
     final json = store.encodeContacts(connector.discoveredContacts);
 
     try {
-      final dir = await _getStorageDir();
-      final file = File('${dir.path}/meshcore_discovered_contacts.json');
-      await file.writeAsString(json);
+      const filename = 'meshcore_discovered_contacts.json';
+      final location = await getSaveLocation(
+        suggestedName: filename,
+        acceptedTypeGroups: const [
+          XTypeGroup(label: 'JSON', extensions: ['json']),
+        ],
+      );
+      if (location == null) {
+        return;
+      }
+
+      final exportFile = XFile.fromData(
+        Uint8List.fromList(utf8.encode(json)),
+        mimeType: 'application/json',
+        name: filename,
+      );
+      await exportFile.saveTo(location.path);
       if (!mounted) return;
       messenger.showSnackBar(
-        SnackBar(content: Text(l10n.discoveredContacts_exported(file.path))),
+        SnackBar(
+          content: Text(l10n.discoveredContacts_exported(location.path)),
+        ),
       );
     } catch (e) {
       if (!mounted) return;
@@ -289,9 +292,12 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
     final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
     try {
-      final dir = await _getStorageDir();
-      final file = File('${dir.path}/meshcore_discovered_contacts.json');
-      if (!await file.exists()) {
+      final file = await openFile(
+        acceptedTypeGroups: const [
+          XTypeGroup(label: 'JSON', extensions: ['json']),
+        ],
+      );
+      if (file == null) {
         if (!mounted) return;
         messenger.showSnackBar(
           SnackBar(content: Text(l10n.discoveredContacts_importNoFile)),
