@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../connector/meshcore_connector.dart';
 import '../connector/meshcore_protocol.dart';
@@ -13,6 +13,7 @@ import '../l10n/l10n.dart';
 import '../models/discovery_contact.dart';
 import '../storage/contact_discovery_store.dart';
 import '../utils/contact_search.dart';
+import '../utils/platform_info.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/list_filter_widget.dart';
 
@@ -253,28 +254,46 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
 
     try {
       const filename = 'meshcore_discovered_contacts.json';
-      final location = await getSaveLocation(
-        suggestedName: filename,
-        acceptedTypeGroups: const [
-          XTypeGroup(label: 'JSON', extensions: ['json']),
-        ],
-      );
-      if (location == null) {
-        return;
-      }
-
       final exportFile = XFile.fromData(
         Uint8List.fromList(utf8.encode(json)),
         mimeType: 'application/json',
         name: filename,
       );
-      await exportFile.saveTo(location.path);
-      if (!mounted) return;
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(l10n.discoveredContacts_exported(location.path)),
+
+      if (PlatformInfo.isDesktop) {
+        final location = await getSaveLocation(
+          suggestedName: filename,
+          acceptedTypeGroups: const [
+            XTypeGroup(label: 'JSON', extensions: ['json']),
+          ],
+        );
+        if (location == null) {
+          return;
+        }
+
+        await exportFile.saveTo(location.path);
+        if (!mounted) return;
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(l10n.discoveredContacts_exported(location.path)),
+          ),
+        );
+        return;
+      }
+
+      final result = await SharePlus.instance.share(
+        ShareParams(
+          subject: l10n.discoveredContacts_export,
+          files: [exportFile],
         ),
       );
+
+      if (!mounted) return;
+      if (result.status == ShareResultStatus.success) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.discoveredContacts_exported(filename))),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
@@ -315,10 +334,17 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
         return;
       }
 
-      // Import each contact using the existing connector API.
+      final store = ContactDiscoveryStore();
+      final existing = await store.loadContacts();
+      final byPublicKey = <String, DiscoveryContact>{
+        for (final contact in existing) contact.publicKeyHex: contact,
+      };
       for (final contact in contacts) {
-        await connector.importDiscoveredContact(contact);
+        byPublicKey[contact.publicKeyHex] = contact;
       }
+      await store.saveContacts(byPublicKey.values.toList());
+      await connector.loadDiscoveredContactCache();
+      connector.notifyListeners();
 
       if (!mounted) return;
       messenger.showSnackBar(
