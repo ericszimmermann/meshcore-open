@@ -505,7 +505,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _shareLocation(MeshCoreConnector connector) async {
+  Future<void> _shareLocation(MeshCoreConnector connector) async {
     final lat = connector.selfLatitude;
     final lon = connector.selfLongitude;
     if (lat == null || lon == null) {
@@ -515,10 +515,34 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
-    // Use the contact name + ISO timestamp as the marker label so the recipient
-    // can see when the location was shared.
-    final label =
-        '${widget.contact.name}: ${DateTime.now().toUtc().toIso8601String()}';
+    final defaultLabel =
+        '${connector.deviceDisplayName} ${DateTime.now().toUtc().toIso8601String()}';
+    final controller = TextEditingController(text: defaultLabel);
+
+    final label = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.chat_shareLocation),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(labelText: context.l10n.chat_location),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n.common_cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: Text(context.l10n.common_save),
+          ),
+        ],
+      ),
+    );
+
+    if (label == null || label.isEmpty) return;
+
     final markerText =
         'm:${lat.toStringAsFixed(6)},${lon.toStringAsFixed(6)}|$label|loc';
     connector.sendMessage(widget.contact, markerText);

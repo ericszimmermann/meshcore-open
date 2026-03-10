@@ -855,7 +855,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     );
   }
 
-  void _shareLocation() {
+  Future<void> _shareLocation() async {
     final connector = context.read<MeshCoreConnector>();
     final lat = connector.selfLatitude;
     final lon = connector.selfLongitude;
@@ -866,8 +866,34 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
       return;
     }
 
-    final label =
+    final defaultLabel =
         '${connector.deviceDisplayName} ${DateTime.now().toUtc().toIso8601String()}';
+    final controller = TextEditingController(text: defaultLabel);
+
+    final label = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.chat_shareLocation),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(labelText: context.l10n.chat_location),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n.common_cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: Text(context.l10n.common_save),
+          ),
+        ],
+      ),
+    );
+
+    if (label == null || label.isEmpty) return;
+
     final markerText =
         'm:${lat.toStringAsFixed(6)},${lon.toStringAsFixed(6)}|$label|loc';
     connector.sendChannelMessage(widget.channel, markerText);
