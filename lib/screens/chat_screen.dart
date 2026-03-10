@@ -515,9 +515,17 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
+    final maxBytes = maxContactMessageBytes();
+    final prefix = 'm:${lat.toStringAsFixed(6)},${lon.toStringAsFixed(6)}|';
+    const suffix = '|loc';
+    final maxLabelBytes =
+        maxBytes - utf8.encode(prefix).length - utf8.encode(suffix).length;
+
     final defaultLabel =
         '${connector.deviceDisplayName} ${DateTime.now().toUtc().toIso8601String()}';
-    final controller = TextEditingController(text: defaultLabel);
+    final controller = TextEditingController(
+      text: _truncateToUtf8Bytes(defaultLabel, maxLabelBytes),
+    );
 
     final label = await showDialog<String>(
       context: context,
@@ -527,6 +535,9 @@ class _ChatScreenState extends State<ChatScreen> {
           controller: controller,
           decoration: InputDecoration(labelText: context.l10n.chat_location),
           autofocus: true,
+          inputFormatters: [
+            Utf8LengthLimitingTextInputFormatter(maxLabelBytes),
+          ],
         ),
         actions: [
           TextButton(
@@ -543,9 +554,31 @@ class _ChatScreenState extends State<ChatScreen> {
 
     if (label == null || label.isEmpty) return;
 
+    if (!mounted) return;
+
     final markerText =
         'm:${lat.toStringAsFixed(6)},${lon.toStringAsFixed(6)}|$label|loc';
+    if (utf8.encode(markerText).length > maxBytes) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.chat_messageTooLong(maxBytes))),
+      );
+      return;
+    }
     connector.sendMessage(widget.contact, markerText);
+  }
+
+  String _truncateToUtf8Bytes(String text, int maxBytes) {
+    if (maxBytes <= 0) return '';
+
+    final codeUnits = text.codeUnits;
+    var end = codeUnits.length;
+    while (end > 0 &&
+        utf8.encode(String.fromCharCodes(codeUnits.take(end))).length >
+            maxBytes) {
+      end--;
+    }
+
+    return String.fromCharCodes(codeUnits.take(end));
   }
 
   void _showGifPicker(BuildContext context) {
