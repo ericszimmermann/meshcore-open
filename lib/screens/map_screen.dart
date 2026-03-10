@@ -598,8 +598,9 @@ class _MapScreenState extends State<MapScreen> {
       // history). Without any path bytes we have no basis to guess location.
       final recentPaths = pathHistory.getRecentPaths(contact.publicKeyHex);
       if ((contact.path.isEmpty || contact.pathLength <= 0) &&
-          recentPaths.isEmpty)
+          recentPaths.isEmpty) {
         continue;
+      }
 
       final anchorSet = <LatLng>{};
 
