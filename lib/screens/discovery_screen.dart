@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
@@ -254,13 +255,14 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
 
     try {
       const filename = 'meshcore_discovered_contacts.json';
-      final exportFile = XFile.fromData(
-        Uint8List.fromList(utf8.encode(json)),
-        mimeType: 'application/json',
-        name: filename,
-      );
+      final bytes = Uint8List.fromList(utf8.encode(json));
 
       if (PlatformInfo.isDesktop) {
+        final exportFile = XFile.fromData(
+          bytes,
+          mimeType: 'application/json',
+          name: filename,
+        );
         final location = await getSaveLocation(
           suggestedName: filename,
           acceptedTypeGroups: const [
@@ -281,12 +283,22 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
         return;
       }
 
-      final result = await SharePlus.instance.share(
-        ShareParams(
-          subject: l10n.discoveredContacts_export,
-          files: [exportFile],
-        ),
+      // Write to a named temp file so the share sheet shows the correct filename
+      // instead of a UUID (XFile.fromData loses the name when share_plus writes it).
+      final tempDir = await Directory.systemTemp.createTemp('meshcore_export');
+      final tempFile = File('${tempDir.path}/$filename');
+      await tempFile.writeAsBytes(bytes);
+      final exportFile = XFile(
+        tempFile.path,
+        mimeType: 'application/json',
+        name: filename,
       );
+
+      final result = await SharePlus.instance.share(
+        ShareParams(subject: filename, files: [exportFile]),
+      );
+
+      unawaited(tempDir.delete(recursive: true));
 
       if (!mounted) return;
       if (result.status == ShareResultStatus.success) {
