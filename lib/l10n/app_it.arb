@@ -1859,5 +1859,41 @@
   "usbConnectionFailed": "Errore nella connessione USB: {error}",
   "usbStatus_notConnected": "Seleziona un dispositivo USB",
   "usbStatus_connecting": "Connessione al dispositivo USB...",
-  "usbErrorConnectTimedOut": "La connessione è scaduta. Assicurarsi che il dispositivo abbia il firmware USB Companion."
+  "usbErrorConnectTimedOut": "La connessione è scaduta. Assicurarsi che il dispositivo abbia il firmware USB Companion.",
+  "discoveredContacts_export": "Esporta contatti rilevati",
+  "discoveredContacts_import": "Importa contatti rilevati",
+  "discoveredContacts_exported": "Contatti rilevati esportati in {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Esportazione dei contatti rilevati non riuscita: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "Importati {count} contatti rilevati.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "Nessun file di contatti rilevati trovato.",
+  "discoveredContacts_importNoContacts": "Nessun contatto trovato nel file di importazione.",
+  "discoveredContacts_importFailed": "Importazione dei contatti rilevati non riuscita: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

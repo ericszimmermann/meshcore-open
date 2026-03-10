@@ -3038,6 +3038,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contacts_contactImportFailed => 'Failed to import contact.';
 
   @override
+  String get discoveredContacts_export => 'Export discovery contacts';
+
+  @override
+  String get discoveredContacts_import => 'Import discovery contacts';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Exported discovery contacts to $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Failed to export discovery contacts: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return 'Imported $count discovery contacts.';
+  }
+
+  @override
+  String get discoveredContacts_importNoFile =>
+      'No discovery contacts file found.';
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'No contacts found in import file.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Failed to import discovery contacts: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => 'Zero Hop Advert';
 
   @override

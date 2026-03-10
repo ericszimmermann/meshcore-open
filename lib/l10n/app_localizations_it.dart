@@ -3087,6 +3087,40 @@ class AppLocalizationsIt extends AppLocalizations {
       'Contatto non importato con successo.';
 
   @override
+  String get discoveredContacts_export => 'Esporta contatti rilevati';
+
+  @override
+  String get discoveredContacts_import => 'Importa contatti rilevati';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Contatti rilevati esportati in $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Esportazione dei contatti rilevati non riuscita: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return 'Importati $count contatti rilevati.';
+  }
+
+  @override
+  String get discoveredContacts_importNoFile =>
+      'Nessun file di contatti rilevati trovato.';
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'Nessun contatto trovato nel file di importazione.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Importazione dei contatti rilevati non riuscita: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => 'Annuncio Zero Hop';
 
   @override

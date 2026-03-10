@@ -3069,6 +3069,40 @@ class AppLocalizationsSl extends AppLocalizations {
   String get contacts_contactImportFailed => 'Kontakt ni bil uspešno uvožen.';
 
   @override
+  String get discoveredContacts_export => 'Izvozi odkrite stike';
+
+  @override
+  String get discoveredContacts_import => 'Uvozi odkrite stike';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Odkriti stiki so bili izvoženi v $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Izvoz odkritih stikov ni uspel: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return 'Uvoženih je bilo $count odkritih stikov.';
+  }
+
+  @override
+  String get discoveredContacts_importNoFile =>
+      'Datoteka z odkritimi stiki ni bila najdena.';
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'V uvozni datoteki ni bilo najdenih nobenih stikov.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Uvoz odkritih stikov ni uspel: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => 'Reklama brez posrednikov';
 
   @override

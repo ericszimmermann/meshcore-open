@@ -1859,5 +1859,41 @@
   "usbConnectionFailed": "Neúspešné pripojenie cez USB: {error}",
   "usbStatus_notConnected": "Vyberte USB zariadenie",
   "usbStatus_connecting": "Pripojenie k USB zariadeniu...",
-  "usbErrorConnectTimedOut": "Pripojenie nebolo úspešné. Uistite sa, že zariadenie má nainštalovaný firmware USB Companion."
+  "usbErrorConnectTimedOut": "Pripojenie nebolo úspešné. Uistite sa, že zariadenie má nainštalovaný firmware USB Companion.",
+  "discoveredContacts_export": "Exportovať objavené kontakty",
+  "discoveredContacts_import": "Importovať objavené kontakty",
+  "discoveredContacts_exported": "Objavené kontakty boli exportované do {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Nepodarilo sa exportovať objavené kontakty: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "Naimportovaných bolo {count} objavených kontaktov.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "Nenašiel sa súbor s objavenými kontaktmi.",
+  "discoveredContacts_importNoContacts": "V importovanom súbore sa nenašli žiadne kontakty.",
+  "discoveredContacts_importFailed": "Nepodarilo sa importovať objavené kontakty: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

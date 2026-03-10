@@ -1864,5 +1864,41 @@
   "usbStatus_connecting": "连接USB设备...",
   "usbStatus_notConnected": "选择一个 USB 设备",
   "usbConnectionFailed": "USB 连接失败：{error}",
-  "usbErrorConnectTimedOut": "连接超时。请确保设备已安装 USB 伴侣固件。"
+  "usbErrorConnectTimedOut": "连接超时。请确保设备已安装 USB 伴侣固件。",
+  "discoveredContacts_export": "导出发现的联系人",
+  "discoveredContacts_import": "导入发现的联系人",
+  "discoveredContacts_exported": "已将发现的联系人导出到 {path}。",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "导出发现的联系人失败：{error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "已导入 {count} 个发现的联系人。",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "未找到发现的联系人文件。",
+  "discoveredContacts_importNoContacts": "导入文件中未找到联系人。",
+  "discoveredContacts_importFailed": "导入发现的联系人失败：{error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -28,6 +28,22 @@ class ContactDiscoveryStore {
     await prefs.setString(_key, jsonEncode(jsonList));
   }
 
+  String encodeContacts(List<DiscoveryContact> contacts) {
+    final jsonList = contacts.map(_toJson).toList();
+    return jsonEncode(jsonList);
+  }
+
+  List<DiscoveryContact> decodeContacts(String jsonStr) {
+    try {
+      final jsonList = jsonDecode(jsonStr) as List<dynamic>;
+      return jsonList
+          .map((entry) => _fromJson(entry as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
   Map<String, dynamic> _toJson(DiscoveryContact contact) {
     return {
       'rawPacket': base64Encode(contact.rawPacket),
