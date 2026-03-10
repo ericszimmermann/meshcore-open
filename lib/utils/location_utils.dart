@@ -21,11 +21,13 @@ Contact? selectBestRepeaterContactForPrefix(
   if (candidates.isEmpty) return null;
 
   candidates.sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
-  candidates.sort((a, b) {
-    final favA = a.isFavorite ? 1 : 0;
-    final favB = b.isFavorite ? 1 : 0;
-    return favB.compareTo(favA);
-  });
+  if (preferFavorites != null && preferFavorites == true) {
+    candidates.sort((a, b) {
+      final favA = a.isFavorite ? 1 : 0;
+      final favB = b.isFavorite ? 1 : 0;
+      return favB.compareTo(favA);
+    });
+  }
 
   if (searchPoint == null) {
     return candidates.first;

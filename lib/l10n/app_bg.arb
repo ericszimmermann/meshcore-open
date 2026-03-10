@@ -1859,5 +1859,41 @@
   "usbConnectionFailed": "Неуспешно свързване през USB: {error}",
   "usbStatus_notConnected": "Изберете USB устройство",
   "usbStatus_searching": "Търсене на USB устройства...",
-  "usbErrorConnectTimedOut": "Връзката прекъсна. Уверете се, че устройството има софтуер за USB връзка."
+  "usbErrorConnectTimedOut": "Връзката прекъсна. Уверете се, че устройството има софтуер за USB връзка.",
+  "discoveredContacts_export": "Експортиране на откритите контакти",
+  "discoveredContacts_import": "Импортиране на откритите контакти",
+  "discoveredContacts_exported": "Откритите контакти бяха експортирани в {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Неуспешно експортиране на откритите контакти: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "Импортирани са {count} открити контакта.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "Не е намерен файл с открити контакти.",
+  "discoveredContacts_importNoContacts": "Не са открити контакти във файла за импортиране.",
+  "discoveredContacts_importFailed": "Неуспешно импортиране на откритите контакти: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

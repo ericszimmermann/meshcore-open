@@ -1859,5 +1859,41 @@
   "usbStatus_notConnected": "Selecione um dispositivo USB",
   "usbConnectionFailed": "Falha na conexão USB: {error}",
   "usbStatus_connecting": "Conectando ao dispositivo USB...",
-  "usbErrorConnectTimedOut": "A conexão expirou. Verifique se o dispositivo possui o firmware USB Companion."
+  "usbErrorConnectTimedOut": "A conexão expirou. Verifique se o dispositivo possui o firmware USB Companion.",
+  "discoveredContacts_export": "Exportar contatos descobertos",
+  "discoveredContacts_import": "Importar contatos descobertos",
+  "discoveredContacts_exported": "Contatos descobertos exportados para {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Falha ao exportar contatos descobertos: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "Importados {count} contatos descobertos.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "Nenhum arquivo de contatos descobertos encontrado.",
+  "discoveredContacts_importNoContacts": "Nenhum contato encontrado no arquivo de importação.",
+  "discoveredContacts_importFailed": "Falha ao importar contatos descobertos: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

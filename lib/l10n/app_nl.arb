@@ -1859,5 +1859,41 @@
   "usbStatus_notConnected": "Selecteer een USB-apparaat",
   "usbStatus_connecting": "Verbinding maken met USB-apparaat...",
   "usbStatus_searching": "Zoeken naar USB-apparaten...",
-  "usbErrorConnectTimedOut": "Verbinding is verbroken. Zorg ervoor dat het apparaat de juiste USB-firmware heeft."
+  "usbErrorConnectTimedOut": "Verbinding is verbroken. Zorg ervoor dat het apparaat de juiste USB-firmware heeft.",
+  "discoveredContacts_export": "Ontdekte contacten exporteren",
+  "discoveredContacts_import": "Ontdekte contacten importeren",
+  "discoveredContacts_exported": "Ontdekte contacten geëxporteerd naar {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Exporteren van ontdekte contacten mislukt: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "{count} ontdekte contacten geïmporteerd.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "Geen bestand met ontdekte contacten gevonden.",
+  "discoveredContacts_importNoContacts": "Geen contacten gevonden in het importbestand.",
+  "discoveredContacts_importFailed": "Importeren van ontdekte contacten mislukt: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

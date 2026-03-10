@@ -3070,6 +3070,40 @@ class AppLocalizationsSk extends AppLocalizations {
       'Kontakt sa nepodarilo importovať.';
 
   @override
+  String get discoveredContacts_export => 'Exportovať objavené kontakty';
+
+  @override
+  String get discoveredContacts_import => 'Importovať objavené kontakty';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Objavené kontakty boli exportované do $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Nepodarilo sa exportovať objavené kontakty: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return 'Naimportovaných bolo $count objavených kontaktov.';
+  }
+
+  @override
+  String get discoveredContacts_importNoFile =>
+      'Nenašiel sa súbor s objavenými kontaktmi.';
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'V importovanom súbore sa nenašli žiadne kontakty.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Nepodarilo sa importovať objavené kontakty: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => 'Inzerát Zero Hop';
 
   @override

@@ -1859,5 +1859,41 @@
   "usbStatus_notConnected": "Välj en USB-enhet",
   "usbConnectionFailed": "Fel vid USB-anslutning: {error}",
   "usbStatus_searching": "Söker efter USB-enheter...",
-  "usbErrorConnectTimedOut": "Anslutningen har tidsutgått. Se till att enheten har rätt USB-firmware."
+  "usbErrorConnectTimedOut": "Anslutningen har tidsutgått. Se till att enheten har rätt USB-firmware.",
+  "discoveredContacts_export": "Exportera upptäckta kontakter",
+  "discoveredContacts_import": "Importera upptäckta kontakter",
+  "discoveredContacts_exported": "Upptäckta kontakter exporterades till {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Det gick inte att exportera upptäckta kontakter: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "Importerade {count} upptäckta kontakter.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "Ingen fil med upptäckta kontakter hittades.",
+  "discoveredContacts_importNoContacts": "Inga kontakter hittades i importfilen.",
+  "discoveredContacts_importFailed": "Det gick inte att importera upptäckta kontakter: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

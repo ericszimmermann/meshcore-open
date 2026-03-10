@@ -3084,6 +3084,40 @@ class AppLocalizationsPl extends AppLocalizations {
       'Kontakt nie został zaimportowany.';
 
   @override
+  String get discoveredContacts_export => 'Eksportuj wykryte kontakty';
+
+  @override
+  String get discoveredContacts_import => 'Importuj wykryte kontakty';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Wyeksportowano wykryte kontakty do $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Nie udało się wyeksportować wykrytych kontaktów: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return 'Zaimportowano $count wykrytych kontaktów.';
+  }
+
+  @override
+  String get discoveredContacts_importNoFile =>
+      'Nie znaleziono pliku z wykrytymi kontaktami.';
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'Nie znaleziono kontaktów w pliku importu.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Nie udało się zaimportować wykrytych kontaktów: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => 'Reklama Zero Hop';
 
   @override
