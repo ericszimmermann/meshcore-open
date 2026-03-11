@@ -1555,7 +1555,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get map_sharedPin => 'Clé partagée';
 
   @override
-  String get map_sharedAt => 'Shared';
+  String get map_sharedAt => 'Partagé';
 
   @override
   String get map_joinRoom => 'Rejoindre la salle';

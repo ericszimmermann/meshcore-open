@@ -1054,13 +1054,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get chat_sendGif => '发送 GIF';
 
   @override
-  String get chat_insertEmoji => 'Insert emoji';
+  String get chat_insertEmoji => '插入表情';
 
   @override
-  String get chat_shareLocation => 'Share location';
+  String get chat_shareLocation => '分享位置';
 
   @override
-  String get chat_locationUnavailable => 'Location not available';
+  String get chat_locationUnavailable => '位置不可用';
 
   @override
   String get chat_reply => '回复';
@@ -1459,7 +1459,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get map_sharedPin => '共享标记';
 
   @override
-  String get map_sharedAt => 'Shared';
+  String get map_sharedAt => '已分享';
 
   @override
   String get map_joinRoom => '加入房间';

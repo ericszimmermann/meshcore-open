@@ -1550,7 +1550,7 @@ class AppLocalizationsBg extends AppLocalizations {
   String get map_sharedPin => 'Споделено копие';
 
   @override
-  String get map_sharedAt => 'Shared';
+  String get map_sharedAt => 'Споделено';
 
   @override
   String get map_joinRoom => 'Присъедини се към стаята';

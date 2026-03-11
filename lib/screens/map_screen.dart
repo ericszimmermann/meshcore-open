@@ -1486,6 +1486,10 @@ class _MapScreenState extends State<MapScreen> {
     String defaultLabel,
   ) async {
     final controller = TextEditingController(text: defaultLabel);
+    controller.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: controller.text.length,
+    );
     return showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(

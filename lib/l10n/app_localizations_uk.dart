@@ -1548,7 +1548,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get map_sharedPin => 'Спільний пін';
 
   @override
-  String get map_sharedAt => 'Shared';
+  String get map_sharedAt => 'Поділено';
 
   @override
   String get map_joinRoom => 'Приєднатися до кімнати';
