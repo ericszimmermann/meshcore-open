@@ -527,7 +527,7 @@ class _ChatScreenState extends State<ChatScreen> {
       text: _truncateToUtf8Bytes(defaultLabel, maxLabelBytes),
     );
 
-    final label = await showDialog<String>(
+    var label = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(context.l10n.chat_shareLocation),
