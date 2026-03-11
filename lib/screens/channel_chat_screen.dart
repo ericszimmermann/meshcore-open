@@ -14,6 +14,7 @@ import '../connector/meshcore_protocol.dart';
 import '../helpers/link_handler.dart';
 import '../helpers/reaction_helper.dart';
 import '../helpers/utf8_length_limiter.dart';
+import '../helpers/smaz.dart';
 import '../l10n/l10n.dart';
 import '../models/channel.dart';
 import '../models/channel_message.dart';
@@ -827,28 +828,30 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     );
   }
 
+  void _insertTextAtCursor(String text) {
+    final currentValue = _textController.value;
+    final selection = currentValue.selection;
+    final newText = selection.isValid
+        ? currentValue.text.replaceRange(selection.start, selection.end, text)
+        : currentValue.text + text;
+    final caret =
+        (selection.isValid ? selection.start : currentValue.text.length) +
+        text.length;
+
+    _textController.value = currentValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: caret),
+    );
+  }
+
   void _showEmojiPickerForComposer(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (context) => EmojiPicker(
+        title: context.l10n.chat_insertEmoji,
         onEmojiSelected: (emoji) {
-          final currentValue = _textController.value;
-          final selection = currentValue.selection;
-          final newText = selection.isValid
-              ? currentValue.text.replaceRange(
-                  selection.start,
-                  selection.end,
-                  emoji,
-                )
-              : currentValue.text + emoji;
-          final caret =
-              (selection.isValid ? selection.start : currentValue.text.length) +
-              emoji.length;
-          _textController.value = currentValue.copyWith(
-            text: newText,
-            selection: TextSelection.collapsed(offset: caret),
-          );
+          _insertTextAtCursor(emoji);
           _textFieldFocusNode.requestFocus();
         },
       ),
@@ -875,10 +878,14 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     final defaultLabel =
         '${connector.deviceDisplayName} ${DateTime.now().toUtc().toIso8601String()}';
     final controller = TextEditingController(
-      text: _truncateToUtf8Bytes(defaultLabel, maxLabelBytes),
+      text: truncateToUtf8Bytes(defaultLabel, maxLabelBytes),
+    );
+    controller.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: controller.text.length,
     );
 
-    final label = await showDialog<String>(
+    var label = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(context.l10n.chat_shareLocation),
@@ -904,6 +911,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     );
 
     if (label == null || label.isEmpty) return;
+    label = label.replaceAll('|', '/');
 
     if (!mounted) return;
 
@@ -915,21 +923,39 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
       );
       return;
     }
+
+    if (widget.channel.isPublicChannel) {
+      final channelLabel = widget.channel.name.isEmpty
+          ? context.l10n.channels_channelIndex(widget.channel.index)
+          : widget.channel.name;
+      final canShare = await _confirmPublicShare(channelLabel);
+      if (!mounted || !canShare) return;
+    }
+
     connector.sendChannelMessage(widget.channel, markerText);
   }
 
-  String _truncateToUtf8Bytes(String text, int maxBytes) {
-    if (maxBytes <= 0) return '';
-
-    final codeUnits = text.codeUnits;
-    var end = codeUnits.length;
-    while (end > 0 &&
-        utf8.encode(String.fromCharCodes(codeUnits.take(end))).length >
-            maxBytes) {
-      end--;
-    }
-
-    return String.fromCharCodes(codeUnits.take(end));
+  Future<bool> _confirmPublicShare(String channelLabel) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(context.l10n.map_publicLocationShare),
+        content: Text(
+          context.l10n.map_publicLocationShareConfirm(channelLabel),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(context.l10n.common_cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(context.l10n.common_share),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
   }
 
   Widget _buildAvatar(String senderName) {
@@ -1040,6 +1066,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
   Widget _buildMessageComposer() {
     final connector = context.watch<MeshCoreConnector>();
     final maxBytes = maxChannelMessageBytes(connector.selfName);
+    final smazEncoder = connector.isChannelSmazEnabled(widget.channel.index)
+        ? Smaz.encodeIfSmaller
+        : null;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -1067,8 +1096,8 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
           child: Row(
             children: [
               PopupMenuButton<_ChannelChatInputAction>(
-                icon: const Icon(Icons.add),
-                tooltip: context.l10n.chat_sendGif,
+                icon: const Icon(Icons.add_circle_outline),
+                tooltip: context.l10n.common_add,
                 offset: const Offset(0, -8),
                 onSelected: (action) {
                   if (action == _ChannelChatInputAction.sendGif) {
@@ -1166,7 +1195,10 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                       controller: _textController,
                       focusNode: _textFieldFocusNode,
                       inputFormatters: [
-                        Utf8LengthLimitingTextInputFormatter(maxBytes),
+                        Utf8LengthLimitingTextInputFormatter(
+                          maxBytes,
+                          encoder: smazEncoder,
+                        ),
                       ],
                       textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
@@ -1302,6 +1334,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
       context: context,
       isScrollControlled: true,
       builder: (context) => EmojiPicker(
+        title: context.l10n.chat_addReaction,
         onEmojiSelected: (emoji) {
           _sendReaction(message, emoji);
         },

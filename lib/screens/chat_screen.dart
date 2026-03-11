@@ -17,6 +17,7 @@ import '../widgets/message_status_icon.dart';
 import '../helpers/chat_scroll_controller.dart';
 import '../helpers/link_handler.dart';
 import '../helpers/utf8_length_limiter.dart';
+import '../helpers/smaz.dart';
 import '../models/channel_message.dart';
 import '../models/contact.dart';
 import '../models/message.dart';
@@ -336,6 +337,10 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildInputBar(MeshCoreConnector connector) {
     final maxBytes = maxContactMessageBytes();
     final colorScheme = Theme.of(context).colorScheme;
+    final smazEncoder =
+        connector.isContactSmazEnabled(widget.contact.publicKeyHex)
+        ? Smaz.encodeIfSmaller
+        : null;
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -346,8 +351,8 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Row(
           children: [
             PopupMenuButton<_ChatInputAction>(
-              icon: const Icon(Icons.add),
-              tooltip: context.l10n.chat_sendGif,
+              icon: const Icon(Icons.add_circle_outline),
+              tooltip: context.l10n.common_add,
               offset: const Offset(0, -8),
               onSelected: (action) {
                 if (action == _ChatInputAction.sendGif) {
@@ -442,7 +447,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     controller: _textController,
                     focusNode: _textFieldFocusNode,
                     inputFormatters: [
-                      Utf8LengthLimitingTextInputFormatter(maxBytes),
+                      Utf8LengthLimitingTextInputFormatter(
+                        maxBytes,
+                        encoder: smazEncoder,
+                      ),
                     ],
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
@@ -497,6 +505,7 @@ class _ChatScreenState extends State<ChatScreen> {
       context: context,
       isScrollControlled: true,
       builder: (context) => EmojiPicker(
+        title: context.l10n.chat_insertEmoji,
         onEmojiSelected: (emoji) {
           _insertTextAtCursor(emoji);
           _textFieldFocusNode.requestFocus();
@@ -524,10 +533,14 @@ class _ChatScreenState extends State<ChatScreen> {
     final defaultLabel =
         '${connector.deviceDisplayName} ${DateTime.now().toUtc().toIso8601String()}';
     final controller = TextEditingController(
-      text: _truncateToUtf8Bytes(defaultLabel, maxLabelBytes),
+      text: truncateToUtf8Bytes(defaultLabel, maxLabelBytes),
+    );
+    controller.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: controller.text.length,
     );
 
-    final label = await showDialog<String>(
+    var label = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(context.l10n.chat_shareLocation),
@@ -553,7 +566,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
 
     if (label == null || label.isEmpty) return;
-
+    label = label.replaceAll('|', '/');
     if (!mounted) return;
 
     final markerText =
@@ -565,20 +578,6 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
     connector.sendMessage(widget.contact, markerText);
-  }
-
-  String _truncateToUtf8Bytes(String text, int maxBytes) {
-    if (maxBytes <= 0) return '';
-
-    final codeUnits = text.codeUnits;
-    var end = codeUnits.length;
-    while (end > 0 &&
-        utf8.encode(String.fromCharCodes(codeUnits.take(end))).length >
-            maxBytes) {
-      end--;
-    }
-
-    return String.fromCharCodes(codeUnits.take(end));
   }
 
   void _showGifPicker(BuildContext context) {
@@ -1307,6 +1306,7 @@ class _ChatScreenState extends State<ChatScreen> {
       context: context,
       isScrollControlled: true,
       builder: (context) => EmojiPicker(
+        title: context.l10n.chat_addReaction,
         onEmojiSelected: (emoji) {
           _sendReaction(message, senderContact, emoji);
         },

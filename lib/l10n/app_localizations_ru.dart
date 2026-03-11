@@ -1551,7 +1551,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get map_sharedPin => 'Общая метка';
 
   @override
-  String get map_sharedAt => 'Shared';
+  String get map_sharedAt => 'Поделено';
 
   @override
   String get map_joinRoom => 'Присоединиться к комнате';

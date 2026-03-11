@@ -1547,7 +1547,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get map_sharedPin => 'Condividi PIN';
 
   @override
-  String get map_sharedAt => 'Shared';
+  String get map_sharedAt => 'Condiviso';
 
   @override
   String get map_joinRoom => 'Unisciti alla stanza';

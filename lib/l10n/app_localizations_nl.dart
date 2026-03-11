@@ -1540,7 +1540,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get map_sharedPin => 'Gedeelde pin';
 
   @override
-  String get map_sharedAt => 'Shared';
+  String get map_sharedAt => 'Gedeeld';
 
   @override
   String get map_joinRoom => 'Sluit Kamer';

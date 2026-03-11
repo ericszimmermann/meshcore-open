@@ -684,6 +684,7 @@
   "map_showSharedMarkers": "Visa delade markörer",
   "map_lastSeenTime": "Senaste Visats Tid",
   "map_sharedPin": "Delad PIN",
+  "map_sharedAt": "Delad",
   "map_joinRoom": "Gå med i rum",
   "map_manageRepeater": "Hantera Upprepare",
   "mapCache_title": "Offline Kartcache",

@@ -684,6 +684,7 @@
   "map_showSharedMarkers": "Mostra i segnaposto condivisi",
   "map_lastSeenTime": "Ultimo Tempo di Visualizzazione",
   "map_sharedPin": "Condividi PIN",
+  "map_sharedAt": "Condiviso",
   "map_joinRoom": "Unisciti alla stanza",
   "map_manageRepeater": "Gestisci Ripetitore",
   "mapCache_title": "Cache Mappa Offline",

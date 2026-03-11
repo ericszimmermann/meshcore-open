@@ -684,6 +684,7 @@
   "map_showSharedMarkers": "Pokaż współdzielone znaki.",
   "map_lastSeenTime": "Ostatni raz widiany",
   "map_sharedPin": "Podzielony PIN",
+  "map_sharedAt": "Udostępnione",
   "map_joinRoom": "Dołącz do pokoju",
   "map_manageRepeater": "Zarządzaj Powtórzami",
   "mapCache_title": "Bufor Map Offline",

@@ -684,6 +684,7 @@
   "map_showSharedMarkers": "Покажи споделени маркери",
   "map_lastSeenTime": "Последна видяна дата",
   "map_sharedPin": "Споделено копие",
+  "map_sharedAt": "Споделено",
   "map_joinRoom": "Присъедини се към стаята",
   "map_manageRepeater": "Управление на Повтарящ се Елемент",
   "mapCache_title": "Кеш на офлайн карти",
