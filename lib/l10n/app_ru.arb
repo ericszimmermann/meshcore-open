@@ -399,6 +399,7 @@
   "map_showSharedMarkers": "Показывать общие метки",
   "map_lastSeenTime": "Время последнего появления",
   "map_sharedPin": "Общая метка",
+  "map_sharedAt": "Поделено",
   "map_joinRoom": "Присоединиться к комнате",
   "map_manageRepeater": "Управление репитером",
   "mapCache_title": "Кэш офлайн-карты",

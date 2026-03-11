@@ -904,6 +904,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     );
 
     if (label == null || label.isEmpty) return;
+    label = label.replaceAll('|', '/');
 
     if (!mounted) return;
 
@@ -921,15 +922,17 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
   String _truncateToUtf8Bytes(String text, int maxBytes) {
     if (maxBytes <= 0) return '';
 
-    final codeUnits = text.codeUnits;
-    var end = codeUnits.length;
-    while (end > 0 &&
-        utf8.encode(String.fromCharCodes(codeUnits.take(end))).length >
-            maxBytes) {
-      end--;
+    final buffer = StringBuffer();
+    var usedBytes = 0;
+    for (final rune in text.runes) {
+      final character = String.fromCharCode(rune);
+      final characterBytes = utf8.encode(character).length;
+      if (usedBytes + characterBytes > maxBytes) break;
+      buffer.write(character);
+      usedBytes += characterBytes;
     }
 
-    return String.fromCharCodes(codeUnits.take(end));
+    return buffer.toString();
   }
 
   Widget _buildAvatar(String senderName) {
@@ -1067,8 +1070,8 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
           child: Row(
             children: [
               PopupMenuButton<_ChannelChatInputAction>(
-                icon: const Icon(Icons.add),
-                tooltip: context.l10n.chat_sendGif,
+                icon: const Icon(Icons.add_circle_outline),
+                tooltip: context.l10n.common_add,
                 offset: const Offset(0, -8),
                 onSelected: (action) {
                   if (action == _ChannelChatInputAction.sendGif) {

@@ -684,6 +684,7 @@
   "map_showSharedMarkers": "Zeige gemeinsam genutzte Marker",
   "map_lastSeenTime": "Letzte Sichtung",
   "map_sharedPin": "Gemeinsames Passwort",
+  "map_sharedAt": "Geteilt",
   "map_joinRoom": "Beitreten Sie dem Raum",
   "map_manageRepeater": "Repeater verwalten",
   "mapCache_title": "Offline-Karten-Cache",

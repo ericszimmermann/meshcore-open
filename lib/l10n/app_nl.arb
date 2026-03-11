@@ -684,6 +684,7 @@
   "map_showSharedMarkers": "Toon gedeelde markeringen",
   "map_lastSeenTime": "Laatste Bekeken Tijd",
   "map_sharedPin": "Gedeelde pin",
+  "map_sharedAt": "Gedeeld",
   "map_joinRoom": "Sluit Kamer",
   "map_manageRepeater": "Beheer Repeater",
   "mapCache_title": "Offline Kaarten Cache",

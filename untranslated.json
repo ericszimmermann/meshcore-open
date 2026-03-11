@@ -1,60 +1,29 @@
 {
-  "bg": [
-    "map_sharedAt"
-  ],
+  "bg": [],
 
-  "de": [
-    "map_sharedAt"
-  ],
+  "de": [],
 
-  "es": [
-    "map_sharedAt"
-  ],
+  "es": [],
 
-  "fr": [
-    "map_sharedAt"
-  ],
+  "fr": [],
 
-  "it": [
-    "map_sharedAt"
-  ],
+  "it": [],
 
-  "nl": [
-    "map_sharedAt"
-  ],
+  "nl": [],
 
-  "pl": [
-    "map_sharedAt"
-  ],
+  "pl": [],
 
-  "pt": [
-    "map_sharedAt"
-  ],
+  "pt": [],
 
-  "ru": [
-    "map_sharedAt"
-  ],
+  "ru": [],
 
-  "sk": [
-    "map_sharedAt"
-  ],
+  "sk": [],
 
-  "sl": [
-    "map_sharedAt"
-  ],
+  "sl": [],
 
-  "sv": [
-    "map_sharedAt"
-  ],
+  "sv": [],
 
-  "uk": [
-    "map_sharedAt"
-  ],
+  "uk": [],
 
-  "zh": [
-    "chat_insertEmoji",
-    "chat_shareLocation",
-    "chat_locationUnavailable",
-    "map_sharedAt"
-  ]
+  "zh": []
 }

@@ -685,6 +685,7 @@
   "map_showSharedMarkers": "Показувати спільні маркери",
   "map_lastSeenTime": "Час останньої активності",
   "map_sharedPin": "Спільний пін",
+  "map_sharedAt": "Поділено",
   "map_joinRoom": "Приєднатися до кімнати",
   "map_manageRepeater": "Керувати ретранслятором",
   "mapCache_title": "Офлайн-кеш карти",
