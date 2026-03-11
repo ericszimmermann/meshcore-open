@@ -224,7 +224,11 @@ class _TcpScreenState extends State<TcpScreen> {
   }
 
   Future<void> _connectTcp() async {
-    if (_connector.state != MeshCoreConnectionState.disconnected) return;
+    if (_connector.state == MeshCoreConnectionState.connecting ||
+        _connector.state == MeshCoreConnectionState.connected ||
+        _connector.state == MeshCoreConnectionState.disconnecting) {
+      return;
+    }
 
     final host = _hostController.text.trim();
     final parsedPort = int.tryParse(_portController.text.trim());

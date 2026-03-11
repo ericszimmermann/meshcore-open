@@ -1059,10 +1059,14 @@ class MeshCoreConnector extends ChangeNotifier {
       await syncTime();
     } catch (error) {
       _appDebugLogService?.error('TCP connection error: $error', tag: 'TCP');
-      final tcpConnectNoLongerActive =
-          _activeTransport != MeshCoreTransportType.tcp ||
-          _state != MeshCoreConnectionState.connecting;
-      if (tcpConnectNoLongerActive) {
+      final tcpConnectCancelledBeforeHandshake =
+          shouldIgnoreLateTcpConnectError(
+            manualDisconnect: _manualDisconnect,
+            state: _state,
+            activeTransport: _activeTransport,
+            tcpManagerConnected: _tcpManager.isConnected,
+          );
+      if (tcpConnectCancelledBeforeHandshake) {
         _appDebugLogService?.info(
           'Ignoring late TCP connect error after cancellation/switch: state=$_state transport=$_activeTransport',
           tag: 'TCP',
@@ -1072,6 +1076,19 @@ class MeshCoreConnector extends ChangeNotifier {
       await disconnect(manual: false);
       rethrow;
     }
+  }
+
+  @visibleForTesting
+  static bool shouldIgnoreLateTcpConnectError({
+    required bool manualDisconnect,
+    required MeshCoreConnectionState state,
+    required MeshCoreTransportType activeTransport,
+    required bool tcpManagerConnected,
+  }) {
+    return manualDisconnect &&
+        (state == MeshCoreConnectionState.disconnected ||
+            state == MeshCoreConnectionState.disconnecting) &&
+        (activeTransport != MeshCoreTransportType.tcp || !tcpManagerConnected);
   }
 
   Future<void> connect(BluetoothDevice device, {String? displayName}) async {

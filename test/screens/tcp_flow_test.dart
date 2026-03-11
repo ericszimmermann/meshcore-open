@@ -135,6 +135,29 @@ void main() {
     await tester.pump(const Duration(milliseconds: 60));
   });
 
+  testWidgets('TcpScreen allows connect while connector is scanning', (
+    tester,
+  ) async {
+    final connector = _FakeMeshCoreConnector()
+      ..initialState = MeshCoreConnectionState.scanning;
+
+    await tester.pumpWidget(
+      _buildTestApp(
+        connector: connector,
+        child: const TcpScreen(),
+        locale: const Locale('en'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Connect'));
+    await tester.pumpAndSettle();
+
+    expect(connector.connectTcpCalls, 1);
+    expect(connector.lastHost, '192.168.40.10');
+    expect(connector.lastPort, 5000);
+  });
+
   testWidgets('TcpScreen narrow width long status text does not overflow', (
     tester,
   ) async {
