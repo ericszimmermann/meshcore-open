@@ -1243,14 +1243,21 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     }
 
     final maxBytes = maxChannelMessageBytes(connector.selfName);
-    if (utf8.encode(messageText).length > maxBytes) {
+    final smazEnabled = connector.isChannelSmazEnabled(widget.channel.index);
+    final trimmed = messageText.trim();
+    final isStructuredPayload =
+        trimmed.startsWith('g:') || trimmed.startsWith('m:');
+    final outboundText = (smazEnabled && !isStructuredPayload)
+        ? Smaz.encodeIfSmaller(messageText)
+        : messageText;
+    if (utf8.encode(outboundText).length > maxBytes) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.l10n.chat_messageTooLong(maxBytes))),
       );
       return;
     }
 
-    connector.sendChannelMessage(widget.channel, messageText);
+    connector.sendChannelMessage(widget.channel, outboundText);
     _textController.clear();
     _cancelReply();
     _textFieldFocusNode.requestFocus();
