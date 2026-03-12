@@ -597,7 +597,11 @@ class _ChatScreenState extends State<ChatScreen> {
     if (text.isEmpty) return;
 
     final maxBytes = maxContactMessageBytes();
-    if (utf8.encode(text).length > maxBytes) {
+    final outboundText = connector.prepareContactOutboundText(
+      widget.contact,
+      text,
+    );
+    if (utf8.encode(outboundText).length > maxBytes) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.l10n.chat_messageTooLong(maxBytes))),
       );
