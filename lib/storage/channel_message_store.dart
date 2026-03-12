@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:meshcore_open/utils/app_logger.dart';
+
 import '../models/channel_message.dart';
 import '../helpers/smaz.dart';
 import 'prefs_manager.dart';
@@ -7,13 +9,25 @@ import 'prefs_manager.dart';
 class ChannelMessageStore {
   static const String _keyPrefix = 'channel_messages_';
 
+  String publicKeyHex = '';
+  set setPublicKeyHex(String value) =>
+      publicKeyHex = value.length > 10 ? value.substring(0, 10) : '';
+
+  String get keyFor => '$_keyPrefix$publicKeyHex';
+
   /// Save messages for a specific channel
   Future<void> saveChannelMessages(
     int channelIndex,
     List<ChannelMessage> messages,
   ) async {
+    if (publicKeyHex.isEmpty) {
+      appLogger.warn(
+        'Public key hex is not set. Cannot save channel messages.',
+      );
+      return;
+    }
     final prefs = PrefsManager.instance;
-    final key = '$_keyPrefix$channelIndex';
+    final key = '$keyFor$channelIndex';
 
     // Convert messages to JSON
     final jsonList = messages.map((msg) => _messageToJson(msg)).toList();
@@ -24,11 +38,31 @@ class ChannelMessageStore {
 
   /// Load messages for a specific channel
   Future<List<ChannelMessage>> loadChannelMessages(int channelIndex) async {
+    if (publicKeyHex.isEmpty) {
+      appLogger.warn(
+        'Public key hex is not set. Cannot load channel messages.',
+      );
+      return [];
+    }
     final prefs = PrefsManager.instance;
-    final key = '$_keyPrefix$channelIndex';
+    final key = '$keyFor$channelIndex';
 
-    final jsonString = prefs.getString(key);
-    if (jsonString == null) return [];
+    String? jsonString = prefs.getString(_keyPrefix);
+    if (jsonString == null || jsonString.isEmpty) {
+      // Attempt migration from legacy unscoped key on first load
+      final legacyJsonString = prefs.getString(_keyPrefix);
+      prefs.remove(_keyPrefix);
+      if (legacyJsonString != null && legacyJsonString.isNotEmpty) {
+        appLogger.info(
+          'Migrating channel messages from legacy key $_keyPrefix to scoped key $key',
+        );
+        await prefs.setString(key, legacyJsonString);
+        jsonString = legacyJsonString;
+      }
+    }
+    if (jsonString == null || jsonString.isEmpty) {
+      return [];
+    }
 
     try {
       final jsonList = jsonDecode(jsonString) as List<dynamic>;
@@ -42,14 +76,14 @@ class ChannelMessageStore {
   /// Clear messages for a specific channel
   Future<void> clearChannelMessages(int channelIndex) async {
     final prefs = PrefsManager.instance;
-    final key = '$_keyPrefix$channelIndex';
+    final key = '$keyFor$channelIndex';
     await prefs.remove(key);
   }
 
   /// Clear all channel messages
   Future<void> clearAllChannelMessages() async {
     final prefs = PrefsManager.instance;
-    final keys = prefs.getKeys().where((k) => k.startsWith(_keyPrefix));
+    final keys = prefs.getKeys().where((k) => k.startsWith(keyFor));
     for (var key in keys) {
       await prefs.remove(key);
     }

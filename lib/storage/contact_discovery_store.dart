@@ -5,11 +5,11 @@ import '../models/discovery_contact.dart';
 import 'prefs_manager.dart';
 
 class ContactDiscoveryStore {
-  static const String _key = 'discovered_contacts';
+  static const String _keyPrefix = 'discovered_contacts';
 
   Future<List<DiscoveryContact>> loadContacts() async {
     final prefs = PrefsManager.instance;
-    final jsonStr = prefs.getString(_key);
+    final jsonStr = prefs.getString(_keyPrefix);
     if (jsonStr == null) return [];
 
     try {
@@ -25,7 +25,7 @@ class ContactDiscoveryStore {
   Future<void> saveContacts(List<DiscoveryContact> contacts) async {
     final prefs = PrefsManager.instance;
     final jsonList = contacts.map(_toJson).toList();
-    await prefs.setString(_key, jsonEncode(jsonList));
+    await prefs.setString(_keyPrefix, jsonEncode(jsonList));
   }
 
   Map<String, dynamic> _toJson(DiscoveryContact contact) {
