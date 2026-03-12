@@ -1886,13 +1886,7 @@ class MeshCoreConnector extends ChangeNotifier {
     _pendingChannelSentQueue.add(message.messageId);
     notifyListeners();
 
-    final trimmed = text.trim();
-    final isStructuredPayload =
-        trimmed.startsWith('g:') || trimmed.startsWith('m:');
-    final outboundText =
-        (isChannelSmazEnabled(channel.index) && !isStructuredPayload)
-        ? Smaz.encodeIfSmaller(text)
-        : text;
+    final outboundText = prepareChannelOutboundText(channel.index, text);
     await sendFrame(
       buildSendChannelTextMsgFrame(channel.index, outboundText),
       channelSendQueueId: message.messageId,
@@ -3147,6 +3141,16 @@ class MeshCoreConnector extends ChangeNotifier {
         trimmed.startsWith('m:') ||
         trimmed.startsWith('V1|');
     if (!isStructuredPayload && isContactSmazEnabled(contact.publicKeyHex)) {
+      return Smaz.encodeIfSmaller(text);
+    }
+    return text;
+  }
+
+  String prepareChannelOutboundText(int channelIndex, String text) {
+    final trimmed = text.trim();
+    final isStructuredPayload =
+        trimmed.startsWith('g:') || trimmed.startsWith('m:');
+    if (!isStructuredPayload && isChannelSmazEnabled(channelIndex)) {
       return Smaz.encodeIfSmaller(text);
     }
     return text;
