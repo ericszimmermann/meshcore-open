@@ -60,10 +60,11 @@ class ContactDiscoveryStore {
 
   DiscoveryContact _fromJson(Map<String, dynamic> json) {
     final lastSeenMs = json['lastSeen'] as int? ?? 0;
+    final rawName = json['name'] as String? ?? 'Unknown';
     return DiscoveryContact(
       rawPacket: Uint8List.fromList(base64Decode(json['rawPacket'] as String)),
       publicKey: Uint8List.fromList(base64Decode(json['publicKey'] as String)),
-      name: json['name'] as String? ?? 'Unknown',
+      name: _repairMojibakeIfNeeded(rawName),
       type: json['type'] as int? ?? 0,
       pathLength: json['pathLength'] as int? ?? -1,
       path: json['path'] != null
@@ -73,5 +74,28 @@ class ContactDiscoveryStore {
       longitude: (json['longitude'] as num?)?.toDouble(),
       lastSeen: DateTime.fromMillisecondsSinceEpoch(lastSeenMs),
     );
+  }
+
+  String _repairMojibakeIfNeeded(String value) {
+    if (value.isEmpty) return value;
+
+    final looksMojibake =
+        value.contains('Ã') ||
+        value.contains('Â') ||
+        value.contains('â') ||
+        value.contains('ð') ||
+        RegExp(r'[\u0080-\u009F]').hasMatch(value);
+    if (!looksMojibake) return value;
+
+    try {
+      final repaired = utf8.decode(latin1.encode(value));
+      if (repaired.isNotEmpty) {
+        return repaired;
+      }
+    } catch (_) {
+      // Keep original if conversion is not valid.
+    }
+
+    return value;
   }
 }

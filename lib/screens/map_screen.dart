@@ -661,7 +661,7 @@ class _MapScreenState extends State<MapScreen> {
         }
         position = LatLng(lat / anchors.length, lon / anchors.length);
       }
-      final isNotDiscovered = !connectorContacts.any(
+      final isNotDiscovered = connectorContacts.any(
         (c) => c.publicKeyHex == contact.publicKeyHex,
       );
       result.add(
