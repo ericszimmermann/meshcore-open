@@ -353,7 +353,8 @@ class _ChatScreenState extends State<ChatScreen> {
             PopupMenuButton<_ChatInputAction>(
               icon: const Icon(Icons.add_circle_outline),
               tooltip: context.l10n.common_add,
-              offset: const Offset(0, -8),
+              position: PopupMenuPosition.over,
+              offset: const Offset(0, -180),
               onSelected: (action) {
                 if (action == _ChatInputAction.sendGif) {
                   _showGifPicker(context);

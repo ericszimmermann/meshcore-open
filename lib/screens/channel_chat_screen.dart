@@ -1098,7 +1098,8 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
               PopupMenuButton<_ChannelChatInputAction>(
                 icon: const Icon(Icons.add_circle_outline),
                 tooltip: context.l10n.common_add,
-                offset: const Offset(0, -8),
+                position: PopupMenuPosition.over,
+                offset: const Offset(0, -180),
                 onSelected: (action) {
                   if (action == _ChannelChatInputAction.sendGif) {
                     _showGifPicker(context);
