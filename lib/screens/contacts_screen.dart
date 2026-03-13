@@ -75,6 +75,8 @@ class _ContactsScreenState extends State<ContactsScreen>
   }
 
   Future<void> _loadGroups() async {
+    _groupStore.setPublicKeyHex =
+        context.read<MeshCoreConnector>().selfPublicKeyHex;
     final groups = await _groupStore.loadGroups();
     if (!mounted) return;
     setState(() {
@@ -84,6 +86,8 @@ class _ContactsScreenState extends State<ContactsScreen>
   }
 
   Future<void> _saveGroups() async {
+    _groupStore.setPublicKeyHex =
+        context.read<MeshCoreConnector>().selfPublicKeyHex;
     await _groupStore.saveGroups(_groups);
   }
 
@@ -502,48 +506,74 @@ class _ContactsScreenState extends State<ContactsScreen>
           child: Row(
             children: [
               Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        initialValue:
-                            _selectedGroup?.name ?? contactsAllGroupsValue,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 10,
-                          ),
-                        ),
-                        items: [
-                          DropdownMenuItem<String>(
-                            value: contactsAllGroupsValue,
-                            child: Text(context.l10n.listFilter_all),
-                          ),
-                          ...sortedGroupNames.map(
-                            (name) => DropdownMenuItem<String>(
-                              value: name,
-                              child: Text(name),
-                            ),
+                child: DropdownButtonFormField<String>(
+                  initialValue: _selectedGroup?.name ?? contactsAllGroupsValue,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                  ),
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: contactsAllGroupsValue,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(context.l10n.listFilter_all),
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () => _showGroupEditor(context, contacts),
+                            child: const Icon(Icons.group_add, size: 20),
                           ),
                         ],
-                        onChanged: (value) {
-                          viewState.setContactsSelectedGroupName(
-                            value ?? contactsAllGroupsValue,
-                          );
-                        },
                       ),
                     ),
-                    IconButton(
-                      tooltip: 'Manage groups',
-                      icon: const Icon(Icons.group),
-                      onPressed: () =>
-                          _showGroupManagementSheet(context, contacts),
-                    ),
-                    _buildFilterButton(context, viewState),
+                    ...sortedGroupNames.map((name) {
+                      final group = _groups.firstWhere((g) => g.name == name);
+                      return DropdownMenuItem<String>(
+                        value: name,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                name,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () => _showGroupEditor(
+                                context,
+                                contacts,
+                                group: group,
+                              ),
+                              child: const Icon(Icons.edit, size: 20),
+                            ),
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () => _confirmDeleteGroup(context, group),
+                              child: const Icon(
+                                Icons.delete,
+                                size: 20,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
                   ],
+                  onChanged: (value) {
+                    viewState.setContactsSelectedGroupName(
+                      value ?? contactsAllGroupsValue,
+                    );
+                  },
                 ),
               ),
               const SizedBox(width: 8),
@@ -557,7 +587,12 @@ class _ContactsScreenState extends State<ContactsScreen>
                         autofocus: true,
                         decoration: InputDecoration(
                           hintText: hintText,
-                          prefixIcon: const Icon(Icons.search),
+                          prefixIcon: IconButton(
+                            icon: const Icon(Icons.search),
+                            onPressed: () {
+                              viewState.setContactsSearchExpanded(false);
+                            },
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               viewState.contactsSearchText.isNotEmpty
@@ -606,6 +641,20 @@ class _ContactsScreenState extends State<ContactsScreen>
                         },
                         child: const Icon(Icons.search),
                       ),
+              ),
+              const SizedBox(width: 8),
+              SizedBox(
+                width: 48,
+                height: 48,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: _buildFilterButton(context, viewState),
+                ),
               ),
             ],
           ),
@@ -821,84 +870,6 @@ class _ContactsScreenState extends State<ContactsScreen>
             ),
           );
         },
-      ),
-    );
-  }
-
-  void _showGroupManagementSheet(BuildContext context, List<Contact> contacts) {
-    final selectedGroup = _selectedGroup;
-    final sortedGroups = List<ContactGroup>.from(_groups)
-      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-
-    showModalBottomSheet(
-      context: context,
-      builder: (sheetContext) => SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.add),
-                title: Text(context.l10n.contacts_newGroup),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  _showGroupEditor(context, contacts);
-                },
-              ),
-              if (selectedGroup != null) ...[
-                ListTile(
-                  leading: const Icon(Icons.edit),
-                  title: Text(context.l10n.contacts_editGroup),
-                  subtitle: Text(selectedGroup.name),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _showGroupEditor(context, contacts, group: selectedGroup);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.delete, color: Colors.red),
-                  title: Text(
-                    context.l10n.contacts_deleteGroup,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                  subtitle: Text(selectedGroup.name),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _confirmDeleteGroup(context, selectedGroup);
-                  },
-                ),
-              ],
-              if (sortedGroups.isNotEmpty) const Divider(),
-              ...sortedGroups.map(
-                (group) => ListTile(
-                  leading: const Icon(Icons.groups_2_outlined),
-                  title: Text(group.name),
-                  subtitle: Text(
-                    '${group.memberKeys.length} member${group.memberKeys.length == 1 ? '' : 's'}',
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit),
-                    tooltip: context.l10n.contacts_editGroup,
-                    onPressed: () {
-                      Navigator.pop(sheetContext);
-                      _showGroupEditor(context, contacts, group: group);
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    context
-                        .read<UiViewStateService>()
-                        .setContactsSelectedGroupName(group.name);
-                  },
-                  onLongPress: () {
-                    Navigator.pop(sheetContext);
-                    _confirmDeleteGroup(context, group);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
