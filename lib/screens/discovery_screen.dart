@@ -14,6 +14,8 @@ import '../l10n/l10n.dart';
 import '../models/contact.dart';
 import '../utils/contact_search.dart';
 import '../utils/platform_info.dart';
+import '../utils/web_file_download_stub.dart'
+    if (dart.library.js_interop) '../utils/web_file_download_web.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/list_filter_widget.dart';
 
@@ -255,6 +257,15 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
     try {
       const filename = 'meshcore_discovered_contacts.json';
       final bytes = Uint8List.fromList(utf8.encode(json));
+
+      if (PlatformInfo.isWeb) {
+        downloadFileOnWeb(filename, bytes);
+        if (!mounted) return;
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.discoveredContacts_exported(filename))),
+        );
+        return;
+      }
 
       if (PlatformInfo.isDesktop) {
         final exportFile = XFile.fromData(
