@@ -463,7 +463,7 @@ class MeshCoreConnector extends ChangeNotifier {
 
   Contact _mergeImportedDiscoveredContact(Contact existing, Contact imported) {
     final isKnownContact = _knownContactKeys.contains(imported.publicKeyHex);
-    return imported.copyWith(
+    return existing.copyWith(
       isActive: existing.isActive || isKnownContact,
       rawPacket: existing.rawPacket ?? imported.rawPacket,
       lastSeen: imported.lastSeen.isAfter(existing.lastSeen)

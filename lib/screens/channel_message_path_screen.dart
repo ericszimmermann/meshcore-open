@@ -833,7 +833,7 @@ List<_PathHop> _buildPathHops(
         preferFavorites: false,
       );
 
-      if (contact != null && contact.hasLocation) {
+      if (contact != null && _hasValidLocation(contact)) {
         searchPoint = LatLng(contact.latitude!, contact.longitude!);
       }
 
@@ -861,7 +861,7 @@ List<_PathHop> _buildPathHops(
         preferFavorites: false,
       );
 
-      if (contact != null && contact.hasLocation) {
+      if (contact != null && _hasValidLocation(contact)) {
         searchPoint = LatLng(contact.latitude!, contact.longitude!);
       }
 

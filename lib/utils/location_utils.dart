@@ -3,6 +3,14 @@ import 'package:latlong2/latlong.dart';
 import '../connector/meshcore_protocol.dart';
 import '../models/contact.dart';
 
+bool _hasValidContactLocation(Contact contact) {
+  final lat = contact.latitude;
+  final lon = contact.longitude;
+  if (lat == null || lon == null) return false;
+  if (lat == 0 && lon == 0) return false;
+  return true;
+}
+
 Contact? selectBestRepeaterContactForPrefix(
   List<Contact> contacts,
   int pubkeyFirstByte, {
@@ -43,7 +51,7 @@ Contact? selectBestRepeaterContactForPrefix(
   var bestDistance = double.infinity;
 
   for (final c in candidates) {
-    if (c.hasLocation) {
+    if (_hasValidContactLocation(c)) {
       final d = distance(searchPoint, LatLng(c.latitude!, c.longitude!));
       if (d < bestDistance) {
         bestDistance = d;
