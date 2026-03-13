@@ -40,11 +40,16 @@ class ChannelMessagePathScreen extends StatelessWidget {
         final primaryPath = !channelMessage && !message.isOutgoing
             ? Uint8List.fromList(primaryPathTmp.reversed.toList())
             : primaryPathTmp;
-
+        final contacts = <Contact>[
+          ...connector.contacts,
+          ...connector.discoveredContacts,
+        ];
         final hops = _buildPathHops(
           primaryPath,
-          connector,
+          contacts,
           message.isOutgoing,
+          connector.selfLatitude,
+          connector.selfLongitude,
           l10n,
         );
         final hasHopDetails = primaryPath.isNotEmpty;
@@ -369,10 +374,16 @@ class _ChannelMessagePathMapScreenState
             : selectedPathTmp;
 
         final selectedIndex = _indexForPath(selectedPath, observedPaths);
+        final contacts = <Contact>[
+          ...connector.contacts,
+          ...connector.discoveredContacts,
+        ];
         final hops = _buildPathHops(
           selectedPath,
-          connector,
+          contacts,
           widget.message.isOutgoing,
+          connector.selfLatitude,
+          connector.selfLongitude,
           context.l10n,
         );
 
@@ -795,30 +806,16 @@ class _ObservedPath {
 
 List<_PathHop> _buildPathHops(
   Uint8List pathBytes,
-  MeshCoreConnector connector,
+  List<Contact> contacts,
   bool isOutgoing,
+  double? selfLatitude,
+  double? selfLongitude,
   AppLocalizations l10n,
 ) {
   final hops = <_PathHop>[];
 
-  final allContacts = <Contact>[
-    ...connector.contacts,
-    ...connector.discoveredContacts.map(
-      (d) => Contact(
-        publicKey: d.publicKey,
-        name: d.name,
-        type: d.type,
-        pathLength: d.pathLength,
-        path: d.path,
-        latitude: d.latitude,
-        longitude: d.longitude,
-        lastSeen: d.lastSeen,
-      ),
-    ),
-  ];
-
-  final selfLat = connector.selfLatitude;
-  final selfLon = connector.selfLongitude;
+  final selfLat = selfLatitude;
+  final selfLon = selfLongitude;
 
   LatLng? searchPoint;
   if (selfLat != null && selfLon != null) {
@@ -830,7 +827,7 @@ List<_PathHop> _buildPathHops(
       final prefix = pathBytes[i];
 
       final contact = selectBestRepeaterContactForPrefix(
-        allContacts,
+        contacts,
         prefix,
         searchPoint: searchPoint,
         preferFavorites: false,
@@ -858,7 +855,7 @@ List<_PathHop> _buildPathHops(
       final prefix = pathBytes[i];
 
       final contact = selectBestRepeaterContactForPrefix(
-        allContacts,
+        contacts,
         prefix,
         searchPoint: searchPoint,
         preferFavorites: false,

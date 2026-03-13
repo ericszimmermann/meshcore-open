@@ -1063,6 +1063,42 @@
   "discoveredContacts_addContact": "Добавить контакт",
   "discoveredContacts_Title": "Обнаруженные контакты",
   "discoveredContacts_deleteContact": "Удалить контакт",
+  "discoveredContacts_export": "Экспортировать обнаруженные контакты",
+  "discoveredContacts_import": "Импортировать обнаруженные контакты",
+  "discoveredContacts_exported": "Обнаруженные контакты экспортированы в {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Не удалось экспортировать обнаруженные контакты: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "Импортировано {count} обнаруженных контактов.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "Файл с обнаруженными контактами не найден.",
+  "discoveredContacts_importNoContacts": "В файле импорта не найдены контакты.",
+  "discoveredContacts_importFailed": "Не удалось импортировать обнаруженные контакты: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "contactsSettings_overwriteOldestSubtitle": "Когда список контактов заполнен, будет заменен самый старый контакт, который не находится в избранном.",
   "common_deleteAll": "Удалить все",
   "discoveredContacts_deleteContactAllContent": "Вы уверены, что хотите удалить все обнаруженные контакты?",
@@ -1100,40 +1136,32 @@
   "usbConnectionFailed": "Не удалось установить соединение через USB: {error}",
   "usbStatus_notConnected": "Выберите USB-устройство",
   "usbErrorConnectTimedOut": "Соединение не установлено. Убедитесь, что устройство имеет установленное программное обеспечение USB Companion.",
-  "discoveredContacts_export": "Экспортировать обнаруженные контакты",
-  "discoveredContacts_import": "Импортировать обнаруженные контакты",
-  "discoveredContacts_exported": "Обнаруженные контакты экспортированы в {path}.",
-  "@discoveredContacts_exported": {
+  "@tcpStatus_connectingTo": {
     "placeholders": {
-      "path": {
+      "endpoint": {
         "type": "String"
       }
     }
   },
-  "discoveredContacts_exportFailed": "Не удалось экспортировать обнаруженные контакты: {error}",
-  "@discoveredContacts_exportFailed": {
+  "@tcpConnectionFailed": {
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
-  "discoveredContacts_imported": "Импортировано {count} обнаруженных контактов.",
-  "@discoveredContacts_imported": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "discoveredContacts_importNoFile": "Файл с обнаруженными контактами не найден.",
-  "discoveredContacts_importNoContacts": "В файле импорта не найдено контактов.",
-  "discoveredContacts_importFailed": "Не удалось импортировать обнаруженные контакты: {error}",
-  "@discoveredContacts_importFailed": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  }
+  "tcpHostHint": "192.168.40.10",
+  "connectionChoiceTcpLabel": "TCP",
+  "tcpHostLabel": "IP-адрес",
+  "tcpScreenTitle": "Установить соединение по протоколу TCP",
+  "tcpPortLabel": "Порт",
+  "tcpPortHint": "5000",
+  "tcpStatus_notConnected": "Введите адрес и подключитесь.",
+  "tcpStatus_connectingTo": "Подключение к {endpoint}...",
+  "tcpErrorHostRequired": "Необходимо указать IP-адрес.",
+  "tcpErrorPortInvalid": "Порт должен находиться в диапазоне от 1 до 65535.",
+  "tcpErrorUnsupported": "Протокол TCP не поддерживается на этой платформе.",
+  "tcpErrorTimedOut": "Соединение TCP не удалось установить.",
+  "tcpConnectionFailed": "Не удалось установить соединение TCP: {error}",
+  "map_showDiscoveryContacts": "Показать контакты Discovery"
 }

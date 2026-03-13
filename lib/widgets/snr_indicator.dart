@@ -4,7 +4,6 @@ import 'package:latlong2/latlong.dart';
 import '../connector/meshcore_connector.dart';
 import '../l10n/l10n.dart';
 import '../utils/location_utils.dart';
-import '../models/contact.dart';
 import 'signal_ui.dart';
 
 class SNRUi {
@@ -161,21 +160,9 @@ class _SNRIndicatorState extends State<SNRIndicator> {
                   repeater.snr,
                   widget.connector.currentSf,
                 );
-
-                final allRepeaterContacts = <Contact>[
+                final allContacts = [
                   ...widget.connector.contacts,
-                  ...widget.connector.discoveredContacts.map(
-                    (d) => Contact(
-                      publicKey: d.publicKey,
-                      name: d.name,
-                      type: d.type,
-                      pathLength: d.pathLength,
-                      path: d.path,
-                      latitude: d.latitude,
-                      longitude: d.longitude,
-                      lastSeen: d.lastSeen,
-                    ),
-                  ),
+                  ...widget.connector.discoveredContacts,
                 ];
 
                 final selfLat = widget.connector.selfLatitude;
@@ -187,7 +174,7 @@ class _SNRIndicatorState extends State<SNRIndicator> {
                 }
 
                 final contact = selectBestRepeaterContactForPrefix(
-                  allRepeaterContacts,
+                  allContacts,
                   repeater.pubkeyFirstByte,
                   searchPoint: selfPoint,
                   preferFavorites: true,

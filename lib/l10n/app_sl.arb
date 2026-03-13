@@ -1823,6 +1823,42 @@
   "discoveredContacts_Title": "Odkriti stiki",
   "discoveredContacts_searchHint": "Najdeni stiki po iskanju",
   "discoveredContacts_deleteContact": "Izbriši stik",
+  "discoveredContacts_export": "Izvozi odkrite stike",
+  "discoveredContacts_import": "Uvozi odkrite stike",
+  "discoveredContacts_exported": "Odkriti stiki so izvoženi v {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Izvoz odkritih stikov ni uspel: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "Uvoženih je bilo {count} odkritih stikov.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "Datoteka z odkritimi stiki ni bila najdena.",
+  "discoveredContacts_importNoContacts": "V uvozni datoteki ni bilo najdenih stikov.",
+  "discoveredContacts_importFailed": "Uvoz odkritih stikov ni uspel: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "contactsSettings_overwriteOldestSubtitle": "Ko je seznam stikov poln, bo najstarejši nestarševski stik zamenjan.",
   "common_deleteAll": "Izbriši vse",
   "discoveredContacts_deleteContactAllContent": "Ste prepričani, da želite izbrisati vse odkrite kontakte?",
@@ -1860,40 +1896,32 @@
   "usbStatus_searching": "Iskanje USB naprav...",
   "usbConnectionFailed": "Napaka pri povezavi preko USB: {error}",
   "usbErrorConnectTimedOut": "Vzpostavitve ni bilo mogo. Prosimo, da se prepričate, da ima naprave trenutno nameštan firmware USB Companion.",
-  "discoveredContacts_export": "Izvozi odkrite stike",
-  "discoveredContacts_import": "Uvozi odkrite stike",
-  "discoveredContacts_exported": "Odkriti stiki so bili izvoženi v {path}.",
-  "@discoveredContacts_exported": {
+  "@tcpStatus_connectingTo": {
     "placeholders": {
-      "path": {
+      "endpoint": {
         "type": "String"
       }
     }
   },
-  "discoveredContacts_exportFailed": "Izvoz odkritih stikov ni uspel: {error}",
-  "@discoveredContacts_exportFailed": {
+  "@tcpConnectionFailed": {
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
-  "discoveredContacts_imported": "Uvoženih je bilo {count} odkritih stikov.",
-  "@discoveredContacts_imported": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "discoveredContacts_importNoFile": "Datoteka z odkritimi stiki ni bila najdena.",
-  "discoveredContacts_importNoContacts": "V uvozni datoteki ni bilo najdenih nobenih stikov.",
-  "discoveredContacts_importFailed": "Uvoz odkritih stikov ni uspel: {error}",
-  "@discoveredContacts_importFailed": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  }
+  "connectionChoiceTcpLabel": "TCP",
+  "tcpHostLabel": "IP naslov",
+  "tcpHostHint": "192.168.40.10",
+  "tcpScreenTitle": "Komunicirajte preko protokola TCP",
+  "tcpPortLabel": "Vrata",
+  "tcpPortHint": "5000",
+  "tcpStatus_notConnected": "Vnesite končni naslov in se povežite",
+  "tcpStatus_connectingTo": "Povezava z {endpoint}...",
+  "tcpErrorHostRequired": "Potrebna je IP-naslov.",
+  "tcpErrorPortInvalid": "Port mora biti med 1 in 65535.",
+  "tcpErrorUnsupported": "Transport preko protokola TCP ni podprt na tej platformi.",
+  "tcpErrorTimedOut": "Povezava TCP je presegla časovno obdobje.",
+  "tcpConnectionFailed": "Napaka pri povezavi TCP: {error}",
+  "map_showDiscoveryContacts": "Prikaži odkritja kontaktov"
 }

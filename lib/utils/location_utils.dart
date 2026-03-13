@@ -7,7 +7,7 @@ Contact? selectBestRepeaterContactForPrefix(
   List<Contact> contacts,
   int pubkeyFirstByte, {
   LatLng? searchPoint,
-  bool? preferFavorites = false,
+  bool preferFavorites = false,
 }) {
   final candidates = contacts
       .where(
@@ -20,14 +20,19 @@ Contact? selectBestRepeaterContactForPrefix(
 
   if (candidates.isEmpty) return null;
 
-  candidates.sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
-  if (preferFavorites != null && preferFavorites == true) {
-    candidates.sort((a, b) {
+  candidates.sort((a, b) {
+    if (preferFavorites) {
       final favA = a.isFavorite ? 1 : 0;
       final favB = b.isFavorite ? 1 : 0;
-      return favB.compareTo(favA);
-    });
-  }
+      final favCompare = favB.compareTo(favA);
+      if (favCompare != 0) return favCompare;
+    }
+
+    final seenCompare = b.lastSeen.compareTo(a.lastSeen);
+    if (seenCompare != 0) return seenCompare;
+
+    return a.publicKeyHex.compareTo(b.publicKeyHex);
+  });
 
   if (searchPoint == null) {
     return candidates.first;

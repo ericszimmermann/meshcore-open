@@ -118,6 +118,51 @@ class AppLocalizationsRu extends AppLocalizations {
   String get connectionChoiceBluetoothLabel => 'Bluetooth';
 
   @override
+  String get connectionChoiceTcpLabel => 'TCP';
+
+  @override
+  String get tcpScreenTitle => 'Установить соединение по протоколу TCP';
+
+  @override
+  String get tcpHostLabel => 'IP-адрес';
+
+  @override
+  String get tcpHostHint => '192.168.40.10';
+
+  @override
+  String get tcpPortLabel => 'Порт';
+
+  @override
+  String get tcpPortHint => '5000';
+
+  @override
+  String get tcpStatus_notConnected => 'Введите адрес и подключитесь.';
+
+  @override
+  String tcpStatus_connectingTo(String endpoint) {
+    return 'Подключение к $endpoint...';
+  }
+
+  @override
+  String get tcpErrorHostRequired => 'Необходимо указать IP-адрес.';
+
+  @override
+  String get tcpErrorPortInvalid =>
+      'Порт должен находиться в диапазоне от 1 до 65535.';
+
+  @override
+  String get tcpErrorUnsupported =>
+      'Протокол TCP не поддерживается на этой платформе.';
+
+  @override
+  String get tcpErrorTimedOut => 'Соединение TCP не удалось установить.';
+
+  @override
+  String tcpConnectionFailed(String error) {
+    return 'Не удалось установить соединение TCP: $error';
+  }
+
+  @override
   String get usbScreenTitle => 'Подключение через USB';
 
   @override
@@ -1531,6 +1576,9 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get map_showGuessedLocations =>
       'Отобразить предполагаемые места расположения узлов';
+
+  @override
+  String get map_showDiscoveryContacts => 'Показать контакты Discovery';
 
   @override
   String get map_guessedLocation => 'Угаданное место';
@@ -3116,7 +3164,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get discoveredContacts_importNoContacts =>
-      'В файле импорта не найдено контактов.';
+      'В файле импорта не найдены контакты.';
 
   @override
   String discoveredContacts_importFailed(String error) {

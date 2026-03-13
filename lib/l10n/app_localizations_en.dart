@@ -118,6 +118,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get connectionChoiceBluetoothLabel => 'Bluetooth';
 
   @override
+  String get connectionChoiceTcpLabel => 'TCP';
+
+  @override
+  String get tcpScreenTitle => 'Connect over TCP';
+
+  @override
+  String get tcpHostLabel => 'IP Address';
+
+  @override
+  String get tcpHostHint => '192.168.40.10';
+
+  @override
+  String get tcpPortLabel => 'Port';
+
+  @override
+  String get tcpPortHint => '5000';
+
+  @override
+  String get tcpStatus_notConnected => 'Enter endpoint and connect';
+
+  @override
+  String tcpStatus_connectingTo(String endpoint) {
+    return 'Connecting to $endpoint...';
+  }
+
+  @override
+  String get tcpErrorHostRequired => 'IP address is required.';
+
+  @override
+  String get tcpErrorPortInvalid => 'Port must be between 1 and 65535.';
+
+  @override
+  String get tcpErrorUnsupported =>
+      'TCP transport is not supported on this platform.';
+
+  @override
+  String get tcpErrorTimedOut => 'TCP connection timed out.';
+
+  @override
+  String tcpConnectionFailed(String error) {
+    return 'TCP connection failed: $error';
+  }
+
+  @override
   String get usbScreenTitle => 'Connect over USB';
 
   @override
@@ -1505,6 +1549,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get map_showGuessedLocations => 'Show guessed node locations';
+
+  @override
+  String get map_showDiscoveryContacts => 'Show Discovered Contacts';
 
   @override
   String get map_guessedLocation => 'Guessed location';
@@ -3038,29 +3085,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contacts_contactImportFailed => 'Failed to import contact.';
 
   @override
-  String get discoveredContacts_export => 'Export discovery contacts';
+  String get discoveredContacts_export => 'Export discovered contacts';
 
   @override
-  String get discoveredContacts_import => 'Import discovery contacts';
+  String get discoveredContacts_import => 'Import discovered contacts';
 
   @override
   String discoveredContacts_exported(String path) {
-    return 'Exported discovery contacts to $path.';
+    return 'Exported discovered contacts to $path.';
   }
 
   @override
   String discoveredContacts_exportFailed(String error) {
-    return 'Failed to export discovery contacts: $error';
+    return 'Failed to export discovered contacts: $error';
   }
 
   @override
   String discoveredContacts_imported(int count) {
-    return 'Imported $count discovery contacts.';
+    return 'Imported $count discovered contacts.';
   }
 
   @override
   String get discoveredContacts_importNoFile =>
-      'No discovery contacts file found.';
+      'No discovered contacts file found.';
 
   @override
   String get discoveredContacts_importNoContacts =>
@@ -3068,7 +3115,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String discoveredContacts_importFailed(String error) {
-    return 'Failed to import discovery contacts: $error';
+    return 'Failed to import discovered contacts: $error';
   }
 
   @override

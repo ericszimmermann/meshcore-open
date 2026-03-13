@@ -118,6 +118,50 @@ class AppLocalizationsEs extends AppLocalizations {
   String get connectionChoiceBluetoothLabel => 'Bluetooth';
 
   @override
+  String get connectionChoiceTcpLabel => 'TCP';
+
+  @override
+  String get tcpScreenTitle => 'Establecer conexión a través de TCP';
+
+  @override
+  String get tcpHostLabel => 'Dirección IP';
+
+  @override
+  String get tcpHostHint => '192.168.40.10';
+
+  @override
+  String get tcpPortLabel => 'Puerto';
+
+  @override
+  String get tcpPortHint => '5000';
+
+  @override
+  String get tcpStatus_notConnected => 'Ingrese la dirección final y conecte.';
+
+  @override
+  String tcpStatus_connectingTo(String endpoint) {
+    return 'Conectándose a $endpoint...';
+  }
+
+  @override
+  String get tcpErrorHostRequired => 'Se requiere la dirección IP.';
+
+  @override
+  String get tcpErrorPortInvalid => 'El puerto debe estar entre 1 y 65535.';
+
+  @override
+  String get tcpErrorUnsupported =>
+      'El protocolo de transporte TCP no está soportado en esta plataforma.';
+
+  @override
+  String get tcpErrorTimedOut => 'La conexión TCP ha caducado.';
+
+  @override
+  String tcpConnectionFailed(String error) {
+    return 'Error en la conexión TCP: $error';
+  }
+
+  @override
   String get usbScreenTitle => 'Conecte mediante USB';
 
   @override
@@ -1528,6 +1572,9 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get map_showGuessedLocations =>
       'Mostrar las ubicaciones estimadas de los nodos.';
+
+  @override
+  String get map_showDiscoveryContacts => 'Mostrar Contactos de Descubrimiento';
 
   @override
   String get map_guessedLocation => 'Ubicación estimada';

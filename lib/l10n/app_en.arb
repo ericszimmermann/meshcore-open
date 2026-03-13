@@ -49,6 +49,33 @@
   "scanner_title": "MeshCore Open",
   "connectionChoiceUsbLabel": "USB",
   "connectionChoiceBluetoothLabel": "Bluetooth",
+  "connectionChoiceTcpLabel": "TCP",
+  "tcpScreenTitle": "Connect over TCP",
+  "tcpHostLabel": "IP Address",
+  "tcpHostHint": "192.168.40.10",
+  "tcpPortLabel": "Port",
+  "tcpPortHint": "5000",
+  "tcpStatus_notConnected": "Enter endpoint and connect",
+  "tcpStatus_connectingTo": "Connecting to {endpoint}...",
+  "@tcpStatus_connectingTo": {
+    "placeholders": {
+      "endpoint": {
+        "type": "String"
+      }
+    }
+  },
+  "tcpErrorHostRequired": "IP address is required.",
+  "tcpErrorPortInvalid": "Port must be between 1 and 65535.",
+  "tcpErrorUnsupported": "TCP transport is not supported on this platform.",
+  "tcpErrorTimedOut": "TCP connection timed out.",
+  "tcpConnectionFailed": "TCP connection failed: {error}",
+  "@tcpConnectionFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "usbScreenTitle": "Connect over USB",
   "usbScreenSubtitle": "Choose a detected serial device and connect directly to your MeshCore node.",
   "usbScreenStatus": "Select a USB device",
@@ -807,6 +834,7 @@
   "map_markers": "Markers",
   "map_showSharedMarkers": "Show shared markers",
   "map_showGuessedLocations": "Show guessed node locations",
+  "map_showDiscoveryContacts": "Show Discovered Contacts",
   "map_guessedLocation": "Guessed location",
   "map_lastSeenTime": "Last Seen Time",
   "map_sharedPin": "Shared pin",
@@ -1815,9 +1843,9 @@
   "contacts_invalidAdvertFormat": "Invalid contact data",
   "contacts_contactImported": "Contact has been imported.",
   "contacts_contactImportFailed": "Failed to import contact.",
-  "discoveredContacts_export": "Export discovery contacts",
-  "discoveredContacts_import": "Import discovery contacts",
-  "discoveredContacts_exported": "Exported discovery contacts to {path}.",
+  "discoveredContacts_export": "Export discovered contacts",
+  "discoveredContacts_import": "Import discovered contacts",
+  "discoveredContacts_exported": "Exported discovered contacts to {path}.",
   "@discoveredContacts_exported": {
     "placeholders": {
       "path": {
@@ -1825,7 +1853,7 @@
       }
     }
   },
-  "discoveredContacts_exportFailed": "Failed to export discovery contacts: {error}",
+  "discoveredContacts_exportFailed": "Failed to export discovered contacts: {error}",
   "@discoveredContacts_exportFailed": {
     "placeholders": {
       "error": {
@@ -1833,7 +1861,7 @@
       }
     }
   },
-  "discoveredContacts_imported": "Imported {count} discovery contacts.",
+  "discoveredContacts_imported": "Imported {count} discovered contacts.",
   "@discoveredContacts_imported": {
     "placeholders": {
       "count": {
@@ -1841,9 +1869,9 @@
       }
     }
   },
-  "discoveredContacts_importNoFile": "No discovery contacts file found.",
+  "discoveredContacts_importNoFile": "No discovered contacts file found.",
   "discoveredContacts_importNoContacts": "No contacts found in import file.",
-  "discoveredContacts_importFailed": "Failed to import discovery contacts: {error}",
+  "discoveredContacts_importFailed": "Failed to import discovered contacts: {error}",
   "@discoveredContacts_importFailed": {
     "placeholders": {
       "error": {

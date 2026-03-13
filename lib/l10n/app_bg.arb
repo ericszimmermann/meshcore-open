@@ -1823,6 +1823,42 @@
   "discoveredContacts_copyContact": "Копирай контакт в клипборда",
   "discoveredContacts_deleteContact": "Изтрий контакт",
   "discoveredContacts_addContact": "Добави контакт",
+  "discoveredContacts_export": "Експортирай откритите контакти",
+  "discoveredContacts_import": "Импортирай откритите контакти",
+  "discoveredContacts_exported": "Откритите контакти са експортирани в {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Неуспешно експортиране на откритите контакти: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "Импортирани са {count} открити контакта.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "Не е намерен файл с открити контакти.",
+  "discoveredContacts_importNoContacts": "Във файла за импортиране не са намерени контакти.",
+  "discoveredContacts_importFailed": "Неуспешно импортиране на откритите контакти: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "contactsSettings_overwriteOldestSubtitle": "Когато списъкът с контакти е пълен, най-старият неключов контакт ще бъде заменен.",
   "discoveredContacts_deleteContactAll": "Изтриване на Всички Открити Контакти",
   "discoveredContacts_deleteContactAllContent": "Сигурни ли сте, че искате да изтриете всички открити контакти?",
@@ -1860,40 +1896,32 @@
   "usbStatus_notConnected": "Изберете USB устройство",
   "usbStatus_searching": "Търсене на USB устройства...",
   "usbErrorConnectTimedOut": "Връзката прекъсна. Уверете се, че устройството има софтуер за USB връзка.",
-  "discoveredContacts_export": "Експортиране на откритите контакти",
-  "discoveredContacts_import": "Импортиране на откритите контакти",
-  "discoveredContacts_exported": "Откритите контакти бяха експортирани в {path}.",
-  "@discoveredContacts_exported": {
+  "@tcpStatus_connectingTo": {
     "placeholders": {
-      "path": {
+      "endpoint": {
         "type": "String"
       }
     }
   },
-  "discoveredContacts_exportFailed": "Неуспешно експортиране на откритите контакти: {error}",
-  "@discoveredContacts_exportFailed": {
+  "@tcpConnectionFailed": {
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
-  "discoveredContacts_imported": "Импортирани са {count} открити контакта.",
-  "@discoveredContacts_imported": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "discoveredContacts_importNoFile": "Не е намерен файл с открити контакти.",
-  "discoveredContacts_importNoContacts": "Не са открити контакти във файла за импортиране.",
-  "discoveredContacts_importFailed": "Неуспешно импортиране на откритите контакти: {error}",
-  "@discoveredContacts_importFailed": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  }
+  "tcpHostHint": "192.168.40.10",
+  "tcpScreenTitle": "Свържете се чрез TCP",
+  "connectionChoiceTcpLabel": "TCP",
+  "tcpHostLabel": "IP адрес",
+  "tcpPortLabel": "Пристанище",
+  "tcpPortHint": "5000",
+  "tcpStatus_notConnected": "Въведете крайната точка и свържете се.",
+  "tcpStatus_connectingTo": "Свързване към {endpoint}...",
+  "tcpErrorHostRequired": "Необходим е IP адрес.",
+  "tcpErrorPortInvalid": "Портът трябва да бъде между 1 и 65535.",
+  "tcpErrorUnsupported": "Транспортът чрез TCP не се поддържа на тази платформа.",
+  "tcpErrorTimedOut": "Връзката TCP изтекла.",
+  "tcpConnectionFailed": "Неуспешно е установено TCP връзката: {error}",
+  "map_showDiscoveryContacts": "Покажи контакти за откриване"
 }

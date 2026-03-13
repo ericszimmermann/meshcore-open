@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -50,7 +51,8 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  static const double _labelZoomThreshold = 8.5;
+  // Zoom level at which node labels start to appear
+  static const double _labelZoomThreshold = 12.0;
 
   final MapController _mapController = MapController();
   final MapMarkerService _markerService = MapMarkerService();
@@ -91,6 +93,15 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+  bool _checkLocationPlausibility(double lat, double lon) {
+    const double epsilon = 1e-6;
+    return (lat.abs() > epsilon || lon.abs() > epsilon) &&
+        lat >= -90.0 &&
+        lat <= 90.0 &&
+        lon >= -180.0 &&
+        lon <= 180.0;
+  }
+
   double _standardDeviation(List<double> values) {
     if (values.length <= 1) {
       return 0.0;
@@ -126,21 +137,15 @@ class _MapScreenState extends State<MapScreen> {
       builder: (context, connector, settingsService, pathHistory, child) {
         final tileCache = context.read<MapTileCacheService>();
         final settings = settingsService.settings;
-        final contacts = <Contact>[
+        final allContacts = <Contact>[
           ...connector.contacts,
-          ...connector.discoveredContacts.map(
-            (d) => Contact(
-              publicKey: d.publicKey,
-              name: d.name,
-              type: d.type,
-              pathLength: d.pathLength,
-              path: d.path,
-              latitude: d.latitude,
-              longitude: d.longitude,
-              lastSeen: d.lastSeen,
-            ),
-          ),
+          ...connector.discoveredContacts.where((c) => !c.isActive),
         ];
+
+        final contacts = settings.mapShowDiscoveryContacts
+            ? allContacts
+            : allContacts.where((c) => c.isActive).toList();
+
         final highlightPosition = widget.highlightPosition;
         final sharedMarkers = settings.mapShowMarkers
             ? _collectSharedMarkers(connector)
@@ -173,14 +178,21 @@ class _MapScreenState extends State<MapScreen> {
             : filteredByTime;
 
         // Filter by location
-        final contactsWithLocation = filteredByKeyPrefix
-            .where((c) => c.hasLocation)
-            .toList();
+        final contactsWithLocation = filteredByKeyPrefix.where((c) {
+          if (!c.hasLocation) {
+            return false;
+          }
+          return _checkLocationPlausibility(c.latitude!, c.longitude!);
+        }).toList();
 
         // All contacts with a known location — used as anchors regardless of
         // time/key-prefix filters so that repeaters are always available.
-        final allContactsWithLocation = contacts
-            .where((c) => c.hasLocation)
+        final allContactsWithLocation = allContacts
+            .where(
+              (c) =>
+                  c.hasLocation &&
+                  _checkLocationPlausibility(c.latitude!, c.longitude!),
+            )
             .toList();
 
         // Compute guessed locations with caching
@@ -204,7 +216,6 @@ class _MapScreenState extends State<MapScreen> {
                   allContactsWithLocation,
                   pathHistory,
                   maxRangeKm,
-                  connector.contacts,
                 )
               : [];
         }
@@ -483,11 +494,13 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                           ),
                         if (!_isBuildingPathTrace)
-                          ...guessedLocations.map(_buildGuessedMarker),
+                          ..._buildGuessedMarker(
+                            guessedLocations,
+                            showLabels: _showNodeLabels,
+                          ),
                         ..._buildMarkers(
                           contactsWithLocation,
                           settings,
-                          connectorContacts: connector.contacts,
                           showLabels: _showNodeLabels,
                         ),
                         ...sharedMarkers.map(_buildSharedMarker),
@@ -573,7 +586,6 @@ class _MapScreenState extends State<MapScreen> {
     List<Contact> withLocation,
     PathHistoryService pathHistory,
     double? maxRangeKm,
-    List<Contact> connectorContacts,
   ) {
     // Index known-location repeaters by their 1-byte hash.
     // null value = two repeaters share the same hash byte (ambiguous collision).
@@ -594,14 +606,6 @@ class _MapScreenState extends State<MapScreen> {
     for (final contact in allContacts) {
       if (contact.hasLocation) continue;
 
-      // Skip contacts with no path information at all (no device path, no
-      // history). Without any path bytes we have no basis to guess location.
-      final recentPaths = pathHistory.getRecentPaths(contact.publicKeyHex);
-      if ((contact.path.isEmpty || contact.pathLength <= 0) &&
-          recentPaths.isEmpty) {
-        continue;
-      }
-
       final anchorSet = <LatLng>{};
 
       // Collect the contact-side (last-hop) repeater from every known path.
@@ -610,7 +614,9 @@ class _MapScreenState extends State<MapScreen> {
       // earlier bytes would anchor against our own side of the network.
       final pathSets = <List<int>>[
         contact.path.toList(),
-        ...recentPaths.map((r) => r.pathBytes),
+        ...pathHistory
+            .getRecentPaths(contact.publicKeyHex)
+            .map((r) => r.pathBytes),
       ];
       final lastHopBytes = <int>{};
       for (final pathBytes in pathSets) {
@@ -653,6 +659,13 @@ class _MapScreenState extends State<MapScreen> {
           anchors[0].latitude + offsetDeg * cos(angle),
           anchors[0].longitude + offsetDeg * sin(angle),
         );
+
+        if (!_checkLocationPlausibility(
+          position.latitude,
+          position.longitude,
+        )) {
+          continue; // discard implausible guesses near (0, 0)
+        }
       } else {
         double lat = 0, lon = 0;
         for (final a in anchors) {
@@ -660,16 +673,18 @@ class _MapScreenState extends State<MapScreen> {
           lon += a.longitude;
         }
         position = LatLng(lat / anchors.length, lon / anchors.length);
+        if (!_checkLocationPlausibility(
+          position.latitude,
+          position.longitude,
+        )) {
+          continue; // discard implausible guesses near (0, 0
+        }
       }
-      final isNotDiscovered = connectorContacts.any(
-        (c) => c.publicKeyHex == contact.publicKeyHex,
-      );
       result.add(
         _GuessedLocation(
           contact: contact,
           position: position,
           highConfidence: anchors.length >= 2,
-          isNotDiscovered: isNotDiscovered,
         ),
       );
     }
@@ -737,57 +752,72 @@ class _MapScreenState extends State<MapScreen> {
         .toList();
   }
 
-  Marker _buildGuessedMarker(_GuessedLocation guess) {
-    final color = _getNodeColor(guess.contact.type);
-    return Marker(
-      point: guess.position,
-      width: 35,
-      height: 35,
-      child: GestureDetector(
-        onTap: () => _showNodeInfo(
-          context,
-          guess.contact,
-          guessedPosition: guess.position,
-          isNotDiscovered: guess.isNotDiscovered,
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: guess.highConfidence ? 0.55 : 0.30),
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
+  List<Marker> _buildGuessedMarker(
+    List<_GuessedLocation> guessed, {
+    required bool showLabels,
+  }) {
+    final markers = <Marker>[];
+
+    for (final guess in guessed) {
+      final color = _getNodeColor(guess.contact.type);
+      final marker = Marker(
+        point: guess.position,
+        width: 35,
+        height: 35,
+        child: GestureDetector(
+          onTap: () => _showNodeInfo(
+            context,
+            guess.contact,
+            guessedPosition: guess.position,
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: color.withValues(
+                alpha: guess.highConfidence ? 0.55 : 0.30,
               ),
-            ],
-          ),
-          child: const Icon(
-            Icons.not_listed_location,
-            color: Colors.white,
-            size: 20,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.not_listed_location,
+              color: Colors.white,
+              size: 20,
+            ),
           ),
         ),
-      ),
-    );
+      );
+
+      markers.add(marker);
+
+      if (showLabels) {
+        markers.add(
+          _buildNodeLabelMarker(
+            point: guess.position,
+            label: guess.contact.name,
+          ),
+        );
+      }
+    }
+    return markers;
   }
 
   List<Marker> _buildMarkers(
     List<Contact> contacts,
     settings, {
-    required List<Contact> connectorContacts,
     required bool showLabels,
   }) {
     final markers = <Marker>[];
 
     for (final contact in contacts) {
       if (!contact.hasLocation) continue;
-
-      final isNotDiscovered = !connectorContacts.any(
-        (c) => c.publicKeyHex == contact.publicKeyHex,
-      );
 
       // Apply node type filters
       if (contact.type == advTypeRepeater &&
@@ -809,20 +839,11 @@ class _MapScreenState extends State<MapScreen> {
         width: 35,
         height: 35,
         child: GestureDetector(
-          onLongPress: () => _isBuildingPathTrace
-              ? _showNodeInfo(
-                  context,
-                  contact,
-                  isNotDiscovered: isNotDiscovered,
-                )
-              : null,
+          onLongPress: () =>
+              _isBuildingPathTrace ? _showNodeInfo(context, contact) : null,
           onTap: () => _isBuildingPathTrace
               ? _addToPath(context, contact)
-              : _showNodeInfo(
-                  context,
-                  contact,
-                  isNotDiscovered: isNotDiscovered,
-                ),
+              : _showNodeInfo(context, contact),
           child: Column(
             children: [
               Container(
@@ -1244,8 +1265,8 @@ class _MapScreenState extends State<MapScreen> {
     BuildContext context,
     Contact contact, {
     LatLng? guessedPosition,
-    bool isNotDiscovered = false,
   }) {
+    final connector = context.read<MeshCoreConnector>();
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -1287,9 +1308,13 @@ class _MapScreenState extends State<MapScreen> {
             onPressed: () => Navigator.pop(dialogContext),
             child: Text(context.l10n.common_close),
           ),
-          if (isNotDiscovered && contact.type == advTypeChat)
+          if (contact.type ==
+              advTypeChat) // Only show chat button for chat nodes
             TextButton(
               onPressed: () {
+                if (!contact.isActive) {
+                  connector.importDiscoveredContact(contact);
+                }
                 Navigator.pop(dialogContext);
                 Navigator.push(
                   context,
@@ -1300,17 +1325,23 @@ class _MapScreenState extends State<MapScreen> {
               },
               child: Text(context.l10n.contacts_openChat),
             ),
-          if (isNotDiscovered && contact.type == advTypeRepeater)
+          if (contact.type == advTypeRepeater)
             TextButton(
               onPressed: () {
+                if (!contact.isActive) {
+                  connector.importDiscoveredContact(contact);
+                }
                 Navigator.pop(dialogContext);
                 _showRepeaterLogin(context, contact);
               },
               child: Text(context.l10n.map_manageRepeater),
             ),
-          if (isNotDiscovered && contact.type == advTypeRoom)
+          if (contact.type == advTypeRoom)
             TextButton(
               onPressed: () {
+                if (!contact.isActive) {
+                  connector.importDiscoveredContact(contact);
+                }
                 Navigator.pop(dialogContext);
                 _showRoomLogin(context, contact);
               },
@@ -1787,6 +1818,14 @@ class _MapScreenState extends State<MapScreen> {
                     },
                     contentPadding: EdgeInsets.zero,
                   ),
+                  CheckboxListTile(
+                    title: Text(context.l10n.map_showDiscoveryContacts),
+                    value: settings.mapShowDiscoveryContacts,
+                    onChanged: (value) {
+                      service.setMapShowDiscoveryContacts(value ?? true);
+                    },
+                    contentPadding: EdgeInsets.zero,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     context.l10n.map_keyPrefix,
@@ -2054,13 +2093,11 @@ class _GuessedLocation {
   final Contact contact;
   final LatLng position;
   final bool highConfidence;
-  final bool isNotDiscovered;
 
   _GuessedLocation({
     required this.contact,
     required this.position,
     required this.highConfidence,
-    required this.isNotDiscovered,
   });
 }
 

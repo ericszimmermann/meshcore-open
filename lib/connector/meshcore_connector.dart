@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart' as crypto;
-import 'package:meshcore_open/models/discovery_contact.dart';
 import 'package:pointycastle/export.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -22,6 +21,7 @@ import '../services/app_settings_service.dart';
 import '../services/background_service.dart';
 import '../services/notification_service.dart';
 import 'meshcore_connector_usb.dart';
+import 'meshcore_connector_tcp.dart';
 import '../storage/channel_message_store.dart';
 import '../storage/channel_order_store.dart';
 import '../storage/channel_settings_store.dart';
@@ -86,7 +86,7 @@ enum MeshCoreConnectionState {
   disconnecting,
 }
 
-enum MeshCoreTransportType { bluetooth, usb }
+enum MeshCoreTransportType { bluetooth, usb, tcp }
 
 class RepeaterBatterySnapshot {
   final int millivolts;
@@ -116,11 +116,12 @@ class MeshCoreConnector extends ChangeNotifier {
   bool _manualDisconnect = false;
   final MeshCoreUsbManager _usbManager = MeshCoreUsbManager();
   StreamSubscription<Uint8List>? _usbFrameSubscription;
+  final MeshCoreTcpConnector _tcpConnector = MeshCoreTcpConnector();
   MeshCoreTransportType _activeTransport = MeshCoreTransportType.bluetooth;
 
   final List<ScanResult> _scanResults = [];
   final List<Contact> _contacts = [];
-  final List<DiscoveryContact> _discoveredContacts = [];
+  final List<Contact> _discoveredContacts = [];
   final List<Channel> _channels = [];
   final Map<String, List<Message>> _conversations = {};
   final Map<int, List<ChannelMessage>> _channelMessages = {};
@@ -255,6 +256,10 @@ class MeshCoreConnector extends ChangeNotifier {
   bool get isUsbTransportConnected =>
       _state == MeshCoreConnectionState.connected &&
       _activeTransport == MeshCoreTransportType.usb;
+  String? get activeTcpEndpoint => _tcpConnector.activeEndpoint;
+  bool get isTcpTransportConnected =>
+      _state == MeshCoreConnectionState.connected &&
+      _activeTransport == MeshCoreTransportType.tcp;
 
   String get deviceDisplayName {
     if (_selfName != null && _selfName!.isNotEmpty) {
@@ -281,8 +286,40 @@ class MeshCoreConnector extends ChangeNotifier {
     );
   }
 
-  List<DiscoveryContact> get discoveredContacts {
+  List<Contact> get discoveredContacts {
     return List.unmodifiable(_discoveredContacts);
+  }
+
+  String exportDiscoveredContactsJson() {
+    return _discoveryContactStore.encodeContacts(
+      _discoveredContacts.where((contact) => !contact.isActive).toList(),
+    );
+  }
+
+  Future<int> importDiscoveredContactsJson(String json) async {
+    final importedContacts = _discoveryContactStore.decodeContacts(json);
+    if (importedContacts.isEmpty) {
+      return 0;
+    }
+
+    final byPublicKey = <String, Contact>{
+      for (final contact in _discoveredContacts) contact.publicKeyHex: contact,
+    };
+
+    for (final contact in importedContacts) {
+      final existing = byPublicKey[contact.publicKeyHex];
+      byPublicKey[contact.publicKeyHex] = existing == null
+          ? contact
+          : _mergeImportedDiscoveredContact(existing, contact);
+    }
+
+    _discoveredContacts
+      ..clear()
+      ..addAll(byPublicKey.values);
+
+    await _persistDiscoveredContacts();
+    notifyListeners();
+    return importedContacts.length;
   }
 
   List<Channel> get channels => List.unmodifiable(_channels);
@@ -291,6 +328,7 @@ class MeshCoreConnector extends ChangeNotifier {
   bool get isLoadingChannels => _isLoadingChannels;
   Stream<Uint8List> get receivedFrames => _receivedFramesController.stream;
   Uint8List? get selfPublicKey => _selfPublicKey;
+  String get selfPublicKeyHex => pubKeyToHex(_selfPublicKey ?? Uint8List(0));
   String? get selfName => _selfName;
   double? get selfLatitude => _selfLatitude;
   double? get selfLongitude => _selfLongitude;
@@ -421,6 +459,20 @@ class MeshCoreConnector extends ChangeNotifier {
       return 'id:$messageId';
     }
     return 'fallback:${message.senderKeyHex}:${message.isOutgoing}:${message.isCli}:${message.timestamp.millisecondsSinceEpoch}:${message.text}';
+  }
+
+  Contact _mergeImportedDiscoveredContact(Contact existing, Contact imported) {
+    final isKnownContact = _knownContactKeys.contains(imported.publicKeyHex);
+    return imported.copyWith(
+      isActive: existing.isActive || isKnownContact,
+      rawPacket: existing.rawPacket ?? imported.rawPacket,
+      lastSeen: imported.lastSeen.isAfter(existing.lastSeen)
+          ? imported.lastSeen
+          : existing.lastSeen,
+      lastMessageAt: imported.lastMessageAt.isAfter(existing.lastMessageAt)
+          ? imported.lastMessageAt
+          : existing.lastMessageAt,
+    );
   }
 
   /// Load older messages for a contact (pagination)
@@ -659,6 +711,7 @@ class MeshCoreConnector extends ChangeNotifier {
     _appDebugLogService = appDebugLogService;
     _backgroundService = backgroundService;
     _usbManager.setDebugLogService(_appDebugLogService);
+    _tcpConnector.setDebugLogService(_appDebugLogService);
 
     // Initialize notification service
     _notificationService.initialize();
@@ -691,7 +744,7 @@ class MeshCoreConnector extends ChangeNotifier {
     }
   }
 
-  Future<void> loadDiscoveredContactCache() async {
+  Future<void> _loadDiscoveredContactCache() async {
     final cached = await _discoveryContactStore.loadContacts();
     _discoveredContacts
       ..clear()
@@ -964,6 +1017,142 @@ class MeshCoreConnector extends ChangeNotifier {
     }
   }
 
+  Future<void> connectTcp({required String host, required int port}) async {
+    if (_state == MeshCoreConnectionState.connecting ||
+        _state == MeshCoreConnectionState.connected) {
+      _appDebugLogService?.warn(
+        'connectTcp ignored: already $_state',
+        tag: 'TCP',
+      );
+      return;
+    }
+
+    _appDebugLogService?.info('connectTcp: endpoint=$host:$port', tag: 'TCP');
+
+    await stopScan();
+    _cancelReconnectTimer();
+    _manualDisconnect = false;
+    _resetConnectionHandshakeState();
+    _activeTransport = MeshCoreTransportType.tcp;
+    _setState(MeshCoreConnectionState.connecting);
+
+    try {
+      Future<void> handleTcpConnectAbort({required String message}) async {
+        _appDebugLogService?.warn(message, tag: 'TCP');
+        final shouldResetState = shouldResetStateAfterTcpConnectAbort(
+          state: _state,
+          activeTransport: _activeTransport,
+        );
+        if (shouldResetState) {
+          await disconnect(manual: false);
+          return;
+        }
+        if (_tcpConnector.isConnected) {
+          await _tcpConnector.disconnect();
+        }
+      }
+
+      await _tcpConnector.cancelFrameSubscription();
+      await _tcpConnector.connect(host: host, port: port);
+      final isTcpConnectCancelled =
+          _activeTransport != MeshCoreTransportType.tcp ||
+          _state != MeshCoreConnectionState.connecting ||
+          !_tcpConnector.isConnected;
+      if (isTcpConnectCancelled) {
+        await handleTcpConnectAbort(
+          message:
+              'connectTcp aborted before handshake: state=$_state transport=$_activeTransport connected=${_tcpConnector.isConnected}',
+        );
+        return;
+      }
+      notifyListeners();
+
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      final isTcpConnectCancelledAfterDelay =
+          _activeTransport != MeshCoreTransportType.tcp ||
+          _state != MeshCoreConnectionState.connecting ||
+          !_tcpConnector.isConnected;
+      if (isTcpConnectCancelledAfterDelay) {
+        await handleTcpConnectAbort(
+          message:
+              'connectTcp aborted after connect delay: state=$_state transport=$_activeTransport connected=${_tcpConnector.isConnected}',
+        );
+        return;
+      }
+      _tcpConnector.listenFrames(
+        onFrame: _handleFrame,
+        onError: (error, stackTrace) {
+          _appDebugLogService?.error('TCP transport error: $error', tag: 'TCP');
+          unawaited(disconnect(manual: false));
+        },
+        onDone: () {
+          _appDebugLogService?.warn('TCP frame stream ended', tag: 'TCP');
+          unawaited(disconnect(manual: false));
+        },
+      );
+
+      _setState(MeshCoreConnectionState.connected);
+      _pendingInitialChannelSync = true;
+      await _requestDeviceInfo();
+      _startBatteryPolling();
+
+      var gotSelfInfo = await _waitForSelfInfo(
+        timeout: const Duration(seconds: 3),
+      );
+      if (!gotSelfInfo) {
+        await refreshDeviceInfo();
+        gotSelfInfo = await _waitForSelfInfo(
+          timeout: const Duration(seconds: 3),
+        );
+      }
+      if (!gotSelfInfo) {
+        throw StateError('Timed out waiting for SELF_INFO during TCP connect');
+      }
+
+      await syncTime();
+    } catch (error) {
+      _appDebugLogService?.error('TCP connection error: $error', tag: 'TCP');
+      final tcpConnectCancelledBeforeHandshake =
+          shouldIgnoreLateTcpConnectError(
+            manualDisconnect: _manualDisconnect,
+            state: _state,
+            activeTransport: _activeTransport,
+            tcpManagerConnected: _tcpConnector.isConnected,
+          );
+      if (tcpConnectCancelledBeforeHandshake) {
+        _appDebugLogService?.info(
+          'Ignoring late TCP connect error after cancellation/switch: state=$_state transport=$_activeTransport',
+          tag: 'TCP',
+        );
+        return;
+      }
+      await disconnect(manual: false);
+      rethrow;
+    }
+  }
+
+  @visibleForTesting
+  static bool shouldIgnoreLateTcpConnectError({
+    required bool manualDisconnect,
+    required MeshCoreConnectionState state,
+    required MeshCoreTransportType activeTransport,
+    required bool tcpManagerConnected,
+  }) {
+    return manualDisconnect &&
+        (state == MeshCoreConnectionState.disconnected ||
+            state == MeshCoreConnectionState.disconnecting) &&
+        (activeTransport != MeshCoreTransportType.tcp || !tcpManagerConnected);
+  }
+
+  @visibleForTesting
+  static bool shouldResetStateAfterTcpConnectAbort({
+    required MeshCoreConnectionState state,
+    required MeshCoreTransportType activeTransport,
+  }) {
+    return state == MeshCoreConnectionState.connecting &&
+        activeTransport == MeshCoreTransportType.tcp;
+  }
+
   Future<void> connect(BluetoothDevice device, {String? displayName}) async {
     if (_state == MeshCoreConnectionState.connecting ||
         _state == MeshCoreConnectionState.connected) {
@@ -1193,7 +1382,6 @@ class MeshCoreConnector extends ChangeNotifier {
 
     await _requestDeviceInfo();
     _startBatteryPolling();
-    unawaited(loadDiscoveredContactCache());
 
     final gotSelfInfo = await _waitForSelfInfo(
       timeout: const Duration(seconds: 3),
@@ -1230,6 +1418,7 @@ class MeshCoreConnector extends ChangeNotifier {
 
   bool get _shouldGateInitialChannelSync =>
       _activeTransport == MeshCoreTransportType.usb ||
+      _activeTransport == MeshCoreTransportType.tcp ||
       (_activeTransport == MeshCoreTransportType.bluetooth &&
           PlatformInfo.isWeb);
 
@@ -1276,9 +1465,11 @@ class MeshCoreConnector extends ChangeNotifier {
   Future<void> disconnect({bool manual = true}) async {
     if (_state == MeshCoreConnectionState.disconnecting) return;
     final transportAtDisconnect = _activeTransport;
-    final transportLabel = transportAtDisconnect == MeshCoreTransportType.usb
-        ? 'USB'
-        : 'BLE';
+    final transportLabel = switch (transportAtDisconnect) {
+      MeshCoreTransportType.bluetooth => 'BLE',
+      MeshCoreTransportType.usb => 'USB',
+      MeshCoreTransportType.tcp => 'TCP',
+    };
 
     _appDebugLogService?.info(
       'Starting disconnect transport=$transportLabel manual=$manual',
@@ -1298,6 +1489,7 @@ class MeshCoreConnector extends ChangeNotifier {
     await _usbFrameSubscription?.cancel();
     _usbFrameSubscription = null;
     await _usbManager.disconnect();
+    await _tcpConnector.disconnect();
 
     await _notifySubscription?.cancel();
     _notifySubscription = null;
@@ -1379,6 +1571,8 @@ class MeshCoreConnector extends ChangeNotifier {
 
     if (_activeTransport == MeshCoreTransportType.usb) {
       await _usbManager.write(data);
+    } else if (_activeTransport == MeshCoreTransportType.tcp) {
+      await _tcpConnector.write(data);
     } else {
       if (_rxCharacteristic == null) {
         throw Exception("MeshCore RX characteristic not available");
@@ -1903,7 +2097,11 @@ class MeshCoreConnector extends ChangeNotifier {
   Future<void> removeContact(Contact contact) async {
     if (!isConnected) return;
 
-    _handleDiscovery(contact, Uint8List(0), noNotify: true);
+    _handleDiscovery(
+      contact,
+      contact.rawPacket ?? Uint8List(0),
+      noNotify: true,
+    );
 
     await sendFrame(buildRemoveContactFrame(contact.publicKey));
     _contacts.removeWhere((c) => c.publicKeyHex == contact.publicKeyHex);
@@ -1919,7 +2117,20 @@ class MeshCoreConnector extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeDiscoveredContact(DiscoveryContact contact) async {
+  Future<void> updateKnownDiscovered() async {
+    if (!isConnected) return;
+    for (int i = 0; i < _discoveredContacts.length; i++) {
+      _discoveredContacts[i] = _discoveredContacts[i].copyWith(
+        isActive: _knownContactKeys.contains(
+          _discoveredContacts[i].publicKeyHex,
+        ),
+      );
+    }
+    unawaited(_persistDiscoveredContacts());
+    notifyListeners();
+  }
+
+  Future<void> removeDiscoveredContact(Contact contact) async {
     if (!isConnected) return;
     _discoveredContacts.removeWhere(
       (c) => c.publicKeyHex == contact.publicKeyHex,
@@ -1928,7 +2139,7 @@ class MeshCoreConnector extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> importDiscoveredContact(DiscoveryContact contact) async {
+  Future<void> importDiscoveredContact(Contact contact) async {
     if (!isConnected) return;
 
     await sendFrame(
@@ -1937,10 +2148,22 @@ class MeshCoreConnector extends ChangeNotifier {
         contact.path,
         contact.pathLength,
         type: contact.type,
-        flags: 0,
+        flags: contact.flags,
         name: contact.name,
+        lat: contact.latitude,
+        lon: contact.longitude,
+        lastModified: contact.lastSeen,
       ),
     );
+
+    // Update the discovered contact to mark it as active (imported)
+    final discoveredIndex = _discoveredContacts.indexWhere(
+      (c) => c.publicKeyHex == contact.publicKeyHex,
+    );
+    if (discoveredIndex >= 0) {
+      _discoveredContacts[discoveredIndex] =
+          _discoveredContacts[discoveredIndex].copyWith(isActive: true);
+    }
 
     _handleContactAdvert(
       Contact(
@@ -1952,6 +2175,7 @@ class MeshCoreConnector extends ChangeNotifier {
         latitude: contact.latitude,
         longitude: contact.longitude,
         lastSeen: DateTime.now(),
+        flags: contact.flags,
       ),
     );
     notifyListeners();
@@ -1968,6 +2192,8 @@ class MeshCoreConnector extends ChangeNotifier {
       final existing = _contacts[existingIndex];
       // Use copyWith to preserve pathOverride and pathOverrideBytes
       _contacts[existingIndex] = existing.copyWith(
+        pathOverride: null,
+        pathOverrideBytes: null,
         pathLength: -1,
         path: Uint8List(0),
       );
@@ -2323,6 +2549,7 @@ class MeshCoreConnector extends ChangeNotifier {
         debugPrint('Got END_OF_CONTACTS');
         _isLoadingContacts = false;
         _preserveContactsOnRefresh = false;
+        unawaited(updateKnownDiscovered());
         notifyListeners();
         unawaited(_persistContacts());
         if (PlatformInfo.isWeb &&
@@ -2338,7 +2565,8 @@ class MeshCoreConnector extends ChangeNotifier {
         }
         if (_pendingDeferredChannelSyncAfterContacts &&
             (_activeTransport == MeshCoreTransportType.bluetooth ||
-                _activeTransport == MeshCoreTransportType.usb)) {
+                _activeTransport == MeshCoreTransportType.usb ||
+                _activeTransport == MeshCoreTransportType.tcp)) {
           _pendingDeferredChannelSyncAfterContacts = false;
           _pendingInitialChannelSync = false;
           unawaited(getChannels());
@@ -2489,6 +2717,28 @@ class MeshCoreConnector extends ChangeNotifier {
         selfName.isNotEmpty) {
       _usbManager.updateConnectedLabel(selfName);
     }
+
+    //set all the stores' public key so they can load the correct data
+    _channelMessageStore.setPublicKeyHex = selfPublicKeyHex;
+    _messageStore.setPublicKeyHex = selfPublicKeyHex;
+    _channelOrderStore.setPublicKeyHex = selfPublicKeyHex;
+    _channelSettingsStore.setPublicKeyHex = selfPublicKeyHex;
+    _contactSettingsStore.setPublicKeyHex = selfPublicKeyHex;
+    _contactStore.setPublicKeyHex = selfPublicKeyHex;
+    _channelStore.setPublicKeyHex = selfPublicKeyHex;
+    _unreadStore.setPublicKeyHex = selfPublicKeyHex;
+
+    // Now that we have self info, we can load all the persisted data for this node
+    _loadChannelOrder();
+    loadContactCache();
+    loadChannelSettings();
+    loadCachedChannels();
+
+    // Load persisted channel messages
+    loadAllChannelMessages();
+    loadUnreadState();
+    _loadDiscoveredContactCache();
+
     _awaitingSelfInfo = false;
     _selfInfoRetryTimer?.cancel();
     _selfInfoRetryTimer = null;
@@ -2505,14 +2755,16 @@ class MeshCoreConnector extends ChangeNotifier {
     if (PlatformInfo.isWeb &&
         _activeTransport == MeshCoreTransportType.bluetooth) {
       _pendingInitialContactsSync = true;
-    } else if (_activeTransport == MeshCoreTransportType.usb) {
+    } else if (_activeTransport == MeshCoreTransportType.usb ||
+        _activeTransport == MeshCoreTransportType.tcp) {
       _pendingDeferredChannelSyncAfterContacts = true;
       getContacts();
     } else {
       getContacts();
     }
     if (_shouldGateInitialChannelSync &&
-        _activeTransport != MeshCoreTransportType.usb) {
+        _activeTransport != MeshCoreTransportType.usb &&
+        _activeTransport != MeshCoreTransportType.tcp) {
       _maybeStartInitialChannelSync();
     }
   }
@@ -4280,6 +4532,7 @@ class MeshCoreConnector extends ChangeNotifier {
     _batteryPollTimer?.cancel();
     _receivedFramesController.close();
     _usbManager.dispose();
+    _tcpConnector.dispose();
 
     // Flush pending unread writes before disposal
     _unreadStore.flush();
@@ -4384,7 +4637,7 @@ class MeshCoreConnector extends ChangeNotifier {
     }
 
     importDiscoveredContact(
-      DiscoveryContact(
+      Contact(
         rawPacket: frame,
         publicKey: publicKey,
         name: name,
@@ -4455,6 +4708,7 @@ class MeshCoreConnector extends ChangeNotifier {
 
     if (isNewContact) {
       final newContact = Contact(
+        rawPacket: rawPacket,
         publicKey: publicKey,
         name: name,
         type: type,
@@ -4600,13 +4854,15 @@ class MeshCoreConnector extends ChangeNotifier {
             latitude: contact.latitude,
             longitude: contact.longitude,
             lastSeen: contact.lastSeen,
+            flags: 0,
+            isActive: false,
           );
       notifyListeners();
       unawaited(_persistDiscoveredContacts());
       return;
     }
 
-    final disContact = DiscoveryContact(
+    final disContact = Contact(
       rawPacket: rawPacket,
       publicKey: contact.publicKey,
       name: contact.name,
@@ -4616,6 +4872,9 @@ class MeshCoreConnector extends ChangeNotifier {
       latitude: contact.latitude,
       longitude: contact.longitude,
       lastSeen: contact.lastSeen,
+      lastMessageAt: contact.lastMessageAt,
+      isActive: false,
+      flags: 0,
     );
     _discoveredContacts.add(disContact);
 

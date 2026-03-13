@@ -118,6 +118,52 @@ class AppLocalizationsPl extends AppLocalizations {
   String get connectionChoiceBluetoothLabel => 'Bluetooth';
 
   @override
+  String get connectionChoiceTcpLabel => 'TCP';
+
+  @override
+  String get tcpScreenTitle => 'Połącz się za pomocą protokołu TCP';
+
+  @override
+  String get tcpHostLabel => 'Adres IP';
+
+  @override
+  String get tcpHostHint => '192.168.40.10';
+
+  @override
+  String get tcpPortLabel => 'Port';
+
+  @override
+  String get tcpPortHint => '5000';
+
+  @override
+  String get tcpStatus_notConnected => 'Wprowadź adres URL i połącz';
+
+  @override
+  String tcpStatus_connectingTo(String endpoint) {
+    return 'Połączenie z $endpoint...';
+  }
+
+  @override
+  String get tcpErrorHostRequired => 'Wymagana jest adresa IP.';
+
+  @override
+  String get tcpErrorPortInvalid =>
+      'Numer portu musi mieścić się w zakresie od 1 do 65535.';
+
+  @override
+  String get tcpErrorUnsupported =>
+      'Transport protokoł TCP nie jest obsługiwany na tym urządzeniu.';
+
+  @override
+  String get tcpErrorTimedOut =>
+      'Połączenie TCP zakończyło się bez powodzenia.';
+
+  @override
+  String tcpConnectionFailed(String error) {
+    return 'Błąd połączenia TCP: $error';
+  }
+
+  @override
   String get usbScreenTitle => 'Połącz przez USB';
 
   @override
@@ -1529,6 +1575,9 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get map_showGuessedLocations =>
       'Wyświetl lokalizacje zgadanych węzłów';
+
+  @override
+  String get map_showDiscoveryContacts => 'Pokaż kontakty odkrywania';
 
   @override
   String get map_guessedLocation => 'Wydana lokalizacja';
@@ -3084,29 +3133,29 @@ class AppLocalizationsPl extends AppLocalizations {
       'Kontakt nie został zaimportowany.';
 
   @override
-  String get discoveredContacts_export => 'Eksportuj wykryte kontakty';
+  String get discoveredContacts_export => 'Eksportuj odkryte kontakty';
 
   @override
-  String get discoveredContacts_import => 'Importuj wykryte kontakty';
+  String get discoveredContacts_import => 'Importuj odkryte kontakty';
 
   @override
   String discoveredContacts_exported(String path) {
-    return 'Wyeksportowano wykryte kontakty do $path.';
+    return 'Wyeksportowano odkryte kontakty do $path.';
   }
 
   @override
   String discoveredContacts_exportFailed(String error) {
-    return 'Nie udało się wyeksportować wykrytych kontaktów: $error';
+    return 'Nie udało się wyeksportować odkrytych kontaktów: $error';
   }
 
   @override
   String discoveredContacts_imported(int count) {
-    return 'Zaimportowano $count wykrytych kontaktów.';
+    return 'Zaimportowano $count odkrytych kontaktów.';
   }
 
   @override
   String get discoveredContacts_importNoFile =>
-      'Nie znaleziono pliku z wykrytymi kontaktami.';
+      'Nie znaleziono pliku z odkrytymi kontaktami.';
 
   @override
   String get discoveredContacts_importNoContacts =>
@@ -3114,7 +3163,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String discoveredContacts_importFailed(String error) {
-    return 'Nie udało się zaimportować wykrytych kontaktów: $error';
+    return 'Nie udało się zaimportować odkrytych kontaktów: $error';
   }
 
   @override

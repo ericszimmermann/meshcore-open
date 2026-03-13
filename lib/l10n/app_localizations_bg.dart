@@ -118,6 +118,50 @@ class AppLocalizationsBg extends AppLocalizations {
   String get connectionChoiceBluetoothLabel => 'Bluetooth';
 
   @override
+  String get connectionChoiceTcpLabel => 'TCP';
+
+  @override
+  String get tcpScreenTitle => 'Свържете се чрез TCP';
+
+  @override
+  String get tcpHostLabel => 'IP адрес';
+
+  @override
+  String get tcpHostHint => '192.168.40.10';
+
+  @override
+  String get tcpPortLabel => 'Пристанище';
+
+  @override
+  String get tcpPortHint => '5000';
+
+  @override
+  String get tcpStatus_notConnected => 'Въведете крайната точка и свържете се.';
+
+  @override
+  String tcpStatus_connectingTo(String endpoint) {
+    return 'Свързване към $endpoint...';
+  }
+
+  @override
+  String get tcpErrorHostRequired => 'Необходим е IP адрес.';
+
+  @override
+  String get tcpErrorPortInvalid => 'Портът трябва да бъде между 1 и 65535.';
+
+  @override
+  String get tcpErrorUnsupported =>
+      'Транспортът чрез TCP не се поддържа на тази платформа.';
+
+  @override
+  String get tcpErrorTimedOut => 'Връзката TCP изтекла.';
+
+  @override
+  String tcpConnectionFailed(String error) {
+    return 'Неуспешно е установено TCP връзката: $error';
+  }
+
+  @override
   String get usbScreenTitle => 'Свържете се чрез USB';
 
   @override
@@ -1530,6 +1574,9 @@ class AppLocalizationsBg extends AppLocalizations {
   @override
   String get map_showGuessedLocations =>
       'Покажете местоположенията на предположените възли.';
+
+  @override
+  String get map_showDiscoveryContacts => 'Покажи контакти за откриване';
 
   @override
   String get map_guessedLocation => 'Предполагано местоположение';
@@ -3085,14 +3132,14 @@ class AppLocalizationsBg extends AppLocalizations {
       'Контактът не е успешно импортиран.';
 
   @override
-  String get discoveredContacts_export => 'Експортиране на откритите контакти';
+  String get discoveredContacts_export => 'Експортирай откритите контакти';
 
   @override
-  String get discoveredContacts_import => 'Импортиране на откритите контакти';
+  String get discoveredContacts_import => 'Импортирай откритите контакти';
 
   @override
   String discoveredContacts_exported(String path) {
-    return 'Откритите контакти бяха експортирани в $path.';
+    return 'Откритите контакти са експортирани в $path.';
   }
 
   @override
@@ -3111,7 +3158,7 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get discoveredContacts_importNoContacts =>
-      'Не са открити контакти във файла за импортиране.';
+      'Във файла за импортиране не са намерени контакти.';
 
   @override
   String discoveredContacts_importFailed(String error) {
