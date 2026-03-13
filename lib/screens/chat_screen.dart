@@ -353,6 +353,7 @@ class _ChatScreenState extends State<ChatScreen> {
             PopupMenuButton<_ChatInputAction>(
               icon: const Icon(Icons.add_circle_outline),
               tooltip: context.l10n.common_add,
+              requestFocus: false,
               position: PopupMenuPosition.over,
               offset: const Offset(0, -180),
               onSelected: (action) {
