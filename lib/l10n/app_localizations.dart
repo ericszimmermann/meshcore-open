@@ -334,6 +334,84 @@ abstract class AppLocalizations {
   /// **'Bluetooth'**
   String get connectionChoiceBluetoothLabel;
 
+  /// No description provided for @connectionChoiceTcpLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TCP'**
+  String get connectionChoiceTcpLabel;
+
+  /// No description provided for @tcpScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect over TCP'**
+  String get tcpScreenTitle;
+
+  /// No description provided for @tcpHostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IP Address'**
+  String get tcpHostLabel;
+
+  /// No description provided for @tcpHostHint.
+  ///
+  /// In en, this message translates to:
+  /// **'192.168.40.10'**
+  String get tcpHostHint;
+
+  /// No description provided for @tcpPortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Port'**
+  String get tcpPortLabel;
+
+  /// No description provided for @tcpPortHint.
+  ///
+  /// In en, this message translates to:
+  /// **'5000'**
+  String get tcpPortHint;
+
+  /// No description provided for @tcpStatus_notConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter endpoint and connect'**
+  String get tcpStatus_notConnected;
+
+  /// No description provided for @tcpStatus_connectingTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to {endpoint}...'**
+  String tcpStatus_connectingTo(String endpoint);
+
+  /// No description provided for @tcpErrorHostRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'IP address is required.'**
+  String get tcpErrorHostRequired;
+
+  /// No description provided for @tcpErrorPortInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Port must be between 1 and 65535.'**
+  String get tcpErrorPortInvalid;
+
+  /// No description provided for @tcpErrorUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'TCP transport is not supported on this platform.'**
+  String get tcpErrorUnsupported;
+
+  /// No description provided for @tcpErrorTimedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'TCP connection timed out.'**
+  String get tcpErrorTimedOut;
+
+  /// No description provided for @tcpConnectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'TCP connection failed: {error}'**
+  String tcpConnectionFailed(String error);
+
   /// No description provided for @usbScreenTitle.
   ///
   /// In en, this message translates to:
@@ -2805,6 +2883,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show guessed node locations'**
   String get map_showGuessedLocations;
+
+  /// No description provided for @map_showDiscoveryContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Discovered Contacts'**
+  String get map_showDiscoveryContacts;
 
   /// No description provided for @map_guessedLocation.
   ///
@@ -5396,37 +5480,37 @@ abstract class AppLocalizations {
   /// No description provided for @discoveredContacts_export.
   ///
   /// In en, this message translates to:
-  /// **'Export discovery contacts'**
+  /// **'Export discovered contacts'**
   String get discoveredContacts_export;
 
   /// No description provided for @discoveredContacts_import.
   ///
   /// In en, this message translates to:
-  /// **'Import discovery contacts'**
+  /// **'Import discovered contacts'**
   String get discoveredContacts_import;
 
   /// No description provided for @discoveredContacts_exported.
   ///
   /// In en, this message translates to:
-  /// **'Exported discovery contacts to {path}.'**
+  /// **'Exported discovered contacts to {path}.'**
   String discoveredContacts_exported(String path);
 
   /// No description provided for @discoveredContacts_exportFailed.
   ///
   /// In en, this message translates to:
-  /// **'Failed to export discovery contacts: {error}'**
+  /// **'Failed to export discovered contacts: {error}'**
   String discoveredContacts_exportFailed(String error);
 
   /// No description provided for @discoveredContacts_imported.
   ///
   /// In en, this message translates to:
-  /// **'Imported {count} discovery contacts.'**
+  /// **'Imported {count} discovered contacts.'**
   String discoveredContacts_imported(int count);
 
   /// No description provided for @discoveredContacts_importNoFile.
   ///
   /// In en, this message translates to:
-  /// **'No discovery contacts file found.'**
+  /// **'No discovered contacts file found.'**
   String get discoveredContacts_importNoFile;
 
   /// No description provided for @discoveredContacts_importNoContacts.
@@ -5438,7 +5522,7 @@ abstract class AppLocalizations {
   /// No description provided for @discoveredContacts_importFailed.
   ///
   /// In en, this message translates to:
-  /// **'Failed to import discovery contacts: {error}'**
+  /// **'Failed to import discovered contacts: {error}'**
   String discoveredContacts_importFailed(String error);
 
   /// No description provided for @contacts_zeroHopAdvert.

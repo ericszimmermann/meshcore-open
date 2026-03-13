@@ -1827,6 +1827,42 @@
   "discoveredContacts_deleteContact": "Excluir Contato",
   "discoveredContacts_contactAdded": "Contato adicionado",
   "discoveredContacts_addContact": "Adicionar Contato",
+  "discoveredContacts_export": "Exportar contatos descobertos",
+  "discoveredContacts_import": "Importar contatos descobertos",
+  "discoveredContacts_exported": "Contatos descobertos exportados para {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Falha ao exportar contatos descobertos: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "{count} contatos descobertos importados.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "Nenhum arquivo de contatos descobertos encontrado.",
+  "discoveredContacts_importNoContacts": "Nenhum contato encontrado no arquivo de importação.",
+  "discoveredContacts_importFailed": "Falha ao importar contatos descobertos: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "contactsSettings_overwriteOldestSubtitle": "Quando a lista de contatos estiver cheia, o contato mais antigo não favoritado será substituído.",
   "common_deleteAll": "Excluir Tudo",
   "discoveredContacts_deleteContactAll": "Excluir Todos os Contatos Descobertos",
@@ -1864,40 +1900,32 @@
   "usbConnectionFailed": "Falha na conexão USB: {error}",
   "usbStatus_connecting": "Conectando ao dispositivo USB...",
   "usbErrorConnectTimedOut": "A conexão expirou. Verifique se o dispositivo possui o firmware USB Companion.",
-  "discoveredContacts_export": "Exportar contatos descobertos",
-  "discoveredContacts_import": "Importar contatos descobertos",
-  "discoveredContacts_exported": "Contatos descobertos exportados para {path}.",
-  "@discoveredContacts_exported": {
+  "@tcpStatus_connectingTo": {
     "placeholders": {
-      "path": {
+      "endpoint": {
         "type": "String"
       }
     }
   },
-  "discoveredContacts_exportFailed": "Falha ao exportar contatos descobertos: {error}",
-  "@discoveredContacts_exportFailed": {
+  "@tcpConnectionFailed": {
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
-  "discoveredContacts_imported": "Importados {count} contatos descobertos.",
-  "@discoveredContacts_imported": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "discoveredContacts_importNoFile": "Nenhum arquivo de contatos descobertos encontrado.",
-  "discoveredContacts_importNoContacts": "Nenhum contato encontrado no arquivo de importação.",
-  "discoveredContacts_importFailed": "Falha ao importar contatos descobertos: {error}",
-  "@discoveredContacts_importFailed": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  }
+  "tcpHostLabel": "Endereço IP",
+  "connectionChoiceTcpLabel": "TCP",
+  "tcpScreenTitle": "Estabelecer conexão via TCP",
+  "tcpHostHint": "192.168.40.10",
+  "tcpPortLabel": "Porta",
+  "tcpPortHint": "5000",
+  "tcpStatus_notConnected": "Insira o endereço final e conecte-se.",
+  "tcpStatus_connectingTo": "Conectando a {endpoint}...",
+  "tcpErrorHostRequired": "É necessário fornecer um endereço IP.",
+  "tcpErrorPortInvalid": "O valor do porto deve estar entre 1 e 65535.",
+  "tcpErrorUnsupported": "O protocolo TCP não é suportado nesta plataforma.",
+  "tcpErrorTimedOut": "A conexão TCP expirou.",
+  "tcpConnectionFailed": "Falha na conexão TCP: {error}",
+  "map_showDiscoveryContacts": "Mostrar Contatos de Descoberta"
 }

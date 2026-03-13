@@ -118,6 +118,49 @@ class AppLocalizationsZh extends AppLocalizations {
   String get connectionChoiceBluetoothLabel => '蓝牙';
 
   @override
+  String get connectionChoiceTcpLabel => 'TCP';
+
+  @override
+  String get tcpScreenTitle => '通过 TCP 连接';
+
+  @override
+  String get tcpHostLabel => 'IP地址';
+
+  @override
+  String get tcpHostHint => '192.168.40.10';
+
+  @override
+  String get tcpPortLabel => '端口';
+
+  @override
+  String get tcpPortHint => '5000';
+
+  @override
+  String get tcpStatus_notConnected => '输入目标地址，然后连接';
+
+  @override
+  String tcpStatus_connectingTo(String endpoint) {
+    return '连接到 $endpoint...';
+  }
+
+  @override
+  String get tcpErrorHostRequired => '需要提供IP地址。';
+
+  @override
+  String get tcpErrorPortInvalid => '端口号必须在 1 到 65535 之间。';
+
+  @override
+  String get tcpErrorUnsupported => '此平台不支持 TCP 传输。';
+
+  @override
+  String get tcpErrorTimedOut => 'TCP 连接超时。';
+
+  @override
+  String tcpConnectionFailed(String error) {
+    return 'TCP 连接失败：$error';
+  }
+
+  @override
   String get usbScreenTitle => '通过USB连接';
 
   @override
@@ -1448,6 +1491,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get map_showGuessedLocations => '显示猜测的节点位置';
+
+  @override
+  String get map_showDiscoveryContacts => '显示发现联系人';
 
   @override
   String get map_guessedLocation => '猜测的位置';
@@ -2893,35 +2939,35 @@ class AppLocalizationsZh extends AppLocalizations {
   String get contacts_contactImportFailed => '导入联系人失败。';
 
   @override
-  String get discoveredContacts_export => '导出发现的联系人';
+  String get discoveredContacts_export => '导出已发现的联系人';
 
   @override
-  String get discoveredContacts_import => '导入发现的联系人';
+  String get discoveredContacts_import => '导入已发现的联系人';
 
   @override
   String discoveredContacts_exported(String path) {
-    return '已将发现的联系人导出到 $path。';
+    return '已将已发现的联系人导出到$path。';
   }
 
   @override
   String discoveredContacts_exportFailed(String error) {
-    return '导出发现的联系人失败：$error';
+    return '导出已发现的联系人失败：$error';
   }
 
   @override
   String discoveredContacts_imported(int count) {
-    return '已导入 $count 个发现的联系人。';
+    return '已导入$count个已发现的联系人。';
   }
 
   @override
-  String get discoveredContacts_importNoFile => '未找到发现的联系人文件。';
+  String get discoveredContacts_importNoFile => '未找到已发现联系人的文件。';
 
   @override
-  String get discoveredContacts_importNoContacts => '导入文件中未找到联系人。';
+  String get discoveredContacts_importNoContacts => '在导入文件中未找到联系人。';
 
   @override
   String discoveredContacts_importFailed(String error) {
-    return '导入发现的联系人失败：$error';
+    return '导入已发现的联系人失败：$error';
   }
 
   @override

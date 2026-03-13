@@ -11,8 +11,7 @@ import 'package:share_plus/share_plus.dart';
 import '../connector/meshcore_connector.dart';
 import '../connector/meshcore_protocol.dart';
 import '../l10n/l10n.dart';
-import '../models/discovery_contact.dart';
-import '../storage/contact_discovery_store.dart';
+import '../models/contact.dart';
 import '../utils/contact_search.dart';
 import '../utils/platform_info.dart';
 import '../widgets/app_bar.dart';
@@ -167,7 +166,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   }
 
   Future<void> _showContactContextMenu(
-    DiscoveryContact contact,
+    Contact contact,
     MeshCoreConnector connector,
   ) async {
     final action = await showModalBottomSheet<String>(
@@ -207,7 +206,8 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
         connector.importDiscoveredContact(contact);
         break;
       case 'copy_contact':
-        final hexString = pubKeyToHex(contact.rawPacket);
+        if (contact.rawPacket == null) return;
+        final hexString = pubKeyToHex(contact.rawPacket!);
         Clipboard.setData(ClipboardData(text: "meshcore://$hexString"));
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -250,8 +250,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   ) async {
     final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
-    final store = ContactDiscoveryStore();
-    final json = store.encodeContacts(connector.discoveredContacts);
+    final json = connector.exportDiscoveredContactsJson();
 
     try {
       const filename = 'meshcore_discovered_contacts.json';
@@ -337,8 +336,8 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
       }
 
       final json = await file.readAsString();
-      final contacts = ContactDiscoveryStore().decodeContacts(json);
-      if (contacts.isEmpty) {
+      final importedCount = await connector.importDiscoveredContactsJson(json);
+      if (importedCount == 0) {
         if (!mounted) return;
         messenger.showSnackBar(
           SnackBar(content: Text(l10n.discoveredContacts_importNoContacts)),
@@ -346,22 +345,10 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
         return;
       }
 
-      final store = ContactDiscoveryStore();
-      final existing = await store.loadContacts();
-      final byPublicKey = <String, DiscoveryContact>{
-        for (final contact in existing) contact.publicKeyHex: contact,
-      };
-      for (final contact in contacts) {
-        byPublicKey[contact.publicKeyHex] = contact;
-      }
-      await store.saveContacts(byPublicKey.values.toList());
-      await connector.loadDiscoveredContactCache();
-      connector.notifyListeners();
-
       if (!mounted) return;
       messenger.showSnackBar(
         SnackBar(
-          content: Text(l10n.discoveredContacts_imported(contacts.length)),
+          content: Text(l10n.discoveredContacts_imported(importedCount)),
         ),
       );
     } catch (e) {
@@ -375,7 +362,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   }
 
   Widget _buildFilters(
-    List<DiscoveryContact> filteredAndSorted,
+    List<Contact> filteredAndSorted,
     MeshCoreConnector connector,
   ) {
     String hintText = "";
@@ -477,8 +464,8 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
     );
   }
 
-  List<DiscoveryContact> _filterAndSortContacts(
-    List<DiscoveryContact> contacts,
+  List<Contact> _filterAndSortContacts(
+    List<Contact> contacts,
     MeshCoreConnector connector,
   ) {
     var filtered = contacts.where((contact) {
@@ -518,7 +505,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
     return filtered;
   }
 
-  bool _matchesTypeFilter(DiscoveryContact contact) {
+  bool _matchesTypeFilter(Contact contact) {
     switch (typeFilter) {
       case ContactTypeFilter.all:
         return true;

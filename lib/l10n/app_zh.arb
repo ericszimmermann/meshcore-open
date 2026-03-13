@@ -1832,6 +1832,42 @@
   "discoveredContacts_noMatching": "没有匹配的联系人",
   "discoveredContacts_Title": "已发现的联系人",
   "discoveredContacts_copyContact": "复制联系人到剪贴板",
+  "discoveredContacts_export": "导出已发现的联系人",
+  "discoveredContacts_import": "导入已发现的联系人",
+  "discoveredContacts_exported": "已将已发现的联系人导出到{path}。",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "导出已发现的联系人失败：{error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "已导入{count}个已发现的联系人。",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "未找到已发现联系人的文件。",
+  "discoveredContacts_importNoContacts": "在导入文件中未找到联系人。",
+  "discoveredContacts_importFailed": "导入已发现的联系人失败：{error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "contactsSettings_overwriteOldestSubtitle": "当联系人列表已满时，将替换最老的非收藏联系人。",
   "common_deleteAll": "删除全部",
   "discoveredContacts_deleteContactAllContent": "您确定要删除所有发现的联系人吗？",
@@ -1869,40 +1905,32 @@
   "usbStatus_notConnected": "选择一个 USB 设备",
   "usbConnectionFailed": "USB 连接失败：{error}",
   "usbErrorConnectTimedOut": "连接超时。请确保设备已安装 USB 伴侣固件。",
-  "discoveredContacts_export": "导出发现的联系人",
-  "discoveredContacts_import": "导入发现的联系人",
-  "discoveredContacts_exported": "已将发现的联系人导出到 {path}。",
-  "@discoveredContacts_exported": {
+  "@tcpStatus_connectingTo": {
     "placeholders": {
-      "path": {
+      "endpoint": {
         "type": "String"
       }
     }
   },
-  "discoveredContacts_exportFailed": "导出发现的联系人失败：{error}",
-  "@discoveredContacts_exportFailed": {
+  "@tcpConnectionFailed": {
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
   },
-  "discoveredContacts_imported": "已导入 {count} 个发现的联系人。",
-  "@discoveredContacts_imported": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "discoveredContacts_importNoFile": "未找到发现的联系人文件。",
-  "discoveredContacts_importNoContacts": "导入文件中未找到联系人。",
-  "discoveredContacts_importFailed": "导入发现的联系人失败：{error}",
-  "@discoveredContacts_importFailed": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  }
+  "tcpHostLabel": "IP地址",
+  "tcpHostHint": "192.168.40.10",
+  "tcpScreenTitle": "通过 TCP 连接",
+  "connectionChoiceTcpLabel": "TCP",
+  "tcpPortLabel": "端口",
+  "tcpPortHint": "5000",
+  "tcpStatus_notConnected": "输入目标地址，然后连接",
+  "tcpStatus_connectingTo": "连接到 {endpoint}...",
+  "tcpErrorHostRequired": "需要提供IP地址。",
+  "tcpErrorPortInvalid": "端口号必须在 1 到 65535 之间。",
+  "tcpErrorUnsupported": "此平台不支持 TCP 传输。",
+  "tcpErrorTimedOut": "TCP 连接超时。",
+  "tcpConnectionFailed": "TCP 连接失败：{error}",
+  "map_showDiscoveryContacts": "显示发现联系人"
 }

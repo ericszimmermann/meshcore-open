@@ -118,6 +118,51 @@ class AppLocalizationsUk extends AppLocalizations {
   String get connectionChoiceBluetoothLabel => 'Bluetooth';
 
   @override
+  String get connectionChoiceTcpLabel => 'TCP';
+
+  @override
+  String get tcpScreenTitle => 'З\'єднатися через протокол TCP';
+
+  @override
+  String get tcpHostLabel => 'IP-адреса';
+
+  @override
+  String get tcpHostHint => '192.168.40.10';
+
+  @override
+  String get tcpPortLabel => 'Порт';
+
+  @override
+  String get tcpPortHint => '5000';
+
+  @override
+  String get tcpStatus_notConnected => 'Введіть кінцеву точку та підключіться';
+
+  @override
+  String tcpStatus_connectingTo(String endpoint) {
+    return 'Підключення до $endpoint...';
+  }
+
+  @override
+  String get tcpErrorHostRequired => 'Необхідно вказати IP-адресу.';
+
+  @override
+  String get tcpErrorPortInvalid => 'Порт повинен бути в межах від 1 до 65535.';
+
+  @override
+  String get tcpErrorUnsupported =>
+      'Транспорт TCP не підтримується на цій платформі.';
+
+  @override
+  String get tcpErrorTimedOut =>
+      'З\'єднання TCP завершилося через закінчення часу очікування.';
+
+  @override
+  String tcpConnectionFailed(String error) {
+    return 'Не вдалося встановити з\'єднання TCP: $error';
+  }
+
+  @override
   String get usbScreenTitle => 'Підключити через USB';
 
   @override
@@ -1537,6 +1582,9 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get map_showGuessedLocations =>
       'Показати місцезнаходження передбачених вузлів';
+
+  @override
+  String get map_showDiscoveryContacts => 'Показати контакти Відкриття';
 
   @override
   String get map_guessedLocation => 'Визначено місцезнаходження';

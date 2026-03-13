@@ -118,6 +118,50 @@ class AppLocalizationsSl extends AppLocalizations {
   String get connectionChoiceBluetoothLabel => 'Bluetooth';
 
   @override
+  String get connectionChoiceTcpLabel => 'TCP';
+
+  @override
+  String get tcpScreenTitle => 'Komunicirajte preko protokola TCP';
+
+  @override
+  String get tcpHostLabel => 'IP naslov';
+
+  @override
+  String get tcpHostHint => '192.168.40.10';
+
+  @override
+  String get tcpPortLabel => 'Vrata';
+
+  @override
+  String get tcpPortHint => '5000';
+
+  @override
+  String get tcpStatus_notConnected => 'Vnesite končni naslov in se povežite';
+
+  @override
+  String tcpStatus_connectingTo(String endpoint) {
+    return 'Povezava z $endpoint...';
+  }
+
+  @override
+  String get tcpErrorHostRequired => 'Potrebna je IP-naslov.';
+
+  @override
+  String get tcpErrorPortInvalid => 'Port mora biti med 1 in 65535.';
+
+  @override
+  String get tcpErrorUnsupported =>
+      'Transport preko protokola TCP ni podprt na tej platformi.';
+
+  @override
+  String get tcpErrorTimedOut => 'Povezava TCP je presegla časovno obdobje.';
+
+  @override
+  String tcpConnectionFailed(String error) {
+    return 'Napaka pri povezavi TCP: $error';
+  }
+
+  @override
   String get usbScreenTitle => 'Povežite preko USB';
 
   @override
@@ -1525,6 +1569,9 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get map_showGuessedLocations => 'Pokaži lokacije domnevnih not.';
+
+  @override
+  String get map_showDiscoveryContacts => 'Prikaži odkritja kontaktov';
 
   @override
   String get map_guessedLocation => 'Predpostavljena lokacija';
@@ -3088,7 +3135,7 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String discoveredContacts_exported(String path) {
-    return 'Odkriti stiki so bili izvoženi v $path.';
+    return 'Odkriti stiki so izvoženi v $path.';
   }
 
   @override
@@ -3107,7 +3154,7 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get discoveredContacts_importNoContacts =>
-      'V uvozni datoteki ni bilo najdenih nobenih stikov.';
+      'V uvozni datoteki ni bilo najdenih stikov.';
 
   @override
   String discoveredContacts_importFailed(String error) {
