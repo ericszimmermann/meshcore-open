@@ -438,7 +438,6 @@ class _ContactsScreenState extends State<ContactsScreen>
     List<Contact> contacts,
     List<ContactGroup> sortedGroups,
   ) {
-    final theme = Theme.of(context);
     final selectedGroupName =
         _selectedGroup?.name ?? context.l10n.listFilter_all;
     final menuWidth = MediaQuery.sizeOf(context).width - 16;
@@ -507,10 +506,7 @@ class _ContactsScreenState extends State<ContactsScreen>
       child: SizedBox(
         height: 48,
         child: DecoratedBox(
-          decoration: BoxDecoration(
-            border: Border.all(color: theme.colorScheme.outline),
-            borderRadius: BorderRadius.circular(12),
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Row(
@@ -994,64 +990,70 @@ class _ContactsScreenState extends State<ContactsScreen>
             ),
             content: SizedBox(
               width: double.maxFinite,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      labelText: context.l10n.contacts_groupName,
-                      border: const OutlineInputBorder(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.8,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: context.l10n.contacts_groupName,
+                        border: const OutlineInputBorder(),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: context.l10n.contacts_filterContacts,
-                      prefixIcon: const Icon(Icons.search),
-                      border: const OutlineInputBorder(),
-                      isDense: true,
+                    const SizedBox(height: 12),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: context.l10n.contacts_filterContacts,
+                        prefixIcon: const Icon(Icons.search),
+                        border: const OutlineInputBorder(),
+                        isDense: true,
+                      ),
+                      onChanged: (value) {
+                        setDialogState(() {
+                          filterQuery = value.toLowerCase();
+                        });
+                      },
                     ),
-                    onChanged: (value) {
-                      setDialogState(() {
-                        filterQuery = value.toLowerCase();
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 240,
-                    child: filteredContacts.isEmpty
-                        ? Center(
-                            child: Text(
-                              context.l10n.contacts_noContactsMatchFilter,
+                    const SizedBox(height: 12),
+                    Expanded(
+                      child: filteredContacts.isEmpty
+                          ? Center(
+                              child: Text(
+                                context.l10n.contacts_noContactsMatchFilter,
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: filteredContacts.length,
+                              itemBuilder: (context, index) {
+                                final contact = filteredContacts[index];
+                                final isSelected = selectedKeys.contains(
+                                  contact.publicKeyHex,
+                                );
+                                return CheckboxListTile(
+                                  value: isSelected,
+                                  title: Text(contact.name),
+                                  subtitle: Text(contact.typeLabel),
+                                  onChanged: (value) {
+                                    setDialogState(() {
+                                      if (value == true) {
+                                        selectedKeys.add(contact.publicKeyHex);
+                                      } else {
+                                        selectedKeys.remove(
+                                          contact.publicKeyHex,
+                                        );
+                                      }
+                                    });
+                                  },
+                                );
+                              },
                             ),
-                          )
-                        : ListView.builder(
-                            itemCount: filteredContacts.length,
-                            itemBuilder: (context, index) {
-                              final contact = filteredContacts[index];
-                              final isSelected = selectedKeys.contains(
-                                contact.publicKeyHex,
-                              );
-                              return CheckboxListTile(
-                                value: isSelected,
-                                title: Text(contact.name),
-                                subtitle: Text(contact.typeLabel),
-                                onChanged: (value) {
-                                  setDialogState(() {
-                                    if (value == true) {
-                                      selectedKeys.add(contact.publicKeyHex);
-                                    } else {
-                                      selectedKeys.remove(contact.publicKeyHex);
-                                    }
-                                  });
-                                },
-                              );
-                            },
-                          ),
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
             actions: [
