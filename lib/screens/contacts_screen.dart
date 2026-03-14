@@ -480,14 +480,14 @@ class _ContactsScreenState extends State<ContactsScreen>
       double.infinity,
     );
 
-    return PopupMenuButton<String>(
+    return PopupMenuButton<String?>(
       position: PopupMenuPosition.under,
       constraints: BoxConstraints.tightFor(width: menuWidth),
-      onSelected: (value) {
+      onSelected: (String? value) {
         viewState.setContactsSelectedGroupName(value);
       },
       itemBuilder: (context) => [
-        PopupMenuItem<String>(
+        PopupMenuItem<String?>(
           value: contactsAllGroupsValue,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -510,7 +510,7 @@ class _ContactsScreenState extends State<ContactsScreen>
           ),
         ),
         ...sortedGroups.map((group) {
-          return PopupMenuItem<String>(
+          return PopupMenuItem<String?>(
             value: group.name,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
