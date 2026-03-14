@@ -75,8 +75,9 @@ class _ContactsScreenState extends State<ContactsScreen>
   }
 
   Future<void> _loadGroups() async {
-    _groupStore.setPublicKeyHex =
-        context.read<MeshCoreConnector>().selfPublicKeyHex;
+    _groupStore.setPublicKeyHex = context
+        .read<MeshCoreConnector>()
+        .selfPublicKeyHex;
     final groups = await _groupStore.loadGroups();
     if (!mounted) return;
     setState(() {
@@ -86,8 +87,9 @@ class _ContactsScreenState extends State<ContactsScreen>
   }
 
   Future<void> _saveGroups() async {
-    _groupStore.setPublicKeyHex =
-        context.read<MeshCoreConnector>().selfPublicKeyHex;
+    _groupStore.setPublicKeyHex = context
+        .read<MeshCoreConnector>()
+        .selfPublicKeyHex;
     await _groupStore.saveGroups(_groups);
   }
 
@@ -402,6 +404,14 @@ class _ContactsScreenState extends State<ContactsScreen>
     }
   }
 
+  void _closeDropdownAndRun(BuildContext context, VoidCallback action) {
+    Navigator.of(context).pop();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      action();
+    });
+  }
+
   Widget _buildFilterButton(
     BuildContext context,
     UiViewStateService viewState,
@@ -508,11 +518,9 @@ class _ContactsScreenState extends State<ContactsScreen>
               Expanded(
                 child: DropdownButtonFormField<String>(
                   initialValue: _selectedGroup?.name ?? contactsAllGroupsValue,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 10,
                     ),
@@ -526,7 +534,10 @@ class _ContactsScreenState extends State<ContactsScreen>
                           Text(context.l10n.listFilter_all),
                           GestureDetector(
                             behavior: HitTestBehavior.opaque,
-                            onTap: () => _showGroupEditor(context, contacts),
+                            onTap: () => _closeDropdownAndRun(
+                              context,
+                              () => _showGroupEditor(context, contacts),
+                            ),
                             child: const Icon(Icons.group_add, size: 20),
                           ),
                         ],
@@ -547,17 +558,23 @@ class _ContactsScreenState extends State<ContactsScreen>
                             ),
                             GestureDetector(
                               behavior: HitTestBehavior.opaque,
-                              onTap: () => _showGroupEditor(
+                              onTap: () => _closeDropdownAndRun(
                                 context,
-                                contacts,
-                                group: group,
+                                () => _showGroupEditor(
+                                  context,
+                                  contacts,
+                                  group: group,
+                                ),
                               ),
                               child: const Icon(Icons.edit, size: 20),
                             ),
                             const SizedBox(width: 8),
                             GestureDetector(
                               behavior: HitTestBehavior.opaque,
-                              onTap: () => _confirmDeleteGroup(context, group),
+                              onTap: () => _closeDropdownAndRun(
+                                context,
+                                () => _confirmDeleteGroup(context, group),
+                              ),
                               child: const Icon(
                                 Icons.delete,
                                 size: 20,
@@ -568,6 +585,12 @@ class _ContactsScreenState extends State<ContactsScreen>
                         ),
                       );
                     }),
+                  ],
+                  selectedItemBuilder: (context) => [
+                    Text(context.l10n.listFilter_all),
+                    ...sortedGroupNames.map(
+                      (name) => Text(name, overflow: TextOverflow.ellipsis),
+                    ),
                   ],
                   onChanged: (value) {
                     viewState.setContactsSelectedGroupName(
@@ -580,71 +603,7 @@ class _ContactsScreenState extends State<ContactsScreen>
               AnimatedContainer(
                 duration: const Duration(milliseconds: 220),
                 curve: Curves.easeOutCubic,
-                width: viewState.contactsSearchExpanded ? 210 : 48,
-                child: viewState.contactsSearchExpanded
-                    ? TextField(
-                        controller: _searchController,
-                        autofocus: true,
-                        decoration: InputDecoration(
-                          hintText: hintText,
-                          prefixIcon: IconButton(
-                            icon: const Icon(Icons.search),
-                            onPressed: () {
-                              viewState.setContactsSearchExpanded(false);
-                            },
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              viewState.contactsSearchText.isNotEmpty
-                                  ? Icons.clear
-                                  : Icons.close,
-                            ),
-                            onPressed: () {
-                              if (viewState.contactsSearchText.isNotEmpty) {
-                                _searchController.clear();
-                                viewState.setContactsSearchText('');
-                                return;
-                              }
-                              viewState.setContactsSearchExpanded(false);
-                            },
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 10,
-                          ),
-                        ),
-                        onChanged: (value) {
-                          _searchDebounce?.cancel();
-                          _searchDebounce = Timer(
-                            const Duration(milliseconds: 300),
-                            () {
-                              if (!mounted) return;
-                              context
-                                  .read<UiViewStateService>()
-                                  .setContactsSearchText(value);
-                            },
-                          );
-                        },
-                      )
-                    : OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () {
-                          viewState.setContactsSearchExpanded(true);
-                        },
-                        child: const Icon(Icons.search),
-                      ),
-              ),
-              const SizedBox(width: 8),
-              SizedBox(
-                width: 48,
+                width: viewState.contactsSearchExpanded ? 270 : 104,
                 height: 48,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -653,7 +612,80 @@ class _ContactsScreenState extends State<ContactsScreen>
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: _buildFilterButton(context, viewState),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: viewState.contactsSearchExpanded
+                            ? TextField(
+                                controller: _searchController,
+                                autofocus: true,
+                                decoration: InputDecoration(
+                                  hintText: hintText,
+                                  prefixIcon: IconButton(
+                                    icon: const Icon(Icons.search),
+                                    onPressed: () {
+                                      viewState.setContactsSearchExpanded(
+                                        false,
+                                      );
+                                    },
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      viewState.contactsSearchText.isNotEmpty
+                                          ? Icons.clear
+                                          : Icons.close,
+                                    ),
+                                    onPressed: () {
+                                      if (viewState
+                                          .contactsSearchText
+                                          .isNotEmpty) {
+                                        _searchController.clear();
+                                        viewState.setContactsSearchText('');
+                                        return;
+                                      }
+                                      viewState.setContactsSearchExpanded(
+                                        false,
+                                      );
+                                    },
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 10,
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  _searchDebounce?.cancel();
+                                  _searchDebounce = Timer(
+                                    const Duration(milliseconds: 300),
+                                    () {
+                                      if (!mounted) return;
+                                      context
+                                          .read<UiViewStateService>()
+                                          .setContactsSearchText(value);
+                                    },
+                                  );
+                                },
+                              )
+                            : IconButton(
+                                onPressed: () {
+                                  viewState.setContactsSearchExpanded(true);
+                                },
+                                icon: const Icon(Icons.search),
+                              ),
+                      ),
+                      Container(
+                        width: 1,
+                        height: 24,
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
+                      SizedBox(
+                        width: 48,
+                        height: 48,
+                        child: _buildFilterButton(context, viewState),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
