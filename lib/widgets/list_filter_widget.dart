@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/l10n.dart';
-
-enum ContactSortOption { lastSeen, recentMessages, name }
-
-enum ContactTypeFilter { all, favorites, users, repeaters, rooms }
+import '../utils/contact_search.dart';
 
 class SortFilterMenuOption {
   final int value;
@@ -99,7 +96,6 @@ const int _actionFilterUsers = 6;
 const int _actionFilterRepeaters = 7;
 const int _actionFilterRooms = 8;
 const int _actionToggleUnreadOnly = 9;
-const int _actionNewGroup = 10;
 
 class ContactsFilterMenu extends StatelessWidget {
   final ContactSortOption sortOption;
@@ -108,7 +104,6 @@ class ContactsFilterMenu extends StatelessWidget {
   final ValueChanged<ContactSortOption> onSortChanged;
   final ValueChanged<ContactTypeFilter> onTypeFilterChanged;
   final ValueChanged<bool> onUnreadOnlyChanged;
-  final VoidCallback onNewGroup;
 
   const ContactsFilterMenu({
     super.key,
@@ -118,7 +113,6 @@ class ContactsFilterMenu extends StatelessWidget {
     required this.onSortChanged,
     required this.onTypeFilterChanged,
     required this.onUnreadOnlyChanged,
-    required this.onNewGroup,
   });
 
   @override
@@ -180,10 +174,6 @@ class ContactsFilterMenu extends StatelessWidget {
               label: l10n.listFilter_unreadOnly,
               checked: showUnreadOnly,
             ),
-            SortFilterMenuOption(
-              value: _actionNewGroup,
-              label: l10n.listFilter_newGroup,
-            ),
           ],
         ),
       ],
@@ -215,9 +205,6 @@ class ContactsFilterMenu extends StatelessWidget {
             break;
           case _actionToggleUnreadOnly:
             onUnreadOnlyChanged(!showUnreadOnly);
-            break;
-          case _actionNewGroup:
-            onNewGroup();
             break;
         }
       },
