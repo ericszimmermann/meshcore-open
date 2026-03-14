@@ -50,6 +50,7 @@ class _ContactsScreenState extends State<ContactsScreen>
   final TextEditingController _searchController = TextEditingController();
   final ContactGroupStore _groupStore = ContactGroupStore();
   List<ContactGroup> _groups = [];
+  String _loadedGroupScopeKeyHex = '';
   Timer? _searchDebounce;
 
   final Set<ContactOperationType> _pendingOperations = {};
@@ -75,22 +76,53 @@ class _ContactsScreenState extends State<ContactsScreen>
   }
 
   Future<void> _loadGroups() async {
-    _groupStore.setPublicKeyHex = context
-        .read<MeshCoreConnector>()
-        .selfPublicKeyHex;
+    final selfPublicKeyHex = context.read<MeshCoreConnector>().selfPublicKeyHex;
+    if (selfPublicKeyHex.isEmpty) {
+      return;
+    }
+    _groupStore.setPublicKeyHex = selfPublicKeyHex;
     final groups = await _groupStore.loadGroups();
     if (!mounted) return;
     setState(() {
+      _loadedGroupScopeKeyHex = selfPublicKeyHex;
       _groups = groups;
       _ensureValidSelectedGroup();
     });
   }
 
   Future<void> _saveGroups() async {
-    _groupStore.setPublicKeyHex = context
-        .read<MeshCoreConnector>()
-        .selfPublicKeyHex;
+    final selfPublicKeyHex = context.read<MeshCoreConnector>().selfPublicKeyHex;
+    if (selfPublicKeyHex.isEmpty) {
+      return;
+    }
+    _groupStore.setPublicKeyHex = selfPublicKeyHex;
     await _groupStore.saveGroups(_groups);
+  }
+
+  bool _hasGroupStoreScope(MeshCoreConnector connector) {
+    return connector.selfPublicKeyHex.isNotEmpty;
+  }
+
+  void _syncGroupScopeIfNeeded(MeshCoreConnector connector) {
+    final selfPublicKeyHex = connector.selfPublicKeyHex;
+    if (selfPublicKeyHex.isEmpty ||
+        selfPublicKeyHex == _loadedGroupScopeKeyHex) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (context.read<MeshCoreConnector>().selfPublicKeyHex !=
+          selfPublicKeyHex) {
+        return;
+      }
+      _loadGroups();
+    });
+  }
+
+  void _showGroupsUnavailableMessage(BuildContext context) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.common_loading)));
   }
 
   void _setupFrameListener() {
@@ -242,6 +274,7 @@ class _ContactsScreenState extends State<ContactsScreen>
   @override
   Widget build(BuildContext context) {
     final connector = context.watch<MeshCoreConnector>();
+    _syncGroupScopeIfNeeded(connector);
 
     // Auto-navigate back to scanner if disconnected
     if (!checkConnectionAndNavigate(connector)) {
@@ -438,9 +471,14 @@ class _ContactsScreenState extends State<ContactsScreen>
     List<Contact> contacts,
     List<ContactGroup> sortedGroups,
   ) {
+    final connector = context.watch<MeshCoreConnector>();
+    final canManageGroups = _hasGroupStoreScope(connector);
     final selectedGroupName =
         _selectedGroup?.name ?? context.l10n.listFilter_all;
-    final menuWidth = MediaQuery.sizeOf(context).width - 16;
+    final double menuWidth = (MediaQuery.sizeOf(context).width - 16).clamp(
+      0.0,
+      double.infinity,
+    );
 
     return PopupMenuButton<String>(
       position: PopupMenuPosition.under,
@@ -457,13 +495,16 @@ class _ContactsScreenState extends State<ContactsScreen>
               Text(context.l10n.listFilter_all),
               IconButton(
                 tooltip: context.l10n.contacts_newGroup,
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
                 icon: const Icon(Icons.group_add, size: 20),
-                onPressed: () => _closeDropdownAndRun(
-                  context,
-                  () => _showGroupEditor(context, contacts),
-                ),
+                onPressed: canManageGroups
+                    ? () => _closeDropdownAndRun(
+                        context,
+                        () => _showGroupEditor(context, contacts),
+                      )
+                    : () => _closeDropdownAndRun(
+                        context,
+                        () => _showGroupsUnavailableMessage(context),
+                      ),
               ),
             ],
           ),
@@ -479,24 +520,31 @@ class _ContactsScreenState extends State<ContactsScreen>
                 ),
                 IconButton(
                   tooltip: context.l10n.contacts_editGroup,
-                  constraints: const BoxConstraints(),
-                  padding: EdgeInsets.zero,
                   icon: const Icon(Icons.edit, size: 20),
-                  onPressed: () => _closeDropdownAndRun(
-                    context,
-                    () => _showGroupEditor(context, contacts, group: group),
-                  ),
+                  onPressed: canManageGroups
+                      ? () => _closeDropdownAndRun(
+                          context,
+                          () =>
+                              _showGroupEditor(context, contacts, group: group),
+                        )
+                      : () => _closeDropdownAndRun(
+                          context,
+                          () => _showGroupsUnavailableMessage(context),
+                        ),
                 ),
                 const SizedBox(width: 8),
                 IconButton(
                   tooltip: context.l10n.contacts_deleteGroup,
-                  constraints: const BoxConstraints(),
-                  padding: EdgeInsets.zero,
                   icon: const Icon(Icons.delete, size: 20, color: Colors.red),
-                  onPressed: () => _closeDropdownAndRun(
-                    context,
-                    () => _confirmDeleteGroup(context, group),
-                  ),
+                  onPressed: canManageGroups
+                      ? () => _closeDropdownAndRun(
+                          context,
+                          () => _confirmDeleteGroup(context, group),
+                        )
+                      : () => _closeDropdownAndRun(
+                          context,
+                          () => _showGroupsUnavailableMessage(context),
+                        ),
                 ),
               ],
             ),
@@ -647,6 +695,8 @@ class _ContactsScreenState extends State<ContactsScreen>
                                   prefixIcon: IconButton(
                                     icon: const Icon(Icons.search),
                                     onPressed: () {
+                                      _searchDebounce?.cancel();
+                                      _searchDebounce = null;
                                       viewState.setContactsSearchExpanded(
                                         false,
                                       );
@@ -662,10 +712,14 @@ class _ContactsScreenState extends State<ContactsScreen>
                                       if (viewState
                                           .contactsSearchText
                                           .isNotEmpty) {
+                                        _searchDebounce?.cancel();
+                                        _searchDebounce = null;
                                         _searchController.clear();
                                         viewState.setContactsSearchText('');
                                         return;
                                       }
+                                      _searchDebounce?.cancel();
+                                      _searchDebounce = null;
                                       viewState.setContactsSearchExpanded(
                                         false,
                                       );
@@ -930,6 +984,10 @@ class _ContactsScreenState extends State<ContactsScreen>
   }
 
   void _confirmDeleteGroup(BuildContext context, ContactGroup group) {
+    if (!_hasGroupStoreScope(context.read<MeshCoreConnector>())) {
+      _showGroupsUnavailableMessage(context);
+      return;
+    }
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -964,6 +1022,10 @@ class _ContactsScreenState extends State<ContactsScreen>
     List<Contact> contacts, {
     ContactGroup? group,
   }) {
+    if (!_hasGroupStoreScope(context.read<MeshCoreConnector>())) {
+      _showGroupsUnavailableMessage(context);
+      return;
+    }
     final isEditing = group != null;
     final nameController = TextEditingController(text: group?.name ?? '');
     final selectedKeys = <String>{...group?.memberKeys ?? []};

@@ -227,6 +227,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                             IconButton(
                               icon: const Icon(Icons.clear),
                               onPressed: () {
+                                _searchDebounce?.cancel();
+                                _searchDebounce = null;
                                 _searchController.clear();
                                 context
                                     .read<UiViewStateService>()
