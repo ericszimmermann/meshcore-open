@@ -13,8 +13,8 @@ import '../connector/meshcore_protocol.dart';
 import '../models/contact.dart';
 import '../models/contact_group.dart';
 import '../services/ui_view_state_service.dart';
-import '../storage/contact_group_store.dart';
 import '../utils/contact_search.dart';
+import '../storage/contact_group_store.dart';
 import '../utils/dialog_utils.dart';
 import '../utils/disconnect_navigation_mixin.dart';
 import '../utils/emoji_utils.dart';
@@ -506,8 +506,12 @@ class _ContactsScreenState extends State<ContactsScreen>
         break;
     }
 
-    final sortedGroupNames = _groups.map((group) => group.name).toSet().toList()
-      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    final groupsByName = <String, ContactGroup>{};
+    for (final group in _groups) {
+      groupsByName.putIfAbsent(group.name, () => group);
+    }
+    final sortedGroups = groupsByName.values.toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
 
     return Column(
       children: [
@@ -518,6 +522,8 @@ class _ContactsScreenState extends State<ContactsScreen>
               Expanded(
                 child: DropdownButtonFormField<String>(
                   initialValue: _selectedGroup?.name ?? contactsAllGroupsValue,
+                  dropdownColor: Theme.of(context).colorScheme.surfaceContainer,
+                  isExpanded: true,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(
@@ -532,33 +538,37 @@ class _ContactsScreenState extends State<ContactsScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(context.l10n.listFilter_all),
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => _closeDropdownAndRun(
+                          IconButton(
+                            tooltip: context.l10n.contacts_newGroup,
+                            constraints: const BoxConstraints(),
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(Icons.group_add, size: 20),
+                            onPressed: () => _closeDropdownAndRun(
                               context,
                               () => _showGroupEditor(context, contacts),
                             ),
-                            child: const Icon(Icons.group_add, size: 20),
                           ),
                         ],
                       ),
                     ),
-                    ...sortedGroupNames.map((name) {
-                      final group = _groups.firstWhere((g) => g.name == name);
+                    ...sortedGroups.map((group) {
                       return DropdownMenuItem<String>(
-                        value: name,
+                        value: group.name,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                               child: Text(
-                                name,
+                                group.name,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () => _closeDropdownAndRun(
+                            IconButton(
+                              tooltip: context.l10n.contacts_editGroup,
+                              constraints: const BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(Icons.edit, size: 20),
+                              onPressed: () => _closeDropdownAndRun(
                                 context,
                                 () => _showGroupEditor(
                                   context,
@@ -566,19 +576,20 @@ class _ContactsScreenState extends State<ContactsScreen>
                                   group: group,
                                 ),
                               ),
-                              child: const Icon(Icons.edit, size: 20),
                             ),
                             const SizedBox(width: 8),
-                            GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () => _closeDropdownAndRun(
-                                context,
-                                () => _confirmDeleteGroup(context, group),
-                              ),
-                              child: const Icon(
+                            IconButton(
+                              tooltip: context.l10n.contacts_deleteGroup,
+                              constraints: const BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(
                                 Icons.delete,
                                 size: 20,
                                 color: Colors.red,
+                              ),
+                              onPressed: () => _closeDropdownAndRun(
+                                context,
+                                () => _confirmDeleteGroup(context, group),
                               ),
                             ),
                           ],
@@ -588,8 +599,9 @@ class _ContactsScreenState extends State<ContactsScreen>
                   ],
                   selectedItemBuilder: (context) => [
                     Text(context.l10n.listFilter_all),
-                    ...sortedGroupNames.map(
-                      (name) => Text(name, overflow: TextOverflow.ellipsis),
+                    ...sortedGroups.map(
+                      (group) =>
+                          Text(group.name, overflow: TextOverflow.ellipsis),
                     ),
                   ],
                   onChanged: (value) {

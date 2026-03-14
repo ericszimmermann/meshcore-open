@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../widgets/list_filter_widget.dart';
+import '../utils/contact_search.dart';
 
 const contactsAllGroupsValue = '__all__';
 
