@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 
 import '../utils/contact_search.dart';
 
-const contactsAllGroupsValue = '__all__';
+const String? contactsAllGroupsValue = null;
 
 class UiViewStateService extends ChangeNotifier {
-  String _contactsSelectedGroupName = contactsAllGroupsValue;
+  String? _contactsSelectedGroupName = contactsAllGroupsValue;
   String _contactsSearchText = '';
   bool _contactsSearchExpanded = false;
   ContactSortOption _contactsSortOption = ContactSortOption.lastSeen;
@@ -15,7 +15,7 @@ class UiViewStateService extends ChangeNotifier {
   String _channelsSearchText = '';
   int _channelsSortIndex = 0;
 
-  String get contactsSelectedGroupName => _contactsSelectedGroupName;
+  String? get contactsSelectedGroupName => _contactsSelectedGroupName;
   String get contactsSearchText => _contactsSearchText;
   bool get contactsSearchExpanded => _contactsSearchExpanded;
   ContactSortOption get contactsSortOption => _contactsSortOption;
@@ -24,7 +24,7 @@ class UiViewStateService extends ChangeNotifier {
   String get channelsSearchText => _channelsSearchText;
   int get channelsSortIndex => _channelsSortIndex;
 
-  void setContactsSelectedGroupName(String value) {
+  void setContactsSelectedGroupName(String? value) {
     if (_contactsSelectedGroupName == value) return;
     _contactsSelectedGroupName = value;
     notifyListeners();
