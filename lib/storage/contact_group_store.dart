@@ -10,27 +10,30 @@ class ContactGroupStore {
   set setPublicKeyHex(String value) =>
       publicKeyHex = value.length > 10 ? value.substring(0, 10) : '';
 
-  String get keyFor =>
-      publicKeyHex.isEmpty ? _keyPrefix : '$_keyPrefix$publicKeyHex';
+  String get keyFor => '$_keyPrefix$publicKeyHex';
 
   Future<List<ContactGroup>> loadGroups() async {
+    if (publicKeyHex.isEmpty) {
+      appLogger.warn('Public key hex is not set. Cannot load contact groups.');
+      return [];
+    }
     final prefs = PrefsManager.instance;
     String? jsonString = prefs.getString(keyFor);
-
-    // Migrate legacy unscoped key once a scoped identity key is available.
-    if ((jsonString == null || jsonString.isEmpty) && publicKeyHex.isNotEmpty) {
+    if (jsonString == null || jsonString.isEmpty) {
       // Attempt migration from legacy unscoped key on first load
       final legacyJsonString = prefs.getString(_keyPrefix);
       prefs.remove(_keyPrefix);
       if (legacyJsonString != null && legacyJsonString.isNotEmpty) {
         appLogger.info(
-          'Migrating contact groups from legacy key $_keyPrefix to scoped key $keyFor',
+          'Migrating channel messages from legacy key $_keyPrefix to scoped key $keyFor',
         );
         await prefs.setString(keyFor, legacyJsonString);
         jsonString = legacyJsonString;
       }
     }
-
+    if (jsonString == null || jsonString.isEmpty) {
+      jsonString = prefs.getString(keyFor);
+    }
     if (jsonString == null || jsonString.isEmpty) {
       return [];
     }
@@ -50,13 +53,12 @@ class ContactGroupStore {
   }
 
   Future<void> saveGroups(List<ContactGroup> groups) async {
+    if (publicKeyHex.isEmpty) {
+      appLogger.warn('Public key hex is not set. Cannot save contact groups.');
+      return;
+    }
     final prefs = PrefsManager.instance;
     final encoded = jsonEncode(groups.map((group) => group.toJson()).toList());
-    if (publicKeyHex.isEmpty) {
-      appLogger.warn(
-        'Public key hex is not set. Saving contact groups to unscoped key $_keyPrefix.',
-      );
-    }
     await prefs.setString(keyFor, encoded);
   }
 }

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/l10n.dart';
-
-enum ContactSortOption { lastSeen, recentMessages, name }
-
-enum ContactTypeFilter { all, favorites, users, repeaters, rooms }
+import '../utils/contact_search.dart';
 
 class SortFilterMenuOption {
   final int value;
