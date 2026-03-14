@@ -1142,6 +1142,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chat_sendGif => 'Send GIF';
 
   @override
+  String get chat_insertEmoji => 'Insert emoji';
+
+  @override
+  String get chat_shareLocation => 'Share location';
+
+  @override
+  String get chat_locationUnavailable => 'Location not available';
+
+  @override
   String get chat_reply => 'Reply';
 
   @override
@@ -1561,6 +1570,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get map_sharedPin => 'Shared pin';
+
+  @override
+  String get map_sharedAt => 'Shared';
 
   @override
   String get map_joinRoom => 'Join Room';

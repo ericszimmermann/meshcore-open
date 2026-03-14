@@ -17,6 +17,7 @@ import '../widgets/message_status_icon.dart';
 import '../helpers/chat_scroll_controller.dart';
 import '../helpers/link_handler.dart';
 import '../helpers/utf8_length_limiter.dart';
+import '../helpers/smaz.dart';
 import '../models/channel_message.dart';
 import '../models/contact.dart';
 import '../models/message.dart';
@@ -36,6 +37,8 @@ import '../widgets/gif_picker.dart';
 import '../widgets/path_selection_dialog.dart';
 import '../utils/app_logger.dart';
 import '../l10n/l10n.dart';
+
+enum _ChatInputAction { sendGif, insertEmoji, shareLocation }
 
 class ChatScreen extends StatefulWidget {
   final Contact contact;
@@ -334,6 +337,10 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildInputBar(MeshCoreConnector connector) {
     final maxBytes = maxContactMessageBytes();
     final colorScheme = Theme.of(context).colorScheme;
+    final smazEncoder =
+        connector.isContactSmazEnabled(widget.contact.publicKeyHex)
+        ? Smaz.encodeIfSmaller
+        : null;
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -343,10 +350,53 @@ class _ChatScreenState extends State<ChatScreen> {
       child: SafeArea(
         child: Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.gif_box),
-              onPressed: () => _showGifPicker(context),
-              tooltip: context.l10n.chat_sendGif,
+            PopupMenuButton<_ChatInputAction>(
+              icon: const Icon(Icons.add_circle_outline),
+              tooltip: context.l10n.common_add,
+              requestFocus: false,
+              position: PopupMenuPosition.over,
+              offset: const Offset(0, -180),
+              onSelected: (action) {
+                if (action == _ChatInputAction.sendGif) {
+                  _showGifPicker(context);
+                } else if (action == _ChatInputAction.insertEmoji) {
+                  _showEmojiPicker(context);
+                } else if (action == _ChatInputAction.shareLocation) {
+                  _shareLocation(context.read<MeshCoreConnector>());
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: _ChatInputAction.shareLocation,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.my_location, size: 20),
+                      const SizedBox(width: 8),
+                      Text(context.l10n.chat_shareLocation),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: _ChatInputAction.sendGif,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.gif_box, size: 20),
+                      const SizedBox(width: 8),
+                      Text(context.l10n.chat_sendGif),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: _ChatInputAction.insertEmoji,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.emoji_emotions, size: 20),
+                      const SizedBox(width: 8),
+                      Text(context.l10n.chat_insertEmoji),
+                    ],
+                  ),
+                ),
+              ],
             ),
             Expanded(
               child: ValueListenableBuilder<TextEditingValue>(
@@ -399,7 +449,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     controller: _textController,
                     focusNode: _textFieldFocusNode,
                     inputFormatters: [
-                      Utf8LengthLimitingTextInputFormatter(maxBytes),
+                      Utf8LengthLimitingTextInputFormatter(
+                        maxBytes,
+                        encoder: smazEncoder,
+                      ),
                     ],
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
@@ -433,6 +486,102 @@ class _ChatScreenState extends State<ChatScreen> {
     return match?.group(1);
   }
 
+  void _insertTextAtCursor(String text) {
+    final currentValue = _textController.value;
+    final selection = currentValue.selection;
+    final newText = selection.isValid
+        ? currentValue.text.replaceRange(selection.start, selection.end, text)
+        : currentValue.text + text;
+    final caret =
+        (selection.isValid ? selection.start : currentValue.text.length) +
+        text.length;
+
+    _textController.value = currentValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: caret),
+    );
+  }
+
+  void _showEmojiPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => EmojiPicker(
+        title: context.l10n.chat_insertEmoji,
+        onEmojiSelected: (emoji) {
+          _insertTextAtCursor(emoji);
+          _textFieldFocusNode.requestFocus();
+        },
+      ),
+    );
+  }
+
+  Future<void> _shareLocation(MeshCoreConnector connector) async {
+    final lat = connector.selfLatitude;
+    final lon = connector.selfLongitude;
+    if (lat == null || lon == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.chat_locationUnavailable)),
+      );
+      return;
+    }
+
+    final maxBytes = maxContactMessageBytes();
+    final prefix = 'm:${lat.toStringAsFixed(6)},${lon.toStringAsFixed(6)}|';
+    const suffix = '|loc';
+    final maxLabelBytes =
+        maxBytes - utf8.encode(prefix).length - utf8.encode(suffix).length;
+
+    final defaultLabel =
+        '${connector.deviceDisplayName} ${DateTime.now().toUtc().toIso8601String()}';
+    final controller = TextEditingController(
+      text: truncateToUtf8Bytes(defaultLabel, maxLabelBytes),
+    );
+    controller.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: controller.text.length,
+    );
+
+    var label = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.chat_shareLocation),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(labelText: context.l10n.chat_location),
+          autofocus: true,
+          inputFormatters: [
+            Utf8LengthLimitingTextInputFormatter(maxLabelBytes),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n.common_cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: Text(context.l10n.common_save),
+          ),
+        ],
+      ),
+    );
+
+    if (label == null || label.isEmpty) return;
+    label = label.replaceAll('|', '/');
+    if (!mounted) return;
+
+    final markerText =
+        'm:${lat.toStringAsFixed(6)},${lon.toStringAsFixed(6)}|$label|loc';
+    if (utf8.encode(markerText).length > maxBytes) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.chat_messageTooLong(maxBytes))),
+      );
+      return;
+    }
+    connector.sendMessage(widget.contact, markerText);
+  }
+
   void _showGifPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -450,7 +599,11 @@ class _ChatScreenState extends State<ChatScreen> {
     if (text.isEmpty) return;
 
     final maxBytes = maxContactMessageBytes();
-    if (utf8.encode(text).length > maxBytes) {
+    final outboundText = connector.prepareContactOutboundText(
+      widget.contact,
+      text,
+    );
+    if (utf8.encode(outboundText).length > maxBytes) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.l10n.chat_messageTooLong(maxBytes))),
       );
@@ -1082,7 +1235,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 title: Text(context.l10n.chat_addReaction),
                 onTap: () {
                   Navigator.pop(sheetContext);
-                  _showEmojiPicker(message, contact);
+                  _showReactionEmojiPicker(message, contact);
                 },
               ),
             ListTile(
@@ -1154,11 +1307,12 @@ class _ChatScreenState extends State<ChatScreen> {
     ).showSnackBar(SnackBar(content: Text(context.l10n.chat_retryingMessage)));
   }
 
-  void _showEmojiPicker(Message message, Contact senderContact) {
+  void _showReactionEmojiPicker(Message message, Contact senderContact) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (context) => EmojiPicker(
+        title: context.l10n.chat_addReaction,
         onEmojiSelected: (emoji) {
           _sendReaction(message, senderContact, emoji);
         },

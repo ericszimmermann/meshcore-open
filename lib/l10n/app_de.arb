@@ -453,6 +453,9 @@
     }
   },
   "chat_sendGif": "GIF senden",
+  "chat_insertEmoji": "Emoji einfügen",
+  "chat_shareLocation": "Standort teilen",
+  "chat_locationUnavailable": "Standort nicht verfügbar",
   "chat_reply": "Beantworten",
   "chat_addReaction": "Reaktion hinzufügen",
   "chat_me": "Ich",
@@ -681,6 +684,7 @@
   "map_showSharedMarkers": "Zeige gemeinsam genutzte Marker",
   "map_lastSeenTime": "Letzte Sichtung",
   "map_sharedPin": "Gemeinsames Passwort",
+  "map_sharedAt": "Geteilt",
   "map_joinRoom": "Beitreten Sie dem Raum",
   "map_manageRepeater": "Repeater verwalten",
   "mapCache_title": "Offline-Karten-Cache",

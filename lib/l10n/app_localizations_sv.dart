@@ -1147,6 +1147,15 @@ class AppLocalizationsSv extends AppLocalizations {
   String get chat_sendGif => 'Skicka GIF';
 
   @override
+  String get chat_insertEmoji => 'Infoga emoji';
+
+  @override
+  String get chat_shareLocation => 'Dela plats';
+
+  @override
+  String get chat_locationUnavailable => 'Plats inte tillgänglig';
+
+  @override
   String get chat_reply => 'Svara';
 
   @override
@@ -1569,6 +1578,9 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get map_sharedPin => 'Delad PIN';
+
+  @override
+  String get map_sharedAt => 'Delad';
 
   @override
   String get map_joinRoom => 'Gå med i rum';
