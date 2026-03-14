@@ -107,21 +107,25 @@ class UiViewStateService extends ChangeNotifier {
     if (_contactsSortOption == value) return;
     _contactsSortOption = value;
     notifyListeners();
-     unawaited(PrefsManager.instance.setString(_keyContactsSortOption, value.name));
+    unawaited(
+      PrefsManager.instance.setString(_keyContactsSortOption, value.name),
+    );
   }
 
   void setContactsShowUnreadOnly(bool value) {
     if (_contactsShowUnreadOnly == value) return;
     _contactsShowUnreadOnly = value;
     notifyListeners();
-     unawaited(PrefsManager.instance.setBool(_keyContactsShowUnreadOnly, value));
+    unawaited(PrefsManager.instance.setBool(_keyContactsShowUnreadOnly, value));
   }
 
   void setContactsTypeFilter(ContactTypeFilter value) {
     if (_contactsTypeFilter == value) return;
     _contactsTypeFilter = value;
     notifyListeners();
-     unawaited(PrefsManager.instance.setString(_keyContactsTypeFilter, value.name));
+    unawaited(
+      PrefsManager.instance.setString(_keyContactsTypeFilter, value.name),
+    );
   }
 
   void setChannelsSearchText(String value) {
@@ -134,6 +138,8 @@ class UiViewStateService extends ChangeNotifier {
     if (_channelsSortOption == value) return;
     _channelsSortOption = value;
     notifyListeners();
-     unawaited(PrefsManager.instance.setString(_keyChannelsSortOption, value.name));
+    unawaited(
+      PrefsManager.instance.setString(_keyChannelsSortOption, value.name),
+    );
   }
 }
