@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../storage/prefs_manager.dart';
 import '../utils/contact_search.dart';
 
-const String? contactsAllGroupsValue = null;
+const String contactsAllGroupsValue = '__all__';
 
 class UiViewStateService extends ChangeNotifier {
   static const _keyContactsSortOption = 'ui_contacts_sort_option';
