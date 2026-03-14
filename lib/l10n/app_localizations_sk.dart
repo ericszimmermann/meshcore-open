@@ -895,6 +895,10 @@ class AppLocalizationsSk extends AppLocalizations {
   String get contacts_groupNameRequired => 'Skupina musí mať názov.';
 
   @override
+  String get contacts_groupNameReserved =>
+      'Názov skupiny \"__all__\" je rezervovaný';
+
+  @override
   String contacts_groupAlreadyExists(String name) {
     return 'Skupina \"$name\" už existuje';
   }
