@@ -5,13 +5,16 @@ import '../utils/contact_search.dart';
 
 const String contactsAllGroupsValue = '__all__';
 
+enum ChannelSortOption { manual, name, latestMessages, unread }
+
 class UiViewStateService extends ChangeNotifier {
   static const _keyContactsSortOption = 'ui_contacts_sort_option';
   static const _keyContactsShowUnreadOnly = 'ui_contacts_show_unread_only';
   static const _keyContactsTypeFilter = 'ui_contacts_type_filter';
-  static const _keyChannelsSortIndex = 'ui_channels_sort_index';
+  static const _keyChannelsSortOption = 'ui_channels_sort_option';
+  static const _keyChannelsSortIndexLegacy = 'ui_channels_sort_index';
 
-  String? _contactsSelectedGroupName = contactsAllGroupsValue;
+  String _contactsSelectedGroupName = contactsAllGroupsValue;
   String _contactsSearchText = '';
   bool _contactsSearchExpanded = false;
   ContactSortOption _contactsSortOption = ContactSortOption.lastSeen;
@@ -19,16 +22,16 @@ class UiViewStateService extends ChangeNotifier {
   ContactTypeFilter _contactsTypeFilter = ContactTypeFilter.all;
 
   String _channelsSearchText = '';
-  int _channelsSortIndex = 0;
+  ChannelSortOption _channelsSortOption = ChannelSortOption.manual;
 
-  String? get contactsSelectedGroupName => _contactsSelectedGroupName;
+  String get contactsSelectedGroupName => _contactsSelectedGroupName;
   String get contactsSearchText => _contactsSearchText;
   bool get contactsSearchExpanded => _contactsSearchExpanded;
   ContactSortOption get contactsSortOption => _contactsSortOption;
   bool get contactsShowUnreadOnly => _contactsShowUnreadOnly;
   ContactTypeFilter get contactsTypeFilter => _contactsTypeFilter;
   String get channelsSearchText => _channelsSearchText;
-  int get channelsSortIndex => _channelsSortIndex;
+  ChannelSortOption get channelsSortOption => _channelsSortOption;
 
   Future<void> initialize() async {
     final prefs = PrefsManager.instance;
@@ -52,10 +55,35 @@ class UiViewStateService extends ChangeNotifier {
       );
     }
 
-    _channelsSortIndex = prefs.getInt(_keyChannelsSortIndex) ?? 0;
+    final channelSortStr = prefs.getString(_keyChannelsSortOption);
+    if (channelSortStr != null) {
+      _channelsSortOption = ChannelSortOption.values.firstWhere(
+        (e) => e.name == channelSortStr,
+        orElse: () => ChannelSortOption.manual,
+      );
+      return;
+    }
+
+    // Backward compatibility for old persisted index format.
+    switch (prefs.getInt(_keyChannelsSortIndexLegacy) ?? 0) {
+      case 0:
+        _channelsSortOption = ChannelSortOption.manual;
+        break;
+      case 1:
+        _channelsSortOption = ChannelSortOption.name;
+        break;
+      case 2:
+        _channelsSortOption = ChannelSortOption.latestMessages;
+        break;
+      case 3:
+        _channelsSortOption = ChannelSortOption.unread;
+        break;
+      default:
+        _channelsSortOption = ChannelSortOption.manual;
+    }
   }
 
-  void setContactsSelectedGroupName(String? value) {
+  void setContactsSelectedGroupName(String value) {
     if (_contactsSelectedGroupName == value) return;
     _contactsSelectedGroupName = value;
     notifyListeners();
@@ -100,10 +128,10 @@ class UiViewStateService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setChannelsSortIndex(int value) {
-    if (_channelsSortIndex == value) return;
-    _channelsSortIndex = value;
+  void setChannelsSortOption(ChannelSortOption value) {
+    if (_channelsSortOption == value) return;
+    _channelsSortOption = value;
     notifyListeners();
-    PrefsManager.instance.setInt(_keyChannelsSortIndex, value);
+    PrefsManager.instance.setString(_keyChannelsSortOption, value.name);
   }
 }

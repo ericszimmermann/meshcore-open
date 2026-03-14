@@ -49,6 +49,7 @@ class _ContactsScreenState extends State<ContactsScreen>
     with DisconnectNavigationMixin {
   final TextEditingController _searchController = TextEditingController();
   final ContactGroupStore _groupStore = ContactGroupStore();
+  MeshCoreConnector? _scopeSyncConnector;
   List<ContactGroup> _groups = [];
   String _loadedGroupScopeKeyHex = '';
   Timer? _searchDebounce;
@@ -68,11 +69,30 @@ class _ContactsScreenState extends State<ContactsScreen>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final connector = context.read<MeshCoreConnector>();
+    if (!identical(_scopeSyncConnector, connector)) {
+      _scopeSyncConnector?.removeListener(_handleConnectorScopeChange);
+      _scopeSyncConnector = connector;
+      _scopeSyncConnector?.addListener(_handleConnectorScopeChange);
+    }
+    _handleConnectorScopeChange();
+  }
+
+  @override
   void dispose() {
     _searchDebounce?.cancel();
     _searchController.dispose();
     _frameSubscription?.cancel();
+    _scopeSyncConnector?.removeListener(_handleConnectorScopeChange);
     super.dispose();
+  }
+
+  void _handleConnectorScopeChange() {
+    final connector = _scopeSyncConnector;
+    if (connector == null) return;
+    _syncGroupScopeIfNeeded(connector);
   }
 
   Future<void> _loadGroups() async {
@@ -109,14 +129,15 @@ class _ContactsScreenState extends State<ContactsScreen>
         selfPublicKeyHex == _loadedGroupScopeKeyHex) {
       return;
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      if (context.read<MeshCoreConnector>().selfPublicKeyHex !=
-          selfPublicKeyHex) {
-        return;
-      }
-      _loadGroups();
-    });
+    _loadGroups();
+  }
+
+  void _collapseContactsSearch(UiViewStateService viewState) {
+    _searchDebounce?.cancel();
+    _searchDebounce = null;
+    _searchController.clear();
+    viewState.setContactsSearchText('');
+    viewState.setContactsSearchExpanded(false);
   }
 
   void _showGroupsUnavailableMessage(BuildContext context) {
@@ -274,7 +295,6 @@ class _ContactsScreenState extends State<ContactsScreen>
   @override
   Widget build(BuildContext context) {
     final connector = context.watch<MeshCoreConnector>();
-    _syncGroupScopeIfNeeded(connector);
 
     // Auto-navigate back to scanner if disconnected
     if (!checkConnectionAndNavigate(connector)) {
@@ -467,11 +487,11 @@ class _ContactsScreenState extends State<ContactsScreen>
 
   Widget _buildGroupButton(
     BuildContext context,
+    MeshCoreConnector connector,
     UiViewStateService viewState,
     List<Contact> contacts,
     List<ContactGroup> sortedGroups,
   ) {
-    final connector = context.watch<MeshCoreConnector>();
     final canManageGroups = _hasGroupStoreScope(connector);
     final selectedGroupName =
         _selectedGroup?.name ?? context.l10n.listFilter_all;
@@ -480,14 +500,14 @@ class _ContactsScreenState extends State<ContactsScreen>
       double.infinity,
     );
 
-    return PopupMenuButton<String?>(
+    return PopupMenuButton<String>(
       position: PopupMenuPosition.under,
       constraints: BoxConstraints.tightFor(width: menuWidth),
-      onSelected: (String? value) {
+      onSelected: (String value) {
         viewState.setContactsSelectedGroupName(value);
       },
       itemBuilder: (context) => [
-        PopupMenuItem<String?>(
+        PopupMenuItem<String>(
           value: contactsAllGroupsValue,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -510,7 +530,7 @@ class _ContactsScreenState extends State<ContactsScreen>
           ),
         ),
         ...sortedGroups.map((group) {
-          return PopupMenuItem<String?>(
+          return PopupMenuItem<String>(
             value: group.name,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -553,22 +573,16 @@ class _ContactsScreenState extends State<ContactsScreen>
       ],
       child: SizedBox(
         height: 48,
-        child: DecoratedBox(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    selectedGroupName,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Icon(Icons.arrow_drop_down),
-              ],
-            ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(selectedGroupName, overflow: TextOverflow.ellipsis),
+              ),
+              const SizedBox(width: 8),
+              const Icon(Icons.arrow_drop_down),
+            ],
           ),
         ),
       ),
@@ -656,6 +670,10 @@ class _ContactsScreenState extends State<ContactsScreen>
     final sortedGroups = groupsByName.values.toList()
       ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
 
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final searchExpandedWidth = (screenWidth * 0.52);
+    final searchCollapsedWidth = (screenWidth * 0.22);
+
     return Column(
       children: [
         Padding(
@@ -665,6 +683,7 @@ class _ContactsScreenState extends State<ContactsScreen>
               Expanded(
                 child: _buildGroupButton(
                   context,
+                  connector,
                   viewState,
                   contacts,
                   sortedGroups,
@@ -674,7 +693,9 @@ class _ContactsScreenState extends State<ContactsScreen>
               AnimatedContainer(
                 duration: const Duration(milliseconds: 220),
                 curve: Curves.easeOutCubic,
-                width: viewState.contactsSearchExpanded ? 270 : 104,
+                width: viewState.contactsSearchExpanded
+                    ? searchExpandedWidth
+                    : searchCollapsedWidth,
                 height: 48,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -692,39 +713,6 @@ class _ContactsScreenState extends State<ContactsScreen>
                                 autofocus: true,
                                 decoration: InputDecoration(
                                   hintText: hintText,
-                                  prefixIcon: IconButton(
-                                    icon: const Icon(Icons.search),
-                                    onPressed: () {
-                                      _searchDebounce?.cancel();
-                                      _searchDebounce = null;
-                                      viewState.setContactsSearchExpanded(
-                                        false,
-                                      );
-                                    },
-                                  ),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      viewState.contactsSearchText.isNotEmpty
-                                          ? Icons.clear
-                                          : Icons.close,
-                                    ),
-                                    onPressed: () {
-                                      if (viewState
-                                          .contactsSearchText
-                                          .isNotEmpty) {
-                                        _searchDebounce?.cancel();
-                                        _searchDebounce = null;
-                                        _searchController.clear();
-                                        viewState.setContactsSearchText('');
-                                        return;
-                                      }
-                                      _searchDebounce?.cancel();
-                                      _searchDebounce = null;
-                                      viewState.setContactsSearchExpanded(
-                                        false,
-                                      );
-                                    },
-                                  ),
                                   border: InputBorder.none,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 12,
@@ -744,12 +732,25 @@ class _ContactsScreenState extends State<ContactsScreen>
                                   );
                                 },
                               )
-                            : IconButton(
-                                onPressed: () {
-                                  viewState.setContactsSearchExpanded(true);
-                                },
-                                icon: const Icon(Icons.search),
-                              ),
+                            : const SizedBox.shrink(),
+                      ),
+                      SizedBox(
+                        width: 48,
+                        height: 48,
+                        child: IconButton(
+                          onPressed: () {
+                            if (viewState.contactsSearchExpanded) {
+                              _collapseContactsSearch(viewState);
+                              return;
+                            }
+                            viewState.setContactsSearchExpanded(true);
+                          },
+                          icon: Icon(
+                            viewState.contactsSearchExpanded
+                                ? Icons.close
+                                : Icons.search,
+                          ),
+                        ),
                       ),
                       Container(
                         width: 1,
@@ -1138,11 +1139,7 @@ class _ContactsScreenState extends State<ContactsScreen>
                       contactsAllGroupsValue.toLowerCase()) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(
-                          context.l10n.contacts_groupAlreadyExists(
-                            contactsAllGroupsValue,
-                          ),
-                        ),
+                        content: Text(context.l10n.contacts_groupNameReserved),
                       ),
                     );
                     return;

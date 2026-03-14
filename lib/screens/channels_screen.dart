@@ -29,8 +29,6 @@ import 'contacts_screen.dart';
 import 'map_screen.dart';
 import 'settings_screen.dart';
 
-enum ChannelSortOption { manual, name, latestMessages, unread }
-
 class ChannelsScreen extends StatefulWidget {
   final bool hideBackButton;
 
@@ -289,7 +287,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                             ),
                           ],
                         )
-                      : (_sortOptionFromIndex(viewState.channelsSortIndex) ==
+                      : (viewState.channelsSortOption ==
                                 ChannelSortOption.manual &&
                             viewState.channelsSearchText.isEmpty)
                       ? ReorderableListView.builder(
@@ -606,36 +604,30 @@ class _ChannelsScreenState extends State<ChannelsScreen>
             SortFilterMenuOption(
               value: actionSortManual,
               label: context.l10n.channels_sortManual,
-              checked:
-                  _sortOptionFromIndex(viewState.channelsSortIndex) ==
-                  ChannelSortOption.manual,
+              checked: viewState.channelsSortOption == ChannelSortOption.manual,
             ),
             SortFilterMenuOption(
               value: actionSortName,
               label: context.l10n.channels_sortAZ,
-              checked:
-                  _sortOptionFromIndex(viewState.channelsSortIndex) ==
-                  ChannelSortOption.name,
+              checked: viewState.channelsSortOption == ChannelSortOption.name,
             ),
             SortFilterMenuOption(
               value: actionSortLatest,
               label: context.l10n.channels_sortLatestMessages,
               checked:
-                  _sortOptionFromIndex(viewState.channelsSortIndex) ==
+                  viewState.channelsSortOption ==
                   ChannelSortOption.latestMessages,
             ),
             SortFilterMenuOption(
               value: actionSortUnread,
               label: context.l10n.channels_sortUnread,
-              checked:
-                  _sortOptionFromIndex(viewState.channelsSortIndex) ==
-                  ChannelSortOption.unread,
+              checked: viewState.channelsSortOption == ChannelSortOption.unread,
             ),
           ],
         ),
       ],
       onSelected: (action) {
-        viewState.setChannelsSortIndex(action);
+        viewState.setChannelsSortOption(_sortOptionFromAction(action));
       },
     );
   }
@@ -659,7 +651,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
       return nameA.toLowerCase().compareTo(nameB.toLowerCase());
     }
 
-    switch (_sortOptionFromIndex(viewState.channelsSortIndex)) {
+    switch (viewState.channelsSortOption) {
       case ChannelSortOption.manual:
         break;
       case ChannelSortOption.latestMessages:
@@ -694,17 +686,18 @@ class _ChannelsScreenState extends State<ChannelsScreen>
     return filtered;
   }
 
-  ChannelSortOption _sortOptionFromIndex(int value) {
-    switch (value) {
+  ChannelSortOption _sortOptionFromAction(int action) {
+    switch (action) {
       case 0:
         return ChannelSortOption.manual;
+      case 1:
+        return ChannelSortOption.name;
       case 2:
         return ChannelSortOption.latestMessages;
       case 3:
         return ChannelSortOption.unread;
-      case 1:
       default:
-        return ChannelSortOption.name;
+        return ChannelSortOption.manual;
     }
   }
 
