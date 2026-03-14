@@ -15,6 +15,7 @@ import '../l10n/l10n.dart';
 import '../models/channel_message.dart';
 import '../models/app_settings.dart';
 import '../models/contact.dart';
+import '../connector/meshcore_protocol.dart';
 import '../utils/location_utils.dart';
 import '../widgets/adaptive_app_bar_title.dart';
 
@@ -804,83 +805,246 @@ class _ObservedPath {
   const _ObservedPath({required this.pathBytes, required this.isPrimary});
 }
 
+class _RouteRebuildState {
+  final List<Contact?> contactsByHop;
+  final Contact? lastKnownContact;
+  final double score;
+
+  const _RouteRebuildState({
+    required this.contactsByHop,
+    required this.lastKnownContact,
+    required this.score,
+  });
+}
+
+class _RouteRebuildResult {
+  final List<Contact?> contactsByHop;
+  final double score;
+
+  const _RouteRebuildResult({required this.contactsByHop, required this.score});
+}
+
 List<_PathHop> _buildPathHops(
   Uint8List pathBytes,
   List<Contact> contacts,
-  bool isOutgoing,
+  bool _isOutgoing,
   double? selfLatitude,
   double? selfLongitude,
   AppLocalizations l10n,
 ) {
+  if (pathBytes.isEmpty) {
+    return const [];
+  }
+
+  final selfPoint = (selfLatitude != null && selfLongitude != null)
+      ? LatLng(selfLatitude, selfLongitude)
+      : null;
+  final candidatesByPrefix = _groupRepeaterCandidatesByPrefix(contacts);
+  final rebuiltContacts = _rebuildMostLikelyContactsForPath(
+    pathBytes,
+    candidatesByPrefix,
+    selfPoint,
+  );
+
   final hops = <_PathHop>[];
-
-  final selfLat = selfLatitude;
-  final selfLon = selfLongitude;
-
-  LatLng? searchPoint;
-  if (selfLat != null && selfLon != null) {
-    searchPoint = LatLng(selfLat, selfLon);
+  for (var i = 0; i < pathBytes.length; i++) {
+    final contact = i < rebuiltContacts.length ? rebuiltContacts[i] : null;
+    hops.add(
+      _PathHop(
+        index: i + 1,
+        prefix: pathBytes[i],
+        contact: contact,
+        position: _resolvePosition(contact),
+        l10n: l10n,
+      ),
+    );
   }
 
-  if (isOutgoing) {
-    for (var i = 0; i < pathBytes.length; i++) {
-      final prefix = pathBytes[i];
-
-      final contact = selectBestRepeaterContactForPrefix(
-        contacts,
-        prefix,
-        searchPoint: searchPoint,
-        preferFavorites: false,
-      );
-
-      if (contact != null && _hasValidLocation(contact)) {
-        searchPoint = LatLng(contact.latitude!, contact.longitude!);
-      }
-
-      hops.add(
-        _PathHop(
-          index: i + 1,
-          prefix: prefix,
-          contact: contact,
-          position: _resolvePosition(contact),
-          l10n: l10n,
-        ),
-      );
-    }
-  } else {
-    // Temporary list to hold hops in reverse
-    final tempHops = <_PathHop>[];
-    // Iterate backwards through pathBytes
-    for (var i = pathBytes.length - 1; i >= 0; i--) {
-      final prefix = pathBytes[i];
-
-      final contact = selectBestRepeaterContactForPrefix(
-        contacts,
-        prefix,
-        searchPoint: searchPoint,
-        preferFavorites: false,
-      );
-
-      if (contact != null && _hasValidLocation(contact)) {
-        searchPoint = LatLng(contact.latitude!, contact.longitude!);
-      }
-
-      // Add to temporary list
-      tempHops.add(
-        _PathHop(
-          index: i + 1, // Calculate index to maintain order
-          prefix: prefix,
-          contact: contact,
-          position: _resolvePosition(contact),
-          l10n: l10n,
-        ),
-      );
-    }
-
-    // Reverse the temporary list to maintain the correct order in hops
-    hops.addAll(tempHops.reversed);
-  }
   return hops;
+}
+
+Map<int, List<Contact>> _groupRepeaterCandidatesByPrefix(
+  List<Contact> contacts,
+) {
+  final byPrefix = <int, List<Contact>>{};
+
+  for (final contact in contacts) {
+    if (contact.publicKey.isEmpty) continue;
+    if (contact.type != advTypeRepeater && contact.type != advTypeRoom) {
+      continue;
+    }
+    byPrefix
+        .putIfAbsent(contact.publicKey.first, () => <Contact>[])
+        .add(contact);
+  }
+
+  for (final entry in byPrefix.entries) {
+    entry.value.sort((a, b) {
+      final favCompare = (b.isFavorite ? 1 : 0).compareTo(a.isFavorite ? 1 : 0);
+      if (favCompare != 0) return favCompare;
+      final seenCompare = b.lastSeen.compareTo(a.lastSeen);
+      if (seenCompare != 0) return seenCompare;
+      return a.publicKeyHex.compareTo(b.publicKeyHex);
+    });
+  }
+
+  return byPrefix;
+}
+
+List<Contact?> _rebuildMostLikelyContactsForPath(
+  Uint8List pathBytes,
+  Map<int, List<Contact>> candidatesByPrefix,
+  LatLng? selfPoint,
+) {
+  final startAnchored = _runRouteBeamSearch(
+    pathBytes,
+    candidatesByPrefix,
+    selfPoint,
+    reverseInput: false,
+  );
+
+  final endAnchored = _runRouteBeamSearch(
+    pathBytes,
+    candidatesByPrefix,
+    selfPoint,
+    reverseInput: true,
+  );
+
+  return startAnchored.score >= endAnchored.score
+      ? startAnchored.contactsByHop
+      : endAnchored.contactsByHop;
+}
+
+_RouteRebuildResult _runRouteBeamSearch(
+  Uint8List pathBytes,
+  Map<int, List<Contact>> candidatesByPrefix,
+  LatLng? selfPoint, {
+  required bool reverseInput,
+}) {
+  final maxCandidatesPerHop = 5;
+  final beamWidth = 24;
+
+  final orderedPrefixes = reverseInput
+      ? pathBytes.reversed.toList(growable: false)
+      : pathBytes.toList(growable: false);
+
+  var states = <_RouteRebuildState>[
+    const _RouteRebuildState(
+      contactsByHop: <Contact?>[],
+      lastKnownContact: null,
+      score: 0,
+    ),
+  ];
+
+  for (var hopIndex = 0; hopIndex < orderedPrefixes.length; hopIndex++) {
+    final prefix = orderedPrefixes[hopIndex];
+    final hopCandidates = <Contact?>[
+      ...(candidatesByPrefix[prefix] ?? const <Contact>[]).take(
+        maxCandidatesPerHop,
+      ),
+      null,
+    ];
+
+    final nextStates = <_RouteRebuildState>[];
+
+    for (final state in states) {
+      for (final candidate in hopCandidates) {
+        var score = state.score;
+        score += _scoreCandidate(candidate);
+        score += _scoreTransition(state.lastKnownContact, candidate);
+        if (hopIndex == 0 && selfPoint != null) {
+          score += _scoreSelfAnchor(selfPoint, candidate);
+        }
+
+        nextStates.add(
+          _RouteRebuildState(
+            contactsByHop: [...state.contactsByHop, candidate],
+            lastKnownContact: candidate ?? state.lastKnownContact,
+            score: score,
+          ),
+        );
+      }
+    }
+
+    nextStates.sort((a, b) => b.score.compareTo(a.score));
+    states = nextStates.take(beamWidth).toList(growable: false);
+  }
+
+  _RouteRebuildState best = states.first;
+  for (final state in states.skip(1)) {
+    if (state.score > best.score) {
+      best = state;
+    }
+  }
+
+  final contactsByHop = reverseInput
+      ? best.contactsByHop.reversed.toList(growable: false)
+      : best.contactsByHop;
+
+  return _RouteRebuildResult(contactsByHop: contactsByHop, score: best.score);
+}
+
+double _scoreCandidate(Contact? candidate) {
+  if (candidate == null) {
+    return -1.2;
+  }
+
+  var score = 1.4;
+
+  if (candidate.isFavorite) {
+    score += 0.25;
+  }
+
+  final ageHours = DateTime.now().difference(candidate.lastSeen).inHours;
+  final freshness = (168 - ageHours.clamp(0, 168)) / 168;
+  score += freshness * 0.6;
+
+  if (_hasValidLocation(candidate)) {
+    score += 0.45;
+  } else {
+    score -= 0.35;
+  }
+
+  return score;
+}
+
+double _scoreTransition(Contact? from, Contact? to) {
+  if (to == null) {
+    return -0.2;
+  }
+  if (from == null) {
+    return 0;
+  }
+
+  if (from.publicKeyHex == to.publicKeyHex) {
+    return -2.5;
+  }
+
+  if (!_hasValidLocation(from) || !_hasValidLocation(to)) {
+    return 0;
+  }
+
+  final distanceMeters = Distance()(
+    LatLng(from.latitude!, from.longitude!),
+    LatLng(to.latitude!, to.longitude!),
+  );
+  final distanceKm = distanceMeters / 1000.0;
+
+  return 1.6 - min(distanceKm / 25.0, 3.0);
+}
+
+double _scoreSelfAnchor(LatLng selfPoint, Contact? candidate) {
+  if (candidate == null || !_hasValidLocation(candidate)) {
+    return -0.15;
+  }
+
+  final distanceMeters = Distance()(
+    selfPoint,
+    LatLng(candidate.latitude!, candidate.longitude!),
+  );
+  final distanceKm = distanceMeters / 1000.0;
+
+  return 1.2 - min(distanceKm / 20.0, 2.2);
 }
 
 LatLng? _resolvePosition(Contact? contact) {
