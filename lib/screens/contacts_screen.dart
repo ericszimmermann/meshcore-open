@@ -432,6 +432,105 @@ class _ContactsScreenState extends State<ContactsScreen>
     );
   }
 
+  Widget _buildGroupButton(
+    BuildContext context,
+    UiViewStateService viewState,
+    List<Contact> contacts,
+    List<ContactGroup> sortedGroups,
+  ) {
+    final theme = Theme.of(context);
+    final selectedGroupName =
+        _selectedGroup?.name ?? context.l10n.listFilter_all;
+    final menuWidth = MediaQuery.sizeOf(context).width - 16;
+
+    return PopupMenuButton<String>(
+      position: PopupMenuPosition.under,
+      constraints: BoxConstraints.tightFor(width: menuWidth),
+      onSelected: (value) {
+        viewState.setContactsSelectedGroupName(value);
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem<String>(
+          value: contactsAllGroupsValue,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(context.l10n.listFilter_all),
+              IconButton(
+                tooltip: context.l10n.contacts_newGroup,
+                constraints: const BoxConstraints(),
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.group_add, size: 20),
+                onPressed: () => _closeDropdownAndRun(
+                  context,
+                  () => _showGroupEditor(context, contacts),
+                ),
+              ),
+            ],
+          ),
+        ),
+        ...sortedGroups.map((group) {
+          return PopupMenuItem<String>(
+            value: group.name,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(group.name, overflow: TextOverflow.ellipsis),
+                ),
+                IconButton(
+                  tooltip: context.l10n.contacts_editGroup,
+                  constraints: const BoxConstraints(),
+                  padding: EdgeInsets.zero,
+                  icon: const Icon(Icons.edit, size: 20),
+                  onPressed: () => _closeDropdownAndRun(
+                    context,
+                    () => _showGroupEditor(context, contacts, group: group),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  tooltip: context.l10n.contacts_deleteGroup,
+                  constraints: const BoxConstraints(),
+                  padding: EdgeInsets.zero,
+                  icon: const Icon(Icons.delete, size: 20, color: Colors.red),
+                  onPressed: () => _closeDropdownAndRun(
+                    context,
+                    () => _confirmDeleteGroup(context, group),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ],
+      child: SizedBox(
+        height: 48,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border.all(color: theme.colorScheme.outline),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    selectedGroupName,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Icon(Icons.arrow_drop_down),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildContactsBody(BuildContext context, MeshCoreConnector connector) {
     final viewState = context.watch<UiViewStateService>();
     final contacts = connector.contacts;
@@ -520,95 +619,11 @@ class _ContactsScreenState extends State<ContactsScreen>
           child: Row(
             children: [
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  initialValue: _selectedGroup?.name ?? contactsAllGroupsValue,
-                  dropdownColor: Theme.of(context).colorScheme.surfaceContainer,
-                  isExpanded: true,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
-                    ),
-                  ),
-                  items: [
-                    DropdownMenuItem<String>(
-                      value: contactsAllGroupsValue,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(context.l10n.listFilter_all),
-                          IconButton(
-                            tooltip: context.l10n.contacts_newGroup,
-                            constraints: const BoxConstraints(),
-                            padding: EdgeInsets.zero,
-                            icon: const Icon(Icons.group_add, size: 20),
-                            onPressed: () => _closeDropdownAndRun(
-                              context,
-                              () => _showGroupEditor(context, contacts),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ...sortedGroups.map((group) {
-                      return DropdownMenuItem<String>(
-                        value: group.name,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                group.name,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            IconButton(
-                              tooltip: context.l10n.contacts_editGroup,
-                              constraints: const BoxConstraints(),
-                              padding: EdgeInsets.zero,
-                              icon: const Icon(Icons.edit, size: 20),
-                              onPressed: () => _closeDropdownAndRun(
-                                context,
-                                () => _showGroupEditor(
-                                  context,
-                                  contacts,
-                                  group: group,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              tooltip: context.l10n.contacts_deleteGroup,
-                              constraints: const BoxConstraints(),
-                              padding: EdgeInsets.zero,
-                              icon: const Icon(
-                                Icons.delete,
-                                size: 20,
-                                color: Colors.red,
-                              ),
-                              onPressed: () => _closeDropdownAndRun(
-                                context,
-                                () => _confirmDeleteGroup(context, group),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  ],
-                  selectedItemBuilder: (context) => [
-                    Text(context.l10n.listFilter_all),
-                    ...sortedGroups.map(
-                      (group) =>
-                          Text(group.name, overflow: TextOverflow.ellipsis),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    viewState.setContactsSelectedGroupName(
-                      value ?? contactsAllGroupsValue,
-                    );
-                  },
+                child: _buildGroupButton(
+                  context,
+                  viewState,
+                  contacts,
+                  sortedGroups,
                 ),
               ),
               const SizedBox(width: 8),
