@@ -2887,7 +2887,7 @@ abstract class AppLocalizations {
   /// No description provided for @map_showDiscoveryContacts.
   ///
   /// In en, this message translates to:
-  /// **'Show Discovery Contacts'**
+  /// **'Show Discovered Contacts'**
   String get map_showDiscoveryContacts;
 
   /// No description provided for @map_guessedLocation.
@@ -5476,6 +5476,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to import contact.'**
   String get contacts_contactImportFailed;
+
+  /// No description provided for @discoveredContacts_export.
+  ///
+  /// In en, this message translates to:
+  /// **'Export discovered contacts'**
+  String get discoveredContacts_export;
+
+  /// No description provided for @discoveredContacts_import.
+  ///
+  /// In en, this message translates to:
+  /// **'Import discovered contacts'**
+  String get discoveredContacts_import;
+
+  /// No description provided for @discoveredContacts_exported.
+  ///
+  /// In en, this message translates to:
+  /// **'Exported discovered contacts to {path}.'**
+  String discoveredContacts_exported(String path);
+
+  /// No description provided for @discoveredContacts_exportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to export discovered contacts: {error}'**
+  String discoveredContacts_exportFailed(String error);
+
+  /// No description provided for @discoveredContacts_imported.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {count} discovered contacts.'**
+  String discoveredContacts_imported(int count);
+
+  /// No description provided for @discoveredContacts_importNoFile.
+  ///
+  /// In en, this message translates to:
+  /// **'No discovered contacts file found.'**
+  String get discoveredContacts_importNoFile;
+
+  /// No description provided for @discoveredContacts_importNoContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'No contacts found in import file.'**
+  String get discoveredContacts_importNoContacts;
+
+  /// No description provided for @discoveredContacts_importFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to import discovered contacts: {error}'**
+  String discoveredContacts_importFailed(String error);
 
   /// No description provided for @contacts_zeroHopAdvert.
   ///

@@ -290,6 +290,38 @@ class MeshCoreConnector extends ChangeNotifier {
     return List.unmodifiable(_discoveredContacts);
   }
 
+  String exportDiscoveredContactsJson() {
+    return _discoveryContactStore.encodeContacts(
+      _discoveredContacts.where((contact) => !contact.isActive).toList(),
+    );
+  }
+
+  Future<int> importDiscoveredContactsJson(String json) async {
+    final importedContacts = _discoveryContactStore.decodeContacts(json);
+    if (importedContacts.isEmpty) {
+      return 0;
+    }
+
+    final byPublicKey = <String, Contact>{
+      for (final contact in _discoveredContacts) contact.publicKeyHex: contact,
+    };
+
+    for (final contact in importedContacts) {
+      final existing = byPublicKey[contact.publicKeyHex];
+      byPublicKey[contact.publicKeyHex] = existing == null
+          ? contact
+          : _mergeImportedDiscoveredContact(existing, contact);
+    }
+
+    _discoveredContacts
+      ..clear()
+      ..addAll(byPublicKey.values);
+
+    await _persistDiscoveredContacts();
+    notifyListeners();
+    return importedContacts.length;
+  }
+
   List<Channel> get channels => List.unmodifiable(_channels);
   bool get isConnected => _state == MeshCoreConnectionState.connected;
   bool get isLoadingContacts => _isLoadingContacts;
@@ -427,6 +459,20 @@ class MeshCoreConnector extends ChangeNotifier {
       return 'id:$messageId';
     }
     return 'fallback:${message.senderKeyHex}:${message.isOutgoing}:${message.isCli}:${message.timestamp.millisecondsSinceEpoch}:${message.text}';
+  }
+
+  Contact _mergeImportedDiscoveredContact(Contact existing, Contact imported) {
+    final isKnownContact = _knownContactKeys.contains(imported.publicKeyHex);
+    return existing.copyWith(
+      isActive: existing.isActive || isKnownContact,
+      rawPacket: existing.rawPacket ?? imported.rawPacket,
+      lastSeen: imported.lastSeen.isAfter(existing.lastSeen)
+          ? imported.lastSeen
+          : existing.lastSeen,
+      lastMessageAt: imported.lastMessageAt.isAfter(existing.lastMessageAt)
+          ? imported.lastMessageAt
+          : existing.lastMessageAt,
+    );
   }
 
   /// Load older messages for a contact (pagination)

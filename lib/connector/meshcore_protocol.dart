@@ -138,8 +138,8 @@ class BufferWriter {
 
   void writeCString(String string, int maxLength) {
     final bytes = Uint8List(maxLength);
-    final encoded = utf8.encode(string);
-    for (var i = 0; i < maxLength - 1 && i < encoded.length; i++) {
+    final encoded = _truncateUtf8ToValidBoundary(string, maxLength - 1);
+    for (var i = 0; i < encoded.length; i++) {
       bytes[i] = encoded[i];
     }
     writeBytes(bytes);
@@ -178,6 +178,26 @@ Uint8List hex2Uint8List(String hex) {
     result.add(byte);
   }
   return Uint8List.fromList(result);
+}
+
+Uint8List _truncateUtf8ToValidBoundary(String value, int maxBytes) {
+  if (maxBytes <= 0) return Uint8List(0);
+  final encoded = utf8.encode(value);
+  if (encoded.length <= maxBytes) {
+    return Uint8List.fromList(encoded);
+  }
+
+  var safeLen = maxBytes;
+  while (safeLen > 0) {
+    try {
+      utf8.decode(encoded.sublist(0, safeLen));
+      break;
+    } catch (_) {
+      safeLen--;
+    }
+  }
+
+  return Uint8List.fromList(encoded.sublist(0, safeLen));
 }
 
 // Command codes (to device)
@@ -586,13 +606,10 @@ Uint8List buildSendSelfAdvertFrame({bool flood = false}) {
 // Build CMD_SET_ADVERT_NAME frame
 // Format: [cmd][name...]
 Uint8List buildSetAdvertNameFrame(String name) {
-  final nameBytes = utf8.encode(name);
-  final nameLen = nameBytes.length < maxNameSize
-      ? nameBytes.length
-      : maxNameSize - 1;
+  final nameBytes = _truncateUtf8ToValidBoundary(name, maxNameSize - 1);
   final writer = BufferWriter();
   writer.writeByte(cmdSetAdvertName);
-  writer.writeBytes(Uint8List.fromList(nameBytes.sublist(0, nameLen)));
+  writer.writeBytes(nameBytes);
   return writer.toBytes();
 }
 
