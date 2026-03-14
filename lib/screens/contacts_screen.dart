@@ -506,24 +506,24 @@ class _ContactsScreenState extends State<ContactsScreen>
       onSelected: (String value) {
         viewState.setContactsSelectedGroupName(value);
       },
-      itemBuilder: (context) => [
+      itemBuilder: (menuContext) => [
         PopupMenuItem<String>(
           value: contactsAllGroupsValue,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(context.l10n.listFilter_all),
+              Text(menuContext.l10n.listFilter_all),
               IconButton(
-                tooltip: context.l10n.contacts_newGroup,
+                tooltip: menuContext.l10n.contacts_newGroup,
                 icon: const Icon(Icons.group_add, size: 20),
                 onPressed: canManageGroups
                     ? () => _closeDropdownAndRun(
-                        context,
-                        () => _showGroupEditor(context, contacts),
+                        menuContext,
+                        () => _showGroupEditor(this.context, contacts),
                       )
                     : () => _closeDropdownAndRun(
-                        context,
-                        () => _showGroupsUnavailableMessage(context),
+                        menuContext,
+                        () => _showGroupsUnavailableMessage(this.context),
                       ),
               ),
             ],
@@ -539,31 +539,34 @@ class _ContactsScreenState extends State<ContactsScreen>
                   child: Text(group.name, overflow: TextOverflow.ellipsis),
                 ),
                 IconButton(
-                  tooltip: context.l10n.contacts_editGroup,
+                  tooltip: menuContext.l10n.contacts_editGroup,
                   icon: const Icon(Icons.edit, size: 20),
                   onPressed: canManageGroups
                       ? () => _closeDropdownAndRun(
-                          context,
-                          () =>
-                              _showGroupEditor(context, contacts, group: group),
+                          menuContext,
+                          () => _showGroupEditor(
+                            this.context,
+                            contacts,
+                            group: group,
+                          ),
                         )
                       : () => _closeDropdownAndRun(
-                          context,
-                          () => _showGroupsUnavailableMessage(context),
+                          menuContext,
+                          () => _showGroupsUnavailableMessage(this.context),
                         ),
                 ),
                 const SizedBox(width: 8),
                 IconButton(
-                  tooltip: context.l10n.contacts_deleteGroup,
+                  tooltip: menuContext.l10n.contacts_deleteGroup,
                   icon: const Icon(Icons.delete, size: 20, color: Colors.red),
                   onPressed: canManageGroups
                       ? () => _closeDropdownAndRun(
-                          context,
-                          () => _confirmDeleteGroup(context, group),
+                          menuContext,
+                          () => _confirmDeleteGroup(this.context, group),
                         )
                       : () => _closeDropdownAndRun(
-                          context,
-                          () => _showGroupsUnavailableMessage(context),
+                          menuContext,
+                          () => _showGroupsUnavailableMessage(this.context),
                         ),
                 ),
               ],

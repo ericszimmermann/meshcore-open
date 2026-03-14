@@ -902,8 +902,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get contacts_groupNameRequired => 'Il nome del gruppo è obbligatorio.';
 
   @override
-  String get contacts_groupNameReserved =>
-      'Il nome del gruppo \"__all__\" è riservato';
+  String get contacts_groupNameReserved => 'Questo nome del gruppo è riservato';
 
   @override
   String contacts_groupAlreadyExists(String name) {

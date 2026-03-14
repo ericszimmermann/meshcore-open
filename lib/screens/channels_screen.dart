@@ -590,44 +590,39 @@ class _ChannelsScreenState extends State<ChannelsScreen>
   }
 
   Widget _buildFilterButton(UiViewStateService viewState) {
-    const actionSortManual = 0;
-    const actionSortName = 1;
-    const actionSortLatest = 2;
-    const actionSortUnread = 3;
-
-    return SortFilterMenu(
+    return SortFilterMenu<ChannelSortOption>(
       tooltip: context.l10n.listFilter_tooltip,
       sections: [
-        SortFilterMenuSection(
+        SortFilterMenuSection<ChannelSortOption>(
           title: context.l10n.channels_sortBy,
           options: [
-            SortFilterMenuOption(
-              value: actionSortManual,
+            SortFilterMenuOption<ChannelSortOption>(
+              value: ChannelSortOption.manual,
               label: context.l10n.channels_sortManual,
               checked: viewState.channelsSortOption == ChannelSortOption.manual,
             ),
-            SortFilterMenuOption(
-              value: actionSortName,
+            SortFilterMenuOption<ChannelSortOption>(
+              value: ChannelSortOption.name,
               label: context.l10n.channels_sortAZ,
               checked: viewState.channelsSortOption == ChannelSortOption.name,
             ),
-            SortFilterMenuOption(
-              value: actionSortLatest,
+            SortFilterMenuOption<ChannelSortOption>(
+              value: ChannelSortOption.latestMessages,
               label: context.l10n.channels_sortLatestMessages,
               checked:
                   viewState.channelsSortOption ==
                   ChannelSortOption.latestMessages,
             ),
-            SortFilterMenuOption(
-              value: actionSortUnread,
+            SortFilterMenuOption<ChannelSortOption>(
+              value: ChannelSortOption.unread,
               label: context.l10n.channels_sortUnread,
               checked: viewState.channelsSortOption == ChannelSortOption.unread,
             ),
           ],
         ),
       ],
-      onSelected: (action) {
-        viewState.setChannelsSortOption(_sortOptionFromAction(action));
+      onSelected: (sortOption) {
+        viewState.setChannelsSortOption(sortOption);
       },
     );
   }
@@ -684,21 +679,6 @@ class _ChannelsScreenState extends State<ChannelsScreen>
     }
 
     return filtered;
-  }
-
-  ChannelSortOption _sortOptionFromAction(int action) {
-    switch (action) {
-      case 0:
-        return ChannelSortOption.manual;
-      case 1:
-        return ChannelSortOption.name;
-      case 2:
-        return ChannelSortOption.latestMessages;
-      case 3:
-        return ChannelSortOption.unread;
-      default:
-        return ChannelSortOption.manual;
-    }
   }
 
   String _normalizeChannelName(Channel channel) {

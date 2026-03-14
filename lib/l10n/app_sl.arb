@@ -285,7 +285,7 @@
   "contacts_newGroup": "Nova skupina",
   "contacts_groupName": "Ime skupine",
   "contacts_groupNameRequired": "Ime skupine je obvezno.",
-  "contacts_groupNameReserved": "Ime skupine \"__all__\" je rezervirano",
+  "contacts_groupNameReserved": "To ime skupine je rezervirano",
   "contacts_groupAlreadyExists": "Skupina \"{name}\" že obstaja",
   "@contacts_groupAlreadyExists": {
     "placeholders": {

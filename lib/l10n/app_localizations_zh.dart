@@ -846,7 +846,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get contacts_groupNameRequired => '请输入群聊名称';
 
   @override
-  String get contacts_groupNameReserved => '群组名称 \"__all__\" 已被保留';
+  String get contacts_groupNameReserved => '该群组名称已被保留';
 
   @override
   String contacts_groupAlreadyExists(String name) {

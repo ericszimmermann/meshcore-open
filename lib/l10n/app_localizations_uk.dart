@@ -899,8 +899,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get contacts_groupNameRequired => 'Назва групи обов\'язкова.';
 
   @override
-  String get contacts_groupNameReserved =>
-      'Назва групи \"__all__\" зарезервована';
+  String get contacts_groupNameReserved => 'Ця назва групи зарезервована';
 
   @override
   String contacts_groupAlreadyExists(String name) {

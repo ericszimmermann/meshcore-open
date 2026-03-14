@@ -896,8 +896,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get contacts_groupNameRequired => 'De groepnaam is verplicht.';
 
   @override
-  String get contacts_groupNameReserved =>
-      'De groepsnaam \"__all__\" is gereserveerd';
+  String get contacts_groupNameReserved => 'Deze groepsnaam is gereserveerd';
 
   @override
   String contacts_groupAlreadyExists(String name) {

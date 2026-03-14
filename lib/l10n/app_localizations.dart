@@ -1717,7 +1717,7 @@ abstract class AppLocalizations {
   /// No description provided for @contacts_groupNameReserved.
   ///
   /// In en, this message translates to:
-  /// **'Group name \"__all__\" is reserved'**
+  /// **'This group name is reserved'**
   String get contacts_groupNameReserved;
 
   /// No description provided for @contacts_groupAlreadyExists.

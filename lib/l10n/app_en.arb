@@ -416,7 +416,7 @@
   "contacts_newGroup": "New Group",
   "contacts_groupName": "Group name",
   "contacts_groupNameRequired": "Group name is required",
-  "contacts_groupNameReserved": "Group name \"__all__\" is reserved",
+  "contacts_groupNameReserved": "This group name is reserved",
   "contacts_groupAlreadyExists": "Group \"{name}\" already exists",
   "@contacts_groupAlreadyExists": {
     "placeholders": {

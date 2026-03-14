@@ -889,8 +889,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get contacts_groupNameRequired => 'Gruppnamnet är obligatoriskt';
 
   @override
-  String get contacts_groupNameReserved =>
-      'Gruppnamnet \"__all__\" är reserverat';
+  String get contacts_groupNameReserved => 'Detta gruppnamn är reserverat';
 
   @override
   String contacts_groupAlreadyExists(String name) {

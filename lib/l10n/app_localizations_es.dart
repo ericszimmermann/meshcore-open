@@ -903,7 +903,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get contacts_groupNameReserved =>
-      'El nombre del grupo \"__all__\" está reservado';
+      'Este nombre de grupo está reservado';
 
   @override
   String contacts_groupAlreadyExists(String name) {
