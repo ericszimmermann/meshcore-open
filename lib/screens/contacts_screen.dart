@@ -647,6 +647,8 @@ class _ContactsScreenState extends State<ContactsScreen>
                                   prefixIcon: IconButton(
                                     icon: const Icon(Icons.search),
                                     onPressed: () {
+                                      _searchDebounce?.cancel();
+                                      _searchDebounce = null;
                                       viewState.setContactsSearchExpanded(
                                         false,
                                       );
@@ -662,10 +664,14 @@ class _ContactsScreenState extends State<ContactsScreen>
                                       if (viewState
                                           .contactsSearchText
                                           .isNotEmpty) {
+                                        _searchDebounce?.cancel();
+                                        _searchDebounce = null;
                                         _searchController.clear();
                                         viewState.setContactsSearchText('');
                                         return;
                                       }
+                                      _searchDebounce?.cancel();
+                                      _searchDebounce = null;
                                       viewState.setContactsSearchExpanded(
                                         false,
                                       );
