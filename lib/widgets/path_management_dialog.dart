@@ -107,7 +107,7 @@ class _PathManagementDialogState extends State<_PathManagementDialog> {
     }
 
     final pathForInput = currentContact.pathIdList;
-    final availableContacts = connector.contacts
+    final availableContacts = connector.allContacts
         .where((c) => c.publicKeyHex != currentContact.publicKeyHex)
         .toList();
 

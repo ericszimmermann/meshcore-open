@@ -289,6 +289,10 @@ class MeshCoreConnector extends ChangeNotifier {
     );
   }
 
+  List<Contact> get allContacts => List.unmodifiable([
+    ..._contacts,
+    ..._discoveredContacts.where((c) => !c.isActive),
+  ]);
   List<Contact> get discoveredContacts {
     return List.unmodifiable(_discoveredContacts);
   }
@@ -2909,6 +2913,8 @@ class MeshCoreConnector extends ChangeNotifier {
   void _handleContact(Uint8List frame, {bool isContact = true}) {
     final contact = Contact.fromFrame(frame);
     if (contact != null) {
+      _handleDiscovery(contact, frame, noNotify: true, addActive: true);
+
       if (contact.type == advTypeRepeater) {
         _contactUnreadCount.remove(contact.publicKeyHex);
         _unreadStore.saveContactUnreadCount(
@@ -4717,6 +4723,12 @@ class MeshCoreConnector extends ChangeNotifier {
           (_autoAddRoomServers && type == advTypeRoom) ||
           (_autoAddSensors && type == advTypeSensor)) {
         _handleContactAdvert(newContact);
+        _handleDiscovery(
+          newContact,
+          rawPacket,
+          noNotify: true,
+          addActive: true,
+        );
       } else {
         _handleDiscovery(newContact, rawPacket);
       }
@@ -4827,6 +4839,7 @@ class MeshCoreConnector extends ChangeNotifier {
     Contact contact,
     Uint8List rawPacket, {
     bool noNotify = false,
+    bool addActive = false,
   }) {
     appLogger.info('Discovered new contact: ${contact.name}', tag: 'Connector');
 
@@ -4847,7 +4860,7 @@ class MeshCoreConnector extends ChangeNotifier {
             longitude: contact.longitude,
             lastSeen: contact.lastSeen,
             flags: 0,
-            isActive: false,
+            isActive: addActive,
           );
       notifyListeners();
       unawaited(_persistDiscoveredContacts());
@@ -4865,7 +4878,7 @@ class MeshCoreConnector extends ChangeNotifier {
       longitude: contact.longitude,
       lastSeen: contact.lastSeen,
       lastMessageAt: contact.lastMessageAt,
-      isActive: false,
+      isActive: addActive,
       flags: 0,
     );
     _discoveredContacts.add(disContact);

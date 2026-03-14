@@ -1027,7 +1027,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final currentPathLabel = _currentPathLabel(currentContact);
 
     // Filter out the current contact from available contacts
-    final availableContacts = connector.contacts
+    final availableContacts = connector.allContacts
         .where((c) => c != widget.contact)
         .toList();
 

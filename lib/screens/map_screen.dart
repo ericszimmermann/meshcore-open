@@ -137,10 +137,7 @@ class _MapScreenState extends State<MapScreen> {
       builder: (context, connector, settingsService, pathHistory, child) {
         final tileCache = context.read<MapTileCacheService>();
         final settings = settingsService.settings;
-        final allContacts = <Contact>[
-          ...connector.contacts,
-          ...connector.discoveredContacts.where((c) => !c.isActive),
-        ];
+        final allContacts = connector.allContacts;
 
         final contacts = settings.mapShowDiscoveryContacts
             ? allContacts

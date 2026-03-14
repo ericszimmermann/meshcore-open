@@ -263,10 +263,7 @@ class _PathTraceMapScreenState extends State<PathTraceMapScreen> {
           .toList();
 
       Map<int, Contact> pathContacts = {};
-      final contacts = <Contact>[
-        ...connector.contacts,
-        ...connector.discoveredContacts,
-      ];
+      final contacts = connector.allContacts;
       contacts.where((c) => c.type != advTypeChat).forEach((repeater) {
         for (var repeaterData in pathData) {
           if (listEquals(
