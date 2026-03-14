@@ -1134,6 +1134,19 @@ class _ContactsScreenState extends State<ContactsScreen>
                     );
                     return;
                   }
+                  if (name.toLowerCase() ==
+                      contactsAllGroupsValue.toLowerCase()) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          context.l10n.contacts_groupAlreadyExists(
+                            contactsAllGroupsValue,
+                          ),
+                        ),
+                      ),
+                    );
+                    return;
+                  }
                   final exists = _groups.any((g) {
                     if (isEditing && g.name == group.name) return false;
                     return g.name.toLowerCase() == name.toLowerCase();
