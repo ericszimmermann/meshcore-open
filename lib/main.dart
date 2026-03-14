@@ -58,6 +58,7 @@ void main() async {
   _registerThirdPartyLicenses();
 
   await chatTextScaleService.initialize();
+  await uiViewStateService.initialize();
 
   // Wire up connector with services
   connector.initialize(
