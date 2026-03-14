@@ -16,7 +16,6 @@ import '../models/channel_message.dart';
 import '../models/app_settings.dart';
 import '../models/contact.dart';
 import '../connector/meshcore_protocol.dart';
-import '../utils/location_utils.dart';
 import '../widgets/adaptive_app_bar_title.dart';
 
 class ChannelMessagePathScreen extends StatelessWidget {
@@ -45,12 +44,18 @@ class ChannelMessagePathScreen extends StatelessWidget {
           ...connector.contacts,
           ...connector.discoveredContacts,
         ];
+        final maxRangeKm = _estimateLoRaRangeKm(
+          connector.currentFreqHz,
+          connector.currentBwHz,
+          connector.currentSf,
+          connector.currentTxPower,
+        );
         final hops = _buildPathHops(
           primaryPath,
           contacts,
-          message.isOutgoing,
           connector.selfLatitude,
           connector.selfLongitude,
+          maxRangeKm,
           l10n,
         );
         final hasHopDetails = primaryPath.isNotEmpty;
@@ -379,12 +384,18 @@ class _ChannelMessagePathMapScreenState
           ...connector.contacts,
           ...connector.discoveredContacts,
         ];
+        final maxRangeKm = _estimateLoRaRangeKm(
+          connector.currentFreqHz,
+          connector.currentBwHz,
+          connector.currentSf,
+          connector.currentTxPower,
+        );
         final hops = _buildPathHops(
           selectedPath,
           contacts,
-          widget.message.isOutgoing,
           connector.selfLatitude,
           connector.selfLongitude,
+          maxRangeKm,
           context.l10n,
         );
 
@@ -827,9 +838,9 @@ class _RouteRebuildResult {
 List<_PathHop> _buildPathHops(
   Uint8List pathBytes,
   List<Contact> contacts,
-  bool _isOutgoing,
   double? selfLatitude,
   double? selfLongitude,
+  double? maxRangeKm,
   AppLocalizations l10n,
 ) {
   if (pathBytes.isEmpty) {
@@ -844,6 +855,7 @@ List<_PathHop> _buildPathHops(
     pathBytes,
     candidatesByPrefix,
     selfPoint,
+    maxRangeKm,
   );
 
   final hops = <_PathHop>[];
@@ -895,11 +907,13 @@ List<Contact?> _rebuildMostLikelyContactsForPath(
   Uint8List pathBytes,
   Map<int, List<Contact>> candidatesByPrefix,
   LatLng? selfPoint,
+  double? maxRangeKm,
 ) {
   final startAnchored = _runRouteBeamSearch(
     pathBytes,
     candidatesByPrefix,
     selfPoint,
+    maxRangeKm,
     reverseInput: false,
   );
 
@@ -907,6 +921,7 @@ List<Contact?> _rebuildMostLikelyContactsForPath(
     pathBytes,
     candidatesByPrefix,
     selfPoint,
+    maxRangeKm,
     reverseInput: true,
   );
 
@@ -919,6 +934,7 @@ _RouteRebuildResult _runRouteBeamSearch(
   Uint8List pathBytes,
   Map<int, List<Contact>> candidatesByPrefix,
   LatLng? selfPoint, {
+  double? maxRangeKm,
   required bool reverseInput,
 }) {
   final maxCandidatesPerHop = 5;
@@ -951,9 +967,13 @@ _RouteRebuildResult _runRouteBeamSearch(
       for (final candidate in hopCandidates) {
         var score = state.score;
         score += _scoreCandidate(candidate);
-        score += _scoreTransition(state.lastKnownContact, candidate);
+        score += _scoreTransition(
+          state.lastKnownContact,
+          candidate,
+          maxRangeKm,
+        );
         if (hopIndex == 0 && selfPoint != null) {
-          score += _scoreSelfAnchor(selfPoint, candidate);
+          score += _scoreSelfAnchor(selfPoint, candidate, maxRangeKm);
         }
 
         nextStates.add(
@@ -1008,7 +1028,7 @@ double _scoreCandidate(Contact? candidate) {
   return score;
 }
 
-double _scoreTransition(Contact? from, Contact? to) {
+double _scoreTransition(Contact? from, Contact? to, double? maxRangeKm) {
   if (to == null) {
     return -0.2;
   }
@@ -1030,10 +1050,16 @@ double _scoreTransition(Contact? from, Contact? to) {
   );
   final distanceKm = distanceMeters / 1000.0;
 
-  return 1.6 - min(distanceKm / 25.0, 3.0);
+  var score = 1.6 - min(distanceKm / 25.0, 3.0);
+  score += _scoreRangeConsistency(distanceKm, maxRangeKm);
+  return score;
 }
 
-double _scoreSelfAnchor(LatLng selfPoint, Contact? candidate) {
+double _scoreSelfAnchor(
+  LatLng selfPoint,
+  Contact? candidate,
+  double? maxRangeKm,
+) {
   if (candidate == null || !_hasValidLocation(candidate)) {
     return -0.15;
   }
@@ -1044,7 +1070,62 @@ double _scoreSelfAnchor(LatLng selfPoint, Contact? candidate) {
   );
   final distanceKm = distanceMeters / 1000.0;
 
-  return 1.2 - min(distanceKm / 20.0, 2.2);
+  var score = 1.2 - min(distanceKm / 20.0, 2.2);
+  score += _scoreRangeConsistency(distanceKm, maxRangeKm);
+  return score;
+}
+
+double _scoreRangeConsistency(double distanceKm, double? maxRangeKm) {
+  if (maxRangeKm == null || maxRangeKm <= 0) {
+    return 0;
+  }
+
+  final ratio = distanceKm / maxRangeKm;
+  if (ratio <= 1.0) {
+    return 0.6;
+  }
+  if (ratio <= 2.0) {
+    return -(ratio - 1.0) * 2.4;
+  }
+  return -2.4 - min((ratio - 2.0) * 1.2, 3.6);
+}
+
+double? _estimateLoRaRangeKm(int? freqHz, int? bwHz, int? sf, int? txPower) {
+  if (freqHz == null || bwHz == null || sf == null || txPower == null) {
+    return null;
+  }
+
+  const noiseFigureDb = 6.0;
+  final thermalNoiseDbm = -174.0 + 10 * log(bwHz.toDouble()) / ln10;
+  final sensitivityDbm =
+      thermalNoiseDbm + noiseFigureDb + _sfToRequiredSnrDb(sf);
+  final linkBudgetDb = txPower.toDouble() - sensitivityDbm;
+  final exponent =
+      (linkBudgetDb + 147.55 - 20 * log(freqHz.toDouble()) / ln10) / 20;
+  return (pow(10, exponent) as num).toDouble() / 1000.0;
+}
+
+double _sfToRequiredSnrDb(int sf) {
+  switch (sf) {
+    case 5:
+      return -2.5;
+    case 6:
+      return -5.0;
+    case 7:
+      return -7.5;
+    case 8:
+      return -10.0;
+    case 9:
+      return -12.5;
+    case 10:
+      return -15.0;
+    case 11:
+      return -17.5;
+    case 12:
+      return -20.0;
+    default:
+      return -10.0;
+  }
 }
 
 LatLng? _resolvePosition(Contact? contact) {
