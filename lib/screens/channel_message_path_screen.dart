@@ -804,15 +804,16 @@ List<_PathHop> _buildPathHops(
   if (pathBytes.isEmpty) return const [];
 
   final perHopCandidates = <List<Contact?>>[];
+  final repeatersAndRooms = contacts
+      .where(
+        (c) =>
+            (c.type == advTypeRepeater || c.type == advTypeRoom) &&
+            c.publicKey.isNotEmpty,
+      )
+      .toList();
   for (final prefix in pathBytes) {
-    final matches = contacts
-        .where(
-          (contact) =>
-              (contact.type == advTypeRepeater ||
-                  contact.type == advTypeRoom) &&
-              contact.publicKey.isNotEmpty &&
-              contact.publicKey[0] == prefix,
-        )
+    final matches = repeatersAndRooms
+        .where((contact) => contact.publicKey[0] == prefix)
         .toList();
 
     // Always include an unknown candidate because we might not know every
