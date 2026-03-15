@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
@@ -323,7 +324,8 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
         return;
       }
 
-      final json = await file.readAsString();
+      final bytes = await file.readAsBytes();
+      final json = _decodeImportedJson(bytes);
       final importedCount = await connector.importDiscoveredContactsJson(json);
       if (importedCount == 0) {
         if (!mounted) return;
@@ -347,6 +349,40 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
         ),
       );
     }
+  }
+
+  String _decodeImportedJson(List<int> bytes) {
+    if (bytes.isEmpty) return '';
+
+    // Handle UTF-16 files (common from some desktop editors) and UTF-8 safely.
+    String text;
+    if (bytes.length >= 2 && bytes[0] == 0xFF && bytes[1] == 0xFE) {
+      text = _decodeUtf16(bytes.sublist(2), Endian.little);
+    } else if (bytes.length >= 2 && bytes[0] == 0xFE && bytes[1] == 0xFF) {
+      text = _decodeUtf16(bytes.sublist(2), Endian.big);
+    } else {
+      text = utf8.decode(bytes, allowMalformed: true);
+    }
+
+    // Some files include a UTF BOM character at the beginning of text.
+    if (text.startsWith('\ufeff')) {
+      return text.substring(1);
+    }
+    return text;
+  }
+
+  String _decodeUtf16(List<int> bytes, Endian endian) {
+    final safeLength = bytes.length - (bytes.length % 2);
+    if (safeLength <= 0) return '';
+
+    final unitBytes = Uint8List.fromList(bytes.sublist(0, safeLength));
+    final data = ByteData.sublistView(unitBytes);
+    final codeUnits = List<int>.generate(
+      safeLength ~/ 2,
+      (index) => data.getUint16(index * 2, endian),
+      growable: false,
+    );
+    return String.fromCharCodes(codeUnits);
   }
 
   Widget _buildFilters(
