@@ -361,7 +361,6 @@ class _PathTraceMapScreenState extends State<PathTraceMapScreen> {
                   contact.longitude! + offsetDeg * sin(angle),
                 );
                 targetGuessed = true;
-                targetGuessed = true;
               }
             }
           }
