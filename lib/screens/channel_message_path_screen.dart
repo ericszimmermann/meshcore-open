@@ -913,7 +913,7 @@ List<Contact?> _rebuildMostLikelyContactsForPath(
     pathBytes,
     candidatesByPrefix,
     selfPoint,
-    maxRangeKm,
+    maxRangeKm: maxRangeKm,
     reverseInput: false,
   );
 
@@ -921,7 +921,7 @@ List<Contact?> _rebuildMostLikelyContactsForPath(
     pathBytes,
     candidatesByPrefix,
     selfPoint,
-    maxRangeKm,
+    maxRangeKm: maxRangeKm,
     reverseInput: true,
   );
 
@@ -972,6 +972,13 @@ _RouteRebuildResult _runRouteBeamSearch(
           candidate,
           maxRangeKm,
         );
+        if (hopIndex >= 2) {
+          score += _scoreTwoHopBypassRisk(
+            state.contactsByHop[hopIndex - 2],
+            candidate,
+            maxRangeKm,
+          );
+        }
         if (hopIndex == 0 && selfPoint != null) {
           score += _scoreSelfAnchor(selfPoint, candidate, maxRangeKm);
         }
@@ -1030,7 +1037,7 @@ double _scoreCandidate(Contact? candidate) {
 
 double _scoreTransition(Contact? from, Contact? to, double? maxRangeKm) {
   if (to == null) {
-    return -0.2;
+    return -0.15;
   }
   if (from == null) {
     return 0;
@@ -1049,9 +1056,11 @@ double _scoreTransition(Contact? from, Contact? to, double? maxRangeKm) {
     LatLng(to.latitude!, to.longitude!),
   );
   final distanceKm = distanceMeters / 1000.0;
-
-  var score = 1.6 - min(distanceKm / 25.0, 3.0);
+  // Repeaters forward based on first-heard timing, so geography is only a
+  // weak signal. Keep long-hop routes plausible and use distance as a tie-break.
+  var score = 0.7;
   score += _scoreRangeConsistency(distanceKm, maxRangeKm);
+  score -= min(distanceKm / 300.0, 0.35);
   return score;
 }
 
@@ -1069,9 +1078,10 @@ double _scoreSelfAnchor(
     LatLng(candidate.latitude!, candidate.longitude!),
   );
   final distanceKm = distanceMeters / 1000.0;
-
-  var score = 1.2 - min(distanceKm / 20.0, 2.2);
+  // Keep endpoint anchoring gentle for the same reason as hop transitions.
+  var score = 0.45;
   score += _scoreRangeConsistency(distanceKm, maxRangeKm);
+  score -= min(distanceKm / 350.0, 0.3);
   return score;
 }
 
@@ -1082,12 +1092,43 @@ double _scoreRangeConsistency(double distanceKm, double? maxRangeKm) {
 
   final ratio = distanceKm / maxRangeKm;
   if (ratio <= 1.0) {
-    return 0.6;
+    return 0.2;
   }
   if (ratio <= 2.0) {
-    return -(ratio - 1.0) * 2.4;
+    return -(ratio - 1.0) * 0.5;
   }
-  return -2.4 - min((ratio - 2.0) * 1.2, 3.6);
+  return -0.5 - min((ratio - 2.0) * 0.35, 1.2);
+}
+
+double _scoreTwoHopBypassRisk(
+  Contact? twoHopsBack,
+  Contact? candidate,
+  double? maxRangeKm,
+) {
+  if (twoHopsBack == null || candidate == null) {
+    return 0;
+  }
+  if (!_hasValidLocation(twoHopsBack) || !_hasValidLocation(candidate)) {
+    return 0;
+  }
+  if (maxRangeKm == null || maxRangeKm <= 0) {
+    return 0;
+  }
+
+  final distanceMeters = Distance()(
+    LatLng(twoHopsBack.latitude!, twoHopsBack.longitude!),
+    LatLng(candidate.latitude!, candidate.longitude!),
+  );
+  final distanceKm = distanceMeters / 1000.0;
+  final ratio = distanceKm / maxRangeKm;
+
+  // If hop N can hear hop N-2 directly, hop N-1 is more likely to be skipped
+  // because repeaters forward the first packet they receive.
+  if (ratio <= 1.0) {
+    return -0.85 - (1.0 - ratio) * 0.35;
+  }
+
+  return 0;
 }
 
 double? _estimateLoRaRangeKm(int? freqHz, int? bwHz, int? sf, int? txPower) {
@@ -1102,7 +1143,7 @@ double? _estimateLoRaRangeKm(int? freqHz, int? bwHz, int? sf, int? txPower) {
   final linkBudgetDb = txPower.toDouble() - sensitivityDbm;
   final exponent =
       (linkBudgetDb + 147.55 - 20 * log(freqHz.toDouble()) / ln10) / 20;
-  return (pow(10, exponent) as num).toDouble() / 1000.0;
+  return pow(10, exponent).toDouble() / 1000.0 * 2.0;
 }
 
 double _sfToRequiredSnrDb(int sf) {
