@@ -1554,7 +1554,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get map_showGuessedLocations => 'Show guessed node locations';
 
   @override
-  String get map_showDiscoveryContacts => 'Show Discovery Contacts';
+  String get map_showDiscoveryContacts => 'Show Discovered Contacts';
 
   @override
   String get map_guessedLocation => 'Guessed location';
@@ -3086,6 +3086,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contacts_contactImportFailed => 'Failed to import contact.';
+
+  @override
+  String get discoveredContacts_export => 'Export discovered contacts';
+
+  @override
+  String get discoveredContacts_import => 'Import discovered contacts';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Exported discovered contacts to $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Failed to export discovered contacts: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return 'Imported $count discovered contacts.';
+  }
+
+  @override
+  String get discoveredContacts_importNoFile =>
+      'No discovered contacts file found.';
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'No contacts found in import file.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Failed to import discovered contacts: $error';
+  }
 
   @override
   String get contacts_zeroHopAdvert => 'Zero Hop Advert';

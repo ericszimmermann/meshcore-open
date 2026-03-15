@@ -10,12 +10,12 @@ import 'package:provider/provider.dart';
 import '../connector/meshcore_connector.dart';
 import '../services/map_tile_cache_service.dart';
 import '../services/app_settings_service.dart';
-import '../connector/meshcore_protocol.dart';
 import '../l10n/app_localizations.dart';
 import '../l10n/l10n.dart';
 import '../models/channel_message.dart';
 import '../models/app_settings.dart';
 import '../models/contact.dart';
+import '../connector/meshcore_protocol.dart';
 import '../widgets/adaptive_app_bar_title.dart';
 
 class ChannelMessagePathScreen extends StatelessWidget {
@@ -44,7 +44,20 @@ class ChannelMessagePathScreen extends StatelessWidget {
           ...connector.contacts,
           ...connector.discoveredContacts,
         ];
-        final hops = _buildPathHops(primaryPath, contacts, l10n);
+        final maxRangeKm = _estimateLoRaRangeKm(
+          connector.currentFreqHz,
+          connector.currentBwHz,
+          connector.currentSf,
+          connector.currentTxPower,
+        );
+        final hops = _buildPathHops(
+          primaryPath,
+          contacts,
+          connector.selfLatitude,
+          connector.selfLongitude,
+          maxRangeKm,
+          l10n,
+        );
         final hasHopDetails = primaryPath.isNotEmpty;
         final observedLabel = _formatObservedHops(
           primaryPath.length,
@@ -371,7 +384,20 @@ class _ChannelMessagePathMapScreenState
           ...connector.contacts,
           ...connector.discoveredContacts,
         ];
-        final hops = _buildPathHops(selectedPath, contacts, context.l10n);
+        final maxRangeKm = _estimateLoRaRangeKm(
+          connector.currentFreqHz,
+          connector.currentBwHz,
+          connector.currentSf,
+          connector.currentTxPower,
+        );
+        final hops = _buildPathHops(
+          selectedPath,
+          contacts,
+          connector.selfLatitude,
+          connector.selfLongitude,
+          maxRangeKm,
+          context.l10n,
+        );
 
         final points = <LatLng>[];
 
@@ -790,50 +816,357 @@ class _ObservedPath {
   const _ObservedPath({required this.pathBytes, required this.isPrimary});
 }
 
+class _RouteRebuildState {
+  final List<Contact?> contactsByHop;
+  final Contact? lastKnownContact;
+  final double score;
+
+  const _RouteRebuildState({
+    required this.contactsByHop,
+    required this.lastKnownContact,
+    required this.score,
+  });
+}
+
+class _RouteRebuildResult {
+  final List<Contact?> contactsByHop;
+  final double score;
+
+  const _RouteRebuildResult({required this.contactsByHop, required this.score});
+}
+
 List<_PathHop> _buildPathHops(
   Uint8List pathBytes,
   List<Contact> contacts,
+  double? selfLatitude,
+  double? selfLongitude,
+  double? maxRangeKm,
   AppLocalizations l10n,
 ) {
+  if (pathBytes.isEmpty) {
+    return const [];
+  }
+
+  final selfPoint = (selfLatitude != null && selfLongitude != null)
+      ? LatLng(selfLatitude, selfLongitude)
+      : null;
+  final candidatesByPrefix = _groupRepeaterCandidatesByPrefix(contacts);
+  final rebuiltContacts = _rebuildMostLikelyContactsForPath(
+    pathBytes,
+    candidatesByPrefix,
+    selfPoint,
+    maxRangeKm,
+  );
+
   final hops = <_PathHop>[];
   for (var i = 0; i < pathBytes.length; i++) {
-    final prefix = pathBytes[i];
-    final contact = _matchContactForPrefix(contacts, prefix);
+    final contact = i < rebuiltContacts.length ? rebuiltContacts[i] : null;
     hops.add(
       _PathHop(
         index: i + 1,
-        prefix: prefix,
+        prefix: pathBytes[i],
         contact: contact,
         position: _resolvePosition(contact),
         l10n: l10n,
       ),
     );
   }
+
   return hops;
 }
 
-Contact? _matchContactForPrefix(List<Contact> contacts, int prefix) {
-  final matches = contacts
-      .where(
-        (contact) =>
-            (contact.type == advTypeRepeater || contact.type == advTypeRoom) &&
-            contact.publicKey.isNotEmpty &&
-            contact.publicKey[0] == prefix,
-      )
-      .toList();
-  if (matches.isEmpty) return null;
+Map<int, List<Contact>> _groupRepeaterCandidatesByPrefix(
+  List<Contact> contacts,
+) {
+  final byPrefix = <int, List<Contact>>{};
 
-  Contact? pickWhere(bool Function(Contact) predicate) {
-    for (final contact in matches) {
-      if (predicate(contact)) return contact;
+  for (final contact in contacts) {
+    if (contact.publicKey.isEmpty) continue;
+    if (contact.type != advTypeRepeater && contact.type != advTypeRoom) {
+      continue;
     }
+    byPrefix
+        .putIfAbsent(contact.publicKey.first, () => <Contact>[])
+        .add(contact);
+  }
+
+  for (final entry in byPrefix.entries) {
+    entry.value.sort((a, b) {
+      final favCompare = (b.isFavorite ? 1 : 0).compareTo(a.isFavorite ? 1 : 0);
+      if (favCompare != 0) return favCompare;
+      final seenCompare = b.lastSeen.compareTo(a.lastSeen);
+      if (seenCompare != 0) return seenCompare;
+      return a.publicKeyHex.compareTo(b.publicKeyHex);
+    });
+  }
+
+  return byPrefix;
+}
+
+List<Contact?> _rebuildMostLikelyContactsForPath(
+  Uint8List pathBytes,
+  Map<int, List<Contact>> candidatesByPrefix,
+  LatLng? selfPoint,
+  double? maxRangeKm,
+) {
+  final startAnchored = _runRouteBeamSearch(
+    pathBytes,
+    candidatesByPrefix,
+    selfPoint,
+    maxRangeKm: maxRangeKm,
+    reverseInput: false,
+  );
+
+  final endAnchored = _runRouteBeamSearch(
+    pathBytes,
+    candidatesByPrefix,
+    selfPoint,
+    maxRangeKm: maxRangeKm,
+    reverseInput: true,
+  );
+
+  return startAnchored.score >= endAnchored.score
+      ? startAnchored.contactsByHop
+      : endAnchored.contactsByHop;
+}
+
+_RouteRebuildResult _runRouteBeamSearch(
+  Uint8List pathBytes,
+  Map<int, List<Contact>> candidatesByPrefix,
+  LatLng? selfPoint, {
+  double? maxRangeKm,
+  required bool reverseInput,
+}) {
+  final maxCandidatesPerHop = 5;
+  final beamWidth = 24;
+
+  final orderedPrefixes = reverseInput
+      ? pathBytes.reversed.toList(growable: false)
+      : pathBytes.toList(growable: false);
+
+  var states = <_RouteRebuildState>[
+    const _RouteRebuildState(
+      contactsByHop: <Contact?>[],
+      lastKnownContact: null,
+      score: 0,
+    ),
+  ];
+
+  for (var hopIndex = 0; hopIndex < orderedPrefixes.length; hopIndex++) {
+    final prefix = orderedPrefixes[hopIndex];
+    final hopCandidates = <Contact?>[
+      ...(candidatesByPrefix[prefix] ?? const <Contact>[]).take(
+        maxCandidatesPerHop,
+      ),
+      null,
+    ];
+
+    final nextStates = <_RouteRebuildState>[];
+
+    for (final state in states) {
+      for (final candidate in hopCandidates) {
+        var score = state.score;
+        score += _scoreCandidate(candidate);
+        score += _scoreTransition(
+          state.lastKnownContact,
+          candidate,
+          maxRangeKm,
+        );
+        if (hopIndex >= 2) {
+          score += _scoreTwoHopBypassRisk(
+            state.contactsByHop[hopIndex - 2],
+            candidate,
+            maxRangeKm,
+          );
+        }
+        if (hopIndex == 0 && selfPoint != null) {
+          score += _scoreSelfAnchor(selfPoint, candidate, maxRangeKm);
+        }
+
+        nextStates.add(
+          _RouteRebuildState(
+            contactsByHop: [...state.contactsByHop, candidate],
+            lastKnownContact: candidate ?? state.lastKnownContact,
+            score: score,
+          ),
+        );
+      }
+    }
+
+    nextStates.sort((a, b) => b.score.compareTo(a.score));
+    states = nextStates.take(beamWidth).toList(growable: false);
+  }
+
+  _RouteRebuildState best = states.first;
+  for (final state in states.skip(1)) {
+    if (state.score > best.score) {
+      best = state;
+    }
+  }
+
+  final contactsByHop = reverseInput
+      ? best.contactsByHop.reversed.toList(growable: false)
+      : best.contactsByHop;
+
+  return _RouteRebuildResult(contactsByHop: contactsByHop, score: best.score);
+}
+
+double _scoreCandidate(Contact? candidate) {
+  if (candidate == null) {
+    return -1.2;
+  }
+
+  var score = 1.4;
+
+  if (candidate.isFavorite) {
+    score += 0.25;
+  }
+
+  final ageHours = DateTime.now().difference(candidate.lastSeen).inHours;
+  final freshness = (168 - ageHours.clamp(0, 168)) / 168;
+  score += freshness * 0.6;
+
+  if (_hasValidLocation(candidate)) {
+    score += 0.45;
+  } else {
+    score -= 0.35;
+  }
+
+  return score;
+}
+
+double _scoreTransition(Contact? from, Contact? to, double? maxRangeKm) {
+  if (to == null) {
+    return -0.15;
+  }
+  if (from == null) {
+    return 0;
+  }
+
+  if (from.publicKeyHex == to.publicKeyHex) {
+    return -2.5;
+  }
+
+  if (!_hasValidLocation(from) || !_hasValidLocation(to)) {
+    return 0;
+  }
+
+  final distanceMeters = Distance()(
+    LatLng(from.latitude!, from.longitude!),
+    LatLng(to.latitude!, to.longitude!),
+  );
+  final distanceKm = distanceMeters / 1000.0;
+  // Repeaters forward based on first-heard timing, so geography is only a
+  // weak signal. Keep long-hop routes plausible and use distance as a tie-break.
+  var score = 0.7;
+  score += _scoreRangeConsistency(distanceKm, maxRangeKm);
+  score -= min(distanceKm / 300.0, 0.35);
+  return score;
+}
+
+double _scoreSelfAnchor(
+  LatLng selfPoint,
+  Contact? candidate,
+  double? maxRangeKm,
+) {
+  if (candidate == null || !_hasValidLocation(candidate)) {
+    return -0.15;
+  }
+
+  final distanceMeters = Distance()(
+    selfPoint,
+    LatLng(candidate.latitude!, candidate.longitude!),
+  );
+  final distanceKm = distanceMeters / 1000.0;
+  // Keep endpoint anchoring gentle for the same reason as hop transitions.
+  var score = 0.45;
+  score += _scoreRangeConsistency(distanceKm, maxRangeKm);
+  score -= min(distanceKm / 350.0, 0.3);
+  return score;
+}
+
+double _scoreRangeConsistency(double distanceKm, double? maxRangeKm) {
+  if (maxRangeKm == null || maxRangeKm <= 0) {
+    return 0;
+  }
+
+  final ratio = distanceKm / maxRangeKm;
+  if (ratio <= 1.0) {
+    return 0.2;
+  }
+  if (ratio <= 2.0) {
+    return -(ratio - 1.0) * 0.5;
+  }
+  return -0.5 - min((ratio - 2.0) * 0.35, 1.2);
+}
+
+double _scoreTwoHopBypassRisk(
+  Contact? twoHopsBack,
+  Contact? candidate,
+  double? maxRangeKm,
+) {
+  if (twoHopsBack == null || candidate == null) {
+    return 0;
+  }
+  if (!_hasValidLocation(twoHopsBack) || !_hasValidLocation(candidate)) {
+    return 0;
+  }
+  if (maxRangeKm == null || maxRangeKm <= 0) {
+    return 0;
+  }
+
+  final distanceMeters = Distance()(
+    LatLng(twoHopsBack.latitude!, twoHopsBack.longitude!),
+    LatLng(candidate.latitude!, candidate.longitude!),
+  );
+  final distanceKm = distanceMeters / 1000.0;
+  final ratio = distanceKm / maxRangeKm;
+
+  // If hop N can hear hop N-2 directly, hop N-1 is more likely to be skipped
+  // because repeaters forward the first packet they receive.
+  if (ratio <= 1.0) {
+    return -0.85 - (1.0 - ratio) * 0.35;
+  }
+
+  return 0;
+}
+
+double? _estimateLoRaRangeKm(int? freqHz, int? bwHz, int? sf, int? txPower) {
+  if (freqHz == null || bwHz == null || sf == null || txPower == null) {
     return null;
   }
 
-  return pickWhere((c) => c.type == advTypeRepeater && _hasValidLocation(c)) ??
-      pickWhere((c) => c.type == advTypeRepeater) ??
-      pickWhere(_hasValidLocation) ??
-      matches.first;
+  const noiseFigureDb = 6.0;
+  final thermalNoiseDbm = -174.0 + 10 * log(bwHz.toDouble()) / ln10;
+  final sensitivityDbm =
+      thermalNoiseDbm + noiseFigureDb + _sfToRequiredSnrDb(sf);
+  final linkBudgetDb = txPower.toDouble() - sensitivityDbm;
+  final exponent =
+      (linkBudgetDb + 147.55 - 20 * log(freqHz.toDouble()) / ln10) / 20;
+  return pow(10, exponent).toDouble() / 1000.0 * 2.0;
+}
+
+double _sfToRequiredSnrDb(int sf) {
+  switch (sf) {
+    case 5:
+      return -2.5;
+    case 6:
+      return -5.0;
+    case 7:
+      return -7.5;
+    case 8:
+      return -10.0;
+    case 9:
+      return -12.5;
+    case 10:
+      return -15.0;
+    case 11:
+      return -17.5;
+    case 12:
+      return -20.0;
+    default:
+      return -10.0;
+  }
 }
 
 LatLng? _resolvePosition(Contact? contact) {

@@ -1,7 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
+
 import '../connector/meshcore_connector.dart';
+import '../connector/meshcore_protocol.dart';
 import '../l10n/l10n.dart';
+import '../models/contact.dart';
 import 'signal_ui.dart';
+
+bool _hasValidContactLocation(Contact contact) {
+  final lat = contact.latitude;
+  final lon = contact.longitude;
+  if (lat == null || lon == null) return false;
+  if (lat == 0 && lon == 0) return false;
+  return true;
+}
+
+Contact? selectBestRepeaterContactForPrefix(
+  List<Contact> contacts,
+  int pubkeyFirstByte, {
+  LatLng? searchPoint,
+  bool preferFavorites = false,
+}) {
+  final candidates = contacts
+      .where(
+        (c) =>
+            c.publicKey.isNotEmpty &&
+            c.publicKey.first == pubkeyFirstByte &&
+            (c.type == advTypeRepeater || c.type == advTypeRoom),
+      )
+      .toList();
+
+  if (candidates.isEmpty) return null;
+
+  candidates.sort((a, b) {
+    if (preferFavorites) {
+      final favA = a.isFavorite ? 1 : 0;
+      final favB = b.isFavorite ? 1 : 0;
+      final favCompare = favB.compareTo(favA);
+      if (favCompare != 0) return favCompare;
+    }
+
+    final seenCompare = b.lastSeen.compareTo(a.lastSeen);
+    if (seenCompare != 0) return seenCompare;
+
+    return a.publicKeyHex.compareTo(b.publicKeyHex);
+  });
+
+  if (searchPoint == null) {
+    return candidates.first;
+  }
+
+  final distance = Distance();
+  Contact best = candidates.first;
+  var bestDistance = double.infinity;
+
+  for (final c in candidates) {
+    if (_hasValidContactLocation(c)) {
+      final d = distance(searchPoint, LatLng(c.latitude!, c.longitude!));
+      if (d < bestDistance) {
+        bestDistance = d;
+        best = c;
+      }
+    }
+  }
+
+  return best;
+}
 
 class SNRUi {
   final IconData icon;
@@ -161,10 +225,23 @@ class _SNRIndicatorState extends State<SNRIndicator> {
                   ...widget.connector.contacts,
                   ...widget.connector.discoveredContacts,
                 ];
-                final name = allContacts
-                    .where((c) => c.publicKey.first == repeater.pubkeyFirstByte)
-                    .map((c) => c.name)
-                    .firstOrNull;
+
+                final selfLat = widget.connector.selfLatitude;
+                final selfLon = widget.connector.selfLongitude;
+
+                LatLng? selfPoint;
+                if (selfLat != null && selfLon != null) {
+                  selfPoint = LatLng(selfLat, selfLon);
+                }
+
+                final contact = selectBestRepeaterContactForPrefix(
+                  allContacts,
+                  repeater.pubkeyFirstByte,
+                  searchPoint: selfPoint,
+                  preferFavorites: true,
+                );
+
+                final name = contact?.name;
 
                 return Column(
                   children: [

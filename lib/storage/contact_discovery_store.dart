@@ -7,11 +7,7 @@ import 'prefs_manager.dart';
 class ContactDiscoveryStore {
   static const String _keyPrefix = 'discovered_contacts';
 
-  Future<List<Contact>> loadContacts() async {
-    final prefs = PrefsManager.instance;
-    final jsonStr = prefs.getString(_keyPrefix);
-    if (jsonStr == null) return [];
-
+  List<Contact> decodeContacts(String jsonStr) {
     try {
       final jsonList = jsonDecode(jsonStr) as List<dynamic>;
       return jsonList
@@ -22,10 +18,21 @@ class ContactDiscoveryStore {
     }
   }
 
+  String encodeContacts(List<Contact> contacts) {
+    final jsonList = contacts.map(_toJson).toList();
+    return jsonEncode(jsonList);
+  }
+
+  Future<List<Contact>> loadContacts() async {
+    final prefs = PrefsManager.instance;
+    final jsonStr = prefs.getString(_keyPrefix);
+    if (jsonStr == null) return [];
+    return decodeContacts(jsonStr);
+  }
+
   Future<void> saveContacts(List<Contact> contacts) async {
     final prefs = PrefsManager.instance;
-    final jsonList = contacts.map(_toJson).toList();
-    await prefs.setString(_keyPrefix, jsonEncode(jsonList));
+    await prefs.setString(_keyPrefix, encodeContacts(contacts));
   }
 
   Map<String, dynamic> _toJson(Contact contact) {
@@ -53,9 +60,10 @@ class ContactDiscoveryStore {
   Contact _fromJson(Map<String, dynamic> json) {
     final lastSeenMs = json['lastSeen'] as int? ?? 0;
     final lastMessageMs = json['lastMessageAt'] as int?;
+    final rawName = json['name'] as String? ?? 'Unknown';
     return Contact(
       publicKey: Uint8List.fromList(base64Decode(json['publicKey'] as String)),
-      name: json['name'] as String? ?? 'Unknown',
+      name: _repairMojibakeIfNeeded(rawName),
       type: json['type'] as int? ?? 0,
       flags: json['flags'] as int? ?? 0,
       pathLength: json['pathLength'] as int? ?? -1,
@@ -79,5 +87,28 @@ class ContactDiscoveryStore {
           ? Uint8List.fromList(base64Decode(json['rawPacket'] as String))
           : null,
     );
+  }
+
+  String _repairMojibakeIfNeeded(String value) {
+    if (value.isEmpty) return value;
+
+    final looksMojibake =
+        value.contains('Ã') ||
+        value.contains('Â') ||
+        value.contains('â') ||
+        value.contains('ð') ||
+        RegExp(r'[\u0080-\u009F]').hasMatch(value);
+    if (!looksMojibake) return value;
+
+    try {
+      final repaired = utf8.decode(latin1.encode(value));
+      if (repaired.isNotEmpty) {
+        return repaired;
+      }
+    } catch (_) {
+      // Keep original if conversion is not valid.
+    }
+
+    return value;
   }
 }

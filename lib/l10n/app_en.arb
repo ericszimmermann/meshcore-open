@@ -835,7 +835,7 @@
   "map_markers": "Markers",
   "map_showSharedMarkers": "Show shared markers",
   "map_showGuessedLocations": "Show guessed node locations",
-  "map_showDiscoveryContacts": "Show Discovery Contacts",
+  "map_showDiscoveryContacts": "Show Discovered Contacts",
   "map_guessedLocation": "Guessed location",
   "map_lastSeenTime": "Last Seen Time",
   "map_sharedPin": "Shared pin",
@@ -1844,6 +1844,42 @@
   "contacts_invalidAdvertFormat": "Invalid contact data",
   "contacts_contactImported": "Contact has been imported.",
   "contacts_contactImportFailed": "Failed to import contact.",
+  "discoveredContacts_export": "Export discovered contacts",
+  "discoveredContacts_import": "Import discovered contacts",
+  "discoveredContacts_exported": "Exported discovered contacts to {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Failed to export discovered contacts: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "Imported {count} discovered contacts.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoFile": "No discovered contacts file found.",
+  "discoveredContacts_importNoContacts": "No contacts found in import file.",
+  "discoveredContacts_importFailed": "Failed to import discovered contacts: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "contacts_zeroHopAdvert": "Zero Hop Advert",
   "contacts_floodAdvert": "Flood Advert",
   "contacts_copyAdvertToClipboard": "Copy Advert to Clipboard",
