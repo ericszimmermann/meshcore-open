@@ -19,6 +19,7 @@ import '../services/message_retry_service.dart';
 import '../services/path_history_service.dart';
 import '../services/app_settings_service.dart';
 import '../services/background_service.dart';
+import '../services/timeout_prediction_service.dart';
 import '../services/notification_service.dart';
 import 'meshcore_connector_usb.dart';
 import 'meshcore_connector_tcp.dart';
@@ -166,6 +167,10 @@ class MeshCoreConnector extends ChangeNotifier {
   bool _isLoadingContacts = false;
   bool _isLoadingChannels = false;
   bool _hasLoadedChannels = false;
+  TimeoutPredictionService? _timeoutPredictionService;
+  // Intentionally global (not per-contact): tracks overall network activity.
+  // Frequent RX from any source indicates a busy network with more collisions.
+  DateTime _lastRxTime = DateTime.now();
   bool _batteryRequested = false;
   bool _awaitingSelfInfo = false;
   bool _hasReceivedDeviceInfo = false;
@@ -668,6 +673,7 @@ class MeshCoreConnector extends ChangeNotifier {
     BleDebugLogService? bleDebugLogService,
     AppDebugLogService? appDebugLogService,
     BackgroundService? backgroundService,
+    TimeoutPredictionService? timeoutPredictionService,
   }) {
     _retryService = retryService;
     _pathHistoryService = pathHistoryService;
@@ -675,6 +681,7 @@ class MeshCoreConnector extends ChangeNotifier {
     _bleDebugLogService = bleDebugLogService;
     _appDebugLogService = appDebugLogService;
     _backgroundService = backgroundService;
+    _timeoutPredictionService = timeoutPredictionService;
     _usbManager.setDebugLogService(_appDebugLogService);
     _tcpConnector.setDebugLogService(_appDebugLogService);
 
@@ -689,13 +696,28 @@ class MeshCoreConnector extends ChangeNotifier {
       updateMessageCallback: _updateMessage,
       clearContactPathCallback: clearContactPath,
       setContactPathCallback: setContactPath,
-      calculateTimeoutCallback: (pathLength, messageBytes) =>
-          calculateTimeout(pathLength: pathLength, messageBytes: messageBytes),
+      calculateTimeoutCallback:
+          (pathLength, messageBytes, {String? contactKey}) => calculateTimeout(
+            pathLength: pathLength,
+            messageBytes: messageBytes,
+            contactKey: contactKey,
+          ),
       getSelfPublicKeyCallback: () => _selfPublicKey,
       prepareContactOutboundTextCallback: prepareContactOutboundText,
       appSettingsService: appSettingsService,
       debugLogService: _appDebugLogService,
       recordPathResultCallback: _recordPathResult,
+      onDeliveryObservedCallback:
+          (contactKey, pathLength, messageBytes, tripTimeMs) {
+            final secSinceRx = DateTime.now().difference(_lastRxTime).inSeconds;
+            _timeoutPredictionService?.recordObservation(
+              contactKey: contactKey,
+              pathLength: pathLength,
+              messageBytes: messageBytes,
+              tripTimeMs: tripTimeMs,
+              secondsSinceLastRx: secSinceRx,
+            );
+          },
     );
   }
 
@@ -2498,6 +2520,7 @@ class MeshCoreConnector extends ChangeNotifier {
 
   void _handleFrame(List<int> data) {
     if (data.isEmpty) return;
+    _lastRxTime = DateTime.now();
 
     final frame = Uint8List.fromList(data);
     _receivedFramesController.add(frame);
@@ -2874,36 +2897,66 @@ class MeshCoreConnector extends ChangeNotifier {
     }
   }
 
-  /// Calculate timeout for a message based on radio settings and path length
-  /// Returns timeout in milliseconds, considering number of hops
-  int calculateTimeout({required int pathLength, int messageBytes = 100}) {
-    // If we have radio settings, use them for accurate calculation
+  /// Estimate single-packet airtime in ms from radio settings, or a fallback.
+  int _estimateAirtimeMs(int messageBytes) {
     if (_currentFreqHz != null &&
         _currentBwHz != null &&
         _currentSf != null &&
         _currentCr != null) {
       final cr = _currentCr! <= 4 ? _currentCr! : _currentCr! - 4;
-      return calculateMessageTimeout(
-        freqHz: _currentFreqHz!,
-        bwHz: _currentBwHz!,
-        sf: _currentSf!,
-        cr: cr,
-        pathLength: pathLength,
-        messageBytes: messageBytes,
+      return calculateLoRaAirtime(
+        payloadBytes: messageBytes,
+        spreadingFactor: _currentSf!,
+        bandwidthHz: _currentBwHz!,
+        codingRate: cr,
+        lowDataRateOptimize: _currentSf! >= 11,
       );
     }
+    return 50; // fallback: ~SF7/BW125 for 100 bytes
+  }
 
-    // Fallback: Conservative estimates based on typical settings
-    // Assume SF7, BW125, which gives ~50ms airtime for 100 bytes
-    const estimatedAirtime = 50;
-
+  /// Physics-based worst-case timeout (ceiling).
+  int _physicsMaxTimeout(int pathLength, int airtime) {
     if (pathLength < 0) {
-      // Flood mode: Base delay + 16× airtime
-      return 500 + (16 * estimatedAirtime);
+      return 500 + (16 * airtime);
     } else {
-      // Direct path: Base delay + ((airtime×6 + 250ms)×(hops+1))
-      return 500 + ((estimatedAirtime * 6 + 250) * (pathLength + 1));
+      return 500 + ((airtime * 6 + 250) * (pathLength + 1));
     }
+  }
+
+  /// Physics-based minimum timeout (floor): raw traversal time.
+  int _physicsMinTimeout(int pathLength, int airtime) {
+    if (pathLength < 0) {
+      return airtime;
+    } else {
+      return airtime * (pathLength + 1);
+    }
+  }
+
+  /// Calculate timeout for a message based on radio settings and path length.
+  /// Returns timeout in milliseconds, considering number of hops.
+  int calculateTimeout({
+    required int pathLength,
+    int messageBytes = 100,
+    String? contactKey,
+  }) {
+    final airtime = _estimateAirtimeMs(messageBytes);
+    final physicsMin = _physicsMinTimeout(pathLength, airtime);
+    final physicsMax = _physicsMaxTimeout(pathLength, airtime);
+
+    // Try ML-based prediction, clamped between physics bounds
+    final secSinceRx = DateTime.now().difference(_lastRxTime).inSeconds;
+    final mlTimeout = _timeoutPredictionService?.predictTimeout(
+      contactKey: contactKey,
+      pathLength: pathLength,
+      messageBytes: messageBytes,
+      secondsSinceLastRx: secSinceRx,
+    );
+    if (mlTimeout != null) {
+      return mlTimeout.clamp(physicsMin, physicsMax);
+    }
+
+    return physicsMax;
   }
 
   void _handleContact(Uint8List frame, {bool isContact = true}) {

@@ -19,6 +19,7 @@ import 'services/app_debug_log_service.dart';
 import 'services/background_service.dart';
 import 'services/map_tile_cache_service.dart';
 import 'services/chat_text_scale_service.dart';
+import 'services/timeout_prediction_service.dart';
 import 'storage/prefs_manager.dart';
 import 'utils/app_logger.dart';
 
@@ -39,6 +40,7 @@ void main() async {
   final backgroundService = BackgroundService();
   final mapTileCacheService = MapTileCacheService();
   final chatTextScaleService = ChatTextScaleService();
+  final timeoutPredictionService = TimeoutPredictionService(storage);
 
   // Load settings
   await appSettingsService.loadSettings();
@@ -56,6 +58,7 @@ void main() async {
   _registerThirdPartyLicenses();
 
   await chatTextScaleService.initialize();
+  await timeoutPredictionService.initialize();
 
   // Wire up connector with services
   connector.initialize(
@@ -65,6 +68,7 @@ void main() async {
     bleDebugLogService: bleDebugLogService,
     appDebugLogService: appDebugLogService,
     backgroundService: backgroundService,
+    timeoutPredictionService: timeoutPredictionService,
   );
 
   await connector.loadContactCache();
@@ -86,6 +90,7 @@ void main() async {
       appDebugLogService: appDebugLogService,
       mapTileCacheService: mapTileCacheService,
       chatTextScaleService: chatTextScaleService,
+      timeoutPredictionService: timeoutPredictionService,
     ),
   );
 }
@@ -121,6 +126,7 @@ class MeshCoreApp extends StatelessWidget {
   final AppDebugLogService appDebugLogService;
   final MapTileCacheService mapTileCacheService;
   final ChatTextScaleService chatTextScaleService;
+  final TimeoutPredictionService timeoutPredictionService;
 
   const MeshCoreApp({
     super.key,
@@ -133,6 +139,7 @@ class MeshCoreApp extends StatelessWidget {
     required this.appDebugLogService,
     required this.mapTileCacheService,
     required this.chatTextScaleService,
+    required this.timeoutPredictionService,
   });
 
   @override
@@ -148,6 +155,7 @@ class MeshCoreApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: chatTextScaleService),
         Provider.value(value: storage),
         Provider.value(value: mapTileCacheService),
+        ChangeNotifierProvider.value(value: timeoutPredictionService),
       ],
       child: Consumer<AppSettingsService>(
         builder: (context, settingsService, child) {

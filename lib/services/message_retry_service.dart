@@ -58,12 +58,13 @@ class MessageRetryService extends ChangeNotifier {
   Function(Message)? _updateMessageCallback;
   Function(Contact)? _clearContactPathCallback;
   Function(Contact, Uint8List, int)? _setContactPathCallback;
-  Function(int, int)? _calculateTimeoutCallback;
+  Function(int, int, {String? contactKey})? _calculateTimeoutCallback;
   Uint8List? Function()? _getSelfPublicKeyCallback;
   String Function(Contact, String)? _prepareContactOutboundTextCallback;
   AppSettingsService? _appSettingsService;
   AppDebugLogService? _debugLogService;
   Function(String, PathSelection, bool, int?)? _recordPathResultCallback;
+  Function(String, int, int, int)? _onDeliveryObservedCallback;
 
   MessageRetryService();
 
@@ -73,12 +74,20 @@ class MessageRetryService extends ChangeNotifier {
     required Function(Message) updateMessageCallback,
     Function(Contact)? clearContactPathCallback,
     Function(Contact, Uint8List, int)? setContactPathCallback,
-    Function(int pathLength, int messageBytes)? calculateTimeoutCallback,
+    Function(int pathLength, int messageBytes, {String? contactKey})?
+    calculateTimeoutCallback,
     Uint8List? Function()? getSelfPublicKeyCallback,
     String Function(Contact, String)? prepareContactOutboundTextCallback,
     AppSettingsService? appSettingsService,
     AppDebugLogService? debugLogService,
     Function(String, PathSelection, bool, int?)? recordPathResultCallback,
+    Function(
+      String contactKey,
+      int pathLength,
+      int messageBytes,
+      int tripTimeMs,
+    )?
+    onDeliveryObservedCallback,
   }) {
     _sendMessageCallback = sendMessageCallback;
     _addMessageCallback = addMessageCallback;
@@ -91,6 +100,7 @@ class MessageRetryService extends ChangeNotifier {
     _appSettingsService = appSettingsService;
     _debugLogService = debugLogService;
     _recordPathResultCallback = recordPathResultCallback;
+    _onDeliveryObservedCallback = onDeliveryObservedCallback;
   }
 
   /// Compute expected ACK hash using same algorithm as firmware:
@@ -423,25 +433,33 @@ class MessageRetryService extends ChangeNotifier {
       );
     }
 
-    // Use device-provided timeout, or calculate from radio settings if timeout is 0 or invalid
+    // Calculate timeout: prefer ML prediction, then device-provided, then physics fallback
+    int pathLengthValue;
+    if (selection != null) {
+      pathLengthValue = selection.useFlood ? -1 : selection.hopCount;
+      if (pathLengthValue < 0) pathLengthValue = contact.pathLength;
+    } else if (message.pathLength != null) {
+      pathLengthValue = message.pathLength!;
+    } else {
+      pathLengthValue = contact.pathLength;
+    }
+
     int actualTimeout = timeoutMs;
-    if (timeoutMs <= 0 && _calculateTimeoutCallback != null) {
-      int pathLengthValue;
-      if (selection != null) {
-        pathLengthValue = selection.useFlood ? -1 : selection.hopCount;
-        if (pathLengthValue < 0) pathLengthValue = contact.pathLength;
-      } else if (message.pathLength != null) {
-        pathLengthValue = message.pathLength!;
-      } else {
-        pathLengthValue = contact.pathLength;
-      }
-      actualTimeout = _calculateTimeoutCallback!(
+    if (_calculateTimeoutCallback != null) {
+      final calculated = _calculateTimeoutCallback!(
         pathLengthValue,
         message.text.length,
+        contactKey: contact.publicKeyHex,
       );
-      debugPrint(
-        'Using calculated timeout: ${actualTimeout}ms for path length $pathLengthValue',
-      );
+      // calculateTimeout tries ML first, falls back to physics.
+      // Use calculated value if device didn't provide one, or if ML
+      // produced a tighter prediction than the device's estimate.
+      if (timeoutMs <= 0 || calculated < timeoutMs) {
+        actualTimeout = calculated;
+        debugPrint(
+          'Using calculated timeout: ${actualTimeout}ms for path length $pathLengthValue',
+        );
+      }
     }
 
     final updatedMessage = message.copyWith(
@@ -738,6 +756,16 @@ class MessageRetryService extends ChangeNotifier {
           true,
           tripTimeMs,
         );
+        if (_onDeliveryObservedCallback != null &&
+            tripTimeMs > 0 &&
+            message.pathLength != null) {
+          _onDeliveryObservedCallback!(
+            contact.publicKeyHex,
+            message.pathLength!,
+            message.text.length,
+            tripTimeMs,
+          );
+        }
         _onMessageResolved(matchedMessageId, contact.publicKeyHex);
       }
 
