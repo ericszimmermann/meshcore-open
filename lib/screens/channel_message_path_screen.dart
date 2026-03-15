@@ -41,7 +41,12 @@ class ChannelMessagePathScreen extends StatelessWidget {
             ? Uint8List.fromList(primaryPathTmp.reversed.toList())
             : primaryPathTmp;
         final contacts = connector.allContacts;
-        final hops = _buildPathHops(primaryPath, contacts, l10n);
+        final hops = _buildPathHops(
+          primaryPath,
+          contacts,
+          l10n,
+          maxRangeKm: _estimateLoRaRangeKm(connector),
+        );
         final hasHopDetails = primaryPath.isNotEmpty;
         final observedLabel = _formatObservedHops(
           primaryPath.length,
@@ -366,7 +371,12 @@ class _ChannelMessagePathMapScreenState
 
         final selectedIndex = _indexForPath(selectedPath, observedPaths);
         final contacts = connector.allContacts;
-        final hops = _buildPathHops(selectedPath, contacts, context.l10n);
+        final hops = _buildPathHops(
+          selectedPath,
+          contacts,
+          context.l10n,
+          maxRangeKm: _estimateLoRaRangeKm(connector),
+        );
 
         final points = <LatLng>[];
 
@@ -788,16 +798,60 @@ class _ObservedPath {
 List<_PathHop> _buildPathHops(
   Uint8List pathBytes,
   List<Contact> contacts,
-  AppLocalizations l10n,
-) {
+  AppLocalizations l10n, {
+  double? maxRangeKm,
+}) {
+  if (pathBytes.isEmpty) return const [];
+
+  final perHopCandidates = <List<Contact?>>[];
+  for (final prefix in pathBytes) {
+    final matches =
+        contacts
+            .where(
+              (contact) =>
+                  (contact.type == advTypeRepeater ||
+                      contact.type == advTypeRoom) &&
+                  contact.publicKey.isNotEmpty &&
+                  contact.publicKey[0] == prefix,
+            )
+            .toList()
+          ..sort(_compareHopCandidates);
+
+    // Always include an unknown candidate because we might not know every
+    // repeater in the route yet, or it may not have location data.
+    perHopCandidates.add([...matches, null]);
+  }
+
+  final current = List<Contact?>.filled(pathBytes.length, null);
+  var best = List<Contact?>.filled(pathBytes.length, null);
+  var bestScore = double.negativeInfinity;
+
+  void search(int index, double score) {
+    if (index >= pathBytes.length) {
+      if (score > bestScore) {
+        bestScore = score;
+        best = List<Contact?>.from(current);
+      }
+      return;
+    }
+
+    for (final candidate in perHopCandidates[index]) {
+      current[index] = candidate;
+      final nextScore =
+          score + _scoreCandidateAt(index, current, candidate, maxRangeKm);
+      search(index + 1, nextScore);
+    }
+  }
+
+  search(0, 0);
+
   final hops = <_PathHop>[];
   for (var i = 0; i < pathBytes.length; i++) {
-    final prefix = pathBytes[i];
-    final contact = _matchContactForPrefix(contacts, prefix);
+    final contact = best[i];
     hops.add(
       _PathHop(
         index: i + 1,
-        prefix: prefix,
+        prefix: pathBytes[i],
         contact: contact,
         position: _resolvePosition(contact),
         l10n: l10n,
@@ -807,28 +861,160 @@ List<_PathHop> _buildPathHops(
   return hops;
 }
 
-Contact? _matchContactForPrefix(List<Contact> contacts, int prefix) {
-  final matches = contacts
-      .where(
-        (contact) =>
-            (contact.type == advTypeRepeater || contact.type == advTypeRoom) &&
-            contact.publicKey.isNotEmpty &&
-            contact.publicKey[0] == prefix,
-      )
-      .toList();
-  if (matches.isEmpty) return null;
+int _compareHopCandidates(Contact a, Contact b) {
+  int rank(Contact c) {
+    if (c.type == advTypeRepeater || c.type == advTypeRoom) return 0;
+    return 1;
+  }
 
-  Contact? pickWhere(bool Function(Contact) predicate) {
-    for (final contact in matches) {
-      if (predicate(contact)) return contact;
-    }
+  final rankDiff = rank(a).compareTo(rank(b));
+  if (rankDiff != 0) return rankDiff;
+
+  final locationDiff = (_hasValidLocation(b) ? 1 : 0).compareTo(
+    _hasValidLocation(a) ? 1 : 0,
+  );
+  if (locationDiff != 0) return locationDiff;
+
+  final lastSeenDiff = b.lastSeen.compareTo(a.lastSeen);
+  if (lastSeenDiff != 0) return lastSeenDiff;
+
+  return a.publicKeyHex.compareTo(b.publicKeyHex);
+}
+
+double _scoreCandidateAt(
+  int index,
+  List<Contact?> assignment,
+  Contact? candidate,
+  double? maxRangeKm,
+) {
+  var score = 0.0;
+
+  // Unknown hops are plausible in sparse topologies, but still weaker evidence.
+  if (candidate == null) {
+    score -= 1.5;
+  } else {
+    score += candidate.type == advTypeRepeater ? 2.0 : 1.0;
+    score += _hasValidLocation(candidate) ? 2.0 : 0.2;
+  }
+
+  if (index > 0) {
+    score += _scoreAdjacentHop(assignment[index - 1], candidate, maxRangeKm);
+  }
+
+  if (index > 1) {
+    score += _scoreMiddleSkipPenalty(
+      assignment[index - 2],
+      assignment[index - 1],
+      candidate,
+      maxRangeKm,
+    );
+  }
+
+  return score;
+}
+
+double _scoreAdjacentHop(Contact? a, Contact? b, double? maxRangeKm) {
+  if (a == null || b == null) {
+    return -0.3;
+  }
+
+  final posA = _resolvePosition(a);
+  final posB = _resolvePosition(b);
+  if (posA == null || posB == null || maxRangeKm == null) {
+    return 0.0;
+  }
+
+  const distance = Distance();
+  const tolerance = 1.2;
+  final distKm = distance(posA, posB) / 1000.0;
+  final rangeKm = maxRangeKm * tolerance;
+
+  if (distKm <= rangeKm) {
+    return 3.0;
+  }
+
+  // Strongly penalize implausible adjacent hops only when evidence is strong.
+  return -8.0;
+}
+
+double _scoreMiddleSkipPenalty(
+  Contact? a,
+  Contact? b,
+  Contact? c,
+  double? maxRangeKm,
+) {
+  if (a == null || b == null || c == null || maxRangeKm == null) {
+    return 0.0;
+  }
+
+  final posA = _resolvePosition(a);
+  final posB = _resolvePosition(b);
+  final posC = _resolvePosition(c);
+  if (posA == null || posB == null || posC == null) {
+    // Unknown location can hide real relays, so avoid strong assumptions.
+    return 0.0;
+  }
+
+  const distance = Distance();
+  const tolerance = 1.2;
+  final rangeKm = maxRangeKm * tolerance;
+  final abKm = distance(posA, posB) / 1000.0;
+  final bcKm = distance(posB, posC) / 1000.0;
+  final acKm = distance(posA, posC) / 1000.0;
+
+  if (acKm > rangeKm) {
+    return 0.0;
+  }
+
+  // If A and C can already see each other directly, a known middle hop is
+  // likely redundant; penalize it strongly.
+  if (abKm <= rangeKm && bcKm <= rangeKm) {
+    return -10.0;
+  }
+
+  return -14.0;
+}
+
+double? _estimateLoRaRangeKm(MeshCoreConnector connector) {
+  final freqHz = connector.currentFreqHz;
+  final bwHz = connector.currentBwHz;
+  final sf = connector.currentSf;
+  final txPower = connector.currentTxPower;
+  if (freqHz == null || bwHz == null || sf == null || txPower == null) {
     return null;
   }
 
-  return pickWhere((c) => c.type == advTypeRepeater && _hasValidLocation(c)) ??
-      pickWhere((c) => c.type == advTypeRepeater) ??
-      pickWhere(_hasValidLocation) ??
-      matches.first;
+  const noiseFigureDb = 6.0;
+  final thermalNoiseDbm = -174.0 + 10 * log(bwHz.toDouble()) / ln10;
+  final sensitivityDbm =
+      thermalNoiseDbm + noiseFigureDb + _sfToRequiredSnrDb(sf);
+  final linkBudgetDb = txPower.toDouble() - sensitivityDbm;
+  final exponent =
+      (linkBudgetDb + 147.55 - 20 * log(freqHz.toDouble()) / ln10) / 20;
+  return pow(10, exponent) / 1000;
+}
+
+double _sfToRequiredSnrDb(int sf) {
+  switch (sf) {
+    case 5:
+      return -2.5;
+    case 6:
+      return -5.0;
+    case 7:
+      return -7.5;
+    case 8:
+      return -10.0;
+    case 9:
+      return -12.5;
+    case 10:
+      return -15.0;
+    case 11:
+      return -17.5;
+    case 12:
+      return -20.0;
+    default:
+      return -10.0;
+  }
 }
 
 LatLng? _resolvePosition(Contact? contact) {
