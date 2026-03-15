@@ -805,17 +805,15 @@ List<_PathHop> _buildPathHops(
 
   final perHopCandidates = <List<Contact?>>[];
   for (final prefix in pathBytes) {
-    final matches =
-        contacts
-            .where(
-              (contact) =>
-                  (contact.type == advTypeRepeater ||
-                      contact.type == advTypeRoom) &&
-                  contact.publicKey.isNotEmpty &&
-                  contact.publicKey[0] == prefix,
-            )
-            .toList()
-          ..sort(_compareHopCandidates);
+    final matches = contacts
+        .where(
+          (contact) =>
+              (contact.type == advTypeRepeater ||
+                  contact.type == advTypeRoom) &&
+              contact.publicKey.isNotEmpty &&
+              contact.publicKey[0] == prefix,
+        )
+        .toList();
 
     // Always include an unknown candidate because we might not know every
     // repeater in the route yet, or it may not have location data.
@@ -836,6 +834,10 @@ List<_PathHop> _buildPathHops(
     }
 
     for (final candidate in perHopCandidates[index]) {
+      if (index > 0 &&
+          _isAdjacentHopImpossible(current[index - 1], candidate, maxRangeKm)) {
+        continue;
+      }
       current[index] = candidate;
       final nextScore =
           score + _scoreCandidateAt(index, current, candidate, maxRangeKm);
@@ -861,26 +863,6 @@ List<_PathHop> _buildPathHops(
   return hops;
 }
 
-int _compareHopCandidates(Contact a, Contact b) {
-  int rank(Contact c) {
-    if (c.type == advTypeRepeater || c.type == advTypeRoom) return 0;
-    return 1;
-  }
-
-  final rankDiff = rank(a).compareTo(rank(b));
-  if (rankDiff != 0) return rankDiff;
-
-  final locationDiff = (_hasValidLocation(b) ? 1 : 0).compareTo(
-    _hasValidLocation(a) ? 1 : 0,
-  );
-  if (locationDiff != 0) return locationDiff;
-
-  final lastSeenDiff = b.lastSeen.compareTo(a.lastSeen);
-  if (lastSeenDiff != 0) return lastSeenDiff;
-
-  return a.publicKeyHex.compareTo(b.publicKeyHex);
-}
-
 double _scoreCandidateAt(
   int index,
   List<Contact?> assignment,
@@ -893,7 +875,10 @@ double _scoreCandidateAt(
   if (candidate == null) {
     score -= 1.5;
   } else {
-    score += candidate.type == advTypeRepeater ? 2.0 : 1.0;
+    score +=
+        (candidate.type == advTypeRepeater || candidate.type == advTypeRoom)
+        ? 2.0
+        : 1.0;
     score += _hasValidLocation(candidate) ? 2.0 : 0.2;
   }
 
@@ -918,23 +903,47 @@ double _scoreAdjacentHop(Contact? a, Contact? b, double? maxRangeKm) {
     return -0.3;
   }
 
-  final posA = _resolvePosition(a);
-  final posB = _resolvePosition(b);
-  if (posA == null || posB == null || maxRangeKm == null) {
+  final distKm = _adjacentHopDistanceKm(a, b);
+  if (distKm == null || maxRangeKm == null) {
     return 0.0;
   }
 
-  const distance = Distance();
-  const tolerance = 1.2;
-  final distKm = distance(posA, posB) / 1000.0;
-  final rangeKm = maxRangeKm * tolerance;
-
-  if (distKm <= rangeKm) {
-    return 3.0;
+  if (distKm <= maxRangeKm) {
+    final distanceRatio = (distKm / maxRangeKm).clamp(0.0, 1.0);
+    final proximityBonus = (1.0 - distanceRatio) * 1.5;
+    return 1.5 + proximityBonus;
   }
 
   // Strongly penalize implausible adjacent hops only when evidence is strong.
   return -8.0;
+}
+
+bool _isAdjacentHopImpossible(Contact? a, Contact? b, double? maxRangeKm) {
+  if (maxRangeKm == null) {
+    return false;
+  }
+
+  final distKm = _adjacentHopDistanceKm(a, b);
+  if (distKm == null) {
+    return false;
+  }
+
+  return distKm > maxRangeKm;
+}
+
+double? _adjacentHopDistanceKm(Contact? a, Contact? b) {
+  if (a == null || b == null) {
+    return null;
+  }
+
+  final posA = _resolvePosition(a);
+  final posB = _resolvePosition(b);
+  if (posA == null || posB == null) {
+    return null;
+  }
+
+  const distance = Distance();
+  return distance(posA, posB) / 1000.0;
 }
 
 double _scoreMiddleSkipPenalty(
@@ -956,8 +965,7 @@ double _scoreMiddleSkipPenalty(
   }
 
   const distance = Distance();
-  const tolerance = 1.2;
-  final rangeKm = maxRangeKm * tolerance;
+  final rangeKm = maxRangeKm;
   final abKm = distance(posA, posB) / 1000.0;
   final bcKm = distance(posB, posC) / 1000.0;
   final acKm = distance(posA, posC) / 1000.0;
