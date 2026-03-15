@@ -880,6 +880,8 @@ double _scoreCandidateAt(
         ? 2.0
         : 1.0;
     score += _hasValidLocation(candidate) ? 2.0 : 0.2;
+    if (candidate.isFavorite) score += 0.2;
+    score -= DateTime.now().difference(candidate.lastSeen).inHours / 1000.0;
   }
 
   if (index > 0) {
