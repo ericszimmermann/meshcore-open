@@ -302,6 +302,29 @@ class MeshCoreConnector extends ChangeNotifier {
     return List.unmodifiable(_discoveredContacts);
   }
 
+  String exportDiscoveredContactsJson() {
+    return _discoveryContactStore.exportContactsJson(_discoveredContacts);
+  }
+
+  Future<int> importDiscoveredContactsJson(String json) async {
+    final result = _discoveryContactStore.importContactsJson(
+      json: json,
+      existingContacts: _discoveredContacts,
+      knownContactKeys: _knownContactKeys,
+    );
+    if (result.mergedContacts.isEmpty) {
+      return 0;
+    }
+
+    _discoveredContacts
+      ..clear()
+      ..addAll(result.mergedContacts);
+
+    await _persistDiscoveredContacts();
+    notifyListeners();
+    return result.newContactCount;
+  }
+
   List<Channel> get channels => List.unmodifiable(_channels);
   bool get isConnected => _state == MeshCoreConnectionState.connected;
   bool get isLoadingContacts => _isLoadingContacts;
@@ -2753,6 +2776,7 @@ class MeshCoreConnector extends ChangeNotifier {
     _contactStore.setPublicKeyHex = selfPublicKeyHex;
     _channelStore.setPublicKeyHex = selfPublicKeyHex;
     _unreadStore.setPublicKeyHex = selfPublicKeyHex;
+    _discoveryContactStore.setPublicKeyHex = selfPublicKeyHex;
 
     // Now that we have self info, we can load all the persisted data for this node
     _loadChannelOrder();
