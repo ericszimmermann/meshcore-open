@@ -873,7 +873,7 @@ double _scoreCandidateAt(
 
   // Unknown hops are plausible in sparse topologies, but still weaker evidence.
   if (candidate == null) {
-    score -= 1.5;
+    score -= 2.5;
   } else {
     score +=
         (candidate.type == advTypeRepeater || candidate.type == advTypeRoom)
@@ -912,12 +912,12 @@ double _scoreAdjacentHop(Contact? a, Contact? b, double? maxRangeKm) {
 
   if (distKm <= maxRangeKm) {
     final distanceRatio = (distKm / maxRangeKm).clamp(0.0, 1.0);
-    final proximityBonus = (1.0 - distanceRatio) * 1.5;
-    return 1.5 + proximityBonus;
+    final proximityBonus = (1.0 - distanceRatio) * 3.0;
+    return 3.0 + proximityBonus;
   }
 
   // Strongly penalize implausible adjacent hops only when evidence is strong.
-  return -8.0;
+  return -12.0;
 }
 
 bool _isAdjacentHopImpossible(Contact? a, Contact? b, double? maxRangeKm) {
@@ -955,7 +955,7 @@ double _scoreMiddleSkipPenalty(
   double? maxRangeKm,
 ) {
   if (a == null || b == null || c == null || maxRangeKm == null) {
-    return 0.0;
+    return -1.5;
   }
 
   final posA = _resolvePosition(a);
@@ -963,7 +963,7 @@ double _scoreMiddleSkipPenalty(
   final posC = _resolvePosition(c);
   if (posA == null || posB == null || posC == null) {
     // Unknown location can hide real relays, so avoid strong assumptions.
-    return 0.0;
+    return -1.0;
   }
 
   const distance = Distance();
@@ -979,7 +979,7 @@ double _scoreMiddleSkipPenalty(
   // If A and C can already see each other directly, a known middle hop is
   // likely redundant; penalize it strongly.
   if (abKm <= rangeKm && bcKm <= rangeKm) {
-    return -10.0;
+    return -12.0;
   }
 
   return -14.0;
