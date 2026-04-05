@@ -15,6 +15,7 @@ import 'app_settings_screen.dart';
 import 'app_debug_log_screen.dart';
 import 'ble_debug_log_screen.dart';
 import '../widgets/radio_stats_entry.dart';
+import 'region_management_screen.dart';
 
 /// Convert device coding-rate value (1-4 on some firmware, 5-8 on others)
 /// to the UI enum range (always 5-8).
@@ -285,6 +286,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: Text(l10n.settings_radioSettingsSubtitle),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showRadioSettings(context, connector),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.landscape),
+            title: Text(l10n.settings_regionSettings),
+            subtitle: Text(l10n.settings_regionSettingsSubtitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => pushRegionManagementScreen(context),
           ),
           const Divider(height: 1),
           ListTile(

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meshcore_open/storage/channel_message_store.dart';
 import 'package:meshcore_open/utils/platform_info.dart';
 import 'package:meshcore_open/widgets/app_bar.dart';
@@ -380,10 +380,15 @@ class _ChannelsScreenState extends State<ChannelsScreen>
         isCommunityChannel && _isCommunityPublicChannel(channel, community);
 
     // Determine icon and colors based on channel type
-    IconData icon;
-    Color iconColor;
-    Color bgColor;
-    String subtitle;
+    IconData icon = Icons.lock;
+    Color iconColor = Colors.blue;
+    Color bgColor = Colors.blue.withValues(alpha: 0.2);
+    String region = connector.hasChannelRegion(channel.index)
+        ? context.l10n.channels_regionSetTo(
+            connector.getChannelRegion(channel.index),
+          )
+        : context.l10n.channels_regionNotSet;
+    String subtitle = region;
 
     if (isCommunityChannel) {
       // Community channel styling
@@ -402,17 +407,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
       icon = Icons.public;
       iconColor = Colors.green;
       bgColor = Colors.green.withValues(alpha: 0.2);
-      subtitle = context.l10n.channels_publicChannel;
-    } else if (channel.name.startsWith('#')) {
+    } else if (channel.isHashtagChannel) {
       icon = Icons.tag;
-      iconColor = Colors.blue;
-      bgColor = Colors.blue.withValues(alpha: 0.2);
-      subtitle = context.l10n.channels_hashtagChannel;
-    } else {
-      icon = Icons.lock;
-      iconColor = Colors.blue;
-      bgColor = Colors.blue.withValues(alpha: 0.2);
-      subtitle = context.l10n.channels_privateChannel;
     }
 
     return Card(

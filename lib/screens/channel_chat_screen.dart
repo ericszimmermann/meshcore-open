@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:meshcore_open/screens/region_management_screen.dart';
+import 'package:meshcore_open/storage/region_store.dart';
+import 'package:meshcore_open/widgets/adaptive_app_bar_title.dart';
 import 'package:provider/provider.dart';
 
 import '../connector/meshcore_connector.dart';
@@ -50,6 +53,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
   ChannelMessage? _replyingToMessage;
   final Map<String, GlobalKey> _messageKeys = {};
   bool _isLoadingOlder = false;
+  Region region = '';
 
   MeshCoreConnector? _connector;
   DateTime? _lastChannelSendAt;
@@ -60,12 +64,17 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     super.initState();
     _textFieldFocusNode.addListener(_onTextFieldFocusChange);
     _scrollController.onScrollNearTop = _loadOlderMessages;
+    region = context.read<MeshCoreConnector>().getChannelRegion(
+      widget.channel.index,
+    );
+
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final connector = context.read<MeshCoreConnector>();
       final settings = context.read<AppSettingsService>().settings;
       final idx = widget.channel.index;
       final unread = connector.getUnreadCountForChannelIndex(idx);
+
       ChannelMessage? anchor;
       if (settings.jumpToOldestUnread && unread > 0) {
         anchor = _findOldestUnreadChannelAnchor(
@@ -166,47 +175,81 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final connector = context.watch<MeshCoreConnector>();
+
+    // Determine icon and colors based on channel type
+    IconData icon = Icons.lock;
+    Color iconColor = Colors.blue;
+    Color bgColor = Colors.blue.withValues(alpha: 0.2);
+
+    // TODO(clauwn): add community handling
+    final isCommunityChannel = false;
+    final isCommunityPublic = false;
+
+    if (isCommunityChannel) {
+      iconColor = Colors.purple;
+      bgColor = Colors.purple.withValues(alpha: 0.2);
+      icon = isCommunityPublic ? Icons.groups : Icons.tag;
+    } else if (widget.channel.isPublicChannel) {
+      icon = Icons.public;
+      iconColor = Colors.green;
+      bgColor = Colors.green.withValues(alpha: 0.2);
+    } else if (widget.channel.isHashtagChannel) {
+      icon = Icons.tag;
+    }
+
+    final regionHeader = region != ''
+        ? context.l10n.channels_regionSetTo(region)
+        : context.l10n.channels_regionNotSet;
+
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Icon(
-              widget.channel.isPublicChannel ? Icons.public : Icons.tag,
-              size: 20,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.channel.name.isEmpty
-                        ? context.l10n.channels_channelIndex(
-                            widget.channel.index,
-                          )
-                        : widget.channel.name,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  Consumer<MeshCoreConnector>(
-                    builder: (context, connector, _) {
-                      final unreadCount = connector
-                          .getUnreadCountForChannelIndex(widget.channel.index);
-                      final privacy = widget.channel.isPublicChannel
-                          ? context.l10n.channels_public
-                          : context.l10n.channels_private;
-                      return Text(
-                        '$privacy • ${context.l10n.chat_unread(unreadCount)}',
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 12),
-                      );
-                    },
-                  ),
-                ],
+        title: GestureDetector(
+          onTap: () => openRegionSelectDialog(widget.channel),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: bgColor,
+                child: Icon(icon, color: iconColor),
               ),
-            ),
-          ],
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Consumer<MeshCoreConnector>(
+                      builder: (context, connector, _) {
+                        return Text(
+                          widget.channel.name.isEmpty
+                              ? context.l10n.channels_channelIndex(
+                                  widget.channel.index,
+                                )
+                              : widget.channel.name,
+                          style: const TextStyle(fontSize: 16),
+                        );
+                      },
+                    ),
+                    Consumer<MeshCoreConnector>(
+                      builder: (context, connector, _) {
+                        final unreadCount = connector
+                            .getUnreadCountForChannelIndex(
+                              widget.channel.index,
+                            );
+                        return Text(
+                          '$regionHeader • ${context.l10n.chat_unread(unreadCount)}',
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 12),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
         centerTitle: false,
+        titleSpacing: 0,
         actions: [
           const RadioStatsIconButton(),
           PopupMenuButton<String>(
@@ -1340,6 +1383,117 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     return pathBytes
         .map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase())
         .join(',');
+  }
+
+  void openRegionSelectDialog(Channel channel) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => _RegionSelectDialog(channel: channel),
+    );
+    if (context.mounted) {
+      await _connector?.loadChannelSettings();
+      setState(() {
+        region = _connector?.getChannelRegion(channel.index) ?? '';
+      });
+    }
+  }
+}
+
+class _RegionSelectDialog extends StatefulWidget {
+  final Channel channel;
+
+  const _RegionSelectDialog({required this.channel});
+
+  @override
+  _RegionSelectDialogState createState() => _RegionSelectDialogState();
+}
+
+class _RegionSelectDialogState extends State<_RegionSelectDialog> {
+  final RegionStore regionStore = RegionStore();
+
+  List<Region> regions = [];
+  int selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    loadRegions();
+  }
+
+  void loadRegions() {
+    setState(() {
+      regions = regionStore.loadRegions();
+      Region channelRegion = context.read<MeshCoreConnector>().getChannelRegion(
+        widget.channel.index,
+      );
+      selectedIndex = regions.indexOf(channelRegion);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AppBar(
+              backgroundColor: Colors.transparent,
+              title: AdaptiveAppBarTitle(
+                context.l10n.channels_regionSelect_Title,
+              ),
+              centerTitle: true,
+              actions: [
+                IconButton(
+                  tooltip: context.l10n.channels_clearRegion,
+                  icon: const Icon(Icons.backspace_outlined),
+                  onPressed: () {
+                    context.read<MeshCoreConnector>().setChannelRegion(
+                      widget.channel.index,
+                      '',
+                    );
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+                IconButton(
+                  tooltip: context.l10n.settings_regionSettingsSubtitle,
+                  icon: const Icon(Icons.settings),
+                  onPressed: () async {
+                    await pushRegionManagementScreen(context);
+                    loadRegions();
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 15),
+            Expanded(
+              child: ListView.builder(
+                itemCount: regions.length,
+                itemBuilder: (context, index) => ListTile(
+                  title: Text(regions[index]),
+                  tileColor: selectedIndex == index
+                      ? Colors.blue.withValues(alpha: 0.2)
+                      : null,
+                  onTap: () {
+                    context.read<MeshCoreConnector>().setChannelRegion(
+                      widget.channel.index,
+                      regions[index],
+                    );
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

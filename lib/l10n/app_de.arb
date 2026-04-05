@@ -2097,5 +2097,33 @@
     "description": "Repeater setting subtitle: describes the clock sync after login behavior"
   },
   "repeater_clockSyncAfterLogin": "Uhrzeit-Synchronisation nach dem Anmelden",
-  "repeater_clockSyncAfterLoginSubtitle": "Automatisch \"Uhrzeit-Synchronisierung\" nach erfolgreicher Anmeldung senden."
+  "repeater_clockSyncAfterLoginSubtitle": "Automatisch \"Uhrzeit-Synchronisierung\" nach erfolgreicher Anmeldung senden.",
+  "@settings_deleteRegionConfirm": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "@channels_regionSetTo": {
+    "placeholders": {
+      "region": {
+        "type": "String",
+        "example": "de-mitte"
+      }
+    }
+  },
+  "settings_regionSettings": "Regionen",
+  "settings_regionSettingsSubtitle": "Gespeicherte Regionen verwalten",
+  "settings_regionManagement_screenTitle": "Regions-Verwaltung",
+  "settings_regionNameHint": "Regions-Namen eingeben",
+  "settings_regionAddRegion": "Region hinzufügen",
+  "settings_regionDeleted": "Region entfernt",
+  "settings_regionName": "Regions-Name",
+  "settings_deleteRegion": "Region entfernen",
+  "settings_deleteRegionConfirm": "Region \"{region}\" aus der Liste entfernen?",
+  "channels_regionNotSet": "Region: keine",
+  "channels_regionSetTo": "Region: {region}",
+  "channels_regionSelect_Title": "Region auswählen",
+  "channels_clearRegion": "Region zurücksetzen"
 }
