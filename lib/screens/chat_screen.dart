@@ -14,7 +14,6 @@ import 'package:latlong2/latlong.dart';
 import '../connector/meshcore_connector.dart';
 import '../connector/meshcore_protocol.dart';
 import '../helpers/reaction_helper.dart';
-import '../helpers/smaz.dart';
 import '../widgets/message_status_icon.dart';
 import '../helpers/chat_scroll_controller.dart';
 import '../helpers/gif_helper.dart';
@@ -578,7 +577,10 @@ class _ChatScreenState extends State<ChatScreen> {
                         connector.isContactSmazEnabled(
                           widget.contact.publicKeyHex,
                         )
-                        ? Smaz.encodeIfSmaller
+                        ? (text) => connector.prepareContactOutboundText(
+                            widget.contact,
+                            text,
+                          )
                         : null,
                     decoration: InputDecoration(
                       hintText: context.l10n.chat_typeMessage,

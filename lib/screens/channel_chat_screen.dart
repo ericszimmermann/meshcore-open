@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import '../connector/meshcore_connector.dart';
 import '../utils/platform_info.dart';
 import '../helpers/chat_scroll_controller.dart';
-import '../helpers/smaz.dart';
 import '../connector/meshcore_protocol.dart';
 import '../helpers/gif_helper.dart';
 import '../helpers/reaction_helper.dart';
@@ -1102,7 +1101,10 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                       onSubmitted: (_) => _sendMessage(),
                       encoder:
                           connector.isChannelSmazEnabled(widget.channel.index)
-                          ? Smaz.encodeIfSmaller
+                          ? (text) => connector.prepareChannelOutboundText(
+                              widget.channel.index,
+                              text,
+                            )
                           : null,
                       decoration: InputDecoration(
                         hintText: context.l10n.chat_typeMessage,
