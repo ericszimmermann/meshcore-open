@@ -3207,6 +3207,37 @@ class AppLocalizationsSv extends AppLocalizations {
   String get losLegendTerrain => 'Terräng';
 
   @override
+  String get losBlockedSpotsTitle => 'Reserverade platser';
+
+  @override
+  String get losBlockedSpotsHint =>
+      'Klicka på en markerad plats för att framhäva den på kartan.';
+
+  @override
+  String losBlockedSpotChip(
+    String distance,
+    String distanceUnit,
+    String obstruction,
+    String heightUnit,
+  ) {
+    return '$distance $distanceUnit • $obstruction $heightUnit';
+  }
+
+  @override
+  String get losSelectedObstructionTitle => 'Vald hinder';
+
+  @override
+  String losSelectedObstructionDetails(
+    String obstruction,
+    String heightUnit,
+    String distanceFromA,
+    String distanceUnit,
+    String distanceFromB,
+  ) {
+    return 'Blocked by $obstruction $heightUnit, $distanceFromA from A and $distanceFromB from B ($distanceUnit).';
+  }
+
+  @override
   String get losFrequencyLabel => 'Frekvens';
 
   @override

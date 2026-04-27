@@ -2067,5 +2067,45 @@
   "room_guest": "Informatie over de server",
   "chat_sendMessage": "Verzend bericht",
   "repeater_guest": "Informatie over herhalingsapparatuur",
-  "settings_multiAck": "Meerdere bevestigingen"
+  "settings_multiAck": "Meerdere bevestigingen",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losSelectedObstructionTitle": "Geselecteerde obstakel",
+  "losBlockedSpotsHint": "Tik op een geblokkeerd gebied om het op de kaart te markeren.",
+  "losBlockedSpotsTitle": "Geplande plaatsen",
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}",
+  "losSelectedObstructionDetails": "Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit})."
 }

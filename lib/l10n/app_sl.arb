@@ -2067,5 +2067,45 @@
   "chat_sendMessage": "Pošlji sporočilo",
   "room_guest": "Informacije o strežniku",
   "repeater_guestTools": "Naložila za goste",
-  "settings_multiAck": "Več potrdil"
+  "settings_multiAck": "Več potrdil",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losBlockedSpotsHint": "Dotaknite blokirano točko, da jo označite na zemljeplati.",
+  "losSelectedObstructionTitle": "Izbrano ovire",
+  "losBlockedSpotsTitle": "Zasedena parkirišča",
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}",
+  "losSelectedObstructionDetails": "Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit})."
 }

@@ -2067,5 +2067,45 @@
   "room_guest": "Informações do Servidor",
   "chat_sendMessage": "Enviar mensagem",
   "repeater_guest": "Informações sobre repetidores",
-  "repeater_guestTools": "Ferramentas para hóspedes"
+  "repeater_guestTools": "Ferramentas para hóspedes",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losBlockedSpotsTitle": "Locais ocupados",
+  "losBlockedSpotsHint": "Toque em um ponto bloqueado para destacá-lo no mapa.",
+  "losSelectedObstructionTitle": "Obstrução selecionada",
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}",
+  "losSelectedObstructionDetails": "Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit})."
 }

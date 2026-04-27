@@ -2095,5 +2095,45 @@
   "chat_sendMessage": "Enviar mensaje",
   "repeater_guestTools": "Herramientas para invitados",
   "room_guest": "Información del servidor",
-  "settings_multiAck": "Múltiples respuestas de confirmación"
+  "settings_multiAck": "Múltiples respuestas de confirmación",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losBlockedSpotsTitle": "Espacios ocupados",
+  "losBlockedSpotsHint": "Seleccione un punto bloqueado para resaltarlo en el mapa.",
+  "losSelectedObstructionTitle": "Obstrucción seleccionada",
+  "losSelectedObstructionDetails": "Bloqueado por {obstruction} a una altura de {heightUnit}, a {distanceFromA} metros de A y a {distanceFromB} metros de B ({distanceUnit}).",
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}"
 }

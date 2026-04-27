@@ -5658,6 +5658,47 @@ abstract class AppLocalizations {
   /// **'Terrain'**
   String get losLegendTerrain;
 
+  /// No description provided for @losBlockedSpotsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked spots'**
+  String get losBlockedSpotsTitle;
+
+  /// No description provided for @losBlockedSpotsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a blocked spot to highlight it on the map.'**
+  String get losBlockedSpotsHint;
+
+  /// No description provided for @losBlockedSpotChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} {distanceUnit} • {obstruction} {heightUnit}'**
+  String losBlockedSpotChip(
+    String distance,
+    String distanceUnit,
+    String obstruction,
+    String heightUnit,
+  );
+
+  /// No description provided for @losSelectedObstructionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected obstruction'**
+  String get losSelectedObstructionTitle;
+
+  /// No description provided for @losSelectedObstructionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit}).'**
+  String losSelectedObstructionDetails(
+    String obstruction,
+    String heightUnit,
+    String distanceFromA,
+    String distanceUnit,
+    String distanceFromB,
+  );
+
   /// No description provided for @losFrequencyLabel.
   ///
   /// In en, this message translates to:

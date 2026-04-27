@@ -2072,5 +2072,45 @@
   "repeater_guestTools": "访客工具",
   "repeater_guest": "重复器信息",
   "chat_sendMessage": "发送消息",
-  "room_guest": "服务器信息"
+  "room_guest": "服务器信息",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losBlockedSpotsTitle": "被占用区域",
+  "losBlockedSpotsHint": "点击地图上的某个被遮盖的区域，以突出显示该区域。",
+  "losSelectedObstructionTitle": "选择性阻碍",
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}",
+  "losSelectedObstructionDetails": "Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit})."
 }

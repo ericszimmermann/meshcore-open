@@ -2095,5 +2095,45 @@
   "repeater_guestTools": "Gastwerkzeuge",
   "chat_sendMessage": "Nachricht senden",
   "room_guest": "Informationen zum Room Server",
-  "settings_multiAck": "Mehrere Bestätigungen"
+  "settings_multiAck": "Mehrere Bestätigungen",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losBlockedSpotsTitle": "Reservierte Plätze",
+  "losSelectedObstructionTitle": "Ausgewählte Behinderung",
+  "losBlockedSpotChip": "{distance} • {distanceUnit} • {obstruction} {heightUnit}",
+  "losBlockedSpotsHint": "Klicken Sie auf einen blockierten Bereich, um ihn auf der Karte hervorzuheben.",
+  "losSelectedObstructionDetails": "Blockiert durch {obstruction} in einer Höhe von {heightUnit}, {distanceFromA} von A und {distanceFromB} von B ({distanceUnit})."
 }

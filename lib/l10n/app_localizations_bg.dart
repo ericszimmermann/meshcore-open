@@ -3246,6 +3246,37 @@ class AppLocalizationsBg extends AppLocalizations {
   String get losLegendTerrain => 'Терен';
 
   @override
+  String get losBlockedSpotsTitle => 'Ограничени места';
+
+  @override
+  String get losBlockedSpotsHint =>
+      'Кликнете върху блокираната точка, за да я отбележите на картата.';
+
+  @override
+  String losBlockedSpotChip(
+    String distance,
+    String distanceUnit,
+    String obstruction,
+    String heightUnit,
+  ) {
+    return '$distance $distanceUnit • $obstruction $heightUnit';
+  }
+
+  @override
+  String get losSelectedObstructionTitle => 'Избрано препятствие';
+
+  @override
+  String losSelectedObstructionDetails(
+    String obstruction,
+    String heightUnit,
+    String distanceFromA,
+    String distanceUnit,
+    String distanceFromB,
+  ) {
+    return 'Blocked by $obstruction $heightUnit, $distanceFromA from A and $distanceFromB from B ($distanceUnit).';
+  }
+
+  @override
   String get losFrequencyLabel => 'Честота';
 
   @override

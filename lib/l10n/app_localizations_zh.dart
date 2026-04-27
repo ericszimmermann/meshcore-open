@@ -3024,6 +3024,36 @@ class AppLocalizationsZh extends AppLocalizations {
   String get losLegendTerrain => '地形';
 
   @override
+  String get losBlockedSpotsTitle => '被占用区域';
+
+  @override
+  String get losBlockedSpotsHint => '点击地图上的某个被遮盖的区域，以突出显示该区域。';
+
+  @override
+  String losBlockedSpotChip(
+    String distance,
+    String distanceUnit,
+    String obstruction,
+    String heightUnit,
+  ) {
+    return '$distance $distanceUnit • $obstruction $heightUnit';
+  }
+
+  @override
+  String get losSelectedObstructionTitle => '选择性阻碍';
+
+  @override
+  String losSelectedObstructionDetails(
+    String obstruction,
+    String heightUnit,
+    String distanceFromA,
+    String distanceUnit,
+    String distanceFromB,
+  ) {
+    return 'Blocked by $obstruction $heightUnit, $distanceFromA from A and $distanceFromB from B ($distanceUnit).';
+  }
+
+  @override
   String get losFrequencyLabel => '频率';
 
   @override

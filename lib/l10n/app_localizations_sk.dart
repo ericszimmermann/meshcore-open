@@ -3224,6 +3224,37 @@ class AppLocalizationsSk extends AppLocalizations {
   String get losLegendTerrain => 'Terén';
 
   @override
+  String get losBlockedSpotsTitle => 'Zablokované miesta';
+
+  @override
+  String get losBlockedSpotsHint =>
+      'Kliknite na zablokované miesto, aby ste ho zvýraznili na mape.';
+
+  @override
+  String losBlockedSpotChip(
+    String distance,
+    String distanceUnit,
+    String obstruction,
+    String heightUnit,
+  ) {
+    return '$distance $distanceUnit • $obstruction $heightUnit';
+  }
+
+  @override
+  String get losSelectedObstructionTitle => 'Vybraná prekážka';
+
+  @override
+  String losSelectedObstructionDetails(
+    String obstruction,
+    String heightUnit,
+    String distanceFromA,
+    String distanceUnit,
+    String distanceFromB,
+  ) {
+    return 'Blocked by $obstruction $heightUnit, $distanceFromA from A and $distanceFromB from B ($distanceUnit).';
+  }
+
+  @override
   String get losFrequencyLabel => 'Frekvencia';
 
   @override

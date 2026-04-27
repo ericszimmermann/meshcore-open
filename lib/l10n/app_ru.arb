@@ -1307,5 +1307,45 @@
   "repeater_guest": "Информация о ретрансляторе",
   "room_guest": "Информация о сервере",
   "repeater_guestTools": "Инструменты для гостей",
-  "settings_multiAck": "Несколько подтверждений"
+  "settings_multiAck": "Несколько подтверждений",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losBlockedSpotsHint": "Щелкните по заблокированной области, чтобы выделить ее на карте.",
+  "losBlockedSpotsTitle": "Зарезервированные места",
+  "losSelectedObstructionTitle": "Выбранный объект, препятствующий движению",
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}",
+  "losSelectedObstructionDetails": "Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit})."
 }

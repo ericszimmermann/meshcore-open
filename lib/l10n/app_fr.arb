@@ -2067,5 +2067,45 @@
   "chat_sendMessage": "Envoyer un message",
   "room_guest": "Informations sur le serveur",
   "repeater_guest": "Informations sur les répéteurs",
-  "settings_multiAck": "Plusieurs accusés de réception"
+  "settings_multiAck": "Plusieurs accusés de réception",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losSelectedObstructionTitle": "Obstruction sélectionnée",
+  "losBlockedSpotsTitle": "Places occupés",
+  "losBlockedSpotsHint": "Sélectionnez un emplacement bloqué pour le mettre en évidence sur la carte.",
+  "losSelectedObstructionDetails": "Bloqué par {obstruction}, à une hauteur de {heightUnit}, à une distance de {distanceFromA} par rapport à A et à une distance de {distanceFromB} par rapport à B ({distanceUnit}).",
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}"
 }

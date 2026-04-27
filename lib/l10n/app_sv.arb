@@ -2067,5 +2067,45 @@
   "chat_sendMessage": "Skicka meddelande",
   "repeater_guestTools": "Gästverktyg",
   "room_guest": "Information om servern",
-  "settings_multiAck": "Flera bekräftelser"
+  "settings_multiAck": "Flera bekräftelser",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}",
+  "losBlockedSpotsTitle": "Reserverade platser",
+  "losSelectedObstructionTitle": "Vald hinder",
+  "losBlockedSpotsHint": "Klicka på en markerad plats för att framhäva den på kartan.",
+  "losSelectedObstructionDetails": "Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit})."
 }

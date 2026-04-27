@@ -2067,5 +2067,45 @@
   "repeater_guestTools": "Strumenti per gli ospiti",
   "chat_sendMessage": "Invia messaggio",
   "room_guest": "Informazioni sul server",
-  "settings_multiAck": "ACK multipli"
+  "settings_multiAck": "ACK multipli",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losSelectedObstructionTitle": "Ostacolo selezionato",
+  "losBlockedSpotsHint": "Tocca un punto bloccato sulla mappa per evidenziarlo.",
+  "losBlockedSpotsTitle": "Posti occupati",
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}",
+  "losSelectedObstructionDetails": "Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit})."
 }

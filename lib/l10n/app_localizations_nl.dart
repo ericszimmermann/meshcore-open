@@ -3230,6 +3230,37 @@ class AppLocalizationsNl extends AppLocalizations {
   String get losLegendTerrain => 'Terrein';
 
   @override
+  String get losBlockedSpotsTitle => 'Geplande plaatsen';
+
+  @override
+  String get losBlockedSpotsHint =>
+      'Tik op een geblokkeerd gebied om het op de kaart te markeren.';
+
+  @override
+  String losBlockedSpotChip(
+    String distance,
+    String distanceUnit,
+    String obstruction,
+    String heightUnit,
+  ) {
+    return '$distance $distanceUnit • $obstruction $heightUnit';
+  }
+
+  @override
+  String get losSelectedObstructionTitle => 'Geselecteerde obstakel';
+
+  @override
+  String losSelectedObstructionDetails(
+    String obstruction,
+    String heightUnit,
+    String distanceFromA,
+    String distanceUnit,
+    String distanceFromB,
+  ) {
+    return 'Blocked by $obstruction $heightUnit, $distanceFromA from A and $distanceFromB from B ($distanceUnit).';
+  }
+
+  @override
   String get losFrequencyLabel => 'Frequentie';
 
   @override
