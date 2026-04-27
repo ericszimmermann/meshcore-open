@@ -2824,6 +2824,18 @@ abstract class AppLocalizations {
   /// **'Unread: {count}'**
   String chat_unread(int count);
 
+  /// No description provided for @chat_markAsUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Unread'**
+  String get chat_markAsUnread;
+
+  /// No description provided for @chat_newMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'New messages'**
+  String get chat_newMessages;
+
   /// No description provided for @chat_openLink.
   ///
   /// In en, this message translates to:
@@ -3129,6 +3141,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Shared pin'**
   String get map_sharedPin;
+
+  /// No description provided for @map_sharedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared'**
+  String get map_sharedAt;
 
   /// No description provided for @map_joinRoom.
   ///

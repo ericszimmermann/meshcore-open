@@ -1540,6 +1540,12 @@ class AppLocalizationsSl extends AppLocalizations {
   }
 
   @override
+  String get chat_markAsUnread => 'Mark as Unread';
+
+  @override
+  String get chat_newMessages => 'New messages';
+
+  @override
   String get chat_openLink => 'Odpreti povezavo?';
 
   @override
@@ -1704,6 +1710,9 @@ class AppLocalizationsSl extends AppLocalizations {
 
   @override
   String get map_sharedPin => 'Deljeno naslovno geslo';
+
+  @override
+  String get map_sharedAt => 'Deljeno';
 
   @override
   String get map_joinRoom => 'Pridružiti sobo';

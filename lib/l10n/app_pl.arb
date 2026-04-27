@@ -692,6 +692,7 @@
   "map_showSharedMarkers": "Pokaż udostępnione znaczniki.",
   "map_lastSeenTime": "Ostatni raz widziany",
   "map_sharedPin": "Udostępniona pinezka",
+  "map_sharedAt": "Udostępnione",
   "map_joinRoom": "Dołącz do pokoju",
   "map_manageRepeater": "Zarządzaj przekaźnikiem",
   "mapCache_title": "Pamięć podręczna map offline",

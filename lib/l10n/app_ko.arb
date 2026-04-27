@@ -861,6 +861,7 @@
   "map_guessedLocation": "추측된 위치",
   "map_lastSeenTime": "마지막으로 확인된 시간",
   "map_sharedPin": "공유 비밀번호",
+  "map_sharedAt": "공유됨",
   "map_joinRoom": "방에 참여",
   "map_manageRepeater": "리피터 관리",
   "map_tapToAdd": "노드에 클릭하여 경로에 추가합니다.",

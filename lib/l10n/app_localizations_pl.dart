@@ -1568,6 +1568,12 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String get chat_markAsUnread => 'Mark as Unread';
+
+  @override
+  String get chat_newMessages => 'New messages';
+
+  @override
   String get chat_openLink => 'Otworzyć link?';
 
   @override
@@ -1732,6 +1738,9 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get map_sharedPin => 'Udostępniona pinezka';
+
+  @override
+  String get map_sharedAt => 'Udostępnione';
 
   @override
   String get map_joinRoom => 'Dołącz do pokoju';

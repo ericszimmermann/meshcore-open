@@ -709,6 +709,7 @@
   "map_showSharedMarkers": "显示共享标记",
   "map_lastSeenTime": "最后在线时间",
   "map_sharedPin": "共享标记",
+  "map_sharedAt": "已分享",
   "map_joinRoom": "加入房间",
   "map_manageRepeater": "管理转发节点",
   "mapCache_title": "离线地图缓存",

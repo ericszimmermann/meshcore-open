@@ -861,6 +861,7 @@
   "map_guessedLocation": "推測された場所",
   "map_lastSeenTime": "最後に確認された時間",
   "map_sharedPin": "共有パスワード",
+  "map_sharedAt": "共有済み",
   "map_joinRoom": "部屋に参加する",
   "map_manageRepeater": "リピーターの管理",
   "map_tapToAdd": "ノードをクリックして、パスに追加します。",

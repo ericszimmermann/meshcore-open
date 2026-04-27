@@ -1559,6 +1559,12 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get chat_markAsUnread => 'Mark as Unread';
+
+  @override
+  String get chat_newMessages => 'New messages';
+
+  @override
   String get chat_openLink => 'Открыть ссылку?';
 
   @override
@@ -1723,6 +1729,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get map_sharedPin => 'Общая метка';
+
+  @override
+  String get map_sharedAt => 'Поделено';
 
   @override
   String get map_joinRoom => 'Присоединиться к комнате';

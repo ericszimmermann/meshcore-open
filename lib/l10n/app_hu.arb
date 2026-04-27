@@ -861,6 +861,7 @@
   "map_guessedLocation": "Tippolt hely",
   "map_lastSeenTime": "Utoljára megjelent idő",
   "map_sharedPin": "Gemeinsames PIN-kód",
+  "map_sharedAt": "Megosztva",
   "map_joinRoom": "Csatlakozás a szobához",
   "map_manageRepeater": "Ellenőriző eszköz kezelése",
   "map_tapToAdd": "Nyomj meg a csomópontokhoz, hogy hozzáadd őket az útvonalhoz.",

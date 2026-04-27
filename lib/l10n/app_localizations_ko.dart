@@ -1484,6 +1484,12 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get chat_markAsUnread => 'Mark as Unread';
+
+  @override
+  String get chat_newMessages => 'New messages';
+
+  @override
   String get chat_openLink => '링크를 열기?';
 
   @override
@@ -1643,6 +1649,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get map_sharedPin => '공유 비밀번호';
+
+  @override
+  String get map_sharedAt => '공유됨';
 
   @override
   String get map_joinRoom => '방에 참여';

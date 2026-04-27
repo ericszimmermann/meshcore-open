@@ -1559,6 +1559,12 @@ class AppLocalizationsBg extends AppLocalizations {
   }
 
   @override
+  String get chat_markAsUnread => 'Mark as Unread';
+
+  @override
+  String get chat_newMessages => 'New messages';
+
+  @override
   String get chat_openLink => 'Отваряне на връзката?';
 
   @override
@@ -1723,6 +1729,9 @@ class AppLocalizationsBg extends AppLocalizations {
 
   @override
   String get map_sharedPin => 'Споделено копие';
+
+  @override
+  String get map_sharedAt => 'Споделено';
 
   @override
   String get map_joinRoom => 'Присъедини се към стаята';

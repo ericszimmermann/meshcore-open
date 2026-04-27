@@ -1553,6 +1553,12 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get chat_markAsUnread => 'Mark as Unread';
+
+  @override
+  String get chat_newMessages => 'New messages';
+
+  @override
   String get chat_openLink => 'Відкрити посилання?';
 
   @override
@@ -1718,6 +1724,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get map_sharedPin => 'Спільний пін';
+
+  @override
+  String get map_sharedAt => 'Поділено';
 
   @override
   String get map_joinRoom => 'Приєднатися до кімнати';

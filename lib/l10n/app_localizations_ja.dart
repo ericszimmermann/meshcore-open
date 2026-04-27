@@ -1488,6 +1488,12 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get chat_markAsUnread => 'Mark as Unread';
+
+  @override
+  String get chat_newMessages => 'New messages';
+
+  @override
   String get chat_openLink => 'リンクを開く？';
 
   @override
@@ -1647,6 +1653,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get map_sharedPin => '共有パスワード';
+
+  @override
+  String get map_sharedAt => '共有済み';
 
   @override
   String get map_joinRoom => '部屋に参加する';
