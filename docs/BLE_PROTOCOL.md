@@ -765,17 +765,53 @@ String decoded = Smaz.tryDecodePrefixed(received) ?? received;
 - Contact: Stored in `ContactSettingsStore`
 - Channel: Stored in `ChannelSettingsStore`
 
-**Exclusions**: Structured payloads starting with `g:`, `m:`, or `V1|` are never compressed.
+**Exclusions**: Structured payloads starting with `g:`, `m:`, `r:` or `V1|` are never compressed.
+
+### Shared Markers
+
+**Format**: `m:<lat>,<lon>|<label>|<flags>`
+
+- `lat`,`lon`: Decimal degrees (latitude, longitude)
+- `label`: Optional short text label
+- `flags`: Optional short flags string (app-defined)
+
+**Example**: `m:37.7749,-122.4194|San Francisco|poi`
+
+**Processing**:
+1. The app extracts markers using `parseMarkerText()` (see `lib/screens/map_screen.dart`).
+2. A valid marker yields a `MarkerPayload` (position, label, flags) and is shown on the map UI and as a visible chat bubble with pin button.
+3. Deduplication uses `buildSharedMarkerKey()` to avoid duplicate markers from multiple sends.
+
+#### Meshcore-SAR Markers (`S:`)
+
+The app also recognizes Meshcore-SAR style markers prefixed with `S:`. These include an optional color index and optional flags.
+
+**Format**: `S:<label>:<sarType>:<lat>,<lon>[:flags]`
+
+- `label`: Short label for the marker
+- `sarType`: index for SarMarker type for color and Icon:
+  1 = person, 2 = fire, 3 = staging_area, 4 = objext, others = unkown
+- `lat`,`lon`: Decimal degrees (latitude, longitude)
+- `flags`: Optional short flags string
+
+**Example**: `S:Victim:2:37.7749,-122.4194:urgent`
+
+**Processing**:
+1. `parseMarkerText()` parses `S:` markers and returns a `MarkerPayload` including an optional `colorIndex` (see `lib/screens/map_screen.dart`).
+2. `colorIdx` is preserved in the payload as `colorIndex` and can be used by the UI to alter marker appearance when supported.
 
 ### Message Reactions
 
-**Format**: `"m:[message_id]:[emoji]"`
+**Format**: "r:[hash]:[emoji_index]"
 
-**Example**: `"m:abc123:👍"`
+- `hash`: 4-hex-char reaction hash computed from the message (timestamp + [senderName] + first 5 chars of text)
+- `emoji_index`: 2-hex-char index into the app's reaction emoji palette
+
+**Example**: `r:1a2b:05`  (where `05` maps to an emoji like 👍 via the app palette)
 
 **Processing**:
 1. Parse reaction from incoming message
-2. Find target message by `messageId`
+2. Find target message by computing the same hash and matching messages
 3. Increment emoji counter in target message's `reactions` map
 4. Don't display reaction as a separate message
 

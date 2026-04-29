@@ -492,8 +492,9 @@ class _ChannelsScreenState extends State<ChannelsScreen>
             ],
           ),
           onTap: () async {
-            final unread =
-                connector.getUnreadCountForChannelIndex(channel.index);
+            final unread = connector.getUnreadCountForChannelIndex(
+              channel.index,
+            );
             connector.markChannelRead(channel.index);
             await Future.delayed(const Duration(milliseconds: 50));
             if (context.mounted) {
@@ -1497,7 +1498,9 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                   if (!context.mounted) return;
                   showDismissibleSnackBar(
                     context,
-                    content: Text(context.l10n.channels_channelUpdateFailed('$e')),
+                    content: Text(
+                      context.l10n.channels_channelUpdateFailed('$e'),
+                    ),
                   );
                 }
               },

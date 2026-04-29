@@ -886,7 +886,14 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         IconButton(
-          icon: Icon(Icons.location_on_outlined, color: channelColor),
+          icon: Icon(
+            poi.sarMarkerType != null
+                ? getSarMarkerIcon(poi.sarMarkerType)
+                : Icons.location_on_outlined,
+            color: poi.sarMarkerType != null
+                ? getSarMarkerColor(poi.sarMarkerType)
+                : channelColor,
+          ),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
           onPressed: () {

@@ -65,8 +65,7 @@ class BackgroundService {
         return AppLocalizations.delegate.load(overrideLocale);
       }
     }
-    final preferred =
-        WidgetsBinding.instance.platformDispatcher.locales;
+    final preferred = WidgetsBinding.instance.platformDispatcher.locales;
     final match = basicLocaleListResolution(preferred, supported);
     return AppLocalizations.delegate.load(match);
   }

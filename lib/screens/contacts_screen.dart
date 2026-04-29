@@ -932,16 +932,15 @@ class _ContactsScreenState extends State<ContactsScreen>
       _showRoomLogin(context, contact, RoomLoginDestination.chat);
     } else {
       final connector = context.read<MeshCoreConnector>();
-      final unread =
-          connector.getUnreadCountForContactKey(contact.publicKeyHex);
+      final unread = connector.getUnreadCountForContactKey(
+        contact.publicKeyHex,
+      );
       connector.markContactRead(contact.publicKeyHex);
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ChatScreen(
-            contact: contact,
-            initialUnreadCount: unread,
-          ),
+          builder: (context) =>
+              ChatScreen(contact: contact, initialUnreadCount: unread),
         ),
       );
     }
@@ -998,8 +997,9 @@ class _ContactsScreenState extends State<ContactsScreen>
         room: room,
         onLogin: (password, isAdmin) {
           final connector = context.read<MeshCoreConnector>();
-          final unread =
-              connector.getUnreadCountForContactKey(room.publicKeyHex);
+          final unread = connector.getUnreadCountForContactKey(
+            room.publicKeyHex,
+          );
           connector.markContactRead(room.publicKeyHex);
           Navigator.push(
             context,
@@ -1011,10 +1011,7 @@ class _ContactsScreenState extends State<ContactsScreen>
                       password: password,
                       isAdmin: isAdmin,
                     )
-                  : ChatScreen(
-                      contact: room,
-                      initialUnreadCount: unread,
-                    ),
+                  : ChatScreen(contact: room, initialUnreadCount: unread),
             ),
           );
         },

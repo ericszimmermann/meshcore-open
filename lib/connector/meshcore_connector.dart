@@ -4460,6 +4460,8 @@ class MeshCoreConnector extends ChangeNotifier {
     final isStructuredPayload =
         trimmed.startsWith('g:') ||
         trimmed.startsWith('m:') ||
+        trimmed.startsWith('S:') ||
+        trimmed.startsWith('r:') ||
         trimmed.startsWith('V1|');
     if (!isStructuredPayload && isContactSmazEnabled(contact.publicKeyHex)) {
       return Smaz.encodeIfSmaller(text);
@@ -4470,7 +4472,11 @@ class MeshCoreConnector extends ChangeNotifier {
   String prepareChannelOutboundText(int channelIndex, String text) {
     final trimmed = text.trim();
     final isStructuredPayload =
-        trimmed.startsWith('g:') || trimmed.startsWith('m:');
+        trimmed.startsWith('g:') ||
+        trimmed.startsWith('m:') ||
+        trimmed.startsWith('S:') ||
+        trimmed.startsWith('r:') ||
+        trimmed.startsWith('V1|');
     if (!isStructuredPayload && isChannelSmazEnabled(channelIndex)) {
       return Smaz.encodeIfSmaller(text);
     }

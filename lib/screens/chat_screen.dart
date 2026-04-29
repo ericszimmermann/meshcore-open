@@ -1218,8 +1218,14 @@ class _ChatScreenState extends State<ChatScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoRow(context.l10n.chat_type, contact.typeLabel(context.l10n)),
-              _buildInfoRow(context.l10n.chat_path, contact.pathLabel(context.l10n)),
+              _buildInfoRow(
+                context.l10n.chat_type,
+                contact.typeLabel(context.l10n),
+              ),
+              _buildInfoRow(
+                context.l10n.chat_path,
+                contact.pathLabel(context.l10n),
+              ),
               _buildInfoRow(
                 context.l10n.contact_lastSeen,
                 _formatContactLastMessage(contact.lastMessageAt),
@@ -1938,7 +1944,14 @@ class _MessageBubble extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         IconButton(
-          icon: Icon(Icons.location_on_outlined, color: textColor),
+          icon: Icon(
+            poi.sarMarkerType != null
+                ? getSarMarkerIcon(poi.sarMarkerType)
+                : Icons.location_on_outlined,
+            color: poi.sarMarkerType != null
+                ? getSarMarkerColor(poi.sarMarkerType)
+                : textColor,
+          ),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
           onPressed: () async {

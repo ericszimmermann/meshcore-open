@@ -1305,6 +1305,7 @@ class _MapScreenState extends State<MapScreen> {
                 ? context.l10n.map_sharedPin
                 : payload.label,
             flags: payload.flags,
+            sarMarkerType: payload.sarMarkerType,
             fromName: fromName,
             sourceLabel: contact.name,
             timestamp: message.timestamp,
@@ -1336,6 +1337,7 @@ class _MapScreenState extends State<MapScreen> {
                 ? context.l10n.map_sharedPin
                 : payload.label,
             flags: payload.flags,
+            sarMarkerType: payload.sarMarkerType,
             fromName: message.senderName,
             sourceLabel: channel.name.isEmpty
                 ? 'Channel ${channel.index}'
@@ -1373,6 +1375,8 @@ class _MapScreenState extends State<MapScreen> {
     final markerColor = marker.isChannel
         ? (marker.isPublicChannel ? Colors.orange : Colors.purple)
         : Colors.blue;
+    final sarColor = getSarMarkerColor(marker.sarMarkerType);
+    final displayColor = sarColor ?? markerColor;
     return Marker(
       point: marker.position,
       width: 60,
@@ -1392,7 +1396,7 @@ class _MapScreenState extends State<MapScreen> {
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: markerColor,
+                color: displayColor,
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 2),
                 boxShadow: [
@@ -1403,7 +1407,15 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ],
               ),
-              child: const Icon(Icons.flag, color: Colors.white, size: 20),
+              child: Icon(
+                marker.flags == 'loc'
+                    ? Icons.my_location
+                    : (marker.sarMarkerType != null
+                          ? getSarMarkerIcon(marker.sarMarkerType)
+                          : Icons.flag),
+                color: Colors.white,
+                size: 20,
+              ),
             ),
           ],
         ),
@@ -1480,8 +1492,14 @@ class _MapScreenState extends State<MapScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildInfoRow(context.l10n.map_type, contact.typeLabel(context.l10n)),
-            _buildInfoRow(context.l10n.map_path, contact.pathLabel(context.l10n)),
+            _buildInfoRow(
+              context.l10n.map_type,
+              contact.typeLabel(context.l10n),
+            ),
+            _buildInfoRow(
+              context.l10n.map_path,
+              contact.pathLabel(context.l10n),
+            ),
             if (contact.hasLocation)
               _buildInfoRow(
                 context.l10n.map_location,
@@ -2381,32 +2399,102 @@ class _GuessedLocation {
   });
 }
 
+// SAR marker helpers using a simple integer index instead of an enum.
+// Index meanings (app-defined): 1=foundPerson, 2=fire, 3=stagingArea, 4=object
+Color? getSarMarkerColor(int? idx) {
+  if (idx == null) return null;
+  switch (idx) {
+    case 1:
+      return Colors.green;
+    case 2:
+      return Colors.red;
+    case 3:
+      return Colors.orange;
+    case 4:
+      return Colors.purple;
+    default:
+      return Colors.grey;
+  }
+}
+
+IconData getSarMarkerIcon(int? idx) {
+  switch (idx) {
+    case 1:
+      return Icons.person;
+    case 2:
+      return Icons.local_fire_department;
+    case 3:
+      return Icons.festival;
+    case 4:
+      return Icons.inventory;
+    default:
+      return Icons.help_outline;
+  }
+}
+
 class MarkerPayload {
   final LatLng position;
   final String label;
   final String flags;
+  final int? sarMarkerType;
 
   MarkerPayload({
     required this.position,
     required this.label,
     required this.flags,
+    this.sarMarkerType,
   });
 }
 
-/// Parse a shared marker text message of the form
-/// `m:<lat>,<lon>|<label>|<flags>` and return a [MarkerPayload].
+/// Parse a shared marker text message and return a [MarkerPayload].
+/// Supported formats:
+/// - `m:<lat>,<lon>|<label>|<flags>` (legacy shared marker)
+/// - `S:<label>:<colorIdx>:<lat>,<lon>[:flags]` (Meshcore-SAR marker, flags optional)
 MarkerPayload? parseMarkerText(String text) {
   final trimmed = text.trim();
-  final match = RegExp(
-    r'm:([\-0-9.]+),([\-0-9.]+)\|([^|]*)\|(.*)',
-  ).firstMatch(trimmed);
-  if (match == null) return null;
-  final lat = double.tryParse(match.group(1) ?? '');
-  final lon = double.tryParse(match.group(2) ?? '');
-  if (lat == null || lon == null) return null;
-  final label = (match.group(3) ?? '').trim();
-  final flags = (match.group(4) ?? '').trim();
-  return MarkerPayload(position: LatLng(lat, lon), label: label, flags: flags);
+
+  // Legacy 'm:' format: m:<lat>,<lon>|<label>|<flags>
+  if (trimmed.startsWith('m:')) {
+    final match = RegExp(
+      r'm:([\-0-9.]+),([\-0-9.]+)\|([^|]*)\|(.*)',
+    ).firstMatch(trimmed);
+    if (match == null) return null;
+    final lat = double.tryParse(match.group(1) ?? '');
+    final lon = double.tryParse(match.group(2) ?? '');
+    if (lat == null || lon == null) return null;
+    final label = (match.group(3) ?? '').trim();
+    final flags = (match.group(4) ?? '').trim();
+    return MarkerPayload(
+      position: LatLng(lat, lon),
+      label: label,
+      flags: flags,
+    );
+  }
+
+  // Meshcore-SAR 'S:' format: S:<label>:<colorIdx>:<lat>,<lon>[:flags]
+  if (trimmed.startsWith('S:')) {
+    final match = RegExp(
+      r'^S:([^:]+):(\d+):([\-0-9.]+),([\-0-9.]+)(?::(.*))?',
+    ).firstMatch(trimmed);
+    if (match == null) return null;
+    final label = (match.group(1) ?? '').trim();
+    final sarMarkerTypeStr = match.group(2);
+    final lat = double.tryParse(match.group(3) ?? '');
+    final lon = double.tryParse(match.group(4) ?? '');
+    final flags = (match.group(5) ?? '').trim();
+    if (lat == null || lon == null) return null;
+    final sarMarkerType = sarMarkerTypeStr != null
+        ? int.tryParse(sarMarkerTypeStr)
+        : null;
+    return MarkerPayload(
+      position: LatLng(lat, lon),
+      label: label,
+      flags: flags,
+      sarMarkerType: sarMarkerType,
+    );
+  }
+
+  return null;
 }
 
 /// Build a normalized dedupe key for shared markers.
@@ -2430,6 +2518,7 @@ class _SharedMarker {
   final LatLng position;
   final String label;
   final String flags;
+  final int? sarMarkerType;
   final String fromName;
   final String sourceLabel;
   final DateTime timestamp;
@@ -2442,6 +2531,7 @@ class _SharedMarker {
     required this.position,
     required this.label,
     required this.flags,
+    this.sarMarkerType,
     required this.fromName,
     required this.sourceLabel,
     required this.timestamp,
@@ -2456,6 +2546,7 @@ class _SharedMarker {
       position: position,
       label: label,
       flags: flags,
+      sarMarkerType: sarMarkerType,
       fromName: fromName,
       sourceLabel: sourceLabel,
       timestamp: timestamp,

@@ -514,6 +514,7 @@ class TranslationService extends ChangeNotifier {
       return false;
     }
     return !(trimmed.startsWith('m:') ||
+        trimmed.startsWith('S:') ||
         trimmed.startsWith('V1|') ||
         trimmed.startsWith('r:'));
   }
