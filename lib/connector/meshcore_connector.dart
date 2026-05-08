@@ -3295,6 +3295,13 @@ class MeshCoreConnector extends ChangeNotifier {
   Future<void> setCustomVar(String value) async {
     if (!isConnected) return;
     await sendFrame(buildSetCustomVarFrame(value));
+    final sep = value.indexOf(':');
+    if (sep > 0) {
+      final key = value.substring(0, sep);
+      final val = value.substring(sep + 1);
+      (_currentCustomVars ??= <String, String>{})[key] = val;
+      notifyListeners();
+    }
     if (value == 'gps:1') {
       _startGpsLocationPolling();
     } else if (value == 'gps:0') {
