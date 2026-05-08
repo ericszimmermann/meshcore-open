@@ -496,11 +496,11 @@ class AppLocalizationsHu extends AppLocalizations {
   String get settings_debug => 'Hibakeresés';
 
   @override
-  String get settings_bleDebugLog => 'BLE hibaelhárítási napló';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'BLE parancsok, válaszok és alapvető adatok';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'App-debug log';

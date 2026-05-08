@@ -492,11 +492,11 @@ class AppLocalizationsUk extends AppLocalizations {
   String get settings_debug => 'Налагодження';
 
   @override
-  String get settings_bleDebugLog => 'Журнал налагодження BLE';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'Команди BLE, відповіді та необроблені дані';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'Журнал налагодження застосунку';

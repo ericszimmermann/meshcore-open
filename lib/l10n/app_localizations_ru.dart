@@ -495,11 +495,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settings_debug => 'Отладка';
 
   @override
-  String get settings_bleDebugLog => 'Журнал отладки BLE';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'Команды BLE, ответы и сырые данные';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'Журнал отладки приложения';

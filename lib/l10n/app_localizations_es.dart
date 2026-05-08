@@ -494,11 +494,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settings_debug => 'Depurar';
 
   @override
-  String get settings_bleDebugLog => 'Registro de Depuración BLE';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'Comandos, respuestas y datos brutos de BLE';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'Registro de Depuración de la App';

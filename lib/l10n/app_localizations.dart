@@ -1006,17 +1006,17 @@ abstract class AppLocalizations {
   /// **'Debug'**
   String get settings_debug;
 
-  /// No description provided for @settings_bleDebugLog.
+  /// No description provided for @settings_companionDebugLog.
   ///
   /// In en, this message translates to:
-  /// **'BLE Debug Log'**
-  String get settings_bleDebugLog;
+  /// **'Companion Debug Log'**
+  String get settings_companionDebugLog;
 
-  /// No description provided for @settings_bleDebugLogSubtitle.
+  /// No description provided for @settings_companionDebugLogSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'BLE commands, responses, and raw data'**
-  String get settings_bleDebugLogSubtitle;
+  /// **'BLE/TCP/USB commands, responses, and raw data'**
+  String get settings_companionDebugLogSubtitle;
 
   /// No description provided for @settings_appDebugLog.
   ///

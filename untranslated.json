@@ -1,85 +1,119 @@
 {
   "bg": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "de": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "es": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "fr": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "hu": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "it": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "ja": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "ko": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "nl": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "pl": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "pt": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "ru": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "sk": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "sl": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "sv": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "uk": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ],
 
   "zh": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
     "chat_newMessages"
   ]

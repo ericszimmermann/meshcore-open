@@ -470,10 +470,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_debug => '디버깅';
 
   @override
-  String get settings_bleDebugLog => 'BLE 디버그 로그';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle => 'BLE 명령어, 응답 및 원시 데이터';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => '앱 디버깅 로그';

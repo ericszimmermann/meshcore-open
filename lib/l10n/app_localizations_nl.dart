@@ -490,11 +490,11 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settings_debug => 'Foutopsporing';
 
   @override
-  String get settings_bleDebugLog => 'BLE Debug Log';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'BLE commando\'s, antwoorden en ruwe data';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'Debuglog van de app';

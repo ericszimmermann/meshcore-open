@@ -485,10 +485,11 @@ class AppLocalizationsSv extends AppLocalizations {
   String get settings_debug => 'Felsök';
 
   @override
-  String get settings_bleDebugLog => 'BLE-felsökning';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle => 'BLE-kommandon, svar och rådata';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'Appfelsökning';

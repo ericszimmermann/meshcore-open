@@ -463,10 +463,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings_debug => '调试';
 
   @override
-  String get settings_bleDebugLog => 'BLE 调试日志';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle => 'BLE 命令、响应和原始数据';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => '应用调试日志';

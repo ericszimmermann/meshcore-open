@@ -493,11 +493,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settings_debug => 'Fehlerbehebung';
 
   @override
-  String get settings_bleDebugLog => 'BLE-Debug-Protokoll';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'BLE-Befehle, Antworten und Rohdaten';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'App-Debug-Protokoll';

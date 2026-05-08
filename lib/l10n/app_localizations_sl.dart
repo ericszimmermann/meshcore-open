@@ -488,11 +488,11 @@ class AppLocalizationsSl extends AppLocalizations {
   String get settings_debug => 'Odpravljanje napak';
 
   @override
-  String get settings_bleDebugLog => 'BLE debug log (razhroščevanje)';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'BLE ukazi, odgovori in surovi podatki';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'Logi aplikacije';

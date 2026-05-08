@@ -496,11 +496,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settings_debug => 'Depurar';
 
   @override
-  String get settings_bleDebugLog => 'Log de Depuração BLE';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'Comandos, respostas e dados brutos do BLE';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'Log de Depuração do Aplicativo';

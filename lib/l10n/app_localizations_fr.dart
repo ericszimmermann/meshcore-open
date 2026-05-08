@@ -498,11 +498,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settings_debug => 'Déboguer';
 
   @override
-  String get settings_bleDebugLog => 'Journal de débogage BLE';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'Commandes BLE, réponses et données brutes';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'Journal de débogage de l\'application';

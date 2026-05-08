@@ -496,11 +496,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String get settings_debug => 'Risoluzione dei problemi';
 
   @override
-  String get settings_bleDebugLog => 'Log di Debug BLE';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'Comandi, risposte e dati grezzi BLE';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'Log di Debug dell\'App';

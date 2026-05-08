@@ -490,11 +490,11 @@ class AppLocalizationsSk extends AppLocalizations {
   String get settings_debug => 'Ladenie';
 
   @override
-  String get settings_bleDebugLog => 'Log BLE Debug';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'Príkazy BLE, odpovede a surové dáta';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'Záznam ladenia aplikácie';

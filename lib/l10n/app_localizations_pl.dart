@@ -498,11 +498,11 @@ class AppLocalizationsPl extends AppLocalizations {
   String get settings_debug => 'Naprawianie błędów';
 
   @override
-  String get settings_bleDebugLog => 'Dziennik debugowania BLE';
+  String get settings_companionDebugLog => 'Companion Debug Log';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'Polecenia BLE, odpowiedzi i surowe dane';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commands, responses, and raw data';
 
   @override
   String get settings_appDebugLog => 'Dziennik debugowania aplikacji';

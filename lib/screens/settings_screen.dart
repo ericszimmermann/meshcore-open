@@ -417,8 +417,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.bluetooth_outlined),
-            title: Text(l10n.settings_bleDebugLog),
-            subtitle: Text(l10n.settings_bleDebugLogSubtitle),
+            title: Text(l10n.settings_companionDebugLog),
+            subtitle: Text(l10n.settings_companionDebugLogSubtitle),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               Navigator.push(
