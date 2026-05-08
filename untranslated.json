@@ -1,81 +1,137 @@
 {
   "bg": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "de": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "es": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "fr": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "hu": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "it": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "ja": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "ko": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "nl": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "pl": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "pt": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
+  ],
+
+  "ru": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
+    "chat_markAsUnread",
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "sk": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "sl": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "sv": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "uk": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ],
 
   "zh": [
+    "settings_companionDebugLog",
+    "settings_companionDebugLogSubtitle",
     "chat_markAsUnread",
-    "chat_newMessages"
+    "chat_newMessages",
+    "repeater_chanUtil"
   ]
 }
