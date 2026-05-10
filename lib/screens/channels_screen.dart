@@ -1397,9 +1397,17 @@ class _ChannelsScreenState extends State<ChannelsScreen>
     MeshCoreConnector connector,
     Channel channel,
   ) {
+    final appSettingsService = Provider.of<AppSettingsService>(
+      context,
+      listen: false,
+    );
     final nameController = TextEditingController(text: channel.name);
     final pskController = TextEditingController(text: channel.pskHex);
     bool smazEnabled = connector.isChannelSmazEnabled(channel.index);
+    bool cyr2latEnabled = connector.isChannelCyr2LatEnabled(channel.index);
+    String? selectedCyr2LatProfileId = connector.getChannelCyr2LatProfileId(
+      channel.index,
+    );
 
     showDialog(
       context: context,
@@ -1445,8 +1453,52 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                   contentPadding: EdgeInsets.zero,
                   title: Text(dialogContext.l10n.channels_smazCompression),
                   value: smazEnabled,
-                  onChanged: (value) => setState(() => smazEnabled = value),
+                  onChanged: (value) => setState(() {
+                    smazEnabled = value;
+                    if (smazEnabled) {
+                      cyr2latEnabled = false;
+                    }
+                  }),
                 ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(dialogContext.l10n.channels_cyr2latCompression),
+                  subtitle: Text(
+                    dialogContext.l10n.channels_cyr2latCompressionDscr,
+                  ),
+                  value: cyr2latEnabled,
+                  onChanged: (value) => setState(() {
+                    cyr2latEnabled = value;
+                    if (cyr2latEnabled) {
+                      smazEnabled = false;
+                    }
+                  }),
+                ),
+                if (cyr2latEnabled) ...[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                    child: DropdownButtonFormField<String>(
+                      initialValue: selectedCyr2LatProfileId,
+                      decoration: InputDecoration(
+                        labelText: dialogContext
+                            .l10n
+                            .channels_cyr2latSettingsSubheading,
+                        border: const OutlineInputBorder(),
+                      ),
+                      items: appSettingsService.settings.cyr2latProfiles.map((
+                        profile,
+                      ) {
+                        return DropdownMenuItem(
+                          value: profile.id,
+                          child: Text(profile.name),
+                        );
+                      }).toList(),
+                      onChanged: (value) => setState(() {
+                        selectedCyr2LatProfileId = value;
+                      }),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -1477,6 +1529,14 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                   await connector.setChannelSmazEnabled(
                     channel.index,
                     smazEnabled,
+                  );
+                  await connector.setChannelCyr2LatEnabled(
+                    channel.index,
+                    cyr2latEnabled,
+                  );
+                  await connector.setChannelCyr2LatProfileId(
+                    channel.index,
+                    selectedCyr2LatProfileId,
                   );
                   if (!context.mounted) return;
                   showDismissibleSnackBar(

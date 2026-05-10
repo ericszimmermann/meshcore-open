@@ -16,6 +16,7 @@ import '../models/message.dart';
 import '../models/path_selection.dart';
 import '../models/translation_support.dart';
 import '../helpers/reaction_helper.dart';
+import '../helpers/cyr2lat.dart';
 import '../helpers/smaz.dart';
 import '../services/app_debug_log_service.dart';
 import '../services/ble_debug_log_service.dart';
@@ -290,9 +291,13 @@ class MeshCoreConnector extends ChangeNotifier {
   final UnreadStore _unreadStore = UnreadStore();
   List<Channel> _cachedChannels = [];
   final Map<int, bool> _channelSmazEnabled = {};
+  final Map<int, bool> _channelCyr2LatEnabled = {};
+  final Map<int, String?> _channelCyr2LatProfileId = {};
   bool _lastSentWasCliCommand =
       false; // Track if last sent message was a CLI command
   final Map<String, bool> _contactSmazEnabled = {};
+  final Map<String, bool> _contactCyr2LatEnabled = {};
+  final Map<String, String?> _contactCyr2LatProfileId = {};
   final Set<String> _knownContactKeys = {};
   final Map<String, int> _contactUnreadCount = {};
   final Map<String, RepeaterBatterySnapshot> _repeaterBatterySnapshots = {};
@@ -625,6 +630,20 @@ class MeshCoreConnector extends ChangeNotifier {
     _ensureContactSmazSettingLoaded(contactKeyHex);
   }
 
+  bool isChannelCyr2LatEnabled(int channelIndex) {
+    _ensureChannelCyr2LatSettingLoaded(channelIndex);
+    return _channelCyr2LatEnabled[channelIndex] ?? false;
+  }
+
+  bool isContactCyr2LatEnabled(String contactKeyHex) {
+    _ensureContactCyr2LatSettingLoaded(contactKeyHex);
+    return _contactCyr2LatEnabled[contactKeyHex] ?? false;
+  }
+
+  void ensureContactCyr2LatSettingLoaded(String contactKeyHex) {
+    _ensureContactCyr2LatSettingLoaded(contactKeyHex);
+  }
+
   Future<void> loadUnreadState() async {
     _contactUnreadCount
       ..clear()
@@ -721,6 +740,10 @@ class MeshCoreConnector extends ChangeNotifier {
 
   Future<void> setChannelSmazEnabled(int channelIndex, bool enabled) async {
     _channelSmazEnabled[channelIndex] = enabled;
+    if (enabled) {
+      _channelCyr2LatEnabled[channelIndex] = false;
+      await _channelSettingsStore.saveCyr2LatEnabled(channelIndex, false);
+    }
     await _channelSettingsStore.saveSmazEnabled(channelIndex, enabled);
     notifyListeners();
   }
@@ -728,6 +751,25 @@ class MeshCoreConnector extends ChangeNotifier {
   Future<void> setContactSmazEnabled(String contactKeyHex, bool enabled) async {
     _contactSmazEnabled[contactKeyHex] = enabled;
     await _contactSettingsStore.saveSmazEnabled(contactKeyHex, enabled);
+    notifyListeners();
+  }
+
+  Future<void> setChannelCyr2LatEnabled(int channelIndex, bool enabled) async {
+    _channelCyr2LatEnabled[channelIndex] = enabled;
+    if (enabled) {
+      _channelSmazEnabled[channelIndex] = false;
+      await _channelSettingsStore.saveSmazEnabled(channelIndex, false);
+    }
+    await _channelSettingsStore.saveCyr2LatEnabled(channelIndex, enabled);
+    notifyListeners();
+  }
+
+  Future<void> setContactCyr2LatEnabled(
+    String contactKeyHex,
+    bool enabled,
+  ) async {
+    _contactCyr2LatEnabled[contactKeyHex] = enabled;
+    await _contactSettingsStore.saveCyr2LatEnabled(contactKeyHex, enabled);
     notifyListeners();
   }
 
@@ -867,6 +909,7 @@ class MeshCoreConnector extends ChangeNotifier {
       ..addAll(cached);
     for (final contact in cached) {
       _ensureContactSmazSettingLoaded(contact.publicKeyHex);
+      _ensureContactCyr2LatSettingLoaded(contact.publicKeyHex);
     }
   }
 
@@ -879,9 +922,12 @@ class MeshCoreConnector extends ChangeNotifier {
 
   Future<void> loadChannelSettings({int? maxChannels}) async {
     _channelSmazEnabled.clear();
+    _channelCyr2LatEnabled.clear();
     final channelCount = maxChannels ?? _maxChannels;
     for (int i = 0; i < channelCount; i++) {
       _channelSmazEnabled[i] = await _channelSettingsStore.loadSmazEnabled(i);
+      _channelCyr2LatEnabled[i] = await _channelSettingsStore
+          .loadCyr2LatEnabled(i);
     }
   }
 
@@ -4507,6 +4553,72 @@ class MeshCoreConnector extends ChangeNotifier {
     });
   }
 
+  void _ensureContactCyr2LatSettingLoaded(String contactKeyHex) {
+    if (_contactCyr2LatEnabled.containsKey(contactKeyHex)) return;
+    _contactSettingsStore.loadCyr2LatEnabled(contactKeyHex).then((enabled) {
+      if (_contactCyr2LatEnabled[contactKeyHex] == enabled) return;
+      _contactCyr2LatEnabled[contactKeyHex] = enabled;
+      notifyListeners();
+    });
+  }
+
+  void _ensureContactCyr2LatProfileLoaded(String contactKeyHex) {
+    if (_contactCyr2LatProfileId.containsKey(contactKeyHex)) return;
+    _contactSettingsStore.loadCyr2LatProfileId(contactKeyHex).then((profileId) {
+      if (_contactCyr2LatProfileId[contactKeyHex] == profileId) return;
+      _contactCyr2LatProfileId[contactKeyHex] = profileId;
+      notifyListeners();
+    });
+  }
+
+  void _ensureChannelCyr2LatSettingLoaded(int channelIndex) {
+    if (_channelCyr2LatEnabled.containsKey(channelIndex)) return;
+    _channelSettingsStore.loadCyr2LatEnabled(channelIndex).then((enabled) {
+      if (_channelCyr2LatEnabled[channelIndex] == enabled) return;
+      _channelCyr2LatEnabled[channelIndex] = enabled;
+      notifyListeners();
+    });
+  }
+
+  void _ensureChannelCyr2LatProfileLoaded(int channelIndex) {
+    if (_channelCyr2LatProfileId.containsKey(channelIndex)) return;
+    _channelSettingsStore.loadCyr2LatProfileId(channelIndex).then((profileId) {
+      if (_channelCyr2LatProfileId[channelIndex] == profileId) return;
+      _channelCyr2LatProfileId[channelIndex] = profileId;
+      notifyListeners();
+    });
+  }
+
+  String? getChannelCyr2LatProfileId(int channelIndex) {
+    _ensureChannelCyr2LatProfileLoaded(channelIndex);
+    return _channelCyr2LatProfileId[channelIndex];
+  }
+
+  Future<void> setChannelCyr2LatProfileId(
+    int channelIndex,
+    String? profileId,
+  ) async {
+    if (_channelCyr2LatProfileId[channelIndex] == profileId) return;
+    _channelCyr2LatProfileId[channelIndex] = profileId;
+    await _channelSettingsStore.saveCyr2LatProfileId(channelIndex, profileId);
+    notifyListeners();
+  }
+
+  String? getContactCyr2LatProfileId(String contactKeyHex) {
+    _ensureContactCyr2LatProfileLoaded(contactKeyHex);
+    return _contactCyr2LatProfileId[contactKeyHex];
+  }
+
+  Future<void> setContactCyr2LatProfileId(
+    String contactKeyHex,
+    String? profileId,
+  ) async {
+    if (_contactCyr2LatProfileId[contactKeyHex] == profileId) return;
+    _contactCyr2LatProfileId[contactKeyHex] = profileId;
+    await _contactSettingsStore.saveCyr2LatProfileId(contactKeyHex, profileId);
+    notifyListeners();
+  }
+
   /// Prepares contact outbound text by applying SMAZ encoding if enabled.
   /// This should be used to transform text before computing ACK hashes.
   String prepareContactOutboundText(Contact contact, String text) {
@@ -4515,8 +4627,26 @@ class MeshCoreConnector extends ChangeNotifier {
         trimmed.startsWith('g:') ||
         trimmed.startsWith('m:') ||
         trimmed.startsWith('V1|');
-    if (!isStructuredPayload && isContactSmazEnabled(contact.publicKeyHex)) {
-      return Smaz.encodeIfSmaller(text);
+    if (!isStructuredPayload) {
+      if (isContactSmazEnabled(contact.publicKeyHex)) {
+        return Smaz.encodeIfSmaller(text);
+      } else if (isContactCyr2LatEnabled(contact.publicKeyHex)) {
+        final profileId = getContactCyr2LatProfileId(contact.publicKeyHex);
+        final profile = profileId != null && _appSettingsService != null
+            ? _appSettingsService!.getCyr2LatProfileById(profileId)
+            : null;
+        if (profile != null) {
+          Cyr2Lat.setCharMap(profile.charMap);
+        } else {
+          // Use global profile
+          final globalProfile = _appSettingsService
+              ?.getSelectedCyr2LatProfile();
+          if (globalProfile != null) {
+            Cyr2Lat.setCharMap(globalProfile.charMap);
+          }
+        }
+        return Cyr2Lat.encode(text);
+      }
     }
     return text;
   }
@@ -4525,8 +4655,26 @@ class MeshCoreConnector extends ChangeNotifier {
     final trimmed = text.trim();
     final isStructuredPayload =
         trimmed.startsWith('g:') || trimmed.startsWith('m:');
-    if (!isStructuredPayload && isChannelSmazEnabled(channelIndex)) {
-      return Smaz.encodeIfSmaller(text);
+    if (!isStructuredPayload) {
+      if (isChannelSmazEnabled(channelIndex)) {
+        return Smaz.encodeIfSmaller(text);
+      } else if (isChannelCyr2LatEnabled(channelIndex)) {
+        final profileId = getChannelCyr2LatProfileId(channelIndex);
+        final profile = profileId != null && _appSettingsService != null
+            ? _appSettingsService!.getCyr2LatProfileById(profileId)
+            : null;
+        if (profile != null) {
+          Cyr2Lat.setCharMap(profile.charMap);
+        } else {
+          // Use global profile
+          final globalProfile = _appSettingsService
+              ?.getSelectedCyr2LatProfile();
+          if (globalProfile != null) {
+            Cyr2Lat.setCharMap(globalProfile.charMap);
+          }
+        }
+        return Cyr2Lat.encode(text);
+      }
     }
     return text;
   }

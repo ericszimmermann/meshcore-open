@@ -387,6 +387,22 @@
     }
   },
   "channels_smazCompression": "SMAZ-komprimering",
+  "channels_cyr2latCompression": "Cyr2Lat-komprimering",
+  "channels_cyr2latCompressionDscr": "Ersätter vissa kyrilliska tecken med latinska tecken när du skickar.",
+  "channels_cyr2latSettingsHeading": "Inställningar för Cyr2Lat",
+  "channels_cyr2latSettingsSubheading": "Ersättningslista",
+  "channels_cyr2latSettingsDscr": "Redigera JSON-konfigurationen för teckenersättning",
+  "channels_cyr2latSettingsDialogHint": "JSON-ersättningskarta",
+  "channels_cyr2latSettingsDialogWrongJSON": "Felaktig JSON: {error}",
+  "settings_cyr2latProfileAdd": "Lägg till Cyr2Lat-profil",
+  "settings_cyr2latProfileName": "Profilnamn",
+  "settings_cyr2latProfileNameEmpty": "Profilnamnet får inte vara tomt",
+  "settings_cyr2latProfileAdded": "Profilen har lagts till",
+  "settings_cyr2latProfileUpdated": "Profilen har uppdaterats",
+  "settings_cyr2latProfileEdit": "Redigera Cyr2Lat-profil",
+  "settings_cyr2latProfileDelete": "Ta bort Cyr2Lat-profil",
+  "settings_cyr2latProfileDeleted": "Profilen har tagits bort",
+  "settings_cyr2latProfileDeleteDscr": "Är du säker på att du vill ta bort profilen \"{name}\"?",
   "channels_channelUpdated": "Kanalen \"{name}\" har uppdaterats",
   "@channels_channelUpdated": {
     "placeholders": {

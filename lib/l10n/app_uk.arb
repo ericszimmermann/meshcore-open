@@ -390,6 +390,22 @@
     }
   },
   "channels_smazCompression": "Стиснення SMAZ",
+  "channels_cyr2latCompression": "Стиснення Cyr2Lat",
+  "channels_cyr2latCompressionDscr": "Замінює деякі кириличні символи на латиницю при відправці.",
+  "channels_cyr2latSettingsHeading": "Налаштування Cyr2Lat",
+  "channels_cyr2latSettingsSubheading": "Список замін",
+  "channels_cyr2latSettingsDscr": "Редагувати JSON-конфігурацію заміни символів",
+  "channels_cyr2latSettingsDialogHint": "JSON-карта замін",
+  "channels_cyr2latSettingsDialogWrongJSON": "Некоректний JSON: {error}",
+  "settings_cyr2latProfileAdd": "Додати профіль Cyr2Lat",
+  "settings_cyr2latProfileName": "Назва профілю",
+  "settings_cyr2latProfileNameEmpty": "Назва профілю не може бути порожньою",
+  "settings_cyr2latProfileAdded": "Профіль успішно додано",
+  "settings_cyr2latProfileUpdated": "Профіль успішно оновлено",
+  "settings_cyr2latProfileEdit": "Редагувати профіль Cyr2Lat",
+  "settings_cyr2latProfileDelete": "Видалити профіль Cyr2Lat",
+  "settings_cyr2latProfileDeleted": "Профіль успішно видалено",
+  "settings_cyr2latProfileDeleteDscr": "Ви впевнені, що хочете видалити профіль \"{name}\"?",
   "channels_channelUpdated": "Канал «{name}» оновлено",
   "@channels_channelUpdated": {
     "placeholders": {

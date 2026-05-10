@@ -387,6 +387,22 @@
     }
   },
   "channels_smazCompression": "Kompresija SMAZ",
+  "channels_cyr2latCompression": "Kompresija Cyr2Lat",
+  "channels_cyr2latCompressionDscr": "Pri pošiljanju nekatere cirilice nadomesti z latiničnimi.",
+  "channels_cyr2latSettingsHeading": "Nastavitve Cyr2Lat",
+  "channels_cyr2latSettingsSubheading": "Seznam zamenjav",
+  "channels_cyr2latSettingsDscr": "Uredi JSON-konfiguracijo zamenjav znakov",
+  "channels_cyr2latSettingsDialogHint": "JSON-tabela zamenjav",
+  "channels_cyr2latSettingsDialogWrongJSON": "Nepravilen JSON: {error}",
+  "settings_cyr2latProfileAdd": "Dodaj profil Cyr2Lat",
+  "settings_cyr2latProfileName": "Ime profila",
+  "settings_cyr2latProfileNameEmpty": "Ime profila ne sme biti prazno",
+  "settings_cyr2latProfileAdded": "Profil je bil uspešno dodan",
+  "settings_cyr2latProfileUpdated": "Profil je bil uspešno posodobljen",
+  "settings_cyr2latProfileEdit": "Uredi profil Cyr2Lat",
+  "settings_cyr2latProfileDelete": "Izbriši profil Cyr2Lat",
+  "settings_cyr2latProfileDeleted": "Profil je bil uspešno izbrisan",
+  "settings_cyr2latProfileDeleteDscr": "Ali res želite izbrisati profil \"{name}\"?",
   "channels_channelUpdated": "Kanal {name} je bil posodobljen",
   "@channels_channelUpdated": {
     "placeholders": {

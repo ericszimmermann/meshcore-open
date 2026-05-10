@@ -397,6 +397,22 @@
     }
   },
   "channels_smazCompression": "Kompresja SMAZ",
+  "channels_cyr2latCompression": "Kompresja Cyr2Lat",
+  "channels_cyr2latCompressionDscr": "Zastępuje niektóre znaki cyrylicy alfabetem łacińskim podczas wysyłania.",
+  "channels_cyr2latSettingsHeading": "Ustawienia Cyr2Lat",
+  "channels_cyr2latSettingsSubheading": "Lista zamian",
+  "channels_cyr2latSettingsDscr": "Edytuj konfigurację JSON zamiany znaków",
+  "channels_cyr2latSettingsDialogHint": "Mapa zamian JSON",
+  "channels_cyr2latSettingsDialogWrongJSON": "Nieprawidłowy JSON: {error}",
+  "settings_cyr2latProfileAdd": "Dodaj profil Cyr2Lat",
+  "settings_cyr2latProfileName": "Nazwa profilu",
+  "settings_cyr2latProfileNameEmpty": "Nazwa profilu nie może być pusta",
+  "settings_cyr2latProfileAdded": "Profil dodano pomyślnie",
+  "settings_cyr2latProfileUpdated": "Profil został pomyślnie zaktualizowany",
+  "settings_cyr2latProfileEdit": "Edytuj profil Cyr2Lat",
+  "settings_cyr2latProfileDelete": "Usuń profil Cyr2Lat",
+  "settings_cyr2latProfileDeleted": "Profil został pomyślnie usunięty",
+  "settings_cyr2latProfileDeleteDscr": "Czy na pewno chcesz usunąć profil \"{name}\"?",
   "channels_channelUpdated": "Kanał \"{name}\" został zaktualizowany",
   "@channels_channelUpdated": {
     "placeholders": {

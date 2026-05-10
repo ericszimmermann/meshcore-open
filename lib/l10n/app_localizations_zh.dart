@@ -1105,8 +1105,60 @@ class AppLocalizationsZh extends AppLocalizations {
   String get channels_smazCompression => 'SMAZ 压缩';
 
   @override
+  String get channels_cyr2latCompression => 'Cyr2Lat 压缩';
+
+  @override
+  String get channels_cyr2latCompressionDscr => '发送时将一些西里尔字符替换为拉丁字符。';
+
+  @override
+  String get channels_cyr2latSettingsHeading => 'Cyr2Lat 設定';
+
+  @override
+  String get channels_cyr2latSettingsSubheading => '替換清單';
+
+  @override
+  String get channels_cyr2latSettingsDscr => '編輯 JSON 字元替換設定檔';
+
+  @override
+  String get channels_cyr2latSettingsDialogHint => 'JSON 替換映射表';
+
+  @override
+  String channels_cyr2latSettingsDialogWrongJSON(Object error) {
+    return 'JSON 格式錯誤：$error';
+  }
+
+  @override
   String channels_channelUpdated(String name) {
     return '频道 \"$name\" 已更新';
+  }
+
+  @override
+  String get settings_cyr2latProfileAdd => '新增 Cyr2Lat 設定檔';
+
+  @override
+  String get settings_cyr2latProfileName => '設定檔名稱';
+
+  @override
+  String get settings_cyr2latProfileNameEmpty => '設定檔名稱不能為空';
+
+  @override
+  String get settings_cyr2latProfileAdded => '設定檔已成功新增';
+
+  @override
+  String get settings_cyr2latProfileUpdated => '設定檔已成功更新';
+
+  @override
+  String get settings_cyr2latProfileEdit => '編輯 Cyr2Lat 設定檔';
+
+  @override
+  String get settings_cyr2latProfileDelete => '刪除 Cyr2Lat 設定檔';
+
+  @override
+  String get settings_cyr2latProfileDeleted => '設定檔已成功刪除';
+
+  @override
+  String settings_cyr2latProfileDeleteDscr(String name) {
+    return '您確定要刪除設定檔 \"$name\" 嗎？';
   }
 
   @override

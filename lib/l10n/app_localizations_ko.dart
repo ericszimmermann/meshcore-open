@@ -1118,8 +1118,60 @@ class AppLocalizationsKo extends AppLocalizations {
   String get channels_smazCompression => 'SMAZ 압축';
 
   @override
+  String get channels_cyr2latCompression => 'Cyr2Lat 압축';
+
+  @override
+  String get channels_cyr2latCompressionDscr => '보낼 때 일부 키릴 문자를 라틴 문자로 바꿉니다.';
+
+  @override
+  String get channels_cyr2latSettingsHeading => 'Cyr2Lat 설정';
+
+  @override
+  String get channels_cyr2latSettingsSubheading => '변환 목록';
+
+  @override
+  String get channels_cyr2latSettingsDscr => '문자 변환 JSON 구성 편집';
+
+  @override
+  String get channels_cyr2latSettingsDialogHint => 'JSON 변환 맵';
+
+  @override
+  String channels_cyr2latSettingsDialogWrongJSON(Object error) {
+    return '잘못된 JSON: $error';
+  }
+
+  @override
   String channels_channelUpdated(String name) {
     return '채널 \"$name\"이 업데이트되었습니다.';
+  }
+
+  @override
+  String get settings_cyr2latProfileAdd => 'Cyr2Lat 프로필 추가';
+
+  @override
+  String get settings_cyr2latProfileName => '프로필 이름';
+
+  @override
+  String get settings_cyr2latProfileNameEmpty => '프로필 이름은 비워둘 수 없습니다';
+
+  @override
+  String get settings_cyr2latProfileAdded => '프로필이 성공적으로 추가되었습니다';
+
+  @override
+  String get settings_cyr2latProfileUpdated => '프로필이 성공적으로 업데이트되었습니다';
+
+  @override
+  String get settings_cyr2latProfileEdit => 'Cyr2Lat 프로필 편집';
+
+  @override
+  String get settings_cyr2latProfileDelete => 'Cyr2Lat 프로필 삭제';
+
+  @override
+  String get settings_cyr2latProfileDeleted => '프로필이 성공적으로 삭제되었습니다';
+
+  @override
+  String settings_cyr2latProfileDeleteDscr(String name) {
+    return '\"$name\" 프로필을 삭제하시겠습니까?';
   }
 
   @override

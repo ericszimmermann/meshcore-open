@@ -1182,8 +1182,64 @@ class AppLocalizationsFr extends AppLocalizations {
   String get channels_smazCompression => 'Compression SMAZ';
 
   @override
+  String get channels_cyr2latCompression => 'Compression Cyr2Lat';
+
+  @override
+  String get channels_cyr2latCompressionDscr =>
+      'Remplace certains caractères cyrilliques par des caractères latins lors de l\'envoi.';
+
+  @override
+  String get channels_cyr2latSettingsHeading => 'Paramètres Cyr2Lat';
+
+  @override
+  String get channels_cyr2latSettingsSubheading => 'Liste des remplacements';
+
+  @override
+  String get channels_cyr2latSettingsDscr =>
+      'Modifier la configuration JSON des remplacements de caractères';
+
+  @override
+  String get channels_cyr2latSettingsDialogHint =>
+      'Tableau de remplacement JSON';
+
+  @override
+  String channels_cyr2latSettingsDialogWrongJSON(Object error) {
+    return 'JSON incorrect : $error';
+  }
+
+  @override
   String channels_channelUpdated(String name) {
     return 'Le canal \"$name\" a été mis à jour';
+  }
+
+  @override
+  String get settings_cyr2latProfileAdd => 'Ajouter un profil Cyr2Lat';
+
+  @override
+  String get settings_cyr2latProfileName => 'Nom du profil';
+
+  @override
+  String get settings_cyr2latProfileNameEmpty =>
+      'Le nom du profil ne peut pas être vide';
+
+  @override
+  String get settings_cyr2latProfileAdded => 'Profil ajouté avec succès';
+
+  @override
+  String get settings_cyr2latProfileUpdated => 'Profil mis à jour avec succès';
+
+  @override
+  String get settings_cyr2latProfileEdit => 'Modifier le profil Cyr2Lat';
+
+  @override
+  String get settings_cyr2latProfileDelete => 'Supprimer le profil Cyr2Lat';
+
+  @override
+  String get settings_cyr2latProfileDeleted => 'Profil supprimé avec succès';
+
+  @override
+  String settings_cyr2latProfileDeleteDscr(String name) {
+    return 'Êtes-vous sûr de vouloir supprimer le profil \"$name\"?';
   }
 
   @override

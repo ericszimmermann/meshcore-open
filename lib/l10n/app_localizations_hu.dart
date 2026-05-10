@@ -1182,8 +1182,63 @@ class AppLocalizationsHu extends AppLocalizations {
   String get channels_smazCompression => 'SMAZ kompresszió';
 
   @override
+  String get channels_cyr2latCompression => 'Cyr2Lat kompresszió';
+
+  @override
+  String get channels_cyr2latCompressionDscr =>
+      'Néhány Cirill betűt Latin betűkkel helyettesít küldéskor.';
+
+  @override
+  String get channels_cyr2latSettingsHeading => 'Cyr2Lat beállítások';
+
+  @override
+  String get channels_cyr2latSettingsSubheading => 'Helyettesítési lista';
+
+  @override
+  String get channels_cyr2latSettingsDscr =>
+      'A karakterhelyettesítési JSON-konfiguráció szerkesztése';
+
+  @override
+  String get channels_cyr2latSettingsDialogHint => 'JSON-csere táblázat';
+
+  @override
+  String channels_cyr2latSettingsDialogWrongJSON(Object error) {
+    return 'Hibás JSON: $error';
+  }
+
+  @override
   String channels_channelUpdated(String name) {
     return 'A $name csatorna frissítve';
+  }
+
+  @override
+  String get settings_cyr2latProfileAdd => 'Cyr2Lat-profil hozzáadása';
+
+  @override
+  String get settings_cyr2latProfileName => 'Profil neve';
+
+  @override
+  String get settings_cyr2latProfileNameEmpty => 'A profil neve nem lehet üres';
+
+  @override
+  String get settings_cyr2latProfileAdded => 'A profil hozzáadása sikeres';
+
+  @override
+  String get settings_cyr2latProfileUpdated => 'A profil frissítése sikeres';
+
+  @override
+  String get settings_cyr2latProfileEdit => 'Cyr2Lat profil szerkesztése';
+
+  @override
+  String get settings_cyr2latProfileDelete => 'Cyr2Lat profil törlése';
+
+  @override
+  String get settings_cyr2latProfileDeleted =>
+      'A profil törlése sikeresen megtörtént';
+
+  @override
+  String settings_cyr2latProfileDeleteDscr(String name) {
+    return 'Biztosan törölni szeretné a \"$name\" profilt?';
   }
 
   @override

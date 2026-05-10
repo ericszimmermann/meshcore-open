@@ -1157,8 +1157,63 @@ class AppLocalizationsSv extends AppLocalizations {
   String get channels_smazCompression => 'SMAZ-komprimering';
 
   @override
+  String get channels_cyr2latCompression => 'Cyr2Lat-komprimering';
+
+  @override
+  String get channels_cyr2latCompressionDscr =>
+      'Ersätter vissa kyrilliska tecken med latinska tecken när du skickar.';
+
+  @override
+  String get channels_cyr2latSettingsHeading => 'Inställningar för Cyr2Lat';
+
+  @override
+  String get channels_cyr2latSettingsSubheading => 'Ersättningslista';
+
+  @override
+  String get channels_cyr2latSettingsDscr =>
+      'Redigera JSON-konfigurationen för teckenersättning';
+
+  @override
+  String get channels_cyr2latSettingsDialogHint => 'JSON-ersättningskarta';
+
+  @override
+  String channels_cyr2latSettingsDialogWrongJSON(Object error) {
+    return 'Felaktig JSON: $error';
+  }
+
+  @override
   String channels_channelUpdated(String name) {
     return 'Kanalen \"$name\" har uppdaterats';
+  }
+
+  @override
+  String get settings_cyr2latProfileAdd => 'Lägg till Cyr2Lat-profil';
+
+  @override
+  String get settings_cyr2latProfileName => 'Profilnamn';
+
+  @override
+  String get settings_cyr2latProfileNameEmpty =>
+      'Profilnamnet får inte vara tomt';
+
+  @override
+  String get settings_cyr2latProfileAdded => 'Profilen har lagts till';
+
+  @override
+  String get settings_cyr2latProfileUpdated => 'Profilen har uppdaterats';
+
+  @override
+  String get settings_cyr2latProfileEdit => 'Redigera Cyr2Lat-profil';
+
+  @override
+  String get settings_cyr2latProfileDelete => 'Ta bort Cyr2Lat-profil';
+
+  @override
+  String get settings_cyr2latProfileDeleted => 'Profilen har tagits bort';
+
+  @override
+  String settings_cyr2latProfileDeleteDscr(String name) {
+    return 'Är du säker på att du vill ta bort profilen \"$name\"?';
   }
 
   @override

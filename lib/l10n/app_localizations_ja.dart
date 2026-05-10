@@ -1123,8 +1123,60 @@ class AppLocalizationsJa extends AppLocalizations {
   String get channels_smazCompression => 'SMAZ 圧縮';
 
   @override
+  String get channels_cyr2latCompression => 'Cyr2Lat 圧縮';
+
+  @override
+  String get channels_cyr2latCompressionDscr => '送信時に一部のキリル文字をラテン文字に置き換えます。';
+
+  @override
+  String get channels_cyr2latSettingsHeading => 'cyr2latの設定';
+
+  @override
+  String get channels_cyr2latSettingsSubheading => '置換リスト';
+
+  @override
+  String get channels_cyr2latSettingsDscr => '文字置換のJSON設定を編集する';
+
+  @override
+  String get channels_cyr2latSettingsDialogHint => 'JSON置換マップ';
+
+  @override
+  String channels_cyr2latSettingsDialogWrongJSON(Object error) {
+    return '不正なJSON: $error';
+  }
+
+  @override
   String channels_channelUpdated(String name) {
     return 'チャンネル「$name」が更新されました';
+  }
+
+  @override
+  String get settings_cyr2latProfileAdd => 'Cyr2Latプロファイルの追加';
+
+  @override
+  String get settings_cyr2latProfileName => 'プロファイル名';
+
+  @override
+  String get settings_cyr2latProfileNameEmpty => 'プロファイル名は空にできません';
+
+  @override
+  String get settings_cyr2latProfileAdded => 'プロファイルが正常に追加されました';
+
+  @override
+  String get settings_cyr2latProfileUpdated => 'プロファイルの更新に成功しました';
+
+  @override
+  String get settings_cyr2latProfileEdit => 'Cyr2Latプロファイルを編集';
+
+  @override
+  String get settings_cyr2latProfileDelete => 'Cyr2Latプロファイルを削除';
+
+  @override
+  String get settings_cyr2latProfileDeleted => 'プロファイルの削除に成功しました';
+
+  @override
+  String settings_cyr2latProfileDeleteDscr(String name) {
+    return 'プロファイル \"$name\" を削除してもよろしいですか？';
   }
 
   @override

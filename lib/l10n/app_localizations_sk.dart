@@ -1166,8 +1166,64 @@ class AppLocalizationsSk extends AppLocalizations {
   String get channels_smazCompression => 'Odstránenie kompresie SMAZ';
 
   @override
+  String get channels_cyr2latCompression => 'Odstránenie kompresie Cyr2Lat';
+
+  @override
+  String get channels_cyr2latCompressionDscr =>
+      'Pri odosielaní nahradí niektoré znaky cyriliky latinskými znakmi.';
+
+  @override
+  String get channels_cyr2latSettingsHeading => 'Nastavenia Cyr2Lat';
+
+  @override
+  String get channels_cyr2latSettingsSubheading => 'Zoznam nahradení';
+
+  @override
+  String get channels_cyr2latSettingsDscr =>
+      'Upravte konfiguráciu JSON pre nahradenie znakov';
+
+  @override
+  String get channels_cyr2latSettingsDialogHint => 'JSON mapa nahradení';
+
+  @override
+  String channels_cyr2latSettingsDialogWrongJSON(Object error) {
+    return 'Nesprávny JSON: $error';
+  }
+
+  @override
   String channels_channelUpdated(String name) {
     return 'Kanál \"$name\" bol aktualizovaný';
+  }
+
+  @override
+  String get settings_cyr2latProfileAdd => 'Pridať profil Cyr2Lat';
+
+  @override
+  String get settings_cyr2latProfileName => 'Názov profilu';
+
+  @override
+  String get settings_cyr2latProfileNameEmpty =>
+      'Názov profilu nesmie byť prázdny';
+
+  @override
+  String get settings_cyr2latProfileAdded => 'Profil bol úspešne pridaný';
+
+  @override
+  String get settings_cyr2latProfileUpdated =>
+      'Profil bol úspešne aktualizovaný';
+
+  @override
+  String get settings_cyr2latProfileEdit => 'Upraviť profil Cyr2Lat';
+
+  @override
+  String get settings_cyr2latProfileDelete => 'Odstrániť profil Cyr2Lat';
+
+  @override
+  String get settings_cyr2latProfileDeleted => 'Profil bol úspešne odstránený';
+
+  @override
+  String settings_cyr2latProfileDeleteDscr(String name) {
+    return 'Naozaj chcete odstrániť profil \"$name\"?';
   }
 
   @override
