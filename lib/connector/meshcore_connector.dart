@@ -1072,7 +1072,7 @@ class MeshCoreConnector extends ChangeNotifier {
     }
   }
 
-  Future<void> _translateIncomingContactMessage(
+  Future<TranslationResult?> _translateIncomingContactMessage(
     String contactKeyHex,
     Message message,
   ) async {
@@ -1084,7 +1084,7 @@ class MeshCoreConnector extends ChangeNotifier {
             isCli: message.isCli,
             isOutgoing: message.isOutgoing,
           )) {
-        return;
+        return null;
       }
       final targetLanguageCode = service.resolvedIncomingLanguageCode(
         _appSettingsService?.settings.languageOverride,
@@ -1094,7 +1094,7 @@ class MeshCoreConnector extends ChangeNotifier {
         targetLanguageCode: targetLanguageCode,
       );
       if (result == null) {
-        return;
+        return null;
       }
       final translated = result.status == MessageTranslationStatus.completed
           ? result.translatedText
@@ -1109,12 +1109,14 @@ class MeshCoreConnector extends ChangeNotifier {
           translationModelId: result.modelId,
         ),
       );
+      return result;
     } catch (error) {
       appLogger.warn('Translation failed for contact message: $error');
+      return null;
     }
   }
 
-  Future<void> _translateIncomingChannelMessage(
+  Future<TranslationResult?> _translateIncomingChannelMessage(
     int channelIndex,
     ChannelMessage message,
   ) async {
@@ -1126,7 +1128,7 @@ class MeshCoreConnector extends ChangeNotifier {
             isCli: false,
             isOutgoing: message.isOutgoing,
           )) {
-        return;
+        return null;
       }
       final targetLanguageCode = service.resolvedIncomingLanguageCode(
         _appSettingsService?.settings.languageOverride,
@@ -1136,11 +1138,16 @@ class MeshCoreConnector extends ChangeNotifier {
         targetLanguageCode: targetLanguageCode,
       );
       if (result == null) {
-        return;
+        return null;
       }
-      final translated = result.status == MessageTranslationStatus.completed
+      var translated = result.status == MessageTranslationStatus.completed
           ? result.translatedText
           : null;
+      // Strip replyInfo prefix from translated text to match stored message.text
+      if (translated != null) {
+        final regex = RegExp(r'^@\[[^\]]+\]\s+', dotAll: true);
+        translated = translated.replaceFirst(regex, '');
+      }
       _updateStoredChannelMessage(
         channelIndex,
         message.messageId,
@@ -1151,8 +1158,10 @@ class MeshCoreConnector extends ChangeNotifier {
           translationModelId: result.modelId,
         ),
       );
+      return result;
     } catch (error) {
       appLogger.warn('Translation failed for channel message: $error');
+      return null;
     }
   }
 
@@ -4394,9 +4403,11 @@ class MeshCoreConnector extends ChangeNotifier {
         }
       }
       _addMessage(message.senderKeyHex, message);
+      TranslationResult? translationResult;
       if (!message.isOutgoing) {
-        unawaited(
-          _translateIncomingContactMessage(message.senderKeyHex, message),
+        translationResult = await _translateIncomingContactMessage(
+          message.senderKeyHex,
+          message,
         );
       }
       _maybeIncrementContactUnread(message);
@@ -4412,10 +4423,9 @@ class MeshCoreConnector extends ChangeNotifier {
           final msg = message;
           if (contact?.type == advTypeChat) {
             unawaited(() async {
-              final resolvedText = await _maybeTranslateForNotification(
-                msg.text,
-                isCli: msg.isCli,
-              );
+              final resolvedText = translationResult != null
+                  ? translationResult.translatedText.trim()
+                  : msg.text;
               await _notificationService.showMessageNotification(
                 contactName: contact?.name ?? 'Unknown',
                 message: resolvedText,
@@ -4429,10 +4439,9 @@ class MeshCoreConnector extends ChangeNotifier {
                 ? msg.text.substring(4)
                 : msg.text;
             unawaited(() async {
-              final resolvedText = await _maybeTranslateForNotification(
-                bodyText,
-                isCli: msg.isCli,
-              );
+              final resolvedText = translationResult != null
+                  ? translationResult.translatedText.trim()
+                  : bodyText;
               await _notificationService.showMessageNotification(
                 contactName: contact?.name ?? 'Unknown Room',
                 message: resolvedText,
@@ -4708,6 +4717,7 @@ class MeshCoreConnector extends ChangeNotifier {
   void _maybeNotifyChannelMessage(
     ChannelMessage message, {
     String? channelName,
+    TranslationResult? translationResult,
   }) {
     if (message.isOutgoing || _appSettingsService == null) return;
     final channelIndex = message.channelIndex;
@@ -4721,12 +4731,11 @@ class MeshCoreConnector extends ChangeNotifier {
     final label = channelName ?? _channelDisplayName(channelIndex);
     if (_appSettingsService!.isChannelMuted(label)) return;
 
-    // Translate channel notification text if enabled
+    // Reuse translation result from earlier translation, or use original text
+    final resolvedText = translationResult != null
+        ? translationResult.translatedText.trim()
+        : message.text;
     unawaited(() async {
-      final resolvedText = await _maybeTranslateForNotification(
-        message.text,
-        isCli: false,
-      );
       await _notificationService.showChannelMessageNotification(
         channelName: label,
         senderName: message.senderName,
@@ -4737,41 +4746,7 @@ class MeshCoreConnector extends ChangeNotifier {
     }());
   }
 
-  Future<String> _maybeTranslateForNotification(
-    String text, {
-    required bool isCli,
-  }) async {
-    final service = _translationService;
-    if (service == null) return text;
-    try {
-      if (!service.shouldTranslateIncoming(
-        text: text,
-        isCli: isCli,
-        isOutgoing: false,
-      )) {
-        return text;
-      }
-      final targetLanguageCode = service.resolvedIncomingLanguageCode(
-        _appSettingsService?.settings.languageOverride,
-      );
-      if (targetLanguageCode == null || targetLanguageCode.isEmpty) {
-        return text;
-      }
-      final result = await service.translateIncomingText(
-        text: text,
-        targetLanguageCode: targetLanguageCode,
-      );
-      final translated = result?.translatedText.trim();
-      if (translated != null && translated.isNotEmpty) {
-        return translated;
-      }
-    } catch (_) {
-      // Fallback to original text on any error
-    }
-    return text;
-  }
-
-  void _handleIncomingChannelMessage(Uint8List frame) {
+  void _handleIncomingChannelMessage(Uint8List frame) async {
     final parsed = ChannelMessage.fromFrame(frame);
     if (parsed != null && parsed.channelIndex != null) {
       if (_shouldDropSelfChannelMessage(parsed.senderName, parsed.pathBytes)) {
@@ -4790,15 +4765,20 @@ class MeshCoreConnector extends ChangeNotifier {
         pathBytes: message.pathBytes,
       );
       final isNew = _addChannelMessage(message.channelIndex!, message);
+      TranslationResult? translationResult;
       if (isNew && !message.isOutgoing) {
-        unawaited(
-          _translateIncomingChannelMessage(message.channelIndex!, message),
+        translationResult = await _translateIncomingChannelMessage(
+          message.channelIndex!,
+          message,
         );
       }
       _maybeIncrementChannelUnread(message, isNew: isNew);
       notifyListeners();
       if (isNew) {
-        _maybeNotifyChannelMessage(message);
+        _maybeNotifyChannelMessage(
+          message,
+          translationResult: translationResult,
+        );
       }
       _handleQueuedMessageReceived();
     } else if (_isSyncingQueuedMessages) {
@@ -4806,7 +4786,7 @@ class MeshCoreConnector extends ChangeNotifier {
     }
   }
 
-  void _handleLogRxData(Uint8List frame) {
+  void _handleLogRxData(Uint8List frame) async {
     if (frame.length < 4) return;
     try {
       final reader = BufferReader(frame);
@@ -4874,8 +4854,12 @@ class MeshCoreConnector extends ChangeNotifier {
             pathBytes: message.pathBytes,
           );
           final isNew = _addChannelMessage(channel.index, message);
+          TranslationResult? translationResult;
           if (isNew && !message.isOutgoing) {
-            unawaited(_translateIncomingChannelMessage(channel.index, message));
+            translationResult = await _translateIncomingChannelMessage(
+              channel.index,
+              message,
+            );
           }
           _maybeIncrementChannelUnread(message, isNew: isNew);
           notifyListeners();
@@ -4883,7 +4867,11 @@ class MeshCoreConnector extends ChangeNotifier {
             final label = channel.name.isEmpty
                 ? 'Channel ${channel.index}'
                 : channel.name;
-            _maybeNotifyChannelMessage(message, channelName: label);
+            _maybeNotifyChannelMessage(
+              message,
+              channelName: label,
+              translationResult: translationResult,
+            );
           }
           return;
         } catch (e) {
