@@ -29,7 +29,9 @@ enum MapRasterSourcePreset {
 
 enum MapRasterEndpointPreset {
   standard('standard'),
-  eu('eu');
+  standard2x('standard_2x'),
+  eu('eu'),
+  eu2x('eu_2x');
 
   const MapRasterEndpointPreset(this.id);
 
@@ -67,12 +69,14 @@ class MapRasterEndpointDefinition {
     required this.label,
     required this.description,
     required this.host,
+    this.scaleSuffix = '',
   });
 
   final String id;
   final String label;
   final String description;
   final String host;
+  final String scaleSuffix;
 }
 
 class MapRasterSourceCatalog {
@@ -146,20 +150,44 @@ class MapRasterEndpointCatalog {
         description: 'Global CDN routing to the fastest Stadia server',
         host: 'tiles.stadiamaps.com',
       );
+  static const MapRasterEndpointDefinition standard2x =
+      MapRasterEndpointDefinition(
+        id: 'standard_2x',
+        label: 'Standard Endpoint (@2x)',
+        description: 'Global Stadia endpoint with HiDPI raster tiles',
+        host: 'tiles.stadiamaps.com',
+        scaleSuffix: '@2x',
+      );
   static const MapRasterEndpointDefinition eu = MapRasterEndpointDefinition(
     id: 'eu',
     label: 'EU Endpoint',
     description: 'Route tile requests to Stadia EU servers',
     host: 'tiles-eu.stadiamaps.com',
   );
+  static const MapRasterEndpointDefinition eu2x = MapRasterEndpointDefinition(
+    id: 'eu_2x',
+    label: 'EU Endpoint (@2x)',
+    description: 'EU Stadia endpoint with HiDPI raster tiles',
+    host: 'tiles-eu.stadiamaps.com',
+    scaleSuffix: '@2x',
+  );
 
-  static const List<MapRasterEndpointDefinition> presets = [standard, eu];
+  static const List<MapRasterEndpointDefinition> presets = [
+    standard,
+    standard2x,
+    eu,
+    eu2x,
+  ];
 
   static MapRasterEndpointDefinition fromSettings(AppSettings settings) {
     final preset = MapRasterEndpointPreset.fromId(settings.mapTileEndpointId);
     switch (preset) {
+      case MapRasterEndpointPreset.standard2x:
+        return standard2x;
       case MapRasterEndpointPreset.eu:
         return eu;
+      case MapRasterEndpointPreset.eu2x:
+        return eu2x;
       case MapRasterEndpointPreset.standard:
         return standard;
     }
@@ -494,7 +522,8 @@ class MapTileCacheService extends ChangeNotifier {
     }
     final endpoint = MapRasterEndpointCatalog.fromSettings(settings);
     final apiKey = settings.mapTileApiKey?.trim();
-    final base = 'https://${endpoint.host}/tiles/${source.id}/{z}/{x}/{y}.png';
+    final base =
+        'https://${endpoint.host}/tiles/${source.id}/{z}/{x}/{y}${endpoint.scaleSuffix}.png';
     if (apiKey == null || apiKey.isEmpty) {
       return base;
     }
@@ -513,7 +542,8 @@ class MapTileCacheService extends ChangeNotifier {
       final zoom = int.tryParse(segments[segments.length - 3]);
       final x = int.tryParse(segments[segments.length - 2]);
       final ySegment = segments.last;
-      final y = int.tryParse(ySegment.split('.').first);
+      final yString = ySegment.split('.').first.replaceAll('@2x', '');
+      final y = int.tryParse(yString);
 
       if (zoom == null || x == null || y == null) {
         return null;
