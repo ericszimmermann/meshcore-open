@@ -190,6 +190,33 @@ class MapTileCacheResult {
   });
 }
 
+class CachedTileInfo {
+  final String key;
+  final String host;
+  final String sourceId;
+  final int zoom;
+  final int x;
+  final int y;
+  final int length;
+
+  const CachedTileInfo({
+    required this.key,
+    required this.host,
+    required this.sourceId,
+    required this.zoom,
+    required this.x,
+    required this.y,
+    required this.length,
+  });
+}
+
+class CachedTileInventory {
+  final List<CachedTileInfo> tiles;
+  final int totalBytes;
+
+  const CachedTileInventory({required this.tiles, required this.totalBytes});
+}
+
 class MapTileCacheService extends ChangeNotifier {
   static const String cacheKey = 'map_tile_cache';
   static const String userAgentPackageName = 'com.meshcore.open';
@@ -224,12 +251,106 @@ class MapTileCacheService extends ChangeNotifier {
 
   String get urlTemplate => _buildUrlTemplate(appSettingsService.settings);
 
+  CacheManager get _concreteCacheManager => cacheManager as CacheManager;
+
   Map<String, String> get defaultHeaders => {
     'User-Agent': 'flutter_map ($userAgentPackageName)',
   };
 
   Future<void> clearCache() async {
     await cacheManager.emptyCache();
+  }
+
+  Future<CachedTileInventory> getCachedTileInventory() async {
+    final repo = _concreteCacheManager.config.repo;
+    await repo.open();
+    final objects = await repo.getAllObjects();
+    final tiles = <CachedTileInfo>[];
+    int totalBytes = 0;
+
+    for (final object in objects) {
+      totalBytes += object.length ?? 0;
+      final tile = _parseCachedTile(object);
+      if (tile != null) {
+        tiles.add(tile);
+      }
+    }
+
+    return CachedTileInventory(tiles: tiles, totalBytes: totalBytes);
+  }
+
+  List<CachedTileInfo> filterTilesForActiveSource(
+    Iterable<CachedTileInfo> tiles,
+  ) {
+    final activeSource = source;
+    if (!activeSource.isStadia) {
+      return tiles
+          .where(
+            (tile) =>
+                tile.sourceId == MapRasterSourceCatalog.osmStandard.id &&
+                tile.host == 'tile.openstreetmap.org',
+          )
+          .toList();
+    }
+
+    final activeEndpoint = endpoint;
+    return tiles
+        .where(
+          (tile) =>
+              tile.sourceId == activeSource.id &&
+              tile.host == activeEndpoint.host,
+        )
+        .toList();
+  }
+
+  int countTilesForBounds(
+    Iterable<CachedTileInfo> tiles, {
+    LatLngBounds? bounds,
+    required int minZoom,
+    required int maxZoom,
+  }) {
+    if (bounds == null) return 0;
+    final safeMin = math.min(minZoom, maxZoom);
+    final safeMax = math.max(minZoom, maxZoom);
+    return tiles.where((tile) {
+      if (tile.zoom < safeMin || tile.zoom > safeMax) {
+        return false;
+      }
+      final tileBounds = _tileBoundsForTile(tile.x, tile.y, tile.zoom);
+      return _boundsIntersect(bounds, tileBounds);
+    }).length;
+  }
+
+  List<Polygon> buildCachedTilePolygons(
+    Iterable<CachedTileInfo> tiles, {
+    required int zoom,
+    LatLngBounds? visibleBounds,
+    int limit = 250,
+  }) {
+    final polygons = <Polygon>[];
+    for (final tile in tiles) {
+      if (tile.zoom != zoom) continue;
+      final tileBounds = _tileBoundsForTile(tile.x, tile.y, tile.zoom);
+      if (visibleBounds != null &&
+          !_boundsIntersect(visibleBounds, tileBounds)) {
+        continue;
+      }
+      polygons.add(
+        Polygon(
+          points: [
+            tileBounds.northWest,
+            tileBounds.northEast,
+            tileBounds.southEast,
+            tileBounds.southWest,
+          ],
+          borderStrokeWidth: 0.6,
+          color: const Color(0x5532A852),
+          borderColor: const Color(0xCC2F8F46),
+        ),
+      );
+      if (polygons.length >= limit) break;
+    }
+    return polygons;
   }
 
   int estimateTileCount(LatLngBounds bounds, int minZoom, int maxZoom) {
@@ -381,6 +502,42 @@ class MapTileCacheService extends ChangeNotifier {
     return '$base?$query';
   }
 
+  CachedTileInfo? _parseCachedTile(CacheObject object) {
+    final uri = Uri.tryParse(object.key);
+    if (uri == null) return null;
+    final segments = uri.pathSegments;
+
+    if (segments.length >= 3 &&
+        segments[segments.length - 3].isNotEmpty &&
+        segments[segments.length - 2].isNotEmpty) {
+      final zoom = int.tryParse(segments[segments.length - 3]);
+      final x = int.tryParse(segments[segments.length - 2]);
+      final ySegment = segments.last;
+      final y = int.tryParse(ySegment.split('.').first);
+
+      if (zoom == null || x == null || y == null) {
+        return null;
+      }
+
+      var sourceId = MapRasterSourceCatalog.osmStandard.id;
+      if (segments.length >= 5 && segments[0] == 'tiles') {
+        sourceId = segments[1];
+      }
+
+      return CachedTileInfo(
+        key: object.key,
+        host: uri.host,
+        sourceId: sourceId,
+        zoom: zoom,
+        x: x,
+        y: y,
+        length: object.length ?? 0,
+      );
+    }
+
+    return null;
+  }
+
   int _lonToTileX(double lon, int zoom, int maxIndex) {
     final n = 1 << zoom;
     final value = ((lon + 180.0) / 360.0 * n).floor();
@@ -399,6 +556,32 @@ class MapTileCacheService extends ChangeNotifier {
   double _clampLatitude(double lat) {
     const maxLat = 85.05112878;
     return lat.clamp(-maxLat, maxLat);
+  }
+
+  LatLngBounds _tileBoundsForTile(int x, int y, int zoom) {
+    return LatLngBounds.unsafe(
+      north: _tileYToLat(y, zoom),
+      south: _tileYToLat(y + 1, zoom),
+      east: _tileXToLon(x + 1, zoom),
+      west: _tileXToLon(x, zoom),
+    );
+  }
+
+  double _tileXToLon(int x, int zoom) {
+    final n = 1 << zoom;
+    return x / n * 360.0 - 180.0;
+  }
+
+  double _tileYToLat(int y, int zoom) {
+    final n = math.pi - (2.0 * math.pi * y) / (1 << zoom);
+    return 180.0 / math.pi * math.atan(0.5 * (math.exp(n) - math.exp(-n)));
+  }
+
+  bool _boundsIntersect(LatLngBounds a, LatLngBounds b) {
+    return a.west <= b.east &&
+        a.east >= b.west &&
+        a.south <= b.north &&
+        a.north >= b.south;
   }
 
   String _buildTileUrl(int x, int y, int zoom, {required String urlTemplate}) {

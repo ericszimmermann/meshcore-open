@@ -31,6 +31,11 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
   bool _isDownloading = false;
   int _completedTiles = 0;
   int _failedTiles = 0;
+  List<CachedTileInfo> _cachedTiles = const [];
+  int _cachedTileBytes = 0;
+  bool _isLoadingCachedTiles = false;
+  double _overlayZoom = 2.0;
+  LatLngBounds? _visibleBounds;
 
   @override
   void initState() {
@@ -113,8 +118,10 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
       _minZoom = safeMin;
       _maxZoom = safeMax;
       _selectedBounds = bounds;
+      _visibleBounds = bounds;
     });
     _updateEstimate();
+    _refreshCachedTiles();
     if (bounds != null) {
       _mapController.fitCamera(
         CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(48)),
@@ -253,6 +260,8 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
             result.failed,
           )
         : context.l10n.mapCache_cachedTiles(result.downloaded);
+    await _refreshCachedTiles();
+    if (!mounted) return;
     showDismissibleSnackBar(context, content: Text(message));
   }
 
@@ -279,10 +288,35 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
     final cacheService = context.read<MapTileCacheService>();
     await cacheService.clearCache();
     if (!mounted) return;
+    await _refreshCachedTiles();
+    if (!mounted) return;
     showDismissibleSnackBar(
       context,
       content: Text(context.l10n.mapCache_offlineCacheCleared),
     );
+  }
+
+  Future<void> _refreshCachedTiles() async {
+    if (!mounted) return;
+    setState(() {
+      _isLoadingCachedTiles = true;
+    });
+    final cacheService = context.read<MapTileCacheService>();
+    final inventory = await cacheService.getCachedTileInventory();
+    if (!mounted) return;
+    setState(() {
+      _cachedTiles = inventory.tiles;
+      _cachedTileBytes = inventory.totalBytes;
+      _isLoadingCachedTiles = false;
+    });
+  }
+
+  String _formatBytes(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1024 * 1024) {
+      return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    }
+    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 
   @override
@@ -290,6 +324,25 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
     final tileCache = context.watch<MapTileCacheService>();
     final source = tileCache.source;
     final selectedBounds = _selectedBounds;
+    final activeCachedTiles = tileCache.filterTilesForActiveSource(
+      _cachedTiles,
+    );
+    final cachedInSelection = tileCache.countTilesForBounds(
+      activeCachedTiles,
+      bounds: selectedBounds,
+      minZoom: _minZoom,
+      maxZoom: _maxZoom,
+    );
+    final overlayPolygons = tileCache.buildCachedTilePolygons(
+      activeCachedTiles,
+      zoom: _overlayZoom.round().clamp(0, 19).toInt(),
+      visibleBounds: _visibleBounds,
+    );
+    final cacheSummary =
+        'Source: ${source.label}\n'
+        'Cached tiles for source: ${activeCachedTiles.length}\n'
+        'Cached in selected area/zoom: $cachedInSelection\n'
+        'Approx cache size: ${_formatBytes(_cachedTileBytes)}';
     final l10n = context.l10n;
     final isDesktop = _isDesktopPlatform(defaultTargetPlatform);
     final progressValue = _estimatedTiles == 0
@@ -326,6 +379,20 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                             )
                           : const KeyboardOptions.disabled(),
                     ),
+                    onPositionChanged: (camera, hasGesture) {
+                      final nextZoom = camera.zoom;
+                      final nextBounds = camera.visibleBounds;
+                      if (_overlayZoom != nextZoom ||
+                          _visibleBounds?.north != nextBounds.north ||
+                          _visibleBounds?.south != nextBounds.south ||
+                          _visibleBounds?.east != nextBounds.east ||
+                          _visibleBounds?.west != nextBounds.west) {
+                        setState(() {
+                          _overlayZoom = nextZoom;
+                          _visibleBounds = nextBounds;
+                        });
+                      }
+                    },
                   ),
                   children: [
                     TileLayer(
@@ -346,9 +413,26 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                           ),
                         ],
                       ),
+                    if (overlayPolygons.isNotEmpty)
+                      PolygonLayer(polygons: overlayPolygons),
                   ],
                 ),
                 if (isDesktop) _buildDesktopMapControls(),
+                Positioned(
+                  top: 12,
+                  left: isDesktop ? 84 : 12,
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(
+                        _isLoadingCachedTiles
+                            ? 'Loading cached tiles...'
+                            : 'Visible cached tiles at z${_overlayZoom.round()}: ${overlayPolygons.length}',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ),
+                ),
                 Positioned(
                   top: 12,
                   right: 12,
@@ -433,6 +517,22 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                           },
                   ),
                   Text(l10n.mapCache_estimatedTiles(_estimatedTiles)),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    key: ValueKey(
+                      '$cacheSummary|${activeCachedTiles.length}|$cachedInSelection|$_cachedTileBytes',
+                    ),
+                    initialValue: cacheSummary,
+                    readOnly: true,
+                    minLines: 4,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      labelText: _isLoadingCachedTiles
+                          ? 'Cached tiles'
+                          : 'Cached tile summary',
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
                   if (!source.allowsBulkDownload) ...[
                     const SizedBox(height: 8),
                     Text(
