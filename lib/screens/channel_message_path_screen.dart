@@ -441,7 +441,7 @@ class _ChannelMessagePathMapScreenState
       builder: (context, connector, _) {
         final settings = context.watch<AppSettingsService>().settings;
         final isImperial = settings.unitSystem == UnitSystem.imperial;
-        final tileCache = context.read<MapTileCacheService>();
+        final tileCache = context.watch<MapTileCacheService>();
         final primaryPath = _selectPrimaryPath(
           widget.message.pathBytes,
           widget.message.pathVariants,
@@ -559,7 +559,7 @@ class _ChannelMessagePathMapScreenState
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: kMapTileUrlTemplate,
+                      urlTemplate: tileCache.urlTemplate,
                       tileProvider: tileCache.tileProvider,
                       userAgentPackageName:
                           MapTileCacheService.userAgentPackageName,

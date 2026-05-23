@@ -535,7 +535,7 @@ class _PathTraceMapScreenState extends State<PathTraceMapScreen> {
       builder: (context, connector, _) {
         final settings = context.watch<AppSettingsService>().settings;
         final isImperial = settings.unitSystem == UnitSystem.imperial;
-        final tileCache = context.read<MapTileCacheService>();
+        final tileCache = context.watch<MapTileCacheService>();
 
         return Scaffold(
           appBar: AppBar(
@@ -909,7 +909,7 @@ class _PathTraceMapScreenState extends State<PathTraceMapScreen> {
       ),
       children: [
         TileLayer(
-          urlTemplate: kMapTileUrlTemplate,
+          urlTemplate: tileCache.urlTemplate,
           tileProvider: tileCache.tileProvider,
           userAgentPackageName: MapTileCacheService.userAgentPackageName,
           maxZoom: 19,

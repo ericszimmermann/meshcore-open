@@ -40,7 +40,9 @@ void main() async {
   final bleDebugLogService = BleDebugLogService();
   final appDebugLogService = AppDebugLogService();
   final backgroundService = BackgroundService();
-  final mapTileCacheService = MapTileCacheService();
+  final mapTileCacheService = MapTileCacheService(
+    appSettingsService: appSettingsService,
+  );
   final chatTextScaleService = ChatTextScaleService();
   final translationService = TranslationService(appSettingsService);
   final uiViewStateService = UiViewStateService();
@@ -172,7 +174,7 @@ class MeshCoreApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: translationService),
         ChangeNotifierProvider.value(value: uiViewStateService),
         Provider.value(value: storage),
-        Provider.value(value: mapTileCacheService),
+        ChangeNotifierProvider.value(value: mapTileCacheService),
         ChangeNotifierProvider.value(value: timeoutPredictionService),
       ],
       child: Consumer<AppSettingsService>(

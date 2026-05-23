@@ -91,6 +91,9 @@ class AppSettings {
   final Map<String, double>? mapCacheBounds;
   final int mapCacheMinZoom;
   final int mapCacheMaxZoom;
+  final String mapRasterSourceId;
+  final String mapTileEndpointId;
+  final String? mapTileApiKey;
   final bool notificationsEnabled;
   final bool notifyOnNewMessage;
   final bool notifyOnNewChannelMessage;
@@ -144,6 +147,9 @@ class AppSettings {
     this.mapCacheBounds,
     this.mapCacheMinZoom = 10,
     this.mapCacheMaxZoom = 15,
+    this.mapRasterSourceId = 'osm_standard',
+    this.mapTileEndpointId = 'standard',
+    this.mapTileApiKey,
     this.notificationsEnabled = true,
     this.notifyOnNewMessage = true,
     this.notifyOnNewChannelMessage = true,
@@ -204,6 +210,9 @@ class AppSettings {
       'map_cache_bounds': mapCacheBounds,
       'map_cache_min_zoom': mapCacheMinZoom,
       'map_cache_max_zoom': mapCacheMaxZoom,
+      'map_raster_source_id': mapRasterSourceId,
+      'map_tile_endpoint_id': mapTileEndpointId,
+      'map_tile_api_key': mapTileApiKey,
       'notifications_enabled': notificationsEnabled,
       'notify_on_new_message': notifyOnNewMessage,
       'notify_on_new_channel_message': notifyOnNewChannelMessage,
@@ -267,6 +276,10 @@ class AppSettings {
       ),
       mapCacheMinZoom: json['map_cache_min_zoom'] as int? ?? 10,
       mapCacheMaxZoom: json['map_cache_max_zoom'] as int? ?? 15,
+      mapRasterSourceId:
+          json['map_raster_source_id'] as String? ?? 'osm_standard',
+      mapTileEndpointId: json['map_tile_endpoint_id'] as String? ?? 'standard',
+      mapTileApiKey: json['map_tile_api_key'] as String?,
       notificationsEnabled: json['notifications_enabled'] as bool? ?? true,
       notifyOnNewMessage: json['notify_on_new_message'] as bool? ?? true,
       notifyOnNewChannelMessage:
@@ -374,6 +387,9 @@ class AppSettings {
     Object? mapCacheBounds = _unset,
     int? mapCacheMinZoom,
     int? mapCacheMaxZoom,
+    String? mapRasterSourceId,
+    String? mapTileEndpointId,
+    Object? mapTileApiKey = _unset,
     bool? notificationsEnabled,
     bool? notifyOnNewMessage,
     bool? notifyOnNewChannelMessage,
@@ -422,6 +438,11 @@ class AppSettings {
           : mapCacheBounds as Map<String, double>?,
       mapCacheMinZoom: mapCacheMinZoom ?? this.mapCacheMinZoom,
       mapCacheMaxZoom: mapCacheMaxZoom ?? this.mapCacheMaxZoom,
+      mapRasterSourceId: mapRasterSourceId ?? this.mapRasterSourceId,
+      mapTileEndpointId: mapTileEndpointId ?? this.mapTileEndpointId,
+      mapTileApiKey: mapTileApiKey == _unset
+          ? this.mapTileApiKey
+          : mapTileApiKey as String?,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       notifyOnNewMessage: notifyOnNewMessage ?? this.notifyOnNewMessage,
       notifyOnNewChannelMessage:

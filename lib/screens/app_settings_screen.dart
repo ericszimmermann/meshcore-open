@@ -8,6 +8,7 @@ import '../l10n/l10n.dart';
 import '../models/app_settings.dart';
 import '../models/translation_support.dart';
 import '../services/app_settings_service.dart';
+import '../services/map_tile_cache_service.dart';
 import '../services/notification_service.dart';
 import '../services/translation_service.dart';
 import '../widgets/adaptive_app_bar_title.dart';
@@ -530,6 +531,39 @@ class AppSettingsScreen extends StatelessWidget {
           ),
           const Divider(height: 1),
           ListTile(
+            leading: const Icon(Icons.layers_outlined),
+            title: const Text('Raster Tile Source'),
+            subtitle: Text(
+              _mapRasterSourceSummary(settingsService.settings),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _showMapRasterSourceDialog(context, settingsService),
+          ),
+          if (_isStadiaSource(settingsService.settings)) ...[
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.public_outlined),
+              title: const Text('Stadia Endpoint'),
+              subtitle: Text(
+                _mapRasterEndpointSummary(settingsService.settings),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () =>
+                  _showMapRasterEndpointDialog(context, settingsService),
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.key_outlined),
+              title: const Text('Stadia API Key'),
+              subtitle: Text(_mapApiKeySummary(settingsService.settings)),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _showMapApiKeyDialog(context, settingsService),
+            ),
+          ],
+          const Divider(height: 1),
+          ListTile(
             leading: const Icon(Icons.download_outlined),
             title: Text(context.l10n.appSettings_offlineMapCache),
             subtitle: Text(
@@ -547,6 +581,189 @@ class AppSettingsScreen extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const MapCacheScreen()),
               );
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _mapRasterSourceSummary(AppSettings settings) {
+    final source = MapRasterSourceCatalog.fromSettings(settings);
+    return '${source.label} - ${source.description}';
+  }
+
+  bool _isStadiaSource(AppSettings settings) {
+    return MapRasterSourceCatalog.fromSettings(settings).isStadia;
+  }
+
+  String _mapRasterEndpointSummary(AppSettings settings) {
+    final endpoint = MapRasterEndpointCatalog.fromSettings(settings);
+    return '${endpoint.label} - ${endpoint.description}';
+  }
+
+  String _mapApiKeySummary(AppSettings settings) {
+    final apiKey = settings.mapTileApiKey?.trim();
+    if (apiKey == null || apiKey.isEmpty) {
+      return 'Required for mobile and non-local Stadia Maps usage';
+    }
+    return 'Configured: ${_maskApiKey(apiKey)}';
+  }
+
+  String _maskApiKey(String value) {
+    if (value.length <= 8) return '********';
+    return '${value.substring(0, 4)}...${value.substring(value.length - 4)}';
+  }
+
+  void _showMapRasterSourceDialog(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
+    String selectedId = settingsService.settings.mapRasterSourceId;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setState) => AlertDialog(
+          title: const Text('Raster Tile Source'),
+          content: SizedBox(
+            width: 360,
+            child: RadioGroup<String>(
+              groupValue: selectedId,
+              onChanged: (value) {
+                if (value == null) return;
+                setState(() {
+                  selectedId = value;
+                });
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final option in MapRasterSourceCatalog.presets)
+                    RadioListTile<String>(
+                      value: option.id,
+                      title: Text(option.label),
+                      subtitle: Text(option.description),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(context.l10n.common_cancel),
+            ),
+            TextButton(
+              onPressed: () async {
+                await settingsService.setMapRasterSourceId(selectedId);
+                if (!dialogContext.mounted) return;
+                Navigator.pop(dialogContext);
+              },
+              child: Text(context.l10n.common_save),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showMapRasterEndpointDialog(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
+    String selectedId = settingsService.settings.mapTileEndpointId;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setState) => AlertDialog(
+          title: const Text('Stadia Endpoint'),
+          content: SizedBox(
+            width: 360,
+            child: RadioGroup<String>(
+              groupValue: selectedId,
+              onChanged: (value) {
+                if (value == null) return;
+                setState(() {
+                  selectedId = value;
+                });
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final option in MapRasterEndpointCatalog.presets)
+                    RadioListTile<String>(
+                      value: option.id,
+                      title: Text(option.label),
+                      subtitle: Text(option.description),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(context.l10n.common_cancel),
+            ),
+            TextButton(
+              onPressed: () async {
+                await settingsService.setMapTileEndpointId(selectedId);
+                if (!dialogContext.mounted) return;
+                Navigator.pop(dialogContext);
+              },
+              child: Text(context.l10n.common_save),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showMapApiKeyDialog(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
+    final controller = TextEditingController(
+      text: settingsService.settings.mapTileApiKey ?? '',
+    );
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Stadia API Key'),
+        content: SizedBox(
+          width: 420,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Enter your Stadia Maps API key. This app uses it for raster tile requests on mobile and other non-local environments.',
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                autocorrect: false,
+                enableSuggestions: false,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'sk_...',
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(context.l10n.common_cancel),
+          ),
+          TextButton(
+            onPressed: () async {
+              await settingsService.setMapTileApiKey(controller.text);
+              if (!dialogContext.mounted) return;
+              Navigator.pop(dialogContext);
+            },
+            child: Text(context.l10n.common_save),
           ),
         ],
       ),

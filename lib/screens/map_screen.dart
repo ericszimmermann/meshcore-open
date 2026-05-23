@@ -205,7 +205,7 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Consumer3<MeshCoreConnector, AppSettingsService, PathHistoryService>(
       builder: (context, connector, settingsService, pathHistory, child) {
-        final tileCache = context.read<MapTileCacheService>();
+        final tileCache = context.watch<MapTileCacheService>();
         final isDesktop = _isDesktopPlatform(defaultTargetPlatform);
         final settings = settingsService.settings;
         final allContacts = connector.allContacts;
@@ -563,7 +563,7 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: kMapTileUrlTemplate,
+                      urlTemplate: tileCache.urlTemplate,
                       tileProvider: tileCache.tileProvider,
                       userAgentPackageName:
                           MapTileCacheService.userAgentPackageName,

@@ -171,6 +171,7 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
 
   Future<void> _startDownload() async {
     final bounds = _selectedBounds;
+    final cacheService = context.read<MapTileCacheService>();
     if (bounds == null) {
       showDismissibleSnackBar(
         context,
@@ -183,6 +184,16 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
       showDismissibleSnackBar(
         context,
         content: Text(context.l10n.mapCache_noTilesToDownload),
+      );
+      return;
+    }
+
+    if (!cacheService.source.allowsBulkDownload) {
+      showDismissibleSnackBar(
+        context,
+        content: Text(
+          'Offline bulk downloads are disabled for ${cacheService.source.label} in this app configuration.',
+        ),
       );
       return;
     }
@@ -208,8 +219,6 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
     );
 
     if (confirmed != true || !mounted) return;
-
-    final cacheService = context.read<MapTileCacheService>();
 
     setState(() {
       _isDownloading = true;
@@ -278,7 +287,8 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final tileCache = context.read<MapTileCacheService>();
+    final tileCache = context.watch<MapTileCacheService>();
+    final source = tileCache.source;
     final selectedBounds = _selectedBounds;
     final l10n = context.l10n;
     final isDesktop = _isDesktopPlatform(defaultTargetPlatform);
@@ -319,7 +329,7 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: kMapTileUrlTemplate,
+                      urlTemplate: tileCache.urlTemplate,
                       tileProvider: tileCache.tileProvider,
                       userAgentPackageName:
                           MapTileCacheService.userAgentPackageName,
@@ -423,6 +433,13 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                           },
                   ),
                   Text(l10n.mapCache_estimatedTiles(_estimatedTiles)),
+                  if (!source.allowsBulkDownload) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      'Offline bulk downloads are disabled for ${source.label}.',
+                      style: TextStyle(color: Colors.orange[800]),
+                    ),
+                  ],
                   if (_isDownloading) ...[
                     const SizedBox(height: 8),
                     LinearProgressIndicator(value: progressValue),
@@ -441,7 +458,10 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                         child: ElevatedButton.icon(
                           icon: const Icon(Icons.download),
                           label: Text(l10n.mapCache_downloadTilesButton),
-                          onPressed: _isDownloading || selectedBounds == null
+                          onPressed:
+                              _isDownloading ||
+                                  selectedBounds == null ||
+                                  !source.allowsBulkDownload
                               ? null
                               : _startDownload,
                         ),

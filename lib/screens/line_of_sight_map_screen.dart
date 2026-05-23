@@ -391,7 +391,7 @@ class _LineOfSightMapScreenState extends State<LineOfSightMapScreen> {
   Widget build(BuildContext context) {
     final settings = context.watch<AppSettingsService>().settings;
     final isImperial = settings.unitSystem == UnitSystem.imperial;
-    final tileCache = context.read<MapTileCacheService>();
+    final tileCache = context.watch<MapTileCacheService>();
     final endpoints = _visibleEndpoints();
     final mapPoints = [
       if (_start != null) _start!.point,
@@ -470,7 +470,7 @@ class _LineOfSightMapScreenState extends State<LineOfSightMapScreen> {
             ),
             children: [
               TileLayer(
-                urlTemplate: kMapTileUrlTemplate,
+                urlTemplate: tileCache.urlTemplate,
                 tileProvider: tileCache.tileProvider,
                 userAgentPackageName: MapTileCacheService.userAgentPackageName,
                 maxZoom: 19,

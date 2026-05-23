@@ -2,11 +2,169 @@ import 'dart:math' as math;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_map/flutter_map.dart';
 
-const String kMapTileUrlTemplate =
-    'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+import '../models/app_settings.dart';
+import 'app_settings_service.dart';
+
+enum MapRasterSourcePreset {
+  osmStandard('osm_standard'),
+  stamenTerrain('stamen_terrain'),
+  alidadeSmoothDark('alidade_smooth_dark'),
+  outdoors('outdoors'),
+  osmBright('osm_bright');
+
+  const MapRasterSourcePreset(this.id);
+
+  final String id;
+
+  static MapRasterSourcePreset fromId(String id) {
+    for (final value in values) {
+      if (value.id == id) return value;
+    }
+    return MapRasterSourcePreset.osmStandard;
+  }
+}
+
+enum MapRasterEndpointPreset {
+  standard('standard'),
+  eu('eu');
+
+  const MapRasterEndpointPreset(this.id);
+
+  final String id;
+
+  static MapRasterEndpointPreset fromId(String id) {
+    for (final value in values) {
+      if (value.id == id) return value;
+    }
+    return MapRasterEndpointPreset.standard;
+  }
+}
+
+@immutable
+class MapRasterSourceDefinition {
+  const MapRasterSourceDefinition({
+    required this.id,
+    required this.label,
+    required this.description,
+    this.isStadia = false,
+    this.allowsBulkDownload = false,
+  });
+
+  final String id;
+  final String label;
+  final String description;
+  final bool isStadia;
+  final bool allowsBulkDownload;
+}
+
+@immutable
+class MapRasterEndpointDefinition {
+  const MapRasterEndpointDefinition({
+    required this.id,
+    required this.label,
+    required this.description,
+    required this.host,
+  });
+
+  final String id;
+  final String label;
+  final String description;
+  final String host;
+}
+
+class MapRasterSourceCatalog {
+  static const MapRasterSourceDefinition osmStandard =
+      MapRasterSourceDefinition(
+        id: 'osm_standard',
+        label: 'OpenStreetMap Standard',
+        description: 'Direct tiles from tile.openstreetmap.org',
+      );
+  static const MapRasterSourceDefinition stamenTerrain =
+      MapRasterSourceDefinition(
+        id: 'stamen_terrain',
+        label: 'Stamen Terrain',
+        description: 'Terrain-focused style with hill shading',
+        isStadia: true,
+        allowsBulkDownload: true,
+      );
+  static const MapRasterSourceDefinition alidadeSmoothDark =
+      MapRasterSourceDefinition(
+        id: 'alidade_smooth_dark',
+        label: 'Alidade Smooth Dark',
+        description: 'Dark basemap with smooth contrast',
+        isStadia: true,
+        allowsBulkDownload: true,
+      );
+  static const MapRasterSourceDefinition outdoors = MapRasterSourceDefinition(
+    id: 'outdoors',
+    label: 'Outdoors',
+    description: 'Outdoor-focused map with trails and terrain context',
+    isStadia: true,
+    allowsBulkDownload: true,
+  );
+  static const MapRasterSourceDefinition osmBright = MapRasterSourceDefinition(
+    id: 'osm_bright',
+    label: 'OSM Bright',
+    description: 'Bright general-purpose OpenStreetMap style',
+    isStadia: true,
+    allowsBulkDownload: true,
+  );
+
+  static const List<MapRasterSourceDefinition> presets = [
+    osmStandard,
+    stamenTerrain,
+    alidadeSmoothDark,
+    outdoors,
+    osmBright,
+  ];
+
+  static MapRasterSourceDefinition fromSettings(AppSettings settings) {
+    final preset = MapRasterSourcePreset.fromId(settings.mapRasterSourceId);
+    switch (preset) {
+      case MapRasterSourcePreset.osmStandard:
+        return osmStandard;
+      case MapRasterSourcePreset.alidadeSmoothDark:
+        return alidadeSmoothDark;
+      case MapRasterSourcePreset.outdoors:
+        return outdoors;
+      case MapRasterSourcePreset.osmBright:
+        return osmBright;
+      case MapRasterSourcePreset.stamenTerrain:
+        return stamenTerrain;
+    }
+  }
+}
+
+class MapRasterEndpointCatalog {
+  static const MapRasterEndpointDefinition standard =
+      MapRasterEndpointDefinition(
+        id: 'standard',
+        label: 'Standard Endpoint',
+        description: 'Global CDN routing to the fastest Stadia server',
+        host: 'tiles.stadiamaps.com',
+      );
+  static const MapRasterEndpointDefinition eu = MapRasterEndpointDefinition(
+    id: 'eu',
+    label: 'EU Endpoint',
+    description: 'Route tile requests to Stadia EU servers',
+    host: 'tiles-eu.stadiamaps.com',
+  );
+
+  static const List<MapRasterEndpointDefinition> presets = [standard, eu];
+
+  static MapRasterEndpointDefinition fromSettings(AppSettings settings) {
+    final preset = MapRasterEndpointPreset.fromId(settings.mapTileEndpointId);
+    switch (preset) {
+      case MapRasterEndpointPreset.eu:
+        return eu;
+      case MapRasterEndpointPreset.standard:
+        return standard;
+    }
+  }
+}
 
 class MapTileCacheProgress {
   final int completed;
@@ -32,27 +190,39 @@ class MapTileCacheResult {
   });
 }
 
-class MapTileCacheService {
+class MapTileCacheService extends ChangeNotifier {
   static const String cacheKey = 'map_tile_cache';
   static const String userAgentPackageName = 'com.meshcore.open';
   static const int defaultMinZoom = 10;
   static const int defaultMaxZoom = 15;
 
+  final AppSettingsService appSettingsService;
   final BaseCacheManager cacheManager;
   late final TileProvider tileProvider;
 
-  MapTileCacheService({BaseCacheManager? cacheManager})
-    : cacheManager =
-          cacheManager ??
-          CacheManager(
-            Config(
-              cacheKey,
-              stalePeriod: const Duration(days: 365),
-              maxNrOfCacheObjects: 200000,
-            ),
-          ) {
+  MapTileCacheService({
+    required this.appSettingsService,
+    BaseCacheManager? cacheManager,
+  }) : cacheManager =
+           cacheManager ??
+           CacheManager(
+             Config(
+               cacheKey,
+               stalePeriod: const Duration(days: 365),
+               maxNrOfCacheObjects: 200000,
+             ),
+           ) {
     tileProvider = CachedNetworkTileProvider(cacheManager: this.cacheManager);
+    appSettingsService.addListener(_handleSettingsChanged);
   }
+
+  MapRasterSourceDefinition get source =>
+      MapRasterSourceCatalog.fromSettings(appSettingsService.settings);
+
+  MapRasterEndpointDefinition get endpoint =>
+      MapRasterEndpointCatalog.fromSettings(appSettingsService.settings);
+
+  String get urlTemplate => _buildUrlTemplate(appSettingsService.settings);
 
   Map<String, String> get defaultHeaders => {
     'User-Agent': 'flutter_map ($userAgentPackageName)',
@@ -89,6 +259,7 @@ class MapTileCacheService {
     final total = estimateTileCount(bounds, safeMin, safeMax);
     final authHeaders = headers ?? defaultHeaders;
     final safeConcurrency = math.max(1, concurrentDownloads);
+    final currentTemplate = urlTemplate;
     int completed = 0;
     int failed = 0;
 
@@ -124,7 +295,7 @@ class MapTileCacheService {
       final tileBounds = _tileBoundsForBounds(bounds, zoom);
       for (int x = tileBounds.minX; x <= tileBounds.maxX; x++) {
         for (int y = tileBounds.minY; y <= tileBounds.maxY; y++) {
-          final url = _buildTileUrl(x, y, zoom);
+          final url = _buildTileUrl(x, y, zoom, urlTemplate: currentTemplate);
           await queueDownload(url);
         }
       }
@@ -167,6 +338,16 @@ class MapTileCacheService {
     );
   }
 
+  void _handleSettingsChanged() {
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    appSettingsService.removeListener(_handleSettingsChanged);
+    super.dispose();
+  }
+
   _TileBounds _tileBoundsForBounds(LatLngBounds bounds, int zoom) {
     final north = _clampLatitude(bounds.north);
     final south = _clampLatitude(bounds.south);
@@ -183,6 +364,21 @@ class MapTileCacheService {
       minY: math.min(minY, maxY),
       maxY: math.max(minY, maxY),
     );
+  }
+
+  String _buildUrlTemplate(AppSettings settings) {
+    final source = MapRasterSourceCatalog.fromSettings(settings);
+    if (!source.isStadia) {
+      return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+    }
+    final endpoint = MapRasterEndpointCatalog.fromSettings(settings);
+    final apiKey = settings.mapTileApiKey?.trim();
+    final base = 'https://${endpoint.host}/tiles/${source.id}/{z}/{x}/{y}.png';
+    if (apiKey == null || apiKey.isEmpty) {
+      return base;
+    }
+    final query = Uri(queryParameters: {'api_key': apiKey}).query;
+    return '$base?$query';
   }
 
   int _lonToTileX(double lon, int zoom, int maxIndex) {
@@ -205,8 +401,8 @@ class MapTileCacheService {
     return lat.clamp(-maxLat, maxLat);
   }
 
-  String _buildTileUrl(int x, int y, int zoom) {
-    return kMapTileUrlTemplate
+  String _buildTileUrl(int x, int y, int zoom, {required String urlTemplate}) {
+    return urlTemplate
         .replaceAll('{z}', zoom.toString())
         .replaceAll('{x}', x.toString())
         .replaceAll('{y}', y.toString());
