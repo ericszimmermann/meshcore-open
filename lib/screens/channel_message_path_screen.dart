@@ -561,6 +561,7 @@ class _ChannelMessagePathMapScreenState
                     TileLayer(
                       urlTemplate: tileCache.urlTemplate,
                       tileProvider: tileCache.tileProvider,
+                      tileBuilder: tileCache.tileBuilder,
                       userAgentPackageName:
                           MapTileCacheService.userAgentPackageName,
                       maxZoom: 19,

@@ -10,6 +10,7 @@ import 'app_settings_service.dart';
 
 enum MapRasterSourcePreset {
   osmStandard('osm_standard'),
+  osmDark('osm_dark'),
   stamenTerrain('stamen_terrain'),
   alidadeSmoothDark('alidade_smooth_dark'),
   outdoors('outdoors'),
@@ -86,6 +87,11 @@ class MapRasterSourceCatalog {
         label: 'OpenStreetMap Standard',
         description: 'Direct tiles from tile.openstreetmap.org',
       );
+  static const MapRasterSourceDefinition osmDark = MapRasterSourceDefinition(
+    id: 'osm_dark',
+    label: 'OpenStreetMap Dark',
+    description: 'Standard OpenStreetMap tiles with an inverted dark filter',
+  );
   static const MapRasterSourceDefinition stamenTerrain =
       MapRasterSourceDefinition(
         id: 'stamen_terrain',
@@ -119,6 +125,7 @@ class MapRasterSourceCatalog {
 
   static const List<MapRasterSourceDefinition> presets = [
     osmStandard,
+    osmDark,
     stamenTerrain,
     alidadeSmoothDark,
     outdoors,
@@ -130,6 +137,8 @@ class MapRasterSourceCatalog {
     switch (preset) {
       case MapRasterSourcePreset.osmStandard:
         return osmStandard;
+      case MapRasterSourcePreset.osmDark:
+        return osmDark;
       case MapRasterSourcePreset.alidadeSmoothDark:
         return alidadeSmoothDark;
       case MapRasterSourcePreset.outdoors:
@@ -278,6 +287,13 @@ class MapTileCacheService extends ChangeNotifier {
       MapRasterEndpointCatalog.fromSettings(appSettingsService.settings);
 
   String get urlTemplate => _buildUrlTemplate(appSettingsService.settings);
+
+  TileBuilder? get tileBuilder => isInvertedOsmDarkSource
+      ? _osmDarkTileBuilder
+      : null;
+
+  bool get isInvertedOsmDarkSource =>
+      source.id == MapRasterSourceCatalog.osmDark.id;
 
   CacheManager get _concreteCacheManager => cacheManager as CacheManager;
 
@@ -620,6 +636,30 @@ class MapTileCacheService extends ChangeNotifier {
         .replaceAll('{x}', x.toString())
         .replaceAll('{y}', y.toString());
   }
+}
+
+Widget _osmDarkTileBuilder(
+  BuildContext _,
+  Widget tileWidget,
+  TileImage __,
+) {
+  return ColorFiltered(
+    colorFilter: const ColorFilter.matrix(<double>[
+      1.33, 0, 0, 0, 0,
+      0, 1.33, 0, 0, 0,
+      0, 0, 1.33, 0, 0,
+      0, 0, 0, 1, 0,
+    ]),
+    child: ColorFiltered(
+      colorFilter: const ColorFilter.matrix(<double>[
+        0.5740000009536743, -1.4299999475479126, -0.14399999380111694, 0, 255,
+        -0.4259999990463257, -0.429999977350235, -0.14399999380111694, 0, 255,
+        -0.4259999990463257, -1.4299999475479126, 0.8559999465942383, 0, 255,
+        0, 0, 0, 1, 0,
+      ]),
+      child: tileWidget,
+    ),
+  );
 }
 
 class CachedNetworkTileProvider extends TileProvider {

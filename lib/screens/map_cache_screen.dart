@@ -398,6 +398,7 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                     TileLayer(
                       urlTemplate: tileCache.urlTemplate,
                       tileProvider: tileCache.tileProvider,
+                      tileBuilder: tileCache.tileBuilder,
                       userAgentPackageName:
                           MapTileCacheService.userAgentPackageName,
                       maxZoom: 19,
