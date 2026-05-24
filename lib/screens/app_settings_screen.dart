@@ -626,24 +626,31 @@ class AppSettingsScreen extends StatelessWidget {
           title: const Text('Raster Tile Source'),
           content: SizedBox(
             width: 360,
-            child: RadioGroup<String>(
-              groupValue: selectedId,
-              onChanged: (value) {
-                if (value == null) return;
-                setState(() {
-                  selectedId = value;
-                });
-              },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (final option in MapRasterSourceCatalog.presets)
-                    RadioListTile<String>(
-                      value: option.id,
-                      title: Text(option.label),
-                      subtitle: Text(option.description),
-                    ),
-                ],
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(dialogContext).size.height * 0.6,
+              ),
+              child: SingleChildScrollView(
+                child: RadioGroup<String>(
+                  groupValue: selectedId,
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() {
+                      selectedId = value;
+                    });
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final option in MapRasterSourceCatalog.presets)
+                        RadioListTile<String>(
+                          value: option.id,
+                          title: Text(option.label),
+                          subtitle: Text(option.description),
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

@@ -288,9 +288,8 @@ class MapTileCacheService extends ChangeNotifier {
 
   String get urlTemplate => _buildUrlTemplate(appSettingsService.settings);
 
-  TileBuilder? get tileBuilder => isInvertedOsmDarkSource
-      ? _osmDarkTileBuilder
-      : null;
+  TileBuilder? get tileBuilder =>
+      isInvertedOsmDarkSource ? _osmDarkTileBuilder : null;
 
   bool get isInvertedOsmDarkSource =>
       source.id == MapRasterSourceCatalog.osmDark.id;
@@ -638,24 +637,52 @@ class MapTileCacheService extends ChangeNotifier {
   }
 }
 
-Widget _osmDarkTileBuilder(
-  BuildContext _,
-  Widget tileWidget,
-  TileImage __,
-) {
+Widget _osmDarkTileBuilder(BuildContext _, Widget tileWidget, TileImage tile) {
   return ColorFiltered(
     colorFilter: const ColorFilter.matrix(<double>[
-      1.33, 0, 0, 0, 0,
-      0, 1.33, 0, 0, 0,
-      0, 0, 1.33, 0, 0,
-      0, 0, 0, 1, 0,
+      1.33,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1.33,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1.33,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
     ]),
     child: ColorFiltered(
       colorFilter: const ColorFilter.matrix(<double>[
-        0.5740000009536743, -1.4299999475479126, -0.14399999380111694, 0, 255,
-        -0.4259999990463257, -0.429999977350235, -0.14399999380111694, 0, 255,
-        -0.4259999990463257, -1.4299999475479126, 0.8559999465942383, 0, 255,
-        0, 0, 0, 1, 0,
+        0.5740000009536743,
+        -1.4299999475479126,
+        -0.14399999380111694,
+        0,
+        255,
+        -0.4259999990463257,
+        -0.429999977350235,
+        -0.14399999380111694,
+        0,
+        255,
+        -0.4259999990463257,
+        -1.4299999475479126,
+        0.8559999465942383,
+        0,
+        255,
+        0,
+        0,
+        0,
+        1,
+        0,
       ]),
       child: tileWidget,
     ),
