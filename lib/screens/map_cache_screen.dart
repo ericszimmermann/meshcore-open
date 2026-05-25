@@ -426,9 +426,7 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: Text(
-                        _isLoadingCachedTiles
-                            ? 'Loading cached tiles...'
-                            : 'Visible cached tiles at z${_overlayZoom.round()}: ${overlayPolygons.length}',
+                        'Z: ${_overlayZoom.round()}:',
                         style: const TextStyle(fontSize: 12),
                       ),
                     ),

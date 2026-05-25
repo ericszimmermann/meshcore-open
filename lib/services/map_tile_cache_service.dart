@@ -9,6 +9,7 @@ import '../models/app_settings.dart';
 import 'app_settings_service.dart';
 
 enum MapRasterSourcePreset {
+  osmAuto('osm_auto'),
   osmStandard('osm_standard'),
   osmDark('osm_dark'),
   stamenTerrain('stamen_terrain'),
@@ -24,7 +25,7 @@ enum MapRasterSourcePreset {
     for (final value in values) {
       if (value.id == id) return value;
     }
-    return MapRasterSourcePreset.osmStandard;
+    return MapRasterSourcePreset.osmAuto;
   }
 }
 
@@ -81,6 +82,12 @@ class MapRasterEndpointDefinition {
 }
 
 class MapRasterSourceCatalog {
+  static const MapRasterSourceDefinition osmAuto = MapRasterSourceDefinition(
+    id: 'osm_auto',
+    label: 'OpenStreetMap Auto',
+    description:
+        'Automatically uses OpenStreetMap Standard or Dark from the app theme',
+  );
   static const MapRasterSourceDefinition osmStandard =
       MapRasterSourceDefinition(
         id: 'osm_standard',
@@ -124,6 +131,7 @@ class MapRasterSourceCatalog {
   );
 
   static const List<MapRasterSourceDefinition> presets = [
+    osmAuto,
     osmStandard,
     osmDark,
     stamenTerrain,
@@ -135,6 +143,8 @@ class MapRasterSourceCatalog {
   static MapRasterSourceDefinition fromSettings(AppSettings settings) {
     final preset = MapRasterSourcePreset.fromId(settings.mapRasterSourceId);
     switch (preset) {
+      case MapRasterSourcePreset.osmAuto:
+        return osmAuto;
       case MapRasterSourcePreset.osmStandard:
         return osmStandard;
       case MapRasterSourcePreset.osmDark:
@@ -147,6 +157,40 @@ class MapRasterSourceCatalog {
         return osmBright;
       case MapRasterSourcePreset.stamenTerrain:
         return stamenTerrain;
+    }
+  }
+
+  static MapRasterSourceDefinition resolveFromSettings(
+    AppSettings settings, {
+    Brightness? platformBrightness,
+  }) {
+    final selected = fromSettings(settings);
+    if (selected.id != osmAuto.id) return selected;
+
+    return _prefersDarkTheme(
+          settings.themeMode,
+          platformBrightness: platformBrightness,
+        )
+        ? osmDark
+        : osmStandard;
+  }
+
+  static bool _prefersDarkTheme(
+    String themeMode, {
+    Brightness? platformBrightness,
+  }) {
+    switch (themeMode) {
+      case 'dark':
+        return true;
+      case 'light':
+        return false;
+      default:
+        return (platformBrightness ??
+                WidgetsBinding
+                    .instance
+                    .platformDispatcher
+                    .platformBrightness) ==
+            Brightness.dark;
     }
   }
 }
@@ -281,7 +325,7 @@ class MapTileCacheService extends ChangeNotifier {
   }
 
   MapRasterSourceDefinition get source =>
-      MapRasterSourceCatalog.fromSettings(appSettingsService.settings);
+      MapRasterSourceCatalog.resolveFromSettings(appSettingsService.settings);
 
   MapRasterEndpointDefinition get endpoint =>
       MapRasterEndpointCatalog.fromSettings(appSettingsService.settings);
