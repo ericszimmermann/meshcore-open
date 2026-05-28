@@ -116,6 +116,7 @@ class AppSettings {
   final int tcpServerPort;
   final bool jumpToOldestUnread;
   final bool translationEnabled;
+  final bool autoTranslateIncomingMessages;
   final String? translationTargetLanguageCode;
   final bool composerTranslationEnabled;
   final String? translationModelSourceUrl;
@@ -172,6 +173,7 @@ class AppSettings {
     this.tcpServerPort = 0,
     this.jumpToOldestUnread = false,
     this.translationEnabled = false,
+    this.autoTranslateIncomingMessages = true,
     this.translationTargetLanguageCode,
     this.composerTranslationEnabled = false,
     this.translationModelSourceUrl,
@@ -235,6 +237,7 @@ class AppSettings {
       'tcp_server_port': tcpServerPort,
       'jump_to_oldest_unread': jumpToOldestUnread,
       'translation_enabled': translationEnabled,
+      'auto_translate_incoming_messages': autoTranslateIncomingMessages,
       'translation_target_language_code': translationTargetLanguageCode,
       'composer_translation_enabled': composerTranslationEnabled,
       'translation_model_source_url': translationModelSourceUrl,
@@ -319,6 +322,8 @@ class AppSettings {
       tcpServerPort: json['tcp_server_port'] as int? ?? 0,
       jumpToOldestUnread: json['jump_to_oldest_unread'] as bool? ?? false,
       translationEnabled: json['translation_enabled'] as bool? ?? false,
+      autoTranslateIncomingMessages:
+          json['auto_translate_incoming_messages'] as bool? ?? true,
       translationTargetLanguageCode:
           json['translation_target_language_code'] as String?,
       composerTranslationEnabled:
@@ -411,6 +416,7 @@ class AppSettings {
     int? tcpServerPort,
     bool? jumpToOldestUnread,
     bool? translationEnabled,
+    bool? autoTranslateIncomingMessages,
     Object? translationTargetLanguageCode = _unset,
     bool? composerTranslationEnabled,
     Object? translationModelSourceUrl = _unset,
@@ -473,6 +479,8 @@ class AppSettings {
       tcpServerPort: tcpServerPort ?? this.tcpServerPort,
       jumpToOldestUnread: jumpToOldestUnread ?? this.jumpToOldestUnread,
       translationEnabled: translationEnabled ?? this.translationEnabled,
+      autoTranslateIncomingMessages:
+          autoTranslateIncomingMessages ?? this.autoTranslateIncomingMessages,
       translationTargetLanguageCode: translationTargetLanguageCode == _unset
           ? this.translationTargetLanguageCode
           : translationTargetLanguageCode as String?,
