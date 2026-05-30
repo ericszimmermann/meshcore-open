@@ -367,15 +367,32 @@ class _ChannelsScreenState extends State<ChannelsScreen>
       _communityIndex,
     );
     final bool isCommunityChannel = Channel.isCommunityChannel(channelType);
+    final community = isCommunityChannel
+        ? _communityIndex.getCommunityForChannel(channel)
+        : null;
+    final region = connector.hasChannelRegion(channel.index)
+        ? context.l10n.channels_regionSetTo(
+            connector.getChannelRegion(channel.index),
+          )
+        : context.l10n.channels_regionNotSet;
+    String subtitle = region;
     switch (channelType) {
       case ChannelType.communityPublic:
         icon = Icons.groups;
         iconColor = Colors.purple;
         bgColor = Colors.purple.withValues(alpha: 0.2);
+        if (community != null) {
+          subtitle =
+              '${context.l10n.community_publicChannel} • ${community.name}';
+        }
       case ChannelType.communityHashtag:
         icon = Icons.tag;
         iconColor = Colors.purple;
         bgColor = Colors.purple.withValues(alpha: 0.2);
+        if (community != null) {
+          subtitle =
+              '${context.l10n.community_hashtagChannel} • ${community.name}';
+        }
       case ChannelType.public:
         icon = Icons.public;
         iconColor = Colors.green;
@@ -445,6 +462,11 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                 ? context.l10n.channels_channelIndex(channel.index)
                 : channel.name,
             style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+          subtitle: Text(
+            subtitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
