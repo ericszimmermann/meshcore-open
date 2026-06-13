@@ -208,6 +208,9 @@ class MeshCoreConnector extends ChangeNotifier {
   // Intentionally global (not per-contact): tracks overall network activity.
   // Frequent RX from any source indicates a busy network with more collisions.
   DateTime _lastRxTime = DateTime.now();
+  // Snapshot of _lastRxTime taken before the ACK frame updates it, so that
+  // onDeliveryObserved records the pre-ACK elapsed time (matching prediction).
+  DateTime _lastRxBeforeFrame = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastRadioRxTime = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastContactMsgRxTime = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastChannelMsgRxTime = DateTime.fromMillisecondsSinceEpoch(0);
@@ -327,6 +330,20 @@ class MeshCoreConnector extends ChangeNotifier {
   BluetoothDevice? get device => _device;
   String? get deviceId => _deviceId;
   String get deviceIdLabel => _deviceId ?? 'Unknown';
+
+  /// Stable per-radio key for transport-agnostic per-device settings such as
+  /// battery chemistry. On BLE this is the existing remoteId (so previously
+  /// saved settings are preserved); on USB/TCP — where there is no BLE
+  /// remoteId — it falls back to the node's public key, which identifies the
+  /// same physical radio across transports. Null until a device identity is
+  /// known.
+  String? get batteryDeviceKey {
+    if (_deviceId != null) return _deviceId;
+    if (_selfPublicKey != null && _selfPublicKey!.isNotEmpty) {
+      return selfPublicKeyHex;
+    }
+    return null;
+  }
 
   MeshCoreTransportType get activeTransport => _activeTransport;
   String? get activeUsbPort => _usbManager.activePortKey;
@@ -493,7 +510,7 @@ class MeshCoreConnector extends ChangeNotifier {
   }
 
   String _batteryChemistryForDevice() {
-    final deviceId = _device?.remoteId.toString();
+    final deviceId = batteryDeviceKey;
     if (deviceId == null || _appSettingsService == null) return 'nmc';
     return _appSettingsService!.batteryChemistryForDevice(deviceId);
   }
@@ -931,11 +948,17 @@ class MeshCoreConnector extends ChangeNotifier {
         updateMessage: _updateMessage,
         clearContactPath: clearContactPath,
         setContactPath: setContactPath,
-        calculateTimeout: (pathLength, messageBytes, {String? contactKey}) =>
-            calculateTimeout(
+        calculateTimeout:
+            (
+              pathLength,
+              messageBytes, {
+              String? contactKey,
+              int? deviceTimeoutMs,
+            }) => calculateTimeout(
               pathLength: pathLength,
               messageBytes: messageBytes,
               contactKey: contactKey,
+              deviceTimeoutMs: deviceTimeoutMs,
             ),
         getSelfPublicKey: () => _selfPublicKey,
         prepareContactOutboundText: prepareContactOutboundText,
@@ -951,7 +974,9 @@ class MeshCoreConnector extends ChangeNotifier {
                   recentSelections: recentSelections,
                 ),
         onDeliveryObserved: (contactKey, pathLength, messageBytes, tripTimeMs) {
-          final secSinceRx = DateTime.now().difference(_lastRxTime).inSeconds;
+          final secSinceRx = DateTime.now()
+              .difference(_lastRxBeforeFrame)
+              .inSeconds;
           _timeoutPredictionService?.recordObservation(
             contactKey: contactKey,
             pathLength: pathLength,
@@ -1607,6 +1632,20 @@ class MeshCoreConnector extends ChangeNotifier {
         await stopScan();
       }
       await Future<void>.delayed(const Duration(milliseconds: 200));
+
+      // The read pump can fail the instant the port opens (e.g. a device that
+      // re-enumerates on open). That error is emitted on a broadcast stream
+      // before the listener below attaches, so it would otherwise be lost and
+      // the connect would stall until the SELF_INFO timeout. Check transport
+      // liveness directly and abort fast with the real cause.
+      if (!_usbManager.isConnected) {
+        final cause = _usbManager.lastError;
+        throw StateError(
+          'USB device disconnected during connect'
+          '${cause == null ? '' : ': $cause'}',
+        );
+      }
+
       _usbFrameSubscription = _usbManager.frameStream.listen(
         _handleFrame,
         onError: (error, stackTrace) {
@@ -2655,41 +2694,62 @@ class MeshCoreConnector extends ChangeNotifier {
     Uint8List data, {
     String? channelSendQueueId,
     bool expectsGenericAck = false,
+    bool waitForGenericAck = false,
   }) async {
     if (!isConnected) {
       throw Exception("Not connected to a MeshCore device");
     }
     _bleDebugLogService?.logFrame(data, outgoing: true);
 
-    if (_activeTransport == MeshCoreTransportType.usb) {
-      await _usbManager.write(data);
-      // Brief pause so the device firmware can process each frame before the
-      // next arrives. Without this, rapid-fire frames over USB can cause the
-      // device to miss responses (especially on reconnect).
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-    } else if (_activeTransport == MeshCoreTransportType.tcp) {
-      await _tcpConnector.write(data);
-    } else {
-      if (_rxCharacteristic == null) {
-        throw Exception("MeshCore RX characteristic not available");
-      }
-      // Prefer write without response when supported; fall back to write with response.
-      final properties = _rxCharacteristic!.properties;
-      final canWriteWithoutResponse = properties.writeWithoutResponse;
-      final canWriteWithResponse = properties.write;
-      if (!canWriteWithoutResponse && !canWriteWithResponse) {
-        throw Exception("MeshCore RX characteristic does not support write");
-      }
-      await _rxCharacteristic!.write(
-        data.toList(),
-        withoutResponse: canWriteWithoutResponse,
-      );
-    }
-    _trackPendingGenericAck(
+    final pendingAck = _trackPendingGenericAck(
       data,
       channelSendQueueId: channelSendQueueId,
-      expectsGenericAck: expectsGenericAck,
+      expectsGenericAck: expectsGenericAck || waitForGenericAck,
+      waitForAck: waitForGenericAck,
     );
+
+    try {
+      if (_activeTransport == MeshCoreTransportType.usb) {
+        await _usbManager.write(data);
+        // Brief pause so the device firmware can process each frame before the
+        // next arrives. Without this, rapid-fire frames over USB can cause the
+        // device to miss responses (especially on reconnect).
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      } else if (_activeTransport == MeshCoreTransportType.tcp) {
+        await _tcpConnector.write(data);
+      } else {
+        if (_rxCharacteristic == null) {
+          throw Exception("MeshCore RX characteristic not available");
+        }
+        // Prefer write without response when supported; fall back to write with response.
+        final properties = _rxCharacteristic!.properties;
+        final canWriteWithoutResponse = properties.writeWithoutResponse;
+        final canWriteWithResponse = properties.write;
+        if (!canWriteWithoutResponse && !canWriteWithResponse) {
+          throw Exception("MeshCore RX characteristic does not support write");
+        }
+        await _rxCharacteristic!.write(
+          data.toList(),
+          withoutResponse: canWriteWithoutResponse,
+        );
+      }
+    } catch (_) {
+      if (pendingAck != null) {
+        _pendingGenericAckQueue.remove(pendingAck);
+      }
+      rethrow;
+    }
+
+    if (pendingAck?.completer != null) {
+      try {
+        await pendingAck!.completer!.future.timeout(const Duration(seconds: 5));
+      } on TimeoutException {
+        _pendingGenericAckQueue.remove(pendingAck);
+        throw TimeoutException(
+          'Timed out waiting for firmware acknowledgement',
+        );
+      }
+    }
   }
 
   Future<void> requestBatteryStatus({bool force = false}) async {
@@ -2920,6 +2980,17 @@ class MeshCoreConnector extends ChangeNotifier {
     String? translationModelId,
   }) async {
     if (!isConnected || text.isEmpty) return;
+
+    final outboundBytes = utf8.encode(
+      prepareContactOutboundText(contact, text),
+    );
+    if (outboundBytes.length > maxTextPayloadBytes) {
+      debugPrint(
+        'sendMessage: dropping overlong message '
+        '(${outboundBytes.length} > $maxTextPayloadBytes bytes)',
+      );
+      return;
+    }
 
     // Check if this is a reaction - apply locally with pending status and route through retry service
     final reactionInfo = ReactionHelper.parseReaction(text);
@@ -3391,9 +3462,11 @@ class MeshCoreConnector extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> importDiscoveredContact(Contact contact) async {
-    if (!isConnected) return;
+  Future<bool> importDiscoveredContact(Contact contact) async {
+    if (!isConnected) return false;
 
+    // Manual saves must bypass the firmware's auto-add discovery policy.
+    // CMD_IMPORT_CONTACT replays an advert and may remain discovery-only.
     await sendFrame(
       buildUpdateContactPathFrame(
         contact.publicKey,
@@ -3406,6 +3479,7 @@ class MeshCoreConnector extends ChangeNotifier {
         lon: contact.longitude,
         lastModified: contact.lastSeen,
       ),
+      waitForGenericAck: true,
     );
 
     // Update the discovered contact to mark it as active (imported)
@@ -3431,6 +3505,8 @@ class MeshCoreConnector extends ChangeNotifier {
       ),
     );
     notifyListeners();
+    unawaited(_persistDiscoveredContacts());
+    return true;
   }
 
   Future<void> clearContactPath(Contact contact) async {
@@ -3836,6 +3912,7 @@ class MeshCoreConnector extends ChangeNotifier {
 
   void _handleFrame(List<int> data) {
     if (data.isEmpty) return;
+    _lastRxBeforeFrame = _lastRxTime;
     _lastRxTime = DateTime.now();
 
     final frame = Uint8List.fromList(data);
@@ -3988,11 +4065,15 @@ class MeshCoreConnector extends ChangeNotifier {
     }
 
     final failedAck = _pendingGenericAckQueue.removeAt(0);
+    failedAck.completer?.completeError(
+      Exception('Firmware rejected command with error code $errCode'),
+    );
     if (failedAck.commandCode != cmdSendChannelTxtMsg ||
         failedAck.channelSendQueueId == null) {
       return;
     }
     _pendingChannelSentQueue.remove(failedAck.channelSendQueueId);
+    _markPendingChannelMessageFailedById(failedAck.channelSendQueueId!);
   }
 
   void _handlePathUpdated(Uint8List frame) {
@@ -4342,16 +4423,28 @@ class MeshCoreConnector extends ChangeNotifier {
       // Same as max for flood — firmware uses a single formula
       return 500 + (16 * airtime);
     } else {
-      return airtime * (pathLength + 1);
+      // Include firmware base (500ms) and per-hop processing (6*airtime+250)
+      // so ML cannot clamp below a physically plausible round-trip.
+      return 500 + ((airtime * 6 + 250) * pathLength);
     }
   }
 
+  /// Hard ceiling on any ML-derived or physics-fallback timeout (ms).
+  /// Prevents the flood formula (500 + 16·airtime at SF12 ≈ 150s) and an
+  /// unstable OLS model from producing multi-minute waits.
+  static const int _hardMaxTimeoutMs = 45000;
+
   /// Calculate timeout for a message based on radio settings and path length.
   /// Returns timeout in milliseconds, considering number of hops.
+  ///
+  /// [deviceTimeoutMs] is the firmware's own est_timeout from RESP_CODE_SENT.
+  /// When ML is absent it is used as the fallback (clamped to physicsMin).
+  /// When ML is present it is used as an additional ceiling alongside physicsMax.
   int calculateTimeout({
     required int pathLength,
     int messageBytes = 100,
     String? contactKey,
+    int? deviceTimeoutMs,
   }) {
     final airtime = _estimateAirtimeMs(messageBytes);
     final physicsMin = _physicsMinTimeout(pathLength, airtime);
@@ -4366,17 +4459,26 @@ class MeshCoreConnector extends ChangeNotifier {
       secondsSinceLastRx: secSinceRx,
     );
     if (mlTimeout != null) {
+      // Use device est_timeout as an additional ceiling when available —
+      // the firmware computed it from real airtime, so it's better than
+      // a physics guess built on a 50 ms fallback.
+      final ceiling = deviceTimeoutMs != null && deviceTimeoutMs > physicsMin
+          ? deviceTimeoutMs.clamp(physicsMin, _hardMaxTimeoutMs)
+          : physicsMax;
       if (pathLength < 0) {
         // Flood: trust ML, only enforce firmware formula as floor
         if (mlTimeout < physicsMin) {
-          return physicsMin;
+          return physicsMin.clamp(0, _hardMaxTimeoutMs);
         }
       }
-      return mlTimeout.clamp(physicsMin, physicsMax);
+      return mlTimeout.clamp(physicsMin, ceiling).clamp(0, _hardMaxTimeoutMs);
     }
 
-    // No ML data — use firmware formula
-    return physicsMax;
+    // No ML data — prefer device est_timeout (it used real airtime), then physics.
+    if (deviceTimeoutMs != null && deviceTimeoutMs > 0) {
+      return deviceTimeoutMs.clamp(physicsMin, _hardMaxTimeoutMs);
+    }
+    return physicsMax.clamp(0, _hardMaxTimeoutMs);
   }
 
   void _handleContact(Uint8List frame, {bool isContact = true}) {
@@ -4732,14 +4834,11 @@ class MeshCoreConnector extends ChangeNotifier {
         final existing = _conversations[message.senderKeyHex];
         final incomingTimestamp = message.timestamp.millisecondsSinceEpoch;
         if (existing != null && existing.isNotEmpty) {
-          final startIndex = existing.length > 10 ? existing.length - 10 : 0;
-          for (int i = existing.length - 1; i >= startIndex; i--) {
-            final recent = existing[i];
-            if (!recent.isOutgoing &&
-                recent.timestamp.millisecondsSinceEpoch == incomingTimestamp &&
-                recent.text == message.text) {
-              return;
-            }
+          final last = existing.last;
+          if (!last.isOutgoing &&
+              last.timestamp.millisecondsSinceEpoch == incomingTimestamp &&
+              last.text == message.text) {
+            return;
           }
         }
       }
@@ -5323,12 +5422,37 @@ class MeshCoreConnector extends ChangeNotifier {
     return false;
   }
 
+  void _markPendingChannelMessageFailedById(String messageId) {
+    for (final entry in _channelMessages.entries) {
+      final channelMessages = entry.value;
+      for (int i = channelMessages.length - 1; i >= 0; i--) {
+        final message = channelMessages[i];
+        if (message.messageId != messageId) {
+          continue;
+        }
+        if (!message.isOutgoing ||
+            message.status != ChannelMessageStatus.pending) {
+          return;
+        }
+        channelMessages[i] = message.copyWith(
+          status: ChannelMessageStatus.failed,
+        );
+        unawaited(
+          _channelMessageStore.saveChannelMessages(entry.key, channelMessages),
+        );
+        notifyListeners();
+        return;
+      }
+    }
+  }
+
   void _handleOk() {
     if (_pendingGenericAckQueue.isEmpty) {
       return;
     }
 
     final pendingAck = _pendingGenericAckQueue.removeAt(0);
+    pendingAck.completer?.complete();
     if (pendingAck.commandCode != cmdSendChannelTxtMsg ||
         pendingAck.channelSendQueueId == null) {
       return;
@@ -5737,7 +5861,9 @@ class MeshCoreConnector extends ChangeNotifier {
   ) {
     if (!isRoomServer) return null;
     if (!msg.isOutgoing) {
-      final senderContact = _contacts.cast<Contact?>().firstWhere(
+      // Saved contacts first, then discovery-only nodes, so reaction matching
+      // resolves the author's name even when they haven't been saved.
+      final senderContact = allContactsUnfiltered.cast<Contact?>().firstWhere(
         (c) =>
             c != null &&
             _matchesPrefix(c.publicKey, msg.fourByteRoomContactKey),
@@ -6158,18 +6284,25 @@ class MeshCoreConnector extends ChangeNotifier {
     _scheduleReconnect();
   }
 
-  void _trackPendingGenericAck(
+  _PendingCommandAck? _trackPendingGenericAck(
     Uint8List data, {
     String? channelSendQueueId,
     required bool expectsGenericAck,
+    required bool waitForAck,
   }) {
-    if (!expectsGenericAck || data.isEmpty) return;
-    _pendingGenericAckQueue.add(
-      _PendingCommandAck(
-        commandCode: data[0],
-        channelSendQueueId: channelSendQueueId,
-      ),
+    if (!expectsGenericAck || data.isEmpty) return null;
+    final pendingAck = _PendingCommandAck(
+      commandCode: data[0],
+      channelSendQueueId: channelSendQueueId,
+      completer: waitForAck ? Completer<void>() : null,
     );
+    if (pendingAck.completer != null) {
+      // sendFrame awaits this future after transport I/O; attach an error
+      // handler immediately in case USB returns an error response first.
+      unawaited(pendingAck.completer!.future.catchError((_) {}));
+    }
+    _pendingGenericAckQueue.add(pendingAck);
+    return pendingAck;
   }
 
   String _nextReactionSendQueueId() {
@@ -6703,6 +6836,11 @@ class _RepeaterAckContext {
 class _PendingCommandAck {
   final int commandCode;
   final String? channelSendQueueId;
+  final Completer<void>? completer;
 
-  _PendingCommandAck({required this.commandCode, this.channelSendQueueId});
+  _PendingCommandAck({
+    required this.commandCode,
+    this.channelSendQueueId,
+    this.completer,
+  });
 }
