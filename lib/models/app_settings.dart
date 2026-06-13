@@ -76,6 +76,8 @@ class Cyr2LatProfile {
 
 class AppSettings {
   static const Object _unset = Object();
+  static const String stadiaDemo =
+      '51bd0381-4685-4666-bae8-48940f6d77c0';
 
   final bool clearPathOnMaxRetry;
   final bool mapShowRepeaters;
@@ -124,6 +126,17 @@ class AppSettings {
   final List<TranslationModelRecord> translationDownloadedModels;
   final List<Cyr2LatProfile> cyr2latProfiles;
   final String selectedCyr2latProfileId;
+
+  String get effectiveMapTileApiKey {
+    final apiKey = mapTileApiKey?.trim();
+    if (apiKey == null || apiKey.isEmpty) {
+      return stadiaDemo;
+    }
+    return apiKey;
+  }
+
+  bool get usesstadiaDemo =>
+      effectiveMapTileApiKey == stadiaDemo;
 
   Map<String, String> get cyr2latCharMap {
     final profile = cyr2latProfiles.firstWhere(

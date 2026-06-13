@@ -305,8 +305,22 @@ class MapTileCacheService extends ChangeNotifier {
     appSettingsService.addListener(_handleSettingsChanged);
   }
 
-  MapRasterSourceDefinition get source =>
-      MapRasterSourceCatalog.fromSettings(appSettingsService.settings);
+  MapRasterSourceDefinition get source {
+    final selectedSource = MapRasterSourceCatalog.fromSettings(
+      appSettingsService.settings,
+    );
+    if (!selectedSource.allowsBulkDownload ||
+        !appSettingsService.settings.usesstadiaDemo) {
+      return selectedSource;
+    }
+    return MapRasterSourceDefinition(
+      id: selectedSource.id,
+      label: selectedSource.label,
+      description: selectedSource.description,
+      isStadia: selectedSource.isStadia,
+      allowsBulkDownload: false, // Explicitly disable bulk download for demo.
+    );
+  }
 
   MapRasterEndpointDefinition get endpoint =>
       MapRasterEndpointCatalog.fromSettings(appSettingsService.settings);
@@ -314,6 +328,26 @@ class MapTileCacheService extends ChangeNotifier {
   String get urlTemplate => _buildUrlTemplate(appSettingsService.settings);
 
   TileBuilder? get tileBuilder => null;
+
+  static bool shouldApplyDarkFilterForSettings(
+    AppSettings settings,
+    Brightness brightness,
+  ) {
+    switch (MapRasterSourcePreset.fromId(settings.mapRasterSourceId)) {
+      case MapRasterSourcePreset.osmDark:
+      case MapRasterSourcePreset.outdoorsDark:
+      case MapRasterSourcePreset.osmBrightDark:
+        return true;
+      case MapRasterSourcePreset.osmAuto:
+        return brightness == Brightness.dark;
+      case MapRasterSourcePreset.osmStandard:
+      case MapRasterSourcePreset.stamenTerrain:
+      case MapRasterSourcePreset.alidadeSmoothDark:
+      case MapRasterSourcePreset.outdoors:
+      case MapRasterSourcePreset.osmBright:
+        return false;
+    }
+  }
 
   static const ColorFilter _darkMapFilter = ColorFilter.matrix([
     -0.0850,
@@ -345,7 +379,6 @@ class MapTileCacheService extends ChangeNotifier {
   };
 
   Widget buildTileLayer(BuildContext context, {double opacity = 1}) {
-    final source = this.source;
     Widget layer = TileLayer(
       urlTemplate: urlTemplate,
       tileProvider: tileProvider,
@@ -354,12 +387,10 @@ class MapTileCacheService extends ChangeNotifier {
       maxZoom: 19,
     );
 
-    final shouldApplyDarkFilter =
-        source == MapRasterSourceCatalog.osmDark ||
-        source == MapRasterSourceCatalog.outdoorsDark ||
-        source == MapRasterSourceCatalog.osmBrightDark ||
-        (source == MapRasterSourceCatalog.osmAuto &&
-            Theme.of(context).brightness == Brightness.dark);
+    final shouldApplyDarkFilter = shouldApplyDarkFilterForSettings(
+      appSettingsService.settings,
+      Theme.of(context).brightness,
+    );
 
     if (shouldApplyDarkFilter) {
       layer = ColorFiltered(colorFilter: _darkMapFilter, child: layer);
@@ -608,12 +639,9 @@ class MapTileCacheService extends ChangeNotifier {
       return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
     }
     final endpoint = MapRasterEndpointCatalog.fromSettings(settings);
-    final apiKey = settings.mapTileApiKey?.trim();
+    final apiKey = settings.effectiveMapTileApiKey;
     final base =
         'https://${endpoint.host}/tiles/${source.id}/{z}/{x}/{y}${endpoint.scaleSuffix}.png';
-    if (apiKey == null || apiKey.isEmpty) {
-      return base;
-    }
     final query = Uri(queryParameters: {'api_key': apiKey}).query;
     return '$base?$query';
   }

@@ -1019,11 +1019,9 @@ class AppSettingsScreen extends StatelessWidget {
   }
 
   String _mapApiKeySummary(BuildContext context, AppSettings settings) {
-    final apiKey = settings.mapTileApiKey?.trim();
-    if (apiKey == null || apiKey.isEmpty) {
-      return context.l10n.appSettings_stadiaApiKeyRequired;
-    }
-    return context.l10n.appSettings_stadiaApiKeyConfigured(_maskApiKey(apiKey));
+    return context.l10n.appSettings_stadiaApiKeyConfigured(
+      _maskApiKey(settings.effectiveMapTileApiKey),
+    );
   }
 
   String _maskApiKey(String value) {
@@ -1153,9 +1151,13 @@ class AppSettingsScreen extends StatelessWidget {
     BuildContext context,
     AppSettingsService settingsService,
   ) {
-    final controller = TextEditingController(
-      text: settingsService.settings.mapTileApiKey ?? '',
+    final currentApiKey = settingsService.settings.mapTileApiKey?.trim() ?? '';
+    final maskedApiKey = _maskApiKey(
+      currentApiKey.isEmpty
+          ? AppSettings.stadiaDemo
+          : currentApiKey,
     );
+    final controller = TextEditingController(text: maskedApiKey);
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -1173,6 +1175,7 @@ class AppSettingsScreen extends StatelessWidget {
                 autofocus: true,
                 autocorrect: false,
                 enableSuggestions: false,
+                autofillHints: const [AutofillHints.password],
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: '4e1bf343-3d91-4d9c-a8e1-1234567890ab',
@@ -1188,7 +1191,10 @@ class AppSettingsScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () async {
-              await settingsService.setMapTileApiKey(controller.text);
+              final apiKey = controller.text.trim();
+              await settingsService.setMapTileApiKey(
+                apiKey == maskedApiKey ? currentApiKey : apiKey,
+              );
               if (!dialogContext.mounted) return;
               Navigator.pop(dialogContext);
             },
