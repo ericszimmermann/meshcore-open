@@ -142,9 +142,6 @@ class _PathEditorSheetState extends State<PathEditorSheet> {
 
   void _reorderHop(int oldIndex, int newIndex) {
     setState(() {
-      if (oldIndex < newIndex) {
-        newIndex -= 1;
-      }
       final hop = _hops.removeAt(oldIndex);
       _hops.insert(newIndex, hop);
       _syncHexFromHops();
@@ -287,7 +284,7 @@ class _PathEditorSheetState extends State<PathEditorSheet> {
                   physics: const NeverScrollableScrollPhysics(),
                   buildDefaultDragHandles: false,
                   itemCount: _hops.length,
-                  onReorder: _reorderHop,
+                  onReorderItem: _reorderHop,
                   itemBuilder: _hopTile,
                 ),
               const Divider(),
