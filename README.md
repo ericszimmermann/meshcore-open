@@ -94,12 +94,12 @@ MeshCore Open is a cross-platform mobile application for communicating with Mesh
 |---------|---------|
 | flutter_blue_plus | Bluetooth Low Energy communication |
 | provider | State management |
-| sqflite | Local database storage |
+| shared_preferences | Local key-value storage (scoped per device) |
 | flutter_map | Interactive map display |
 | latlong2 | Geographic coordinate handling |
 | flutter_local_notifications | Background notification support |
-| smaz | Message compression |
 | pointycastle | Cryptographic operations |
+| llamadart | On-device LLM message translation |
 | intl | Internationalization and date formatting |
 
 ## Getting Started
@@ -193,6 +193,7 @@ Devices are discovered by scanning for BLE advertisements with known MeshCore de
     - `WisCore-`
     - `HT-`
     - `LowMesh_MC_`
+    - `NRF52`
 
 New device prefixes can be added in `lib/connector/meshcore_uuids.dart`.
 

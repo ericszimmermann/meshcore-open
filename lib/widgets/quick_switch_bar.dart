@@ -2,15 +2,22 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import '../l10n/l10n.dart';
+import '../theme/mesh_theme.dart';
 
 class QuickSwitchBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
+  final int contactsUnreadCount;
+  final int channelsUnreadCount;
+  final bool highContrast;
 
   const QuickSwitchBar({
     super.key,
     required this.selectedIndex,
     required this.onDestinationSelected,
+    this.contactsUnreadCount = 0,
+    this.channelsUnreadCount = 0,
+    this.highContrast = false,
   });
 
   @override
@@ -18,6 +25,14 @@ class QuickSwitchBar extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final labelStyle = theme.textTheme.labelMedium ?? const TextStyle();
+    final background = highContrast ? MapPalette.panelDark : Colors.transparent;
+    final selectedColor = highContrast
+        ? MapPalette.textPrimary
+        : colorScheme.onPrimary;
+    final unselectedColor = highContrast
+        ? MapPalette.textSecondary
+        : colorScheme.onSurfaceVariant;
+    final indicator = highContrast ? MapPalette.selected : colorScheme.primary;
 
     return SizedBox(
       width: double.infinity,
@@ -27,9 +42,11 @@ class QuickSwitchBar extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Colors.transparent,
+              color: background,
               border: Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+                color: highContrast
+                    ? MapPalette.border
+                    : colorScheme.outlineVariant.withValues(alpha: 0.4),
               ),
             ),
             child: NavigationBarTheme(
@@ -37,22 +54,18 @@ class QuickSwitchBar extends StatelessWidget {
                 backgroundColor: Colors.transparent,
                 surfaceTintColor: Colors.transparent,
                 shadowColor: Colors.transparent,
-                indicatorColor: colorScheme.primaryContainer,
+                indicatorColor: indicator,
                 labelTextStyle: WidgetStateProperty.resolveWith((states) {
                   final isSelected = states.contains(WidgetState.selected);
                   return labelStyle.copyWith(
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected
-                        ? colorScheme.onPrimaryContainer
-                        : colorScheme.onSurfaceVariant,
+                    color: isSelected ? selectedColor : unselectedColor,
                   );
                 }),
                 iconTheme: WidgetStateProperty.resolveWith((states) {
                   final isSelected = states.contains(WidgetState.selected);
                   return IconThemeData(
-                    color: isSelected
-                        ? colorScheme.onPrimaryContainer
-                        : colorScheme.onSurfaceVariant,
+                    color: isSelected ? selectedColor : unselectedColor,
                   );
                 }),
               ),
@@ -62,15 +75,34 @@ class QuickSwitchBar extends StatelessWidget {
                 onDestinationSelected: onDestinationSelected,
                 destinations: [
                   NavigationDestination(
-                    icon: const Icon(Icons.people_outline),
+                    icon: _buildIconWithBadge(
+                      context,
+                      const Icon(Icons.people_outline),
+                      contactsUnreadCount,
+                    ),
+                    selectedIcon: _buildIconWithBadge(
+                      context,
+                      const Icon(Icons.people),
+                      contactsUnreadCount,
+                    ),
                     label: context.l10n.nav_contacts,
                   ),
                   NavigationDestination(
-                    icon: const Icon(Icons.tag),
+                    icon: _buildIconWithBadge(
+                      context,
+                      const Icon(Icons.tag),
+                      channelsUnreadCount,
+                    ),
+                    selectedIcon: _buildIconWithBadge(
+                      context,
+                      const Icon(Icons.tag),
+                      channelsUnreadCount,
+                    ),
                     label: context.l10n.nav_channels,
                   ),
                   NavigationDestination(
                     icon: const Icon(Icons.map_outlined),
+                    selectedIcon: const Icon(Icons.map),
                     label: context.l10n.nav_map,
                   ),
                 ],
@@ -80,5 +112,11 @@ class QuickSwitchBar extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildIconWithBadge(BuildContext context, Icon icon, int count) {
+    if (count <= 0) return icon;
+    final label = count > 99 ? '99+' : '$count';
+    return Badge(label: Text(label), child: icon);
   }
 }
