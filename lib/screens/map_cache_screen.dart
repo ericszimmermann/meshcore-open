@@ -10,6 +10,8 @@ import '../services/app_settings_service.dart';
 import '../services/map_tile_cache_service.dart';
 import '../widgets/adaptive_app_bar_title.dart';
 import '../helpers/snack_bar_builder.dart';
+import '../theme/mesh_theme.dart';
+import '../widgets/mesh_ui.dart';
 
 class MapCacheScreen extends StatefulWidget {
   const MapCacheScreen({super.key});
@@ -81,27 +83,34 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
     return Positioned(
       top: 12,
       left: 12,
-      child: Card(
-        elevation: 4,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.add),
-              tooltip: 'Zoom in',
-              onPressed: () => _zoomMapBy(1),
-            ),
-            IconButton(
-              icon: const Icon(Icons.remove),
-              tooltip: 'Zoom out',
-              onPressed: () => _zoomMapBy(-1),
-            ),
-            IconButton(
-              icon: const Icon(Icons.my_location),
-              tooltip: 'Center map',
-              onPressed: _resetMapView,
-            ),
-          ],
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: MeshPalette.bg1.withValues(alpha: 0.90),
+          borderRadius: BorderRadius.circular(MeshRadii.md),
+          border: Border.all(color: MeshPalette.line2),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(MeshRadii.md),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.add),
+                tooltip: context.l10n.map_zoomIn,
+                onPressed: () => _zoomMapBy(1),
+              ),
+              IconButton(
+                icon: const Icon(Icons.remove),
+                tooltip: context.l10n.map_zoomOut,
+                onPressed: () => _zoomMapBy(-1),
+              ),
+              IconButton(
+                icon: const Icon(Icons.my_location),
+                tooltip: context.l10n.map_centerMap,
+                onPressed: _resetMapView,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -199,7 +208,9 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
       showDismissibleSnackBar(
         context,
         content: Text(
-          'Offline bulk downloads are disabled for ${cacheService.source.label} in this app configuration.',
+          context.l10n.mapCache_bulkDownloadDisabledInConfig(
+            cacheService.source.label,
+          ),
         ),
       );
       return;
@@ -339,11 +350,12 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
       visibleBounds: _visibleBounds,
     );
     final cacheSummary =
-        'Source: ${source.label}\n'
-        'Cached tiles for source: ${activeCachedTiles.length}\n'
-        'Cached in selected area/zoom: $cachedInSelection\n'
-        'Approx cache size: ${_formatBytes(_cachedTileBytes)}';
+        '${context.l10n.mapCache_summarySource(source.label)}\n'
+        '${context.l10n.mapCache_summaryCachedTilesForSource(activeCachedTiles.length)}\n'
+        '${context.l10n.mapCache_summaryCachedInSelection(cachedInSelection)}\n'
+        '${context.l10n.mapCache_summaryApproxCacheSize(_formatBytes(_cachedTileBytes))}';
     final l10n = context.l10n;
+    final scheme = Theme.of(context).colorScheme;
     final isDesktop = _isDesktopPlatform(defaultTargetPlatform);
     final progressValue = _estimatedTiles == 0
         ? 0.0
@@ -395,14 +407,7 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                     },
                   ),
                   children: [
-                    TileLayer(
-                      urlTemplate: tileCache.urlTemplate,
-                      tileProvider: tileCache.tileProvider,
-                      tileBuilder: tileCache.tileBuilder,
-                      userAgentPackageName:
-                          MapTileCacheService.userAgentPackageName,
-                      maxZoom: 19,
-                    ),
+                    tileCache.buildTileLayer(context),
                     if (selectedBounds != null)
                       PolygonLayer(
                         polygons: [
@@ -435,14 +440,25 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
                 Positioned(
                   top: 12,
                   right: 12,
-                  child: Card(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: MeshPalette.bg1.withValues(alpha: 0.93),
+                      borderRadius: BorderRadius.circular(MeshRadii.md),
+                      border: Border.all(color: MeshPalette.line2),
+                    ),
                     child: Padding(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       child: Text(
                         selectedBounds == null
                             ? l10n.mapCache_noAreaSelected
                             : _formatBounds(selectedBounds, l10n),
-                        style: const TextStyle(fontSize: 12),
+                        style: MeshTheme.mono(
+                          fontSize: 11,
+                          color: MeshPalette.ink2,
+                        ),
                       ),
                     ),
                   ),
@@ -452,135 +468,164 @@ class _MapCacheScreenState extends State<MapCacheScreen> {
           ),
           SafeArea(
             top: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    l10n.mapCache_cacheArea,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: scheme.surfaceContainerLow,
+                border: Border(top: BorderSide(color: scheme.outlineVariant)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SectionHeader(
+                      l10n.mapCache_cacheArea,
+                      padding: const EdgeInsets.fromLTRB(0, 12, 0, 8),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          icon: const Icon(Icons.crop_free),
-                          label: Text(l10n.mapCache_useCurrentView),
-                          onPressed: _isDownloading ? null : _setBoundsFromView,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.crop_free),
+                            label: Text(l10n.mapCache_useCurrentView),
+                            onPressed: _isDownloading
+                                ? null
+                                : _setBoundsFromView,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      TextButton(
-                        onPressed: _isDownloading || selectedBounds == null
-                            ? null
-                            : _clearBounds,
-                        child: Text(l10n.common_clear),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    l10n.mapCache_zoomRange,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  RangeSlider(
-                    values: RangeValues(
-                      _minZoom.toDouble(),
-                      _maxZoom.toDouble(),
-                    ),
-                    min: 3,
-                    max: 18,
-                    divisions: 15,
-                    labels: RangeLabels('$_minZoom', '$_maxZoom'),
-                    onChanged: _isDownloading
-                        ? null
-                        : (values) {
-                            setState(() {
-                              _minZoom = values.start.round();
-                              _maxZoom = values.end.round();
-                            });
-                          },
-                    onChangeEnd: _isDownloading
-                        ? null
-                        : (_) {
-                            _saveZoomRange();
-                          },
-                  ),
-                  Text(l10n.mapCache_estimatedTiles(_estimatedTiles)),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    key: ValueKey(
-                      '$cacheSummary|${activeCachedTiles.length}|$cachedInSelection|$_cachedTileBytes',
-                    ),
-                    initialValue: cacheSummary,
-                    readOnly: true,
-                    minLines: 4,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      labelText: _isLoadingCachedTiles
-                          ? 'Cached tiles'
-                          : 'Cached tile summary',
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  if (!source.allowsBulkDownload) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      'Offline bulk downloads are disabled for ${source.label}.',
-                      style: TextStyle(color: Colors.orange[800]),
-                    ),
-                  ],
-                  if (_isDownloading) ...[
-                    const SizedBox(height: 8),
-                    LinearProgressIndicator(value: progressValue),
-                    const SizedBox(height: 4),
-                    Text(
-                      l10n.mapCache_downloadedTiles(
-                        _completedTiles,
-                        _estimatedTiles,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          icon: const Icon(Icons.download),
-                          label: Text(l10n.mapCache_downloadTilesButton),
-                          onPressed:
-                              _isDownloading ||
-                                  selectedBounds == null ||
-                                  !source.allowsBulkDownload
+                        const SizedBox(width: 12),
+                        TextButton(
+                          onPressed: _isDownloading || selectedBounds == null
                               ? null
-                              : _startDownload,
+                              : _clearBounds,
+                          child: Text(l10n.common_clear),
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    SectionHeader(
+                      l10n.mapCache_zoomRange,
+                      padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                    ),
+                    RangeSlider(
+                      values: RangeValues(
+                        _minZoom.toDouble(),
+                        _maxZoom.toDouble(),
                       ),
-                      const SizedBox(width: 12),
-                      OutlinedButton(
-                        onPressed: _isDownloading ? null : _clearCache,
-                        child: Text(l10n.mapCache_clearCacheButton),
-                      ),
-                    ],
-                  ),
-                  if (_failedTiles > 0 && !_isDownloading)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        l10n.mapCache_failedDownloads(_failedTiles),
-                        style: TextStyle(color: Colors.orange[700]),
+                      min: 3,
+                      max: 18,
+                      divisions: 15,
+                      labels: RangeLabels('$_minZoom', '$_maxZoom'),
+                      onChanged: _isDownloading
+                          ? null
+                          : (values) {
+                              setState(() {
+                                _minZoom = values.start.round();
+                                _maxZoom = values.end.round();
+                              });
+                            },
+                      onChangeEnd: _isDownloading
+                          ? null
+                          : (_) {
+                              _saveZoomRange();
+                            },
+                    ),
+                    Text(
+                      l10n.mapCache_estimatedTiles(_estimatedTiles),
+                      style: MeshTheme.mono(
+                        fontSize: 12,
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
-                ],
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      key: ValueKey(
+                        '$cacheSummary|${activeCachedTiles.length}|$cachedInSelection|$_cachedTileBytes',
+                      ),
+                      initialValue: cacheSummary,
+                      readOnly: true,
+                      minLines: 4,
+                      maxLines: 4,
+                      decoration: InputDecoration(
+                        labelText: _isLoadingCachedTiles
+                            ? l10n.mapCache_cachedTilesLabel
+                            : l10n.mapCache_cachedTileSummaryLabel,
+                        border: const OutlineInputBorder(),
+                      ),
+                    ),
+                    if (!source.allowsBulkDownload) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.mapCache_bulkDownloadDisabledForSource(
+                          source.label,
+                        ),
+                        style: MeshTheme.mono(
+                          fontSize: 12,
+                          color: MeshPalette.alert,
+                        ),
+                      ),
+                    ],
+                    if (_isDownloading) ...[
+                      const SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: progressValue,
+                        color: MeshPalette.blue,
+                        backgroundColor: scheme.surfaceContainerHighest,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.mapCache_downloadedTiles(
+                          _completedTiles,
+                          _estimatedTiles,
+                        ),
+                        style: MeshTheme.mono(
+                          fontSize: 12,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.download),
+                            label: Text(l10n.mapCache_downloadTilesButton),
+                            onPressed:
+                                _isDownloading ||
+                                    selectedBounds == null ||
+                                    !source.allowsBulkDownload
+                                ? null
+                                : _startDownload,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: MeshPalette.alert,
+                            side: const BorderSide(
+                              color: MeshPalette.alertLine,
+                            ),
+                          ),
+                          onPressed: _isDownloading ? null : _clearCache,
+                          child: Text(l10n.mapCache_clearCacheButton),
+                        ),
+                      ],
+                    ),
+                    if (_failedTiles > 0 && !_isDownloading)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          l10n.mapCache_failedDownloads(_failedTiles),
+                          style: MeshTheme.mono(
+                            fontSize: 12,
+                            color: MeshPalette.alert,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),

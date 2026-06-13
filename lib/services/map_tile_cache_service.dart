@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_map/flutter_map.dart';
 
@@ -15,7 +15,9 @@ enum MapRasterSourcePreset {
   stamenTerrain('stamen_terrain'),
   alidadeSmoothDark('alidade_smooth_dark'),
   outdoors('outdoors'),
-  osmBright('osm_bright');
+  osmBright('osm_bright'),
+  outdoorsDark('outdoors_dark'),
+  osmBrightDark('osm_bright_dark');
 
   const MapRasterSourcePreset(this.id);
 
@@ -129,19 +131,24 @@ class MapRasterSourceCatalog {
     isStadia: true,
     allowsBulkDownload: true,
   );
+  static const MapRasterSourceDefinition outdoorsDark =
+      MapRasterSourceDefinition(
+        id: 'outdoors',
+        label: 'Outdoors Dark',
+        description: 'Dark version of the Outdoors map style',
+        isStadia: true,
+        allowsBulkDownload: true,
+      );
+  static const MapRasterSourceDefinition osmBrightDark =
+      MapRasterSourceDefinition(
+        id: 'osm_bright',
+        label: 'OSM Bright Dark',
+        description: 'Dark version of the OSM Bright map style',
+        isStadia: true,
+        allowsBulkDownload: true,
+      );
 
-  static const List<MapRasterSourceDefinition> presets = [
-    osmAuto,
-    osmStandard,
-    osmDark,
-    stamenTerrain,
-    alidadeSmoothDark,
-    outdoors,
-    osmBright,
-  ];
-
-  static MapRasterSourceDefinition fromSettings(AppSettings settings) {
-    final preset = MapRasterSourcePreset.fromId(settings.mapRasterSourceId);
+  static MapRasterSourceDefinition fromPreset(MapRasterSourcePreset preset) {
     switch (preset) {
       case MapRasterSourcePreset.osmAuto:
         return osmAuto;
@@ -153,45 +160,19 @@ class MapRasterSourceCatalog {
         return alidadeSmoothDark;
       case MapRasterSourcePreset.outdoors:
         return outdoors;
+      case MapRasterSourcePreset.outdoorsDark:
+        return outdoorsDark;
       case MapRasterSourcePreset.osmBright:
         return osmBright;
+      case MapRasterSourcePreset.osmBrightDark:
+        return osmBrightDark;
       case MapRasterSourcePreset.stamenTerrain:
         return stamenTerrain;
     }
   }
 
-  static MapRasterSourceDefinition resolveFromSettings(
-    AppSettings settings, {
-    Brightness? platformBrightness,
-  }) {
-    final selected = fromSettings(settings);
-    if (selected.id != osmAuto.id) return selected;
-
-    return _prefersDarkTheme(
-          settings.themeMode,
-          platformBrightness: platformBrightness,
-        )
-        ? osmDark
-        : osmStandard;
-  }
-
-  static bool _prefersDarkTheme(
-    String themeMode, {
-    Brightness? platformBrightness,
-  }) {
-    switch (themeMode) {
-      case 'dark':
-        return true;
-      case 'light':
-        return false;
-      default:
-        return (platformBrightness ??
-                WidgetsBinding
-                    .instance
-                    .platformDispatcher
-                    .platformBrightness) ==
-            Brightness.dark;
-    }
+  static MapRasterSourceDefinition fromSettings(AppSettings settings) {
+    return fromPreset(MapRasterSourcePreset.fromId(settings.mapRasterSourceId));
   }
 }
 
@@ -325,24 +306,71 @@ class MapTileCacheService extends ChangeNotifier {
   }
 
   MapRasterSourceDefinition get source =>
-      MapRasterSourceCatalog.resolveFromSettings(appSettingsService.settings);
+      MapRasterSourceCatalog.fromSettings(appSettingsService.settings);
 
   MapRasterEndpointDefinition get endpoint =>
       MapRasterEndpointCatalog.fromSettings(appSettingsService.settings);
 
   String get urlTemplate => _buildUrlTemplate(appSettingsService.settings);
 
-  TileBuilder? get tileBuilder =>
-      isInvertedOsmDarkSource ? _osmDarkTileBuilder : null;
+  TileBuilder? get tileBuilder => null;
 
-  bool get isInvertedOsmDarkSource =>
-      source.id == MapRasterSourceCatalog.osmDark.id;
+  static const ColorFilter _darkMapFilter = ColorFilter.matrix([
+    -0.0850,
+    -0.2861,
+    -0.0289,
+    0,
+    120,
+    -0.0957,
+    -0.3218,
+    -0.0325,
+    0,
+    140,
+    -0.1169,
+    -0.3934,
+    -0.0397,
+    0,
+    170,
+    0,
+    0,
+    0,
+    1,
+    0,
+  ]);
 
   CacheManager get _concreteCacheManager => cacheManager as CacheManager;
 
   Map<String, String> get defaultHeaders => {
     'User-Agent': 'flutter_map ($userAgentPackageName)',
   };
+
+  Widget buildTileLayer(BuildContext context, {double opacity = 1}) {
+    final source = this.source;
+    Widget layer = TileLayer(
+      urlTemplate: urlTemplate,
+      tileProvider: tileProvider,
+      tileBuilder: tileBuilder,
+      userAgentPackageName: userAgentPackageName,
+      maxZoom: 19,
+    );
+
+    final shouldApplyDarkFilter =
+        source == MapRasterSourceCatalog.osmDark ||
+        source == MapRasterSourceCatalog.outdoorsDark ||
+        source == MapRasterSourceCatalog.osmBrightDark ||
+        (source == MapRasterSourceCatalog.osmAuto &&
+            Theme.of(context).brightness == Brightness.dark);
+
+    if (shouldApplyDarkFilter) {
+      layer = ColorFiltered(colorFilter: _darkMapFilter, child: layer);
+    }
+
+    if (opacity < 1) {
+      layer = Opacity(opacity: opacity, child: layer);
+    }
+
+    return layer;
+  }
 
   Future<void> clearCache() async {
     await cacheManager.emptyCache();
@@ -679,58 +707,6 @@ class MapTileCacheService extends ChangeNotifier {
         .replaceAll('{x}', x.toString())
         .replaceAll('{y}', y.toString());
   }
-}
-
-Widget _osmDarkTileBuilder(BuildContext _, Widget tileWidget, TileImage tile) {
-  return ColorFiltered(
-    colorFilter: const ColorFilter.matrix(<double>[
-      1.33,
-      0,
-      0,
-      0,
-      0,
-      0,
-      1.33,
-      0,
-      0,
-      0,
-      0,
-      0,
-      1.33,
-      0,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-    ]),
-    child: ColorFiltered(
-      colorFilter: const ColorFilter.matrix(<double>[
-        0.5740000009536743,
-        -1.4299999475479126,
-        -0.14399999380111694,
-        0,
-        255,
-        -0.4259999990463257,
-        -0.429999977350235,
-        -0.14399999380111694,
-        0,
-        255,
-        -0.4259999990463257,
-        -1.4299999475479126,
-        0.8559999465942383,
-        0,
-        255,
-        0,
-        0,
-        0,
-        1,
-        0,
-      ]),
-      child: tileWidget,
-    ),
-  );
 }
 
 class CachedNetworkTileProvider extends TileProvider {
