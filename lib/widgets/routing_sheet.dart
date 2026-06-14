@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../connector/meshcore_connector.dart';
+import '../utils/platform_info.dart';
 import '../helpers/path_helper.dart';
 import '../l10n/l10n.dart';
 import '../models/contact.dart';
@@ -534,11 +535,19 @@ class _RoutingSheetBodyState extends State<_RoutingSheetBody> {
       l10n.routing_deliveryCounts(record.successCount, record.failureCount),
     ];
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: ListTile(
-        enabled: hasBytes,
-        leading: CircleAvatar(
+    return Listener(
+      onPointerDown: PlatformInfo.isDesktop && hasBytes
+          ? (event) {
+              if (event.buttons == 2) {
+                _showPathDetail(context, connector, contact, record.pathBytes);
+              }
+            }
+          : null,
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        child: ListTile(
+          enabled: hasBytes,
+          leading: CircleAvatar(
           radius: 18,
           backgroundColor: bg,
           child: Icon(
@@ -577,13 +586,14 @@ class _RoutingSheetBodyState extends State<_RoutingSheetBody> {
             ),
           ],
         ),
-        onTap: hasBytes && !inUse
-            ? () => _applyHistoryPath(connector, contact, record)
-            : null,
-        onLongPress: hasBytes
-            ? () =>
-                  _showPathDetail(context, connector, contact, record.pathBytes)
-            : null,
+          onTap: hasBytes && !inUse
+              ? () => _applyHistoryPath(connector, contact, record)
+              : null,
+          onLongPress: hasBytes
+              ? () =>
+                    _showPathDetail(context, connector, contact, record.pathBytes)
+              : null,
+        ),
       ),
     );
   }
