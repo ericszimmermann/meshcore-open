@@ -285,7 +285,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void _handleMapTap(BuildContext context, MeshCoreConnector connector, LatLng latLng) {
+  void _handleMapContextPress(BuildContext context, MeshCoreConnector connector, LatLng latLng) {
     if (_isSelectingPoi) {
       setState(() {
         _isSelectingPoi = false;
@@ -729,10 +729,10 @@ class _MapScreenState extends State<MapScreen> {
                       }
                     },
                     onLongPress: (_, latLng) {
-                      _handleMapTap(context, connector, latLng);
+                      _handleMapContextPress(context, connector, latLng);
                     },
                     onSecondaryTap: (_, latLng) {
-                      _handleMapTap(context, connector, latLng);
+                      _handleMapContextPress(context, connector, latLng);
                     },
                     onPositionChanged: (camera, hasGesture) {
                       // Track zoom in half-step buckets so cluster/marker
