@@ -537,6 +537,7 @@ class _RoutingSheetBodyState extends State<_RoutingSheetBody> {
     ];
 
     return Listener(
+      behavior: HitTestBehavior.opaque,
       onPointerDown: PlatformInfo.isDesktop && hasBytes
           ? (event) {
               if (event.buttons & kSecondaryMouseButton != 0) {
