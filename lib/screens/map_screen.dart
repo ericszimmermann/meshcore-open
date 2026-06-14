@@ -1191,8 +1191,8 @@ class _MapScreenState extends State<MapScreen> {
           onLongPress: () => _isBuildingPathTrace
               ? _showNodeInfo(context, guess.contact)
               : null,
-          onSecondaryTap: () => _isBuildingPathTrace 
-              ? _showNodeInfo(context, guess.contact) 
+          onSecondaryTap: () => _isBuildingPathTrace
+              ? _showNodeInfo(context, guess.contact)
               : null,
           onTap: () => _isBuildingPathTrace
               ? _addToPath(context, guess.contact, position: guess.position)
