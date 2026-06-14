@@ -125,7 +125,9 @@ class _BleDebugLogScreenState extends State<BleDebugLogScreen> {
                                 if (context.mounted) {
                                   showDismissibleSnackBar(
                                     context,
-                                    content: Text(context.l10n.debugLog_bleCopied),
+                                    content: Text(
+                                      context.l10n.debugLog_bleCopied,
+                                    ),
                                   );
                                 }
                               }

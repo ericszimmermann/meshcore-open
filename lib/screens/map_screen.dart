@@ -285,7 +285,11 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void _handleMapContextPress(BuildContext context, MeshCoreConnector connector, LatLng latLng) {
+  void _handleMapContextPress(
+    BuildContext context,
+    MeshCoreConnector connector,
+    LatLng latLng,
+  ) {
     if (_isSelectingPoi) {
       setState(() {
         _isSelectingPoi = false;

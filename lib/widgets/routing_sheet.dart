@@ -538,57 +538,62 @@ class _RoutingSheetBodyState extends State<_RoutingSheetBody> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onSecondaryTapUp: PlatformInfo.isDesktop && hasBytes
-          ? (_) => _showPathDetail(context, connector, contact, record.pathBytes)
+          ? (_) =>
+                _showPathDetail(context, connector, contact, record.pathBytes)
           : null,
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 4),
         child: ListTile(
           enabled: hasBytes,
           leading: CircleAvatar(
-          radius: 18,
-          backgroundColor: bg,
-          child: Icon(
-            _qualityIcon(quality),
-            size: 18,
-            color: fg,
-            semanticLabel: _qualityLabel(context, quality),
+            radius: 18,
+            backgroundColor: bg,
+            child: Icon(
+              _qualityIcon(quality),
+              size: 18,
+              color: fg,
+              semanticLabel: _qualityLabel(context, quality),
+            ),
           ),
-        ),
-        title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
-        subtitle: Text(
-          '$line1\n${line2Parts.join(' • ')}',
-          style: const TextStyle(fontSize: 11),
-        ),
-        isThreeLine: true,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (inUse)
-              Tooltip(
-                message: l10n.routing_inUse,
-                child: Icon(
-                  Icons.check_circle,
-                  color: scheme.primary,
-                  semanticLabel: l10n.routing_inUse,
+          title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
+          subtitle: Text(
+            '$line1\n${line2Parts.join(' • ')}',
+            style: const TextStyle(fontSize: 11),
+          ),
+          isThreeLine: true,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (inUse)
+                Tooltip(
+                  message: l10n.routing_inUse,
+                  child: Icon(
+                    Icons.check_circle,
+                    color: scheme.primary,
+                    semanticLabel: l10n.routing_inUse,
+                  ),
+                ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, size: 20),
+                tooltip: l10n.chat_removePath,
+                constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                onPressed: () => pathService.removePathRecord(
+                  contact.publicKeyHex,
+                  record.pathBytes,
                 ),
               ),
-            IconButton(
-              icon: const Icon(Icons.delete_outline, size: 20),
-              tooltip: l10n.chat_removePath,
-              constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-              onPressed: () => pathService.removePathRecord(
-                contact.publicKeyHex,
-                record.pathBytes,
-              ),
-            ),
-          ],
-        ),
+            ],
+          ),
           onTap: hasBytes && !inUse
               ? () => _applyHistoryPath(connector, contact, record)
               : null,
           onLongPress: hasBytes
-              ? () =>
-                    _showPathDetail(context, connector, contact, record.pathBytes)
+              ? () => _showPathDetail(
+                  context,
+                  connector,
+                  contact,
+                  record.pathBytes,
+                )
               : null,
         ),
       ),
