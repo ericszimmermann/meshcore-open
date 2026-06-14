@@ -429,16 +429,15 @@ class _ChannelsScreenState extends State<ChannelsScreen>
           channelMessageStore,
           channel,
         ),
-        child: GestureDetector(
-          onSecondaryTapUp: PlatformInfo.isDesktop
-              ? (_) => _showChannelActions(
-                  this.context,
-                  connector,
-                  channelMessageStore,
-                  channel,
-                )
-              : null,
-          child: Row(
+        onSecondaryTap: PlatformInfo.isDesktop
+            ? () => _showChannelActions(
+                this.context,
+                connector,
+                channelMessageStore,
+                channel,
+              )
+            : null,
+        child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Leading avatar with optional community badge
@@ -566,7 +565,6 @@ class _ChannelsScreenState extends State<ChannelsScreen>
             ],
           ),
         ),
-      ),
     );
   }
 
