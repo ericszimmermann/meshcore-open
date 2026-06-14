@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,7 +40,7 @@ class LinkHandler {
       if (onSecondaryTap == null) return linkify;
       return Listener(
         onPointerDown: (event) {
-          if (event.buttons == 2) onSecondaryTap();
+          if (event.buttons & kSecondaryMouseButton != 0) onSecondaryTap();
         },
         behavior: HitTestBehavior.translucent,
         child: linkify,

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -538,7 +539,7 @@ class _RoutingSheetBodyState extends State<_RoutingSheetBody> {
     return Listener(
       onPointerDown: PlatformInfo.isDesktop && hasBytes
           ? (event) {
-              if (event.buttons == 2) {
+              if (event.buttons & kSecondaryMouseButton != 0) {
                 _showPathDetail(context, connector, contact, record.pathBytes);
               }
             }
