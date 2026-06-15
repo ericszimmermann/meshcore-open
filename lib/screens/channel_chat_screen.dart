@@ -658,6 +658,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                                 : EdgeInsets.zero,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 RouteChip(
                                   isDirect: (message.pathLength ?? -1) >= 0,
@@ -666,13 +667,15 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                                       : null,
                                 ),
                                 const SizedBox(width: 4),
-                                Text(
-                                  context.l10n.channels_via(
-                                    _formatPathPrefixes(displayPath),
-                                  ),
-                                  style: MeshTheme.mono(
-                                    fontSize: 9.5 * textScale,
-                                    color: metaColor,
+                                Flexible(
+                                  child: Text(
+                                    context.l10n.channels_via(
+                                      _formatPathPrefixes(displayPath),
+                                    ),
+                                    style: MeshTheme.mono(
+                                      fontSize: 9.5 * textScale,
+                                      color: metaColor,
+                                    ),
                                   ),
                                 ),
                               ],
