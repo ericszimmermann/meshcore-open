@@ -44,7 +44,7 @@ class RegionStore {
     for (var channel in await channelStore.loadChannels()) {
       var channelRegion = await channelRegionStore.loadRegion(channel.index);
       if (channelRegion == region) {
-        channelRegionStore.saveRegion(channel.index, '');
+        await channelRegionStore.saveRegion(channel.index, '');
       }
     }
     regions.remove(region);

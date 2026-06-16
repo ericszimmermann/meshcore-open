@@ -13,12 +13,14 @@ import '../connector/meshcore_protocol.dart';
 import '../services/app_settings_service.dart';
 import '../services/repeater_command_service.dart';
 import '../utils/app_logger.dart';
-import '../widgets/path_management_dialog.dart';
+import '../widgets/routing_sheet.dart';
 import '../helpers/cayenne_lpp.dart';
 import '../utils/battery_utils.dart';
 import '../helpers/snack_bar_builder.dart';
 import '../widgets/sync_progress_overlay.dart';
 import '../widgets/telemetry_location_map.dart';
+import '../theme/mesh_theme.dart';
+import '../widgets/mesh_ui.dart';
 
 class TelemetryScreen extends StatefulWidget {
   final Contact contact;
@@ -118,7 +120,7 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
               showDismissibleSnackBar(
                 context,
                 content: Text(context.l10n.telemetry_requestTimeout),
-                backgroundColor: Colors.red,
+                backgroundColor: Theme.of(context).colorScheme.error,
               );
             }
             if (isAutoRefreshRequest && _isAutoRefreshEnabled) {
@@ -178,7 +180,6 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
       showDismissibleSnackBar(
         context,
         content: Text(context.l10n.telemetry_receivedData),
-        backgroundColor: Colors.green,
       );
     }
     _statusTimeout?.cancel();
@@ -235,7 +236,7 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
           showDismissibleSnackBar(
             context,
             content: Text(context.l10n.telemetry_errorLoading(e.toString())),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           );
         }
       }
@@ -320,10 +321,15 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final scheme = Theme.of(context).colorScheme;
     final connector = context.watch<MeshCoreConnector>();
     final settings = context.watch<AppSettingsService>().settings;
     final isImperialUnits = settings.unitSystem == UnitSystem.imperial;
-    final isFloodMode = widget.contact.pathOverride == -1;
+    final contact = connector.contacts.firstWhere(
+      (c) => c.publicKeyHex == widget.contact.publicKeyHex,
+      orElse: () => widget.contact,
+    );
+    final isFloodMode = contact.pathOverride == -1;
 
     return Scaffold(
       appBar: AppBar(
@@ -347,70 +353,11 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
         centerTitle: false,
         bottom: const SyncProgressAppBarBottom(),
         actions: [
-          PopupMenuButton<String>(
+          IconButton(
             icon: Icon(isFloodMode ? Icons.waves : Icons.route),
             tooltip: l10n.repeater_routingMode,
-            onSelected: (mode) async {
-              if (mode == 'flood') {
-                await connector.setPathOverride(widget.contact, pathLen: -1);
-              } else {
-                await connector.setPathOverride(widget.contact, pathLen: null);
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'auto',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.auto_mode,
-                      size: 20,
-                      color: !isFloodMode
-                          ? Theme.of(context).primaryColor
-                          : null,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      l10n.repeater_autoUseSavedPath,
-                      style: TextStyle(
-                        fontWeight: !isFloodMode
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: 'flood',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.waves,
-                      size: 20,
-                      color: isFloodMode
-                          ? Theme.of(context).primaryColor
-                          : null,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      l10n.repeater_forceFloodMode,
-                      style: TextStyle(
-                        fontWeight: isFloodMode
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          IconButton(
-            icon: const Icon(Icons.timeline),
-            tooltip: l10n.repeater_pathManagement,
             onPressed: () =>
-                PathManagementDialog.show(context, contact: widget.contact),
+                ContactRoutingSheet.show(context, contact: widget.contact),
           ),
           IconButton(
             icon: _isLoading
@@ -441,7 +388,10 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
                 Center(
                   child: Text(
                     l10n.telemetry_noData,
-                    style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: scheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               if ((_isLoaded || _hasData) &&
@@ -468,34 +418,21 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
     int channel,
     bool isImperialUnits,
   ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  color: Theme.of(context).textTheme.headlineSmall?.color,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const Divider(),
-            for (final entry in channelData.entries)
-              _buildTelemetryField(entry, channel, isImperialUnits),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHeader(title, padding: const EdgeInsets.fromLTRB(16, 16, 16, 8)),
+        MeshCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final entry in channelData.entries)
+                _buildTelemetryField(entry, channel, isImperialUnits),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -654,89 +591,81 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
     final l10n = context.l10n;
     final counterText = _autoRefreshCounterText();
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.autorenew,
-                  color: Theme.of(context).textTheme.headlineSmall?.color,
-                ),
-                const SizedBox(width: 8),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHeader(
+          l10n.common_autoRefresh,
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+        ),
+        MeshCard(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildAutoRefreshNumberField(
+                controller: _autoRefreshIntervalController,
+                label: l10n.common_interval,
+                min: _autoRefreshMinIntervalSeconds,
+                max: _autoRefreshMaxIntervalSeconds,
+                fallback: _autoRefreshIntervalSeconds,
+              ),
+              const SizedBox(height: 12),
+              _buildAutoRefreshNumberField(
+                controller: _autoRefreshQuantityController,
+                label: l10n.telemetry_autoFetchQuantity,
+                min: _autoRefreshMinQuantity,
+                max: _autoRefreshMaxQuantity,
+                fallback: _autoRefreshDefaultQuantity,
+              ),
+              if (counterText != null) ...[
+                const SizedBox(height: 12),
                 Text(
-                  l10n.common_autoRefresh,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  counterText,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: _autoRefreshLastAttemptFailed
+                        ? Theme.of(context).colorScheme.error
+                        : null,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
-            ),
-            const Divider(),
-            _buildAutoRefreshNumberField(
-              controller: _autoRefreshIntervalController,
-              label: l10n.common_interval,
-              min: _autoRefreshMinIntervalSeconds,
-              max: _autoRefreshMaxIntervalSeconds,
-              fallback: _autoRefreshIntervalSeconds,
-            ),
-            const SizedBox(height: 12),
-            _buildAutoRefreshNumberField(
-              controller: _autoRefreshQuantityController,
-              label: l10n.telemetry_autoFetchQuantity,
-              min: _autoRefreshMinQuantity,
-              max: _autoRefreshMaxQuantity,
-              fallback: _autoRefreshDefaultQuantity,
-            ),
-            if (counterText != null) ...[
               const SizedBox(height: 12),
-              Text(
-                counterText,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: _autoRefreshLastAttemptFailed
-                      ? Theme.of(context).colorScheme.error
-                      : null,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-            const SizedBox(height: 12),
-            FilledButton(
-              onPressed: _isLoading && !_isAutoRefreshEnabled
-                  ? null
-                  : _toggleAutoRefresh,
-              child: _isAutoRefreshEnabled
-                  ? SizedBox(
-                      width: double.infinity,
-                      height: 20,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Center(child: Text(l10n.common_disable)),
-                          const Positioned(
-                            right: 0,
-                            child: SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
+              FilledButton(
+                onPressed: _isLoading && !_isAutoRefreshEnabled
+                    ? null
+                    : _toggleAutoRefresh,
+                child: _isAutoRefreshEnabled
+                    ? SizedBox(
+                        width: double.infinity,
+                        height: 20,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Center(child: Text(l10n.common_disable)),
+                            Positioned(
+                              right: 0,
+                              child: SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Text(l10n.common_enable),
-            ),
-          ],
+                          ],
+                        ),
+                      )
+                    : Text(l10n.common_enable),
+              ),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -966,26 +895,27 @@ class _TelemetryScreenState extends State<TelemetryScreen> {
   }
 
   Widget _buildInfoRow(String label, String value) {
+    final scheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 130,
+          Expanded(
             child: Text(
               label,
               style: TextStyle(
-                color: Colors.grey[600],
+                color: scheme.onSurfaceVariant,
+                fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.w400),
-            ),
+          const SizedBox(width: 8),
+          Text(
+            value,
+            style: MeshTheme.mono(fontSize: 13, color: scheme.onSurface),
+            textAlign: TextAlign.end,
           ),
         ],
       ),
