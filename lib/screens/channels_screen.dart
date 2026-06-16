@@ -374,13 +374,30 @@ class _ChannelsScreenState extends State<ChannelsScreen>
       _communityIndex,
     );
     final bool isCommunityChannel = Channel.isCommunityChannel(channelType);
+    final community = isCommunityChannel
+        ? _communityIndex.getCommunityForChannel(channel)
+        : null;
+    // Only flood-routed channels carry a region; show it when one is set.
+    String subtitle = connector.hasChannelRegion(channel.index)
+        ? context.l10n.channels_regionSetTo(
+            connector.getChannelRegion(channel.index),
+          )
+        : '';
     switch (channelType) {
       case ChannelType.communityPublic:
         icon = Icons.groups;
         iconColor = MeshPalette.magenta;
+        if (community != null) {
+          subtitle =
+              '${context.l10n.community_publicChannel} • ${community.name}';
+        }
       case ChannelType.communityHashtag:
         icon = Icons.groups;
         iconColor = MeshPalette.magenta;
+        if (community != null) {
+          subtitle =
+              '${context.l10n.community_hashtagChannel} • ${community.name}';
+        }
       case ChannelType.public:
         icon = Icons.public;
         iconColor = MeshPalette.signal;
@@ -503,6 +520,17 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                       ),
                     ],
                   ),
+                  if (subtitle.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                   if (lastPreview.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(
