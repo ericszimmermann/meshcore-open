@@ -4231,6 +4231,8 @@ class MeshCoreConnector extends ChangeNotifier {
     // [57] = cr
     // [58+] = node_name
     final wasAwaitingSelfInfo = _awaitingSelfInfo;
+    final prevLatitude = _selfLatitude;
+    final prevLongitude = _selfLongitude;
     final reader = BufferReader(frame);
     try {
       reader.skipBytes(2);
@@ -4260,6 +4262,29 @@ class MeshCoreConnector extends ChangeNotifier {
         tag: 'Connector',
       );
     }
+
+    const locationChangeEpsilon = 1e-6;
+    final latChanged =
+      prevLatitude != null &&
+      _selfLatitude != null &&
+      (_selfLatitude! - prevLatitude).abs() >= locationChangeEpsilon;
+    final lonChanged =
+      prevLongitude != null &&
+      _selfLongitude != null &&
+      (_selfLongitude! - prevLongitude).abs() >= locationChangeEpsilon;
+    final gpsSampleChanged =
+      hasValidLocation(prevLatitude, prevLongitude) &&
+      hasValidLocation(_selfLatitude, _selfLongitude) &&
+      (latChanged || lonChanged);
+    final shouldAutoSendZeroHopAdvert =
+        gpsSampleChanged &&
+        _advertLocPolicy == 1 &&
+        (_appSettingsService?.settings.autoSendZeroHopAdvertOnGpsUpdate ??
+            false);
+    if (shouldAutoSendZeroHopAdvert) {
+      unawaited(sendSelfAdvert(flood: false));
+    }
+
     final selfName = _selfName?.trim();
     if (_activeTransport == MeshCoreTransportType.usb &&
         selfName != null &&

@@ -9,6 +9,7 @@ import '../connector/meshcore_connector.dart';
 import '../connector/meshcore_protocol.dart';
 import '../l10n/l10n.dart';
 import '../models/radio_settings.dart';
+import '../services/app_settings_service.dart';
 import '../services/app_debug_log_service.dart';
 import '../theme/mesh_theme.dart';
 import '../widgets/app_bar.dart';
@@ -1172,12 +1173,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 void _privacySettings(BuildContext context, MeshCoreConnector connector) {
   final l10n = context.l10n;
+  final settingsService = context.read<AppSettingsService>();
 
   int telemetryMode = connector.telemetryModeBase;
   int telemetryLocMode = connector.telemetryModeLoc;
   int telemetryEnvMode = connector.telemetryModeEnv;
   bool advertLocPolicy = connector.advertLocationPolicy == 0 ? false : true;
   int multiAcks = connector.multiAcks;
+  bool autoZeroHopAdvertOnGpsUpdate =
+      settingsService.settings.autoSendZeroHopAdvertOnGpsUpdate;
 
   final telemModeBase = [
     DropdownMenuItem(value: teleModeDeny, child: Text(l10n.settings_denyAll)),
@@ -1210,6 +1214,20 @@ void _privacySettings(BuildContext context, MeshCoreConnector connector) {
                 onChanged: (value) {
                   setDialogState(() => advertLocPolicy = value);
                 },
+              ),
+              const SizedBox(height: 8),
+              FeatureToggleRow(
+                title: l10n.settings_autoZeroHopAdvertOnGpsUpdate,
+                subtitle: l10n.settings_autoZeroHopAdvertOnGpsUpdateSubtitle,
+                value: autoZeroHopAdvertOnGpsUpdate,
+                enabled: advertLocPolicy,
+                onChanged: advertLocPolicy
+                    ? (value) {
+                        setDialogState(
+                          () => autoZeroHopAdvertOnGpsUpdate = value,
+                        );
+                      }
+                    : null,
               ),
               const SizedBox(height: 8),
               SwitchListTile(
@@ -1279,6 +1297,9 @@ void _privacySettings(BuildContext context, MeshCoreConnector connector) {
                 telemetryEnvMode,
                 advertLocPolicy ? 1 : 0,
                 multiAcks,
+              );
+              await settingsService.setAutoSendZeroHopAdvertOnGpsUpdate(
+                autoZeroHopAdvertOnGpsUpdate,
               );
               await connector.refreshDeviceInfo();
               if (!context.mounted) return;
