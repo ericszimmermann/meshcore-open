@@ -932,6 +932,28 @@ class AppLocalizationsUk extends AppLocalizations {
   String get appSettings_lastWeek => 'Минулий тиждень';
 
   @override
+  String get appSettings_rasterTileSource => 'Джерело растрових тайлів';
+
+  @override
+  String get appSettings_stadiaEndpoint => 'Кінцева точка Stadia';
+
+  @override
+  String get appSettings_stadiaApiKey => 'Ключ API Stadia';
+
+  @override
+  String get appSettings_stadiaApiKeyRequired =>
+      'Потрібно для використання Stadia Maps';
+
+  @override
+  String appSettings_stadiaApiKeyConfigured(String maskedKey) {
+    return 'Налаштовано: $maskedKey';
+  }
+
+  @override
+  String get appSettings_stadiaApiKeyDialogDescription =>
+      'Введіть свій ключ API Stadia Maps. Програма використовує його для запитів растрових тайлів.';
+
+  @override
   String get appSettings_offlineMapCache => 'Офлайн-кеш карти';
 
   @override
@@ -2082,6 +2104,42 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String mapCache_failedDownloads(int count) {
     return 'Невдалі завантаження: $count';
+  }
+
+  @override
+  String get mapCache_cachedTilesLabel => 'Cached tiles';
+
+  @override
+  String get mapCache_cachedTileSummaryLabel => 'Cached tile summary';
+
+  @override
+  String mapCache_bulkDownloadDisabledForSource(String source) {
+    return 'Offline bulk downloads are disabled for $source.';
+  }
+
+  @override
+  String mapCache_bulkDownloadDisabledInConfig(String source) {
+    return 'Offline bulk downloads are disabled for $source in this app configuration.';
+  }
+
+  @override
+  String mapCache_summarySource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String mapCache_summaryCachedTilesForSource(int count) {
+    return 'Cached tiles for source: $count';
+  }
+
+  @override
+  String mapCache_summaryCachedInSelection(int count) {
+    return 'Cached in selected area/zoom: $count';
+  }
+
+  @override
+  String mapCache_summaryApproxCacheSize(String size) {
+    return 'Approx cache size: $size';
   }
 
   @override
@@ -4098,6 +4156,36 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get contacts_contactImportFailed => 'Контакт не вдалось імпортувати';
+
+  @override
+  String get discoveredContacts_export => 'Експортувати виявлені контакти';
+
+  @override
+  String get discoveredContacts_import => 'Імпортувати виявлені контакти';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Виявлені контакти експортовано до $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Не вдалося експортувати виявлені контакти: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return 'Імпортовано $count виявлених контактів.';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'У файлі імпорту не знайдено контактів.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Не вдалося імпортувати виявлені контакти: $error';
+  }
 
   @override
   String get contacts_zeroHopAdvert => 'Оголошення без ретрансляції';

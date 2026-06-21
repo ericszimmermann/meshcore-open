@@ -885,6 +885,27 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appSettings_lastWeek => '過去1週間';
 
   @override
+  String get appSettings_rasterTileSource => 'ラスタタイルのソース';
+
+  @override
+  String get appSettings_stadiaEndpoint => 'Stadia エンドポイント';
+
+  @override
+  String get appSettings_stadiaApiKey => 'Stadia API キー';
+
+  @override
+  String get appSettings_stadiaApiKeyRequired => 'Stadia Maps の利用に必要です';
+
+  @override
+  String appSettings_stadiaApiKeyConfigured(String maskedKey) {
+    return '設定済み: $maskedKey';
+  }
+
+  @override
+  String get appSettings_stadiaApiKeyDialogDescription =>
+      'Stadia Maps の API キーを入力してください。このアプリはラスタタイルの取得に使用します。';
+
+  @override
   String get appSettings_offlineMapCache => 'オフライン地図キャッシュ';
 
   @override
@@ -1997,6 +2018,42 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String mapCache_failedDownloads(int count) {
     return '失敗したダウンロード: $count';
+  }
+
+  @override
+  String get mapCache_cachedTilesLabel => 'Cached tiles';
+
+  @override
+  String get mapCache_cachedTileSummaryLabel => 'Cached tile summary';
+
+  @override
+  String mapCache_bulkDownloadDisabledForSource(String source) {
+    return 'Offline bulk downloads are disabled for $source.';
+  }
+
+  @override
+  String mapCache_bulkDownloadDisabledInConfig(String source) {
+    return 'Offline bulk downloads are disabled for $source in this app configuration.';
+  }
+
+  @override
+  String mapCache_summarySource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String mapCache_summaryCachedTilesForSource(int count) {
+    return 'Cached tiles for source: $count';
+  }
+
+  @override
+  String mapCache_summaryCachedInSelection(int count) {
+    return 'Cached in selected area/zoom: $count';
+  }
+
+  @override
+  String mapCache_summaryApproxCacheSize(String size) {
+    return 'Approx cache size: $size';
   }
 
   @override
@@ -3889,6 +3946,35 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get contacts_contactImportFailed => '連絡先のインポートに失敗しました。';
+
+  @override
+  String get discoveredContacts_export => '発見済みの連絡先をエクスポート';
+
+  @override
+  String get discoveredContacts_import => '発見済みの連絡先をインポート';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return '発見済みの連絡先を $path にエクスポートしました。';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return '発見済みの連絡先のエクスポートに失敗しました: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return '$count 件の発見済み連絡先をインポートしました。';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts => 'インポートファイルに連絡先が見つかりませんでした。';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return '発見済みの連絡先のインポートに失敗しました: $error';
+  }
 
   @override
   String get contacts_zeroHopAdvert => 'ゼロホップ広告';

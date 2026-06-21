@@ -240,6 +240,19 @@
   "appSettings_last6Hours": "De senaste 6 timmarna",
   "appSettings_last24Hours": "De senaste 24 timmarna",
   "appSettings_lastWeek": "Förra veckan",
+  "appSettings_rasterTileSource": "Källa för rasterplattor",
+  "appSettings_stadiaEndpoint": "Stadia-slutpunkt",
+  "appSettings_stadiaApiKey": "Stadia API-nyckel",
+  "appSettings_stadiaApiKeyRequired": "Krävs för att använda Stadia Maps",
+  "appSettings_stadiaApiKeyConfigured": "Konfigurerad: {maskedKey}",
+  "@appSettings_stadiaApiKeyConfigured": {
+    "placeholders": {
+      "maskedKey": {
+        "type": "String"
+      }
+    }
+  },
+  "appSettings_stadiaApiKeyDialogDescription": "Ange din Stadia Maps API-nyckel. Appen använder den för förfrågningar om rasterplattor.",
   "appSettings_offlineMapCache": "Offline Kartcache",
   "appSettings_noAreaSelected": "Ingen area markerad",
   "appSettings_areaSelectedZoom": "Område markerat (zoom {minZoom}-{maxZoom})",
@@ -766,6 +779,56 @@
     "placeholders": {
       "count": {
         "type": "int"
+      }
+    }
+  },
+  "mapCache_cachedTilesLabel": "Cached tiles",
+  "mapCache_cachedTileSummaryLabel": "Cached tile summary",
+  "mapCache_bulkDownloadDisabledForSource": "Offline bulk downloads are disabled for {source}.",
+  "@mapCache_bulkDownloadDisabledForSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_bulkDownloadDisabledInConfig": "Offline bulk downloads are disabled for {source} in this app configuration.",
+  "@mapCache_bulkDownloadDisabledInConfig": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summarySource": "Source: {source}",
+  "@mapCache_summarySource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summaryCachedTilesForSource": "Cached tiles for source: {count}",
+  "@mapCache_summaryCachedTilesForSource": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryCachedInSelection": "Cached in selected area/zoom: {count}",
+  "@mapCache_summaryCachedInSelection": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryApproxCacheSize": "Approx cache size: {size}",
+  "@mapCache_summaryApproxCacheSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
       }
     }
   },
@@ -1951,6 +2014,41 @@
   "discoveredContacts_contactAdded": "Kontakt tillagd",
   "discoveredContacts_addContact": "Lägg till kontakt",
   "discoveredContacts_copyContact": "Kopiera kontakt till urklipp",
+  "discoveredContacts_export": "Exportera upptäckta kontakter",
+  "discoveredContacts_import": "Importera upptäckta kontakter",
+  "discoveredContacts_exported": "Upptäckta kontakter exporterades till {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Det gick inte att exportera upptäckta kontakter: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "Importerade {count} upptäckta kontakter.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoContacts": "Inga kontakter hittades i importfilen.",
+  "discoveredContacts_importFailed": "Det gick inte att importera upptäckta kontakter: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "contactsSettings_overwriteOldestSubtitle": "När kontaktlistan är full ersätts den äldsta icke-favoriterade kontakten.",
   "common_deleteAll": "Ta bort alla",
   "discoveredContacts_deleteContactAllContent": "Är du säker på att du vill ta bort alla upptäckta kontakter?",
@@ -2185,12 +2283,6 @@
   "scanner_linuxPairingHidePin": "Dölj PIN",
   "repeater_cliQuickDiscovery": "Upptäck grannar",
   "repeater_cliQuickClockSync": "Synkronisera klocka",
-  "@repeater_clockSyncAfterLogin": {
-    "description": "Repeater setting: auto sync device clock after successful login"
-  },
-  "@repeater_clockSyncAfterLoginSubtitle": {
-    "description": "Repeater setting subtitle: describes the clock sync after login behavior"
-  },
   "repeater_clockSyncAfterLoginSubtitle": "Automatiskt skicka \"klocksynkronisering\" efter en lyckad inloggning.",
   "repeater_clockSyncAfterLogin": "Synkronisera klockan efter inloggning",
   "repeater_guest": "Information om repetorer",

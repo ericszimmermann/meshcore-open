@@ -240,6 +240,19 @@
   "appSettings_last6Hours": "Afgelopen 6 uur",
   "appSettings_last24Hours": "Afgelopen 24 uur",
   "appSettings_lastWeek": "Afgelopen week",
+  "appSettings_rasterTileSource": "Rastertegelbron",
+  "appSettings_stadiaEndpoint": "Stadia-eindpunt",
+  "appSettings_stadiaApiKey": "Stadia API-sleutel",
+  "appSettings_stadiaApiKeyRequired": "Vereist voor gebruik van Stadia Maps",
+  "appSettings_stadiaApiKeyConfigured": "Geconfigureerd: {maskedKey}",
+  "@appSettings_stadiaApiKeyConfigured": {
+    "placeholders": {
+      "maskedKey": {
+        "type": "String"
+      }
+    }
+  },
+  "appSettings_stadiaApiKeyDialogDescription": "Voer je Stadia Maps API-sleutel in. De app gebruikt die voor rastertegelverzoeken.",
   "appSettings_offlineMapCache": "Offline Kaartcache",
   "appSettings_noAreaSelected": "Geen gebied geselecteerd",
   "appSettings_areaSelectedZoom": "Geselecteerd gebied (zoom {minZoom}-{maxZoom})",
@@ -766,6 +779,56 @@
     "placeholders": {
       "count": {
         "type": "int"
+      }
+    }
+  },
+  "mapCache_cachedTilesLabel": "Cached tiles",
+  "mapCache_cachedTileSummaryLabel": "Cached tile summary",
+  "mapCache_bulkDownloadDisabledForSource": "Offline bulk downloads are disabled for {source}.",
+  "@mapCache_bulkDownloadDisabledForSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_bulkDownloadDisabledInConfig": "Offline bulk downloads are disabled for {source} in this app configuration.",
+  "@mapCache_bulkDownloadDisabledInConfig": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summarySource": "Source: {source}",
+  "@mapCache_summarySource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summaryCachedTilesForSource": "Cached tiles for source: {count}",
+  "@mapCache_summaryCachedTilesForSource": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryCachedInSelection": "Cached in selected area/zoom: {count}",
+  "@mapCache_summaryCachedInSelection": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryApproxCacheSize": "Approx cache size: {size}",
+  "@mapCache_summaryApproxCacheSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
       }
     }
   },
@@ -1951,6 +2014,41 @@
   "discoveredContacts_Title": "Ontdekte contacten",
   "discoveredContacts_contactAdded": "Contact toegevoegd",
   "discoveredContacts_searchHint": "Ontdekte contacten zoeken",
+  "discoveredContacts_export": "Ontdekte contacten exporteren",
+  "discoveredContacts_import": "Ontdekte contacten importeren",
+  "discoveredContacts_exported": "Ontdekte contacten geëxporteerd naar {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Exporteren van ontdekte contacten mislukt: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "{count} ontdekte contacten geïmporteerd.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoContacts": "Geen contacten gevonden in het importbestand.",
+  "discoveredContacts_importFailed": "Importeren van ontdekte contacten mislukt: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "contactsSettings_overwriteOldestSubtitle": "Wanneer de contactenlijst vol is, wordt de oudste niet-favoriete contactpersoon vervangen.",
   "common_deleteAll": "Alles verwijderen",
   "discoveredContacts_deleteContactAll": "Verwijder alle ontdekte contacten",

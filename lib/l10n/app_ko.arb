@@ -332,6 +332,19 @@
   "appSettings_last6Hours": "지난 6시간",
   "appSettings_last24Hours": "지난 24시간",
   "appSettings_lastWeek": "지난 주",
+  "appSettings_rasterTileSource": "래스터 타일 소스",
+  "appSettings_stadiaEndpoint": "Stadia 엔드포인트",
+  "appSettings_stadiaApiKey": "Stadia API 키",
+  "appSettings_stadiaApiKeyRequired": "Stadia Maps를 사용하려면 필요합니다",
+  "appSettings_stadiaApiKeyConfigured": "설정됨: {maskedKey}",
+  "@appSettings_stadiaApiKeyConfigured": {
+    "placeholders": {
+      "maskedKey": {
+        "type": "String"
+      }
+    }
+  },
+  "appSettings_stadiaApiKeyDialogDescription": "Stadia Maps API 키를 입력하세요. 이 앱은 래스터 타일 요청에 이 키를 사용합니다.",
   "appSettings_offlineMapCache": "오프라인 지도 캐시",
   "appSettings_unitsTitle": "단위",
   "appSettings_unitsMetric": "미터법 (m / km)",
@@ -949,6 +962,56 @@
     "placeholders": {
       "count": {
         "type": "int"
+      }
+    }
+  },
+  "mapCache_cachedTilesLabel": "Cached tiles",
+  "mapCache_cachedTileSummaryLabel": "Cached tile summary",
+  "mapCache_bulkDownloadDisabledForSource": "Offline bulk downloads are disabled for {source}.",
+  "@mapCache_bulkDownloadDisabledForSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_bulkDownloadDisabledInConfig": "Offline bulk downloads are disabled for {source} in this app configuration.",
+  "@mapCache_bulkDownloadDisabledInConfig": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summarySource": "Source: {source}",
+  "@mapCache_summarySource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summaryCachedTilesForSource": "Cached tiles for source: {count}",
+  "@mapCache_summaryCachedTilesForSource": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryCachedInSelection": "Cached in selected area/zoom: {count}",
+  "@mapCache_summaryCachedInSelection": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryApproxCacheSize": "Approx cache size: {size}",
+  "@mapCache_summaryApproxCacheSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
       }
     }
   },
@@ -2076,6 +2139,41 @@
   "discoveredContacts_deleteContact": "발견된 연락처 삭제",
   "discoveredContacts_deleteContactAll": "발견된 모든 연락처 삭제",
   "discoveredContacts_deleteContactAllContent": "정말로 모든 검색된 연락처를 삭제하시겠습니까?",
+  "discoveredContacts_export": "발견된 연락처 내보내기",
+  "discoveredContacts_import": "발견된 연락처 가져오기",
+  "discoveredContacts_exported": "발견된 연락처를 {path}(으)로 내보냈습니다.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "발견된 연락처 내보내기에 실패했습니다: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "발견된 연락처 {count}개를 가져왔습니다.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoContacts": "가져오기 파일에서 연락처를 찾을 수 없습니다.",
+  "discoveredContacts_importFailed": "발견된 연락처 가져오기에 실패했습니다: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "chat_sendCooldown": "다시 보내기 전에 잠시 기다려 주시기 바랍니다.",
   "appSettings_jumpToOldestUnread": "가장 오래된, 아직 읽지 않은 항목으로 이동",
   "appSettings_jumpToOldestUnreadSubtitle": "새로운 메시지가 없는 채팅을 열 때, 최신 메시지가 아닌 첫 번째 읽지 않은 메시지로 스크롤하세요.",

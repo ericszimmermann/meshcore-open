@@ -937,6 +937,28 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appSettings_lastWeek => 'Letzte Woche';
 
   @override
+  String get appSettings_rasterTileSource => 'Quelle für Rasterkacheln';
+
+  @override
+  String get appSettings_stadiaEndpoint => 'Stadia-Endpunkt';
+
+  @override
+  String get appSettings_stadiaApiKey => 'Stadia-API-Schlüssel';
+
+  @override
+  String get appSettings_stadiaApiKeyRequired =>
+      'Für die Nutzung von Stadia Maps erforderlich';
+
+  @override
+  String appSettings_stadiaApiKeyConfigured(String maskedKey) {
+    return 'Konfiguriert: $maskedKey';
+  }
+
+  @override
+  String get appSettings_stadiaApiKeyDialogDescription =>
+      'Geben Sie Ihren Stadia-Maps-API-Schlüssel ein. Die App verwendet ihn für Rasterkachel-Anfragen.';
+
+  @override
   String get appSettings_offlineMapCache => 'Offline-Karten-Cache';
 
   @override
@@ -2088,6 +2110,42 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String mapCache_failedDownloads(int count) {
     return 'Fehlgeschlagene Downloads: $count';
+  }
+
+  @override
+  String get mapCache_cachedTilesLabel => 'Cached tiles';
+
+  @override
+  String get mapCache_cachedTileSummaryLabel => 'Cached tile summary';
+
+  @override
+  String mapCache_bulkDownloadDisabledForSource(String source) {
+    return 'Offline bulk downloads are disabled for $source.';
+  }
+
+  @override
+  String mapCache_bulkDownloadDisabledInConfig(String source) {
+    return 'Offline bulk downloads are disabled for $source in this app configuration.';
+  }
+
+  @override
+  String mapCache_summarySource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String mapCache_summaryCachedTilesForSource(int count) {
+    return 'Cached tiles for source: $count';
+  }
+
+  @override
+  String mapCache_summaryCachedInSelection(int count) {
+    return 'Cached in selected area/zoom: $count';
+  }
+
+  @override
+  String mapCache_summaryApproxCacheSize(String size) {
+    return 'Approx cache size: $size';
   }
 
   @override
@@ -4095,6 +4153,36 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get contacts_contactImportFailed =>
       'Kontakt konnte nicht importiert werden';
+
+  @override
+  String get discoveredContacts_export => 'Entdeckte Kontakte exportieren';
+
+  @override
+  String get discoveredContacts_import => 'Entdeckte Kontakte importieren';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Entdeckte Kontakte exportiert nach $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Export von entdeckten Kontakten fehlgeschlagen: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return '$count entdeckte Kontakte importiert.';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'Keine Kontakte in Importdatei gefunden.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Import von entdeckten Kontakten fehlgeschlagen: $error';
+  }
 
   @override
   String get contacts_zeroHopAdvert => 'Zero-Hop-Ankündigung';

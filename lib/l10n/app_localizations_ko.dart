@@ -887,6 +887,27 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_lastWeek => '지난 주';
 
   @override
+  String get appSettings_rasterTileSource => '래스터 타일 소스';
+
+  @override
+  String get appSettings_stadiaEndpoint => 'Stadia 엔드포인트';
+
+  @override
+  String get appSettings_stadiaApiKey => 'Stadia API 키';
+
+  @override
+  String get appSettings_stadiaApiKeyRequired => 'Stadia Maps를 사용하려면 필요합니다';
+
+  @override
+  String appSettings_stadiaApiKeyConfigured(String maskedKey) {
+    return '설정됨: $maskedKey';
+  }
+
+  @override
+  String get appSettings_stadiaApiKeyDialogDescription =>
+      'Stadia Maps API 키를 입력하세요. 이 앱은 래스터 타일 요청에 이 키를 사용합니다.';
+
+  @override
   String get appSettings_offlineMapCache => '오프라인 지도 캐시';
 
   @override
@@ -2000,6 +2021,42 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String mapCache_failedDownloads(int count) {
     return '실패한 다운로드: $count';
+  }
+
+  @override
+  String get mapCache_cachedTilesLabel => 'Cached tiles';
+
+  @override
+  String get mapCache_cachedTileSummaryLabel => 'Cached tile summary';
+
+  @override
+  String mapCache_bulkDownloadDisabledForSource(String source) {
+    return 'Offline bulk downloads are disabled for $source.';
+  }
+
+  @override
+  String mapCache_bulkDownloadDisabledInConfig(String source) {
+    return 'Offline bulk downloads are disabled for $source in this app configuration.';
+  }
+
+  @override
+  String mapCache_summarySource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String mapCache_summaryCachedTilesForSource(int count) {
+    return 'Cached tiles for source: $count';
+  }
+
+  @override
+  String mapCache_summaryCachedInSelection(int count) {
+    return 'Cached in selected area/zoom: $count';
+  }
+
+  @override
+  String mapCache_summaryApproxCacheSize(String size) {
+    return 'Approx cache size: $size';
   }
 
   @override
@@ -3897,6 +3954,35 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get contacts_contactImportFailed => '연락처를 가져오지 못했습니다.';
+
+  @override
+  String get discoveredContacts_export => '발견된 연락처 내보내기';
+
+  @override
+  String get discoveredContacts_import => '발견된 연락처 가져오기';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return '발견된 연락처를 $path(으)로 내보냈습니다.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return '발견된 연락처 내보내기에 실패했습니다: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return '발견된 연락처 $count개를 가져왔습니다.';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts => '가져오기 파일에서 연락처를 찾을 수 없습니다.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return '발견된 연락처 가져오기에 실패했습니다: $error';
+  }
 
   @override
   String get contacts_zeroHopAdvert => '제로 홉 광고';

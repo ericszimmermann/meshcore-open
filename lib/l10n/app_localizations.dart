@@ -1792,6 +1792,42 @@ abstract class AppLocalizations {
   /// **'Last week'**
   String get appSettings_lastWeek;
 
+  /// No description provided for @appSettings_rasterTileSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Raster Tile Source'**
+  String get appSettings_rasterTileSource;
+
+  /// No description provided for @appSettings_stadiaEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Stadia Endpoint'**
+  String get appSettings_stadiaEndpoint;
+
+  /// No description provided for @appSettings_stadiaApiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Stadia API Key'**
+  String get appSettings_stadiaApiKey;
+
+  /// No description provided for @appSettings_stadiaApiKeyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required for Stadia Maps usage'**
+  String get appSettings_stadiaApiKeyRequired;
+
+  /// No description provided for @appSettings_stadiaApiKeyConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Configured: {maskedKey}'**
+  String appSettings_stadiaApiKeyConfigured(String maskedKey);
+
+  /// No description provided for @appSettings_stadiaApiKeyDialogDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your Stadia Maps API key. This app uses it for raster tile requests.'**
+  String get appSettings_stadiaApiKeyDialogDescription;
+
   /// No description provided for @appSettings_offlineMapCache.
   ///
   /// In en, this message translates to:
@@ -3795,6 +3831,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed downloads: {count}'**
   String mapCache_failedDownloads(int count);
+
+  /// No description provided for @mapCache_cachedTilesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cached tiles'**
+  String get mapCache_cachedTilesLabel;
+
+  /// No description provided for @mapCache_cachedTileSummaryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cached tile summary'**
+  String get mapCache_cachedTileSummaryLabel;
+
+  /// No description provided for @mapCache_bulkDownloadDisabledForSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline bulk downloads are disabled for {source}.'**
+  String mapCache_bulkDownloadDisabledForSource(String source);
+
+  /// No description provided for @mapCache_bulkDownloadDisabledInConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline bulk downloads are disabled for {source} in this app configuration.'**
+  String mapCache_bulkDownloadDisabledInConfig(String source);
+
+  /// No description provided for @mapCache_summarySource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {source}'**
+  String mapCache_summarySource(String source);
+
+  /// No description provided for @mapCache_summaryCachedTilesForSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Cached tiles for source: {count}'**
+  String mapCache_summaryCachedTilesForSource(int count);
+
+  /// No description provided for @mapCache_summaryCachedInSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Cached in selected area/zoom: {count}'**
+  String mapCache_summaryCachedInSelection(int count);
+
+  /// No description provided for @mapCache_summaryApproxCacheSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Approx cache size: {size}'**
+  String mapCache_summaryApproxCacheSize(String size);
 
   /// No description provided for @mapCache_boundsLabel.
   ///
@@ -7101,6 +7185,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to import contact.'**
   String get contacts_contactImportFailed;
+
+  /// No description provided for @discoveredContacts_export.
+  ///
+  /// In en, this message translates to:
+  /// **'Export discovered contacts'**
+  String get discoveredContacts_export;
+
+  /// No description provided for @discoveredContacts_import.
+  ///
+  /// In en, this message translates to:
+  /// **'Import discovered contacts'**
+  String get discoveredContacts_import;
+
+  /// No description provided for @discoveredContacts_exported.
+  ///
+  /// In en, this message translates to:
+  /// **'Exported discovered contacts to {path}.'**
+  String discoveredContacts_exported(String path);
+
+  /// No description provided for @discoveredContacts_exportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to export discovered contacts: {error}'**
+  String discoveredContacts_exportFailed(String error);
+
+  /// No description provided for @discoveredContacts_imported.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {count} discovered contacts.'**
+  String discoveredContacts_imported(int count);
+
+  /// No description provided for @discoveredContacts_importNoContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'No contacts found in import file.'**
+  String get discoveredContacts_importNoContacts;
+
+  /// No description provided for @discoveredContacts_importFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to import discovered contacts: {error}'**
+  String discoveredContacts_importFailed(String error);
 
   /// No description provided for @contacts_zeroHopAdvert.
   ///

@@ -872,6 +872,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appSettings_lastWeek => '上周';
 
   @override
+  String get appSettings_rasterTileSource => '栅格瓦片源';
+
+  @override
+  String get appSettings_stadiaEndpoint => 'Stadia 端点';
+
+  @override
+  String get appSettings_stadiaApiKey => 'Stadia API 密钥';
+
+  @override
+  String get appSettings_stadiaApiKeyRequired => '使用 Stadia Maps 时必需';
+
+  @override
+  String appSettings_stadiaApiKeyConfigured(String maskedKey) {
+    return '已配置：$maskedKey';
+  }
+
+  @override
+  String get appSettings_stadiaApiKeyDialogDescription =>
+      '请输入你的 Stadia Maps API 密钥。该应用会使用它来请求栅格瓦片。';
+
+  @override
   String get appSettings_offlineMapCache => '离线地图缓存';
 
   @override
@@ -1976,6 +1997,42 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String mapCache_failedDownloads(int count) {
     return '下载失败：$count';
+  }
+
+  @override
+  String get mapCache_cachedTilesLabel => 'Cached tiles';
+
+  @override
+  String get mapCache_cachedTileSummaryLabel => 'Cached tile summary';
+
+  @override
+  String mapCache_bulkDownloadDisabledForSource(String source) {
+    return 'Offline bulk downloads are disabled for $source.';
+  }
+
+  @override
+  String mapCache_bulkDownloadDisabledInConfig(String source) {
+    return 'Offline bulk downloads are disabled for $source in this app configuration.';
+  }
+
+  @override
+  String mapCache_summarySource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String mapCache_summaryCachedTilesForSource(int count) {
+    return 'Cached tiles for source: $count';
+  }
+
+  @override
+  String mapCache_summaryCachedInSelection(int count) {
+    return 'Cached in selected area/zoom: $count';
+  }
+
+  @override
+  String mapCache_summaryApproxCacheSize(String size) {
+    return 'Approx cache size: $size';
   }
 
   @override
@@ -3813,6 +3870,35 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get contacts_contactImportFailed => '导入联系人失败。';
+
+  @override
+  String get discoveredContacts_export => '导出已发现的联系人';
+
+  @override
+  String get discoveredContacts_import => '导入已发现的联系人';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return '已将已发现的联系人导出到$path。';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return '导出已发现的联系人失败：$error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return '已导入$count个已发现的联系人。';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts => '在导入文件中未找到联系人。';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return '导入已发现的联系人失败：$error';
+  }
 
   @override
   String get contacts_zeroHopAdvert => '发送零跳广播';

@@ -929,6 +929,28 @@ class AppLocalizationsNl extends AppLocalizations {
   String get appSettings_lastWeek => 'Afgelopen week';
 
   @override
+  String get appSettings_rasterTileSource => 'Rastertegelbron';
+
+  @override
+  String get appSettings_stadiaEndpoint => 'Stadia-eindpunt';
+
+  @override
+  String get appSettings_stadiaApiKey => 'Stadia API-sleutel';
+
+  @override
+  String get appSettings_stadiaApiKeyRequired =>
+      'Vereist voor gebruik van Stadia Maps';
+
+  @override
+  String appSettings_stadiaApiKeyConfigured(String maskedKey) {
+    return 'Geconfigureerd: $maskedKey';
+  }
+
+  @override
+  String get appSettings_stadiaApiKeyDialogDescription =>
+      'Voer je Stadia Maps API-sleutel in. De app gebruikt die voor rastertegelverzoeken.';
+
+  @override
   String get appSettings_offlineMapCache => 'Offline Kaartcache';
 
   @override
@@ -2072,6 +2094,42 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String mapCache_failedDownloads(int count) {
     return 'Mislukte downloads: $count';
+  }
+
+  @override
+  String get mapCache_cachedTilesLabel => 'Cached tiles';
+
+  @override
+  String get mapCache_cachedTileSummaryLabel => 'Cached tile summary';
+
+  @override
+  String mapCache_bulkDownloadDisabledForSource(String source) {
+    return 'Offline bulk downloads are disabled for $source.';
+  }
+
+  @override
+  String mapCache_bulkDownloadDisabledInConfig(String source) {
+    return 'Offline bulk downloads are disabled for $source in this app configuration.';
+  }
+
+  @override
+  String mapCache_summarySource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String mapCache_summaryCachedTilesForSource(int count) {
+    return 'Cached tiles for source: $count';
+  }
+
+  @override
+  String mapCache_summaryCachedInSelection(int count) {
+    return 'Cached in selected area/zoom: $count';
+  }
+
+  @override
+  String mapCache_summaryApproxCacheSize(String size) {
+    return 'Approx cache size: $size';
   }
 
   @override
@@ -4076,6 +4134,36 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get contacts_contactImportFailed =>
       'Contact kon niet geïmporteerd worden.';
+
+  @override
+  String get discoveredContacts_export => 'Ontdekte contacten exporteren';
+
+  @override
+  String get discoveredContacts_import => 'Ontdekte contacten importeren';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Ontdekte contacten geëxporteerd naar $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Exporteren van ontdekte contacten mislukt: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return '$count ontdekte contacten geïmporteerd.';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'Geen contacten gevonden in het importbestand.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Importeren van ontdekte contacten mislukt: $error';
+  }
 
   @override
   String get contacts_zeroHopAdvert => 'Zero Hop Reclame';

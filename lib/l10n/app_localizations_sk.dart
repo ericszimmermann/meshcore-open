@@ -925,6 +925,28 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_lastWeek => 'Minul týždeň';
 
   @override
+  String get appSettings_rasterTileSource => 'Zdroj rastrových dlaždíc';
+
+  @override
+  String get appSettings_stadiaEndpoint => 'Koncový bod Stadia';
+
+  @override
+  String get appSettings_stadiaApiKey => 'Kľúč API Stadia';
+
+  @override
+  String get appSettings_stadiaApiKeyRequired =>
+      'Vyžaduje sa na používanie Stadia Maps';
+
+  @override
+  String appSettings_stadiaApiKeyConfigured(String maskedKey) {
+    return 'Nakonfigurované: $maskedKey';
+  }
+
+  @override
+  String get appSettings_stadiaApiKeyDialogDescription =>
+      'Zadajte svoj kľúč API pre Stadia Maps. Aplikácia ho používa na požiadavky na rastrové dlaždice.';
+
+  @override
   String get appSettings_offlineMapCache => 'Offline Mapa Pamäť';
 
   @override
@@ -2075,6 +2097,42 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String mapCache_failedDownloads(int count) {
     return 'Neúspešné stiahnutia: $count';
+  }
+
+  @override
+  String get mapCache_cachedTilesLabel => 'Cached tiles';
+
+  @override
+  String get mapCache_cachedTileSummaryLabel => 'Cached tile summary';
+
+  @override
+  String mapCache_bulkDownloadDisabledForSource(String source) {
+    return 'Offline bulk downloads are disabled for $source.';
+  }
+
+  @override
+  String mapCache_bulkDownloadDisabledInConfig(String source) {
+    return 'Offline bulk downloads are disabled for $source in this app configuration.';
+  }
+
+  @override
+  String mapCache_summarySource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String mapCache_summaryCachedTilesForSource(int count) {
+    return 'Cached tiles for source: $count';
+  }
+
+  @override
+  String mapCache_summaryCachedInSelection(int count) {
+    return 'Cached in selected area/zoom: $count';
+  }
+
+  @override
+  String mapCache_summaryApproxCacheSize(String size) {
+    return 'Approx cache size: $size';
   }
 
   @override
@@ -4075,6 +4133,36 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get contacts_contactImportFailed =>
       'Kontakt sa nepodarilo importovať.';
+
+  @override
+  String get discoveredContacts_export => 'Exportovať objavené kontakty';
+
+  @override
+  String get discoveredContacts_import => 'Importovať objavené kontakty';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Objavené kontakty boli exportované do $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Export objavených kontaktov zlyhal: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return 'Bolo importovaných $count objavených kontaktov.';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'V importovanom súbore sa nenašli žiadne kontakty.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Import objavených kontaktov zlyhal: $error';
+  }
 
   @override
   String get contacts_zeroHopAdvert => 'Inzerát Zero Hop';
