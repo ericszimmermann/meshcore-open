@@ -4263,7 +4263,7 @@ class MeshCoreConnector extends ChangeNotifier {
       );
     }
 
-    const locationChangeEpsilon = 1e-6;
+    const locationChangeEpsilon = 9e-5; // ~10 meters in degrees.
     final latChanged =
       prevLatitude != null &&
       _selfLatitude != null &&

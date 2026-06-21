@@ -73,6 +73,16 @@ class _FeatureToggleRow extends State<FeatureToggleRow> {
               Switch(
                 value: widget.value,
                 onChanged: isEnabled ? widget.onChanged : null,
+                thumbColor: !isEnabled
+                    ? WidgetStatePropertyAll<Color?>(
+                        scheme.onSurfaceVariant,
+                      )
+                    : null,
+                trackColor: !isEnabled
+                    ? WidgetStatePropertyAll<Color?>(
+                        scheme.onSurfaceVariant.withValues(alpha: 0.35),
+                      )
+                    : null,
               ),
               if (widget.hasRefreshing) ...[
                 const SizedBox(width: 4),
