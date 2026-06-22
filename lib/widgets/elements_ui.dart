@@ -59,9 +59,7 @@ class _FeatureToggleRow extends State<FeatureToggleRow> {
                 const SizedBox(height: 2),
                 Text(
                   widget.subtitle,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: subtitleColor,
-                  ),
+                  style: textTheme.bodySmall?.copyWith(color: subtitleColor),
                 ),
               ],
             ),
@@ -74,9 +72,7 @@ class _FeatureToggleRow extends State<FeatureToggleRow> {
                 value: widget.value,
                 onChanged: isEnabled ? widget.onChanged : null,
                 thumbColor: !isEnabled
-                    ? WidgetStatePropertyAll<Color?>(
-                        scheme.onSurfaceVariant,
-                      )
+                    ? WidgetStatePropertyAll<Color?>(scheme.onSurfaceVariant)
                     : null,
                 trackColor: !isEnabled
                     ? WidgetStatePropertyAll<Color?>(
@@ -97,7 +93,7 @@ class _FeatureToggleRow extends State<FeatureToggleRow> {
                       )
                     : IconButton(
                         icon: const Icon(Icons.refresh, size: 18),
-                      onPressed: isEnabled ? widget.onRefresh : null,
+                        onPressed: isEnabled ? widget.onRefresh : null,
                         tooltip: widget.refreshTooltip,
                         visualDensity: VisualDensity.compact,
                         padding: EdgeInsets.zero,
