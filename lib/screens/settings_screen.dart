@@ -762,6 +762,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _editLocation(BuildContext context, MeshCoreConnector connector) {
     final l10n = context.l10n;
+    final settingsService = context.read<AppSettingsService>();
     final latController = TextEditingController();
     final lonController = TextEditingController();
     final intervalController = TextEditingController();
@@ -773,9 +774,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final bool hasGPS = customVars.containsKey("gps");
     bool isGPSEnabled = customVars["gps"] == "1";
 
-    // Read current interval or default to 900 (15 minutes)
-    final currentInterval =
-        int.tryParse(customVars["gps_interval"] ?? "") ?? 900;
+    final currentInterval = settingsService.resolvedGpsIntervalSeconds(
+      customVars,
+    );
     intervalController.text = currentInterval.toString();
 
     String? intervalError;
@@ -873,7 +874,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Navigator.pop(context);
 
                 if (interval != null) {
-                  await connector.setCustomVar("gps_interval:$interval");
+                  await settingsService.setGpsIntervalSeconds(
+                    interval,
+                    writeToDevice: (value) =>
+                        connector.setCustomVar("gps_interval:$value"),
+                  );
                   await connector.refreshDeviceInfo();
                   if (!context.mounted) return;
                   showDismissibleSnackBar(

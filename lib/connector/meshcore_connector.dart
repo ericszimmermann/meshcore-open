@@ -216,6 +216,7 @@ class MeshCoreConnector extends ChangeNotifier {
   DateTime _lastRadioRxTime = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastContactMsgRxTime = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastChannelMsgRxTime = DateTime.fromMillisecondsSinceEpoch(0);
+  DateTime _lastZeroHopAdvertAt = DateTime.fromMillisecondsSinceEpoch(0);
   static const int _radioQuietMs = 3000;
   static const int _radioQuietMaxWaitMs = 3000;
 
@@ -3817,6 +3818,9 @@ class MeshCoreConnector extends ChangeNotifier {
   Future<void> sendSelfAdvert({bool flood = true}) async {
     if (!isConnected) return;
     await sendFrame(buildSendSelfAdvertFrame(flood: flood));
+    if (!flood) {
+      _lastZeroHopAdvertAt = DateTime.now();
+    }
   }
 
   Future<void> rebootDevice() async {
@@ -4285,22 +4289,30 @@ class MeshCoreConnector extends ChangeNotifier {
 
     const locationChangeEpsilon = 9e-5; // ~10 meters in degrees.
     final latChanged =
-      prevLatitude != null &&
-      _selfLatitude != null &&
-      (_selfLatitude! - prevLatitude).abs() >= locationChangeEpsilon;
+        prevLatitude != null &&
+        _selfLatitude != null &&
+        (_selfLatitude! - prevLatitude).abs() >= locationChangeEpsilon;
     final lonChanged =
-      prevLongitude != null &&
-      _selfLongitude != null &&
-      (_selfLongitude! - prevLongitude).abs() >= locationChangeEpsilon;
+        prevLongitude != null &&
+        _selfLongitude != null &&
+        (_selfLongitude! - prevLongitude).abs() >= locationChangeEpsilon;
     final gpsSampleChanged =
-      hasValidLocation(prevLatitude, prevLongitude) &&
-      hasValidLocation(_selfLatitude, _selfLongitude) &&
-      (latChanged || lonChanged);
+        hasValidLocation(prevLatitude, prevLongitude) &&
+        hasValidLocation(_selfLatitude, _selfLongitude) &&
+        (latChanged || lonChanged);
+    final effectiveGpsIntervalSeconds =
+        _appSettingsService?.resolvedGpsIntervalSeconds(_currentCustomVars) ??
+        0;
+    final timeSinceLastZeroHopAdvert = DateTime.now().difference(
+      _lastZeroHopAdvertAt,
+    );
     final shouldAutoSendZeroHopAdvert =
         gpsSampleChanged &&
         _advertLocPolicy == 1 &&
         (_appSettingsService?.settings.autoSendZeroHopAdvertOnGpsUpdate ??
-            false);
+            false) &&
+        effectiveGpsIntervalSeconds > 0 &&
+        timeSinceLastZeroHopAdvert.inSeconds >= effectiveGpsIntervalSeconds;
     if (shouldAutoSendZeroHopAdvert) {
       unawaited(sendSelfAdvert(flood: false));
     }
