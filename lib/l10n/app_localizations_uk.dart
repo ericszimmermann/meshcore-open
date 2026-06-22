@@ -502,6 +502,14 @@ class AppLocalizationsUk extends AppLocalizations {
       'Включити геопозицію в оголошення';
 
   @override
+  String get settings_autoZeroHopAdvertOnGpsUpdate =>
+      'Автооголошення без хопів при оновленні GPS';
+
+  @override
+  String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle =>
+      'Надсилає оголошення без хопів із місцезнаходженням через кожен GPS-інтервал.';
+
+  @override
   String get settings_multiAck => 'Багато підтверджень';
 
   @override

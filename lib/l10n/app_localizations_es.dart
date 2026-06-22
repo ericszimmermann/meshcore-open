@@ -504,6 +504,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settings_advertLocationSubtitle => 'Incluir ubicación en anuncio';
 
   @override
+  String get settings_autoZeroHopAdvertOnGpsUpdate =>
+      'Anuncio de cero saltos automático al actualizar GPS';
+
+  @override
+  String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle =>
+      'Envía un anuncio de cero saltos con ubicación en cada intervalo de GPS.';
+
+  @override
   String get settings_multiAck => 'Múltiples respuestas de confirmación';
 
   @override

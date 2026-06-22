@@ -502,6 +502,14 @@ class AppLocalizationsNl extends AppLocalizations {
       'Locatie opnemen in advertentie';
 
   @override
+  String get settings_autoZeroHopAdvertOnGpsUpdate =>
+      'Automatische zero-hop-advertentie bij GPS-update';
+
+  @override
+  String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle =>
+      'Verzendt bij elk GPS-interval een zero-hop-advertentie met locatie.';
+
+  @override
   String get settings_multiAck => 'Meerdere bevestigingen';
 
   @override

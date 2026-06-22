@@ -206,6 +206,8 @@
   "settings_telemetryEnvironmentMode": "Telemetry Environment Mode",
   "settings_advertLocation": "Advert Location",
   "settings_advertLocationSubtitle": "Include location in advert.",
+  "settings_autoZeroHopAdvertOnGpsUpdate": "Auto Zero-Hop Advert On GPS Update",
+  "settings_autoZeroHopAdvertOnGpsUpdateSubtitle": "Sends a zero-hop advert with location at GPS interval.",
   "settings_multiAck": "Multi-ACKs",
   "settings_telemetryModeUpdated": "Telemetry mode updated",
   "settings_actions": "Actions",

@@ -500,6 +500,14 @@ class AppLocalizationsSk extends AppLocalizations {
   String get settings_advertLocationSubtitle => 'Zahrnúť polohu do inzerátu';
 
   @override
+  String get settings_autoZeroHopAdvertOnGpsUpdate =>
+      'Automatický zero-hop inzerát pri aktualizácii GPS';
+
+  @override
+  String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle =>
+      'Odosiela zero-hop inzerát s polohou pri každom GPS intervale.';
+
+  @override
   String get settings_multiAck => 'Viaceré ACK';
 
   @override

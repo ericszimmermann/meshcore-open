@@ -216,6 +216,7 @@ class MeshCoreConnector extends ChangeNotifier {
   DateTime _lastRadioRxTime = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastContactMsgRxTime = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastChannelMsgRxTime = DateTime.fromMillisecondsSinceEpoch(0);
+  DateTime _lastZeroHopAdvertAt = DateTime.fromMillisecondsSinceEpoch(0);
   static const int _radioQuietMs = 3000;
   static const int _radioQuietMaxWaitMs = 3000;
 
@@ -3797,6 +3798,9 @@ class MeshCoreConnector extends ChangeNotifier {
   Future<void> sendSelfAdvert({bool flood = true}) async {
     if (!isConnected) return;
     await sendFrame(buildSendSelfAdvertFrame(flood: flood));
+    if (!flood) {
+      _lastZeroHopAdvertAt = DateTime.now();
+    }
   }
 
   Future<void> rebootDevice() async {
@@ -4260,6 +4264,22 @@ class MeshCoreConnector extends ChangeNotifier {
         tag: 'Connector',
       );
     }
+
+    final effectiveGpsIntervalSeconds =
+        _appSettingsService?.resolvedGpsIntervalSeconds(_currentCustomVars) ??
+        0;
+    final shouldAutoSendZeroHopAdvert =
+        _advertLocPolicy == 1 &&
+        (_appSettingsService?.settings.autoSendZeroHopAdvertOnGpsUpdate ??
+            false) &&
+        hasValidLocation(_selfLatitude, _selfLongitude) &&
+        effectiveGpsIntervalSeconds > 0 &&
+        DateTime.now().difference(_lastZeroHopAdvertAt).inSeconds >=
+            effectiveGpsIntervalSeconds;
+    if (shouldAutoSendZeroHopAdvert) {
+      unawaited(sendSelfAdvert(flood: false));
+    }
+
     final selfName = _selfName?.trim();
     if (_activeTransport == MeshCoreTransportType.usb &&
         selfName != null &&

@@ -1030,6 +1030,18 @@ abstract class AppLocalizations {
   /// **'Include location in advert.'**
   String get settings_advertLocationSubtitle;
 
+  /// No description provided for @settings_autoZeroHopAdvertOnGpsUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Zero-Hop Advert On GPS Update'**
+  String get settings_autoZeroHopAdvertOnGpsUpdate;
+
+  /// No description provided for @settings_autoZeroHopAdvertOnGpsUpdateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sends a zero-hop advert with location at GPS interval.'**
+  String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle;
+
   /// No description provided for @settings_multiAck.
   ///
   /// In en, this message translates to:

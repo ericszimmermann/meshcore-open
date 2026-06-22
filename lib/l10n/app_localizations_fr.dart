@@ -508,6 +508,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Inclure la localisation dans l\'annonce';
 
   @override
+  String get settings_autoZeroHopAdvertOnGpsUpdate =>
+      'Annonce zéro saut automatique lors de la mise à jour GPS';
+
+  @override
+  String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle =>
+      'Envoie une annonce zéro saut avec la position à chaque intervalle GPS.';
+
+  @override
   String get settings_multiAck => 'Plusieurs accusés de réception';
 
   @override

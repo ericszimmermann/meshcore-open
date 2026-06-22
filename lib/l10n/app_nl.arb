@@ -100,6 +100,8 @@
   "settings_locationInvalid": "Ongeldige breedtegraad of lengtegraad.",
   "settings_latitude": "Breedtegraad",
   "settings_longitude": "Lengtegraad",
+  "settings_autoZeroHopAdvertOnGpsUpdate": "Automatische zero-hop-advertentie bij GPS-update",
+  "settings_autoZeroHopAdvertOnGpsUpdateSubtitle": "Verzendt bij elk GPS-interval een zero-hop-advertentie met locatie.",
   "settings_privacyMode": "Privacy-modus",
   "settings_privacyModeSubtitle": "Naam/locatie verbergen in advertenties",
   "settings_privacyModeToggle": "Schakel privacy modus in om je naam en locatie in advertenties te verbergen.",

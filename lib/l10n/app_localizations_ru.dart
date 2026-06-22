@@ -506,6 +506,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'Включить местоположение в объявление';
 
   @override
+  String get settings_autoZeroHopAdvertOnGpsUpdate =>
+      'Авто-объявление без хопов при обновлении GPS';
+
+  @override
+  String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle =>
+      'Отправляет объявление без хопов с местоположением через каждый интервал GPS.';
+
+  @override
   String get settings_multiAck => 'Несколько подтверждений';
 
   @override

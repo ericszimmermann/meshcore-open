@@ -498,6 +498,14 @@ class AppLocalizationsSv extends AppLocalizations {
   String get settings_advertLocationSubtitle => 'Inkludera plats i annonsen';
 
   @override
+  String get settings_autoZeroHopAdvertOnGpsUpdate =>
+      'Automatisk zero-hop-annons vid GPS-uppdatering';
+
+  @override
+  String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle =>
+      'Skickar en zero-hop-annons med plats vid varje GPS-intervall.';
+
+  @override
   String get settings_multiAck => 'Flera bekräftelser';
 
   @override
