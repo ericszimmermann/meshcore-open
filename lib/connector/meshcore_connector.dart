@@ -4274,27 +4274,28 @@ class MeshCoreConnector extends ChangeNotifier {
     }
 
     const locationChangeEpsilon = 2.25e-4; // ~25 meters in degrees.
+    final lastAdvertLatitude = _lastZeroHopAdvertLatitude;
+    final lastAdvertLongitude = _lastZeroHopAdvertLongitude;
+    final currentLatitude = _selfLatitude;
+    final currentLongitude = _selfLongitude;
     final latChanged =
-        _lastZeroHopAdvertLatitude != null &&
-        _selfLatitude != null &&
-      (_selfLatitude! - _lastZeroHopAdvertLatitude).abs() >=
-        locationChangeEpsilon;
+        lastAdvertLatitude != null &&
+        currentLatitude != null &&
+        (currentLatitude - lastAdvertLatitude).abs() >= locationChangeEpsilon;
     final lonChanged =
-        _lastZeroHopAdvertLongitude != null &&
-        _selfLongitude != null &&
-      (_selfLongitude! - _lastZeroHopAdvertLongitude).abs() >=
-        locationChangeEpsilon;
+        lastAdvertLongitude != null &&
+        currentLongitude != null &&
+        (currentLongitude - lastAdvertLongitude).abs() >= locationChangeEpsilon;
     final gpsSampleChanged =
-      hasValidLocation(
-        _lastZeroHopAdvertLatitude,
-        _lastZeroHopAdvertLongitude,
-      ) &&
-        hasValidLocation(_selfLatitude, _selfLongitude) &&
+        hasValidLocation(lastAdvertLatitude, lastAdvertLongitude) &&
+        hasValidLocation(currentLatitude, currentLongitude) &&
         (latChanged || lonChanged);
     final effectiveGpsIntervalSeconds =
         _appSettingsService?.resolvedGpsIntervalSeconds(_currentCustomVars) ??
         0;
-    final timeSinceLastZeroHopAdvert = DateTime.now().difference(_lastZeroHopAdvertAt);
+    final timeSinceLastZeroHopAdvert = DateTime.now().difference(
+      _lastZeroHopAdvertAt,
+    );
     final shouldAutoSendZeroHopAdvert =
         (gpsSampleChanged || (_clientRepeat ?? false)) &&
         _advertLocPolicy == 1 &&
