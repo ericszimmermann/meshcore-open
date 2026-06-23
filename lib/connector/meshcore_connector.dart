@@ -4287,7 +4287,7 @@ class MeshCoreConnector extends ChangeNotifier {
       _lastZeroHopAdvertAt,
     );
     final shouldAutoSendZeroHopAdvert =
-        gpsSampleChanged &&
+        (gpsSampleChanged || (_clientRepeat ?? false)) &&
         _advertLocPolicy == 1 &&
         (_appSettingsService?.settings.autoSendZeroHopAdvertOnGpsUpdate ??
             false) &&
