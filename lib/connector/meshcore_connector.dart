@@ -217,6 +217,8 @@ class MeshCoreConnector extends ChangeNotifier {
   DateTime _lastContactMsgRxTime = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastChannelMsgRxTime = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastZeroHopAdvertAt = DateTime.fromMillisecondsSinceEpoch(0);
+  double? _lastZeroHopAdvertLatitude;
+  double? _lastZeroHopAdvertLongitude;
   static const int _radioQuietMs = 3000;
   static const int _radioQuietMaxWaitMs = 3000;
 
@@ -2544,6 +2546,8 @@ class MeshCoreConnector extends ChangeNotifier {
     _selfName = null;
     _selfLatitude = null;
     _selfLongitude = null;
+    _lastZeroHopAdvertLatitude = null;
+    _lastZeroHopAdvertLongitude = null;
     _awaitingSelfInfo = false;
     _webInitialHandshakeRequestSent = false;
     _selfInfoRetryTimer?.cancel();
@@ -2710,6 +2714,8 @@ class MeshCoreConnector extends ChangeNotifier {
     _selfName = null;
     _selfLatitude = null;
     _selfLongitude = null;
+    _lastZeroHopAdvertLatitude = null;
+    _lastZeroHopAdvertLongitude = null;
     _clientRepeat = null;
     _rememberedNonRepeatRadioState = null;
     _firmwareVerCode = null;
@@ -3820,6 +3826,8 @@ class MeshCoreConnector extends ChangeNotifier {
     await sendFrame(buildSendSelfAdvertFrame(flood: flood));
     if (!flood) {
       _lastZeroHopAdvertAt = DateTime.now();
+      _lastZeroHopAdvertLatitude = _selfLatitude;
+      _lastZeroHopAdvertLongitude = _selfLongitude;
     }
   }
 
@@ -4255,8 +4263,6 @@ class MeshCoreConnector extends ChangeNotifier {
     // [57] = cr
     // [58+] = node_name
     final wasAwaitingSelfInfo = _awaitingSelfInfo;
-    final prevLatitude = _selfLatitude;
-    final prevLongitude = _selfLongitude;
     final reader = BufferReader(frame);
     try {
       reader.skipBytes(2);
@@ -4287,27 +4293,30 @@ class MeshCoreConnector extends ChangeNotifier {
       );
     }
 
-    const locationChangeEpsilon = 9e-5; // ~10 meters in degrees.
+    const locationChangeEpsilon = 2.25e-4; // ~25 meters in degrees.
     final latChanged =
-        prevLatitude != null &&
+        _lastZeroHopAdvertLatitude != null &&
         _selfLatitude != null &&
-        (_selfLatitude! - prevLatitude).abs() >= locationChangeEpsilon;
+      (_selfLatitude! - _lastZeroHopAdvertLatitude).abs() >=
+        locationChangeEpsilon;
     final lonChanged =
-        prevLongitude != null &&
+        _lastZeroHopAdvertLongitude != null &&
         _selfLongitude != null &&
-        (_selfLongitude! - prevLongitude).abs() >= locationChangeEpsilon;
+      (_selfLongitude! - _lastZeroHopAdvertLongitude).abs() >=
+        locationChangeEpsilon;
     final gpsSampleChanged =
-        hasValidLocation(prevLatitude, prevLongitude) &&
+      hasValidLocation(
+        _lastZeroHopAdvertLatitude,
+        _lastZeroHopAdvertLongitude,
+      ) &&
         hasValidLocation(_selfLatitude, _selfLongitude) &&
         (latChanged || lonChanged);
     final effectiveGpsIntervalSeconds =
         _appSettingsService?.resolvedGpsIntervalSeconds(_currentCustomVars) ??
         0;
-    final timeSinceLastZeroHopAdvert = DateTime.now().difference(
-      _lastZeroHopAdvertAt,
-    );
+    final timeSinceLastZeroHopAdvert = DateTime.now().difference(_lastZeroHopAdvertAt);
     final shouldAutoSendZeroHopAdvert =
-        gpsSampleChanged &&
+        (gpsSampleChanged || (_clientRepeat ?? false)) &&
         _advertLocPolicy == 1 &&
         (_appSettingsService?.settings.autoSendZeroHopAdvertOnGpsUpdate ??
             false) &&
