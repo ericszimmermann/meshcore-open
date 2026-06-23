@@ -4287,9 +4287,10 @@ class MeshCoreConnector extends ChangeNotifier {
         currentLongitude != null &&
         (currentLongitude - lastAdvertLongitude).abs() >= locationChangeEpsilon;
     final gpsSampleChanged =
-        hasValidLocation(lastAdvertLatitude, lastAdvertLongitude) &&
         hasValidLocation(currentLatitude, currentLongitude) &&
-        (latChanged || lonChanged);
+        (!hasValidLocation(lastAdvertLatitude, lastAdvertLongitude) ||
+            latChanged ||
+            lonChanged);
     final effectiveGpsIntervalSeconds =
         _appSettingsService?.resolvedGpsIntervalSeconds(_currentCustomVars) ??
         0;
