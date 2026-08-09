@@ -42,31 +42,39 @@ done
 
 pkgconfig_libdir="$(IFS=:; printf '%s' "${pkgconfig_dirs[*]}")"
 cd "$project_root"
+mkdir -p "$build_dir"
 
 # Flutter exposes build-dir as a global setting. Preserve it so this command
 # does not change the location used by the developer's other projects.
 previous_build_dir="$(flutter config --machine 2>/dev/null | sed -n 's/.*"build-dir"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')"
 
 restore_flutter_config() {
+  local exit_code=$?
+  trap - EXIT
+  set +e
   if [[ -n "$previous_build_dir" ]]; then
     flutter config --build-dir="$previous_build_dir" >/dev/null
   else
     flutter config --build-dir='' >/dev/null
   fi
+  exit "$exit_code"
 }
 trap restore_flutter_config EXIT
 
+printf 'Configuring Flutter output directory: %s\n' "$build_dir"
 flutter config --build-dir="$build_dir" >/dev/null
+printf 'Resolving Flutter dependencies...\n'
 flutter pub get
 
 # FindPkgConfig needs the target package metadata; otherwise CMake can mix the
 # host GTK libraries with the ARM64 compiler target.
+printf 'Building Linux ARM64 bundle (full log: %s/build.log)...\n' "$build_dir"
 PKG_CONFIG_SYSROOT_DIR="$sysroot" \
 PKG_CONFIG_LIBDIR="$pkgconfig_libdir" \
-  flutter build linux --release \
+  flutter -v build linux --release \
     --target-platform=linux-arm64 \
     --target-sysroot="$sysroot" \
-    --no-pub
+    --no-pub 2>&1 | tee "$build_dir/build.log"
 
 printf '\nRaspberry Pi 5 bundle created below %s/%s/\n' "$project_root" "$build_dir"
 find "$build_dir" -type f -name meshcore_open -printf '  %h\n' | sort -u

@@ -55,8 +55,9 @@ jobs:
       - name: Build Raspberry Pi 5 bundle
         run: tool/build_raspberry_pi_5.sh "$PWD/sysroots/raspberry-pi-5"
       - name: Upload Raspberry Pi 5 bundle
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: meshcore-open-linux-arm64-raspberry-pi-5
+          name: meshcore-open-linux-arm64-raspberry-pi-5-output
           path: out/raspberry-pi-5/
-          if-no-files-found: error
+          if-no-files-found: warn
