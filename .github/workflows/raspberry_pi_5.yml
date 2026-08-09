@@ -33,5 +33,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: meshcore-open-linux-arm64-raspberry-pi-5
-          path: out/raspberry-pi-5/
+          path: out/raspberry-pi-5/linux/arm64/release/bundle
           if-no-files-found: error
