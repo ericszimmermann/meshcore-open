@@ -1,6 +1,9 @@
 name: Build Raspberry Pi 5
 
 on:
+  push:
+    branches:
+      - ez_build_raspberry
   workflow_dispatch:
 
 jobs:
