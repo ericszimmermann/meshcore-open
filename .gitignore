@@ -32,6 +32,7 @@ migrate_working_dir/
 .pub/
 pubspec.lock
 /build/
+/out/raspberry-pi-5/
 /coverage/
 # fvm project files
 .fvm/

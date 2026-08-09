@@ -145,6 +145,31 @@ flutter build apk --release
 flutter build ios --release
 ```
 
+### Raspberry Pi 5 (64-bit Raspberry Pi OS)
+
+Cross-compilation is supported from an x86_64 Linux host. It needs a sysroot
+from the target Pi so CMake links against ARM64 GTK and plugin libraries rather
+than the host libraries. On the Pi, create the sysroot (run this again after
+system-library updates):
+
+```bash
+sudo tar --numeric-owner -C / -czf meshcore-rpi5-sysroot.tar.gz \
+  lib usr/include usr/lib usr/share/pkgconfig
+```
+
+Copy and unpack it on the build host, then run:
+
+```bash
+mkdir -p sysroots/raspberry-pi-5
+tar -xzf meshcore-rpi5-sysroot.tar.gz -C sysroots/raspberry-pi-5
+tool/build_raspberry_pi_5.sh "$PWD/sysroots/raspberry-pi-5"
+```
+
+The host needs Flutter 3.35 or newer, `clang`, `cmake`, `ninja`, and
+`pkg-config`. The release bundle and all build intermediates are placed under
+`out/raspberry-pi-5/`; copy the resulting `bundle/` directory as a whole to the
+Pi. The script also accepts the sysroot through `RPI5_SYSROOT`.
+
 ## Project Structure
 
 ```
