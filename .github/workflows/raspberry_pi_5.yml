@@ -3,7 +3,7 @@ name: Build Raspberry Pi 5
 on:
   push:
     branches:
-      - ez_build_raspberry
+      - ez_raspberry_*
   workflow_dispatch:
 
 jobs:
@@ -20,8 +20,15 @@ jobs:
         run: |
           set -euo pipefail
           source /etc/os-release
-          sudo dpkg --add-architecture arm64
-          sudo tee /etc/apt/sources.list.d/ubuntu-ports-arm64.sources >/dev/null <<EOF
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config
+
+          apt_root="$PWD/.cache/rpi5-apt"
+          cache_dir="$PWD/.cache/rpi5-debs"
+          sysroot="$PWD/sysroots/raspberry-pi-5"
+          mkdir -p "$apt_root/lists/partial" "$cache_dir/partial" "$sysroot"
+          : > "$apt_root/status"
+          cat > "$apt_root/sources.list" <<EOF
           Types: deb
           URIs: http://ports.ubuntu.com/ubuntu-ports
           Suites: ${VERSION_CODENAME} ${VERSION_CODENAME}-updates ${VERSION_CODENAME}-security
@@ -29,22 +36,25 @@ jobs:
           Architectures: arm64
           Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
           EOF
-          sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config
 
-          cache_dir="$PWD/.cache/rpi5-debs"
-          sysroot="$PWD/sysroots/raspberry-pi-5"
-          mkdir -p "$cache_dir" "$sysroot"
-          sudo apt-get --download-only \
+          apt_options=(
+            -o "Dir::Etc::sourcelist=$apt_root/sources.list"
+            -o 'Dir::Etc::sourceparts=-'
+            -o "Dir::State::lists=$apt_root/lists"
+            -o "Dir::State::status=$apt_root/status"
+            -o "Dir::Cache::archives=$cache_dir"
+            -o 'APT::Architecture=arm64'
+          )
+          apt-get "${apt_options[@]}" update
+          apt-get "${apt_options[@]}" --download-only \
             -o "Dir::Cache::archives=$cache_dir" \
             install \
             libgtk-3-dev:arm64 \
             libbluetooth-dev:arm64 \
             libserialport-dev:arm64
           for package in "$cache_dir"/*.deb; do
-            sudo dpkg-deb -x "$package" "$sysroot"
+            dpkg-deb -x "$package" "$sysroot"
           done
-          sudo chown -R "$USER:$USER" "$sysroot"
       - name: Build Raspberry Pi 5 bundle
         run: tool/build_raspberry_pi_5.sh "$PWD/sysroots/raspberry-pi-5"
       - name: Upload Raspberry Pi 5 bundle
