@@ -145,6 +145,24 @@ flutter build apk --release
 flutter build ios --release
 ```
 
+### Raspberry Pi 5 (64-bit Raspberry Pi OS)
+
+Flutter's stable Linux tooling does not support cross-compiling from x86_64 to
+ARM64. Build on an ARM64 Linux host instead:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev
+flutter config --build-dir=out/raspberry-pi-5
+flutter pub get
+flutter build linux --release --no-pub
+```
+
+The dedicated GitHub Actions workflow uses GitHub's `ubuntu-24.04-arm` runner
+to make this native ARM64 build. The release bundle and all build intermediates
+are placed under `out/raspberry-pi-5/`; copy the resulting `bundle/` directory
+as a whole to the Pi.
+
 ## Project Structure
 
 ```
