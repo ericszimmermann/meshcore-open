@@ -1,8 +1,10 @@
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:meshcore_open/utils/keys.dart';
+
+import 'channel.dart';
 
 /// Represents a community with a shared secret for deriving channel PSKs.
 ///
@@ -35,11 +37,7 @@ class Community {
 
   /// Generate a new community with a random 32-byte secret
   factory Community.create({required String id, required String name}) {
-    final random = Random.secure();
-    final secret = Uint8List(32);
-    for (int i = 0; i < 32; i++) {
-      secret[i] = random.nextInt(256);
-    }
+    final secret = randomBytes(32);
     return Community(
       id: id,
       name: name,
@@ -162,6 +160,12 @@ class Community {
     return hashtag.replaceFirst(RegExp(r'^#'), '').toLowerCase().trim();
   }
 
+  /// Returns true if this is the community's public channel
+  static bool isCommunityPublicChannel(Channel channel, Community community) {
+    final publicPsk = community.deriveCommunityPublicPsk();
+    return channel.pskHex == Channel.formatPskHex(publicPsk);
+  }
+
   /// Add a hashtag channel to this community's list
   Community addHashtagChannel(String hashtag) {
     final normalized = _normalizeCommunityHashtag(hashtag);
@@ -202,12 +206,7 @@ class Community {
 
   /// Create a copy of this community with a regenerated random secret
   Community withRegeneratedSecret() {
-    final random = Random.secure();
-    final newSecret = Uint8List(32);
-    for (int i = 0; i < 32; i++) {
-      newSecret[i] = random.nextInt(256);
-    }
-    return withNewSecret(newSecret);
+    return withNewSecret(randomBytes(32));
   }
 
   /// Extract secret from QR data (for updating existing community)
@@ -236,4 +235,29 @@ class Community {
 
   @override
   int get hashCode => id.hashCode;
+}
+
+class CommunityPskIndex {
+  // Cache of PSK hex -> Community for quick lookup
+  final Map<String, Community> _pskToCommunity = {};
+
+  void initialize(List<Community> communities) {
+    _pskToCommunity.clear();
+    for (final community in communities) {
+      // Map the community public channel PSK
+      final publicPsk = community.deriveCommunityPublicPsk();
+      _pskToCommunity[Channel.formatPskHex(publicPsk)] = community;
+
+      // Map all known hashtag channel PSKs
+      for (final hashtag in community.hashtagChannels) {
+        final hashtagPsk = community.deriveCommunityHashtagPsk(hashtag);
+        _pskToCommunity[Channel.formatPskHex(hashtagPsk)] = community;
+      }
+    }
+  }
+
+  /// Returns the community this channel belongs to, or null if not a community channel
+  Community? getCommunityForChannel(Channel channel) {
+    return _pskToCommunity[channel.pskHex];
+  }
 }

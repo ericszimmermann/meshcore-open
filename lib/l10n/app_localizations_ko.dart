@@ -24,10 +24,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get common_cancel => '취소';
 
   @override
-  String get common_ok => '알겠습니다';
+  String get common_ok => '확인';
 
   @override
-  String get common_connect => '연결';
+  String get common_connect => '연결하기';
 
   @override
   String get common_unknownDevice => '알 수 없는 장치';
@@ -45,6 +45,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get common_close => '닫기';
 
   @override
+  String get common_done => '완료';
+
+  @override
   String get common_edit => '수정';
 
   @override
@@ -57,13 +60,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get common_disconnect => '연결 해제';
 
   @override
-  String get common_connected => '연결된';
+  String get common_connected => '연결됨';
 
   @override
-  String get common_disconnected => '단절';
+  String get common_disconnected => '연결 해제됨';
 
   @override
-  String get common_create => '만들다';
+  String get common_create => '만들기';
 
   @override
   String get common_continue => '계속';
@@ -78,22 +81,40 @@ class AppLocalizationsKo extends AppLocalizations {
   String get common_retry => '다시 시도';
 
   @override
-  String get common_hide => '숨기다';
+  String get common_hide => '숨기기';
 
   @override
   String get common_remove => '제거';
 
   @override
-  String get common_enable => '활성화';
+  String get common_enable => '사용';
 
   @override
-  String get common_disable => '비활성화';
+  String get common_disable => '사용 안 함';
+
+  @override
+  String get common_undo => '되돌리기';
+
+  @override
+  String get messageStatus_sent => '전송됨';
+
+  @override
+  String get messageStatus_delivered => '전달됨';
+
+  @override
+  String get messageStatus_pending => '전송 중';
+
+  @override
+  String get messageStatus_failed => '전송 실패';
+
+  @override
+  String get messageStatus_repeated => '반복 수신됨';
 
   @override
   String get common_reboot => '재부팅';
 
   @override
-  String get common_loading => '로딩 중...';
+  String get common_loading => '불러오는 중...';
 
   @override
   String get common_notAvailable => '—';
@@ -109,7 +130,13 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get scanner_title => 'MeshCore 공개';
+  String get common_autoRefresh => '자동 새로고침';
+
+  @override
+  String get common_interval => '간격';
+
+  @override
+  String get scanner_title => 'MeshCore Open';
 
   @override
   String get connectionChoiceUsbLabel => 'USB';
@@ -127,16 +154,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tcpHostLabel => 'IP 주소';
 
   @override
-  String get tcpHostHint => '192.168.40.10';
+  String get tcpHostHint => '192.168.40.10 / example.com';
 
   @override
-  String get tcpPortLabel => '항';
+  String get tcpPortLabel => '포트';
 
   @override
   String get tcpPortHint => '5000';
 
   @override
-  String get tcpStatus_notConnected => '목적지 주소 입력 후 연결';
+  String get tcpStatus_notConnected => '엔드포인트를 입력한 뒤 연결하세요.';
 
   @override
   String tcpStatus_connectingTo(String endpoint) {
@@ -167,26 +194,26 @@ class AppLocalizationsKo extends AppLocalizations {
   String get usbScreenSubtitle => '감지된 시리얼 장치를 선택하고 MeshCore 노드에 직접 연결하십시오.';
 
   @override
-  String get usbScreenStatus => 'USB 장치를 선택합니다.';
+  String get usbScreenStatus => 'USB 장치를 선택하세요.';
 
   @override
-  String get usbScreenNote => 'USB 직렬 통신은 지원되는 안드로이드 장치 및 데스크톱 플랫폼에서 활성화됩니다.';
+  String get usbScreenNote =>
+      'USB 직렬 통신은 지원되는 Android 기기 및 데스크톱 플랫폼에서 사용할 수 있습니다.';
 
   @override
-  String get usbScreenEmptyState =>
-      'USB 장치가 탐지되지 않았습니다. USB 장치를 연결하고 다시 시도해 보세요.';
+  String get usbScreenEmptyState => 'USB 장치가 없습니다. 하나 연결한 뒤 새로고침하세요.';
 
   @override
   String get usbErrorPermissionDenied => 'USB 접근 권한이 거부되었습니다.';
 
   @override
-  String get usbErrorDeviceMissing => '선택한 USB 장치는 더 이상 사용 불가능합니다.';
+  String get usbErrorDeviceMissing => '선택한 USB 장치를 더 이상 사용할 수 없습니다.';
 
   @override
   String get usbErrorInvalidPort => '유효한 USB 장치를 선택하세요.';
 
   @override
-  String get usbErrorBusy => '또 다른 USB 연결 요청이 이미 진행 중입니다.';
+  String get usbErrorBusy => '다른 USB 연결 요청이 이미 진행 중입니다.';
 
   @override
   String get usbErrorNotConnected => 'USB 장치가 연결되지 않았습니다.';
@@ -195,23 +222,23 @@ class AppLocalizationsKo extends AppLocalizations {
   String get usbErrorOpenFailed => '선택한 USB 장치를 열 수 없습니다.';
 
   @override
-  String get usbErrorConnectFailed => '선택한 USB 장치에 연결에 실패했습니다.';
+  String get usbErrorConnectFailed => '선택한 USB 장치에 연결하지 못했습니다.';
 
   @override
   String get usbErrorUnsupported => '이 플랫폼에서는 USB 직렬 통신을 지원하지 않습니다.';
 
   @override
-  String get usbErrorAlreadyActive => 'USB 연결이 이미 활성화되어 있습니다.';
+  String get usbErrorAlreadyActive => 'USB 연결이 이미 활성 상태입니다.';
 
   @override
   String get usbErrorNoDeviceSelected => 'USB 장치가 선택되지 않았습니다.';
 
   @override
-  String get usbErrorPortClosed => 'USB 연결이 활성화되지 않았습니다.';
+  String get usbErrorPortClosed => 'USB 연결이 열려 있지 않습니다.';
 
   @override
   String get usbErrorConnectTimedOut =>
-      '연결이 시간 초과되었습니다. 장치가 USB Companion 펌웨어를 가지고 있는지 확인해 주세요.';
+      '연결 시간이 초과되었습니다. 장치에 USB Companion 펌웨어가 있는지 확인하세요.';
 
   @override
   String get usbFallbackDeviceName => '웹 시리얼 장치';
@@ -265,26 +292,30 @@ class AppLocalizationsKo extends AppLocalizations {
   String get scanner_scan => '스캔';
 
   @override
-  String get scanner_bluetoothOff => '블루투스는 꺼져 있습니다.';
+  String get scanner_bluetoothOff => '블루투스가 꺼져 있습니다.';
 
   @override
-  String get scanner_bluetoothOffMessage => '블루투스를 켜서 장치를 검색해주세요.';
+  String get scanner_bluetoothOffMessage => '기기를 검색하려면 블루투스를 켜세요.';
 
   @override
-  String get scanner_chromeRequired => '크롬 브라우저 필요';
+  String get scanner_chromeRequired => 'Chrome 브라우저 필요';
 
   @override
   String get scanner_chromeRequiredMessage =>
-      '이 웹 애플리케이션은 블루투드 지원을 위해 Google Chrome 또는 Chromium 기반 브라우저가 필요합니다.';
+      '이 웹 앱은 블루투스 지원을 위해 Google Chrome 또는 Chromium 기반 브라우저가 필요합니다.';
 
   @override
-  String get scanner_enableBluetooth => '블루투스 활성화';
+  String get scanner_enableBluetooth => '블루투스 켜기';
+
+  @override
+  String get scanner_bluetoothWebUnsupported =>
+      '브라우저에서는 블루투스를 사용할 수 없습니다. 대신 USB로 연결하세요.';
 
   @override
   String get device_quickSwitch => '빠른 전환';
 
   @override
-  String get device_meshcore => '메쉬코어';
+  String get device_meshcore => 'MeshCore';
 
   @override
   String get settings_title => '설정';
@@ -317,10 +348,49 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_radioSettings => '라디오 설정';
 
   @override
-  String get settings_radioSettingsSubtitle => '주파수, 전력, 스펙트럼';
+  String get settings_radioSettingsSubtitle => '주파수, 전력, 확산 계수';
 
   @override
   String get settings_radioSettingsUpdated => '라디오 설정이 업데이트되었습니다.';
+
+  @override
+  String get settings_regionSettings => 'Regions';
+
+  @override
+  String get settings_regionSettingsSubtitle => 'Manage stored regions';
+
+  @override
+  String get settings_regionManagement_screenTitle => 'Region Management';
+
+  @override
+  String get settings_regionNameHint => 'Enter region name';
+
+  @override
+  String get settings_regionAddRegion => 'Add region';
+
+  @override
+  String get settings_regionFetchRegions => 'Fetch regions from repeaters';
+
+  @override
+  String get settings_regionFetchRegionsFail => 'No regions were found';
+
+  @override
+  String get settings_regionFetchRegionsAlreadyExists =>
+      'This region has already been added';
+
+  @override
+  String get settings_regionName => 'Region Name';
+
+  @override
+  String get settings_regionDeleted => 'Region deleted';
+
+  @override
+  String get settings_deleteRegion => 'Delete Region';
+
+  @override
+  String settings_deleteRegionConfirm(String region) {
+    return 'Remove \"$region\" from region list?';
+  }
 
   @override
   String get settings_location => '위치';
@@ -414,9 +484,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_advertLocationSubtitle => '광고에 위치 정보를 포함하세요.';
 
   @override
-  String settings_multiAck(String value) {
-    return '다중 ACK: $value';
-  }
+  String get settings_autoZeroHopAdvertOnGpsUpdate =>
+      'GPS 업데이트 시 제로 홉 광고 자동 전송';
+
+  @override
+  String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle =>
+      'GPS 위치가 변경되면 제로 홉 광고를 전송합니다(광고에 위치 포함 필요).';
+
+  @override
+  String get settings_multiAck => '다중 ACK';
 
   @override
   String get settings_telemetryModeUpdated => '텔레메트리 모드 업데이트 완료';
@@ -425,25 +501,31 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_actions => '행동';
 
   @override
+  String get settings_deleteAllPaths => '모든 경로 삭제';
+
+  @override
+  String get settings_deleteAllPathsSubtitle => '연락처의 모든 경로 데이터를 지웁니다.';
+
+  @override
   String get settings_sendAdvertisement => '광고 전송';
 
   @override
-  String get settings_sendAdvertisementSubtitle => '방송 활동';
+  String get settings_sendAdvertisementSubtitle => '현재 존재를 방송합니다.';
 
   @override
-  String get settings_advertisementSent => '광고 전송';
+  String get settings_advertisementSent => '광고가 전송되었습니다.';
 
   @override
-  String get settings_syncTime => '동기화 시간';
+  String get settings_syncTime => '시간 동기화';
 
   @override
   String get settings_syncTimeSubtitle => '장치 시계를 휴대폰 시간으로 설정';
 
   @override
-  String get settings_timeSynchronized => '시간 동기화';
+  String get settings_timeSynchronized => '시간이 동기화되었습니다.';
 
   @override
-  String get settings_refreshContacts => '연락처 갱신';
+  String get settings_refreshContacts => '연락처 새로고침';
 
   @override
   String get settings_refreshContactsSubtitle => '장치에서 연락처 목록을 다시 불러오기';
@@ -452,41 +534,41 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_rebootDevice => '장치 재부팅';
 
   @override
-  String get settings_rebootDeviceSubtitle => 'MeshCore 장치를 재부팅하세요.';
+  String get settings_rebootDeviceSubtitle => 'MeshCore 장치를 재부팅합니다.';
 
   @override
-  String get settings_rebootDeviceConfirm =>
-      '정말로 장치를 재부팅하시겠습니까? 이 경우 연결이 끊어집니다.';
+  String get settings_rebootDeviceConfirm => '정말 장치를 재부팅하시겠습니까? 연결이 끊어집니다.';
 
   @override
-  String get settings_debug => '디버깅';
+  String get settings_debug => '디버그';
 
   @override
-  String get settings_bleDebugLog => 'BLE 디버그 로그';
+  String get settings_companionDebugLog => '동반 디버깅 로그';
 
   @override
-  String get settings_bleDebugLogSubtitle => 'BLE 명령어, 응답 및 원시 데이터';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB 명령어, 응답 및 원시 데이터';
 
   @override
-  String get settings_appDebugLog => '앱 디버깅 로그';
+  String get settings_appDebugLog => '앱 디버그 로그';
 
   @override
-  String get settings_appDebugLogSubtitle => '애플리케이션 디버깅 메시지';
+  String get settings_appDebugLogSubtitle => '애플리케이션 디버그 메시지';
 
   @override
-  String get settings_about => '소개';
+  String get settings_about => '정보';
 
   @override
   String settings_aboutVersion(String version) {
-    return 'MeshCore Open $version 버전';
+    return 'MeshCore Open v$version';
   }
 
   @override
-  String get settings_aboutLegalese => '2026년 MeshCore 오픈 소스 프로젝트';
+  String get settings_aboutLegalese => '2026 MeshCore 오픈 소스 프로젝트';
 
   @override
   String get settings_aboutDescription =>
-      'MeshCore LoRa 메시 네트워크 장치를 위한 오픈 소스 Flutter 클라이언트.';
+      'MeshCore LoRa 메시 네트워크 장치를 위한 오픈소스 Flutter 클라이언트.';
 
   @override
   String get settings_aboutOpenMeteoAttribution =>
@@ -514,7 +596,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_infoChannelCount => '채널 수';
 
   @override
-  String get settings_presets => '기본 설정';
+  String get settings_infoHardware => 'Hardware';
+
+  @override
+  String get settings_infoFirmware => 'Firmware';
+
+  @override
+  String get settings_presets => '프리셋';
 
   @override
   String get settings_frequency => '주파수 (MHz)';
@@ -535,24 +623,24 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_codingRate => '코딩 속도';
 
   @override
-  String get settings_txPower => 'TX 전력 (dBm)';
+  String get settings_txPower => '송신 전력 (dBm)';
 
   @override
   String get settings_txPowerHelper => '0 - 22';
 
   @override
-  String get settings_txPowerInvalid => '유효하지 않은 TX 전력 (0-22 dBm)';
+  String get settings_txPowerInvalid => '유효하지 않은 송신 전력 (0-22 dBm)';
 
   @override
   String get settings_clientRepeat => '오프그리드 반복';
 
   @override
   String get settings_clientRepeatSubtitle =>
-      '이 장치가 다른 사람들을 위해 메시 패킷을 반복하도록 허용합니다.';
+      '이 장치가 다른 장치의 메시 패킷을 반복하도록 허용합니다.';
 
   @override
   String get settings_clientRepeatFreqWarning =>
-      '오프그리드(무전력) 시스템 재연결에는 433MHz, 869MHz, 또는 918MHz 주파수가 필요합니다.';
+      '오프그리드 반복에는 433MHz, 869MHz 또는 918MHz 주파수가 필요합니다.';
 
   @override
   String settings_error(String message) {
@@ -563,19 +651,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_title => '앱 설정';
 
   @override
-  String get appSettings_appearance => '외관';
+  String get appSettings_appearance => '모양';
 
   @override
-  String get appSettings_theme => '주제';
+  String get appSettings_theme => '테마';
 
   @override
-  String get appSettings_themeSystem => '기본 설정';
+  String get appSettings_themeSystem => '시스템 기본값';
 
   @override
-  String get appSettings_themeLight => '빛';
+  String get appSettings_themeLight => '밝음';
 
   @override
-  String get appSettings_themeDark => '어둡다';
+  String get appSettings_themeDark => '어두움';
 
   @override
   String get appSettings_language => '언어';
@@ -596,7 +684,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_languageDe => '독일어';
 
   @override
-  String get appSettings_languagePl => '폴란드';
+  String get appSettings_languagePl => '폴란드어';
 
   @override
   String get appSettings_languageSl => '슬로베니아어';
@@ -617,16 +705,28 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_languageNl => '네덜란드어';
 
   @override
-  String get appSettings_languageSk => '슬로베니아어';
+  String get appSettings_languageSk => '슬로바키아어';
 
   @override
-  String get appSettings_languageBg => '불가리';
+  String get appSettings_languageBg => '불가리아어';
 
   @override
   String get appSettings_languageRu => '러시아어';
 
   @override
-  String get appSettings_languageUk => '우크라이나';
+  String get appSettings_languageUk => '우크라이나어';
+
+  @override
+  String get repeater_pathHashModeOption0 => '0 - 1 byte';
+
+  @override
+  String get repeater_pathHashModeOption1 => '1 - 2 bytes';
+
+  @override
+  String get repeater_pathHashModeOption2 => '2 - 3 bytes';
+
+  @override
+  String get repeater_pathHashModeOption3 => '3 - 4 bytes';
 
   @override
   String get appSettings_enableMessageTracing => '메시지 추적 기능 활성화';
@@ -648,10 +748,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_notificationPermissionDenied => '알림 권한 거부';
 
   @override
-  String get appSettings_notificationsEnabled => '알림 기능 활성화';
+  String get appSettings_notificationsEnabled => '알림 사용';
 
   @override
-  String get appSettings_notificationsDisabled => '알림 기능 끄기';
+  String get appSettings_notificationsDisabled => '알림 사용 안 함';
 
   @override
   String get appSettings_messageNotifications => '메시지 알림';
@@ -677,23 +777,24 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_messaging => '메시징';
 
   @override
-  String get appSettings_clearPathOnMaxRetry => 'Max 재시도 시 경로 명확하게 설정';
+  String get appSettings_clearPathOnMaxRetry => '최대 재시도 시 경로 지우기';
 
   @override
   String get appSettings_clearPathOnMaxRetrySubtitle =>
-      '5번의 전송 시도가 실패하면 연락 경로를 재설정';
+      '전송 시도가 5번 실패하면 연락 경로를 재설정합니다.';
 
   @override
-  String get appSettings_pathsWillBeCleared => '5번의 시도 실패 후, 해당 경로가 확보될 것입니다.';
+  String get appSettings_pathsWillBeCleared => '5번 실패하면 해당 경로를 지웁니다.';
 
   @override
-  String get appSettings_pathsWillNotBeCleared => '경로는 자동으로 정리되지 않습니다.';
+  String get appSettings_pathsWillNotBeCleared => '경로를 자동으로 지우지 않습니다.';
 
   @override
   String get appSettings_autoRouteRotation => '자동 경로 순환';
 
   @override
-  String get appSettings_autoRouteRotationSubtitle => '최적 경로와 방수 모드 사이를 전환';
+  String get appSettings_autoRouteRotationSubtitle =>
+      '최적 경로와 플러드 모드 사이를 전환합니다.';
 
   @override
   String get appSettings_autoRouteRotationEnabled => '자동 경로 순환 기능 활성화';
@@ -702,31 +803,31 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_autoRouteRotationDisabled => '자동 경로 순환 기능 비활성화';
 
   @override
-  String get appSettings_maxRouteWeight => '최대 경로 무게';
+  String get appSettings_maxRouteWeight => '최대 경로 가중치';
 
   @override
   String get appSettings_maxRouteWeightSubtitle =>
-      '한 경로가 성공적인 배송을 통해 누적할 수 있는 최대 무게';
+      '한 경로가 성공적인 전송을 통해 누적할 수 있는 최대 가중치';
 
   @override
   String get appSettings_initialRouteWeight => '초기 경로 가중치';
 
   @override
-  String get appSettings_initialRouteWeightSubtitle => '새롭게 발견된 경로의 초기 무게';
+  String get appSettings_initialRouteWeightSubtitle => '새로 발견된 경로의 초기 가중치';
 
   @override
-  String get appSettings_routeWeightSuccessIncrement => '성공 횟수 증가';
+  String get appSettings_routeWeightSuccessIncrement => '성공 시 증가';
 
   @override
   String get appSettings_routeWeightSuccessIncrementSubtitle =>
-      '성공적으로 배송된 경로에 추가된 무게';
+      '성공적으로 전송된 경로에 추가되는 가중치';
 
   @override
-  String get appSettings_routeWeightFailureDecrement => '오류 가중치 감소';
+  String get appSettings_routeWeightFailureDecrement => '실패 시 감소';
 
   @override
   String get appSettings_routeWeightFailureDecrementSubtitle =>
-      '배송 실패 후 경로에서 제거된 무게';
+      '전송 실패 후 경로에서 제거되는 가중치';
 
   @override
   String get appSettings_maxMessageRetries => '최대 메시지 재시도 횟수';
@@ -735,23 +836,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_maxMessageRetriesSubtitle => '메시지를 실패로 처리하기 전 시도 횟수';
 
   @override
-  String path_routeWeight(String weight, String max) {
-    return '$weight/$max';
-  }
-
-  @override
   String get appSettings_battery => '배터리';
 
   @override
-  String get appSettings_batteryChemistry => '배터리 화학';
+  String get appSettings_batteryChemistry => '배터리 종류';
 
   @override
   String appSettings_batteryChemistryPerDevice(String deviceName) {
-    return '$deviceName 당분간';
+    return '$deviceName별';
   }
 
   @override
-  String get appSettings_batteryChemistryConnectFirst => '장치를 선택하기 위해 연결';
+  String get appSettings_batteryChemistryConnectFirst =>
+      '배터리 종류를 선택하려면 먼저 장치를 연결하세요.';
 
   @override
   String get appSettings_batteryNmc => '18650 NMC (3.0-4.2V)';
@@ -763,13 +860,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_batteryLipo => '리튬 폴리머 (3.0-4.2V)';
 
   @override
+  String get appSettings_batteryLipoHv => 'LiPo HV (3.0-4.35V)';
+
+  @override
   String get appSettings_mapDisplay => '지도 표시';
 
   @override
-  String get appSettings_showRepeaters => '반복 기능 표시';
+  String get appSettings_showRepeaters => '리피터 표시';
 
   @override
-  String get appSettings_showRepeatersSubtitle => '지도에 반복자 노드를 표시';
+  String get appSettings_showRepeatersSubtitle => '지도에 리피터 노드를 표시';
 
   @override
   String get appSettings_showChatNodes => '채팅 노드 표시';
@@ -781,7 +881,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_showOtherNodes => '다른 노드 표시';
 
   @override
-  String get appSettings_showOtherNodesSubtitle => '지도에서 다른 노드 유형을 표시';
+  String get appSettings_showOtherNodesSubtitle => '지도에 다른 노드 유형을 표시';
 
   @override
   String get appSettings_timeFilter => '시간 필터';
@@ -791,20 +891,20 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String appSettings_timeFilterShowLast(int hours) {
-    return '지난 $hours 시간 동안의 노드 표시';
+    return '최근 $hours시간 동안의 노드 표시';
   }
 
   @override
-  String get appSettings_mapTimeFilter => '지도 필터';
+  String get appSettings_mapTimeFilter => '지도 시간 필터';
 
   @override
-  String get appSettings_showNodesDiscoveredWithin => '다음 내역에서 발견된 노드 표시:';
+  String get appSettings_showNodesDiscoveredWithin => '다음 기간 내에 발견된 노드 표시:';
 
   @override
-  String get appSettings_allTime => '모든 시간';
+  String get appSettings_allTime => '전체 기간';
 
   @override
-  String get appSettings_lastHour => '지난 시간';
+  String get appSettings_lastHour => '지난 1시간';
 
   @override
   String get appSettings_last6Hours => '지난 6시간';
@@ -816,16 +916,37 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_lastWeek => '지난 주';
 
   @override
+  String get appSettings_rasterTileSource => '래스터 타일 소스';
+
+  @override
+  String get appSettings_stadiaEndpoint => 'Stadia 엔드포인트';
+
+  @override
+  String get appSettings_stadiaApiKey => 'Stadia API 키';
+
+  @override
+  String get appSettings_stadiaApiKeyRequired => 'Stadia Maps를 사용하려면 필요합니다';
+
+  @override
+  String appSettings_stadiaApiKeyConfigured(String maskedKey) {
+    return '설정됨: $maskedKey';
+  }
+
+  @override
+  String get appSettings_stadiaApiKeyDialogDescription =>
+      'Stadia Maps API 키를 입력하세요. 이 앱은 래스터 타일 요청에 이 키를 사용합니다.';
+
+  @override
   String get appSettings_offlineMapCache => '오프라인 지도 캐시';
 
   @override
   String get appSettings_unitsTitle => '단위';
 
   @override
-  String get appSettings_unitsMetric => '단위 (m / km)';
+  String get appSettings_unitsMetric => '미터법 (m / km)';
 
   @override
-  String get appSettings_unitsImperial => '제국 (피트/마일)';
+  String get appSettings_unitsImperial => '영국식 (ft / mi)';
 
   @override
   String get appSettings_noAreaSelected => '선택된 영역 없음';
@@ -836,13 +957,14 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get appSettings_debugCard => '디버깅';
+  String get appSettings_debugCard => '디버그';
 
   @override
-  String get appSettings_appDebugLogging => '앱 디버깅 로깅';
+  String get appSettings_appDebugLogging => '앱 디버그 로깅';
 
   @override
-  String get appSettings_appDebugLoggingSubtitle => '로그 앱 디버깅 메시지 (문제 해결을 위한)';
+  String get appSettings_appDebugLoggingSubtitle =>
+      '문제 해결을 위한 앱 디버그 메시지를 기록합니다.';
 
   @override
   String get appSettings_appDebugLoggingEnabled => '앱 디버깅 로깅 활성화';
@@ -931,6 +1053,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get contacts_newGroup => '새로운 그룹';
 
   @override
+  String get contacts_moreOptions => '더 많은 옵션';
+
+  @override
+  String get contacts_searchOpen => '연락처 검색';
+
+  @override
+  String get contacts_searchClose => '검색 닫기';
+
+  @override
   String get contacts_groupName => '그룹 이름';
 
   @override
@@ -958,7 +1089,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String contacts_lastSeenMinsAgo(int minutes) {
-    return '~ $minutes min.';
+    return '~ $minutes분';
   }
 
   @override
@@ -966,7 +1097,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String contacts_lastSeenHoursAgo(int hours) {
-    return '~ $hours hours';
+    return '~ $hours시간';
   }
 
   @override
@@ -1031,19 +1162,15 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get channels_hashtagChannel => '해시태그 채널';
-
-  @override
   String get channels_public => '대중의';
 
   @override
+  String channels_via(String path) {
+    return '$path 경유';
+  }
+
+  @override
   String get channels_private => '사립';
-
-  @override
-  String get channels_publicChannel => '공개 채널';
-
-  @override
-  String get channels_privateChannel => '개인 채널';
 
   @override
   String get channels_editChannel => '채널 편집';
@@ -1113,8 +1240,60 @@ class AppLocalizationsKo extends AppLocalizations {
   String get channels_smazCompression => 'SMAZ 압축';
 
   @override
+  String get channels_cyr2latCompression => 'Cyr2Lat 압축';
+
+  @override
+  String get channels_cyr2latCompressionDscr => '보낼 때 일부 키릴 문자를 라틴 문자로 바꿉니다.';
+
+  @override
+  String get channels_cyr2latSettingsHeading => 'Cyr2Lat 설정';
+
+  @override
+  String get channels_cyr2latSettingsSubheading => '변환 목록';
+
+  @override
+  String get channels_cyr2latSettingsDscr => '문자 변환 JSON 구성 편집';
+
+  @override
+  String get channels_cyr2latSettingsDialogHint => 'JSON 변환 맵';
+
+  @override
+  String channels_cyr2latSettingsDialogWrongJSON(Object error) {
+    return '잘못된 JSON: $error';
+  }
+
+  @override
   String channels_channelUpdated(String name) {
     return '채널 \"$name\"이 업데이트되었습니다.';
+  }
+
+  @override
+  String get settings_cyr2latProfileAdd => 'Cyr2Lat 프로필 추가';
+
+  @override
+  String get settings_cyr2latProfileName => '프로필 이름';
+
+  @override
+  String get settings_cyr2latProfileNameEmpty => '프로필 이름은 비워둘 수 없습니다';
+
+  @override
+  String get settings_cyr2latProfileAdded => '프로필이 성공적으로 추가되었습니다';
+
+  @override
+  String get settings_cyr2latProfileUpdated => '프로필이 성공적으로 업데이트되었습니다';
+
+  @override
+  String get settings_cyr2latProfileEdit => 'Cyr2Lat 프로필 편집';
+
+  @override
+  String get settings_cyr2latProfileDelete => 'Cyr2Lat 프로필 삭제';
+
+  @override
+  String get settings_cyr2latProfileDeleted => '프로필이 성공적으로 삭제되었습니다';
+
+  @override
+  String settings_cyr2latProfileDeleteDscr(String name) {
+    return '\"$name\" 프로필을 삭제하시겠습니까?';
   }
 
   @override
@@ -1172,6 +1351,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get channels_hashtagHint => '예: #팀';
 
   @override
+  String channels_regionSetTo(String region) {
+    return 'Region: $region';
+  }
+
+  @override
+  String get channels_regionNotSet => 'Region: none';
+
+  @override
+  String get channels_regionSelect_Title => 'Select a region';
+
+  @override
+  String get channels_clearRegion => 'Clear region';
+
+  @override
   String get chat_noMessages => '아직 메시지가 없습니다.';
 
   @override
@@ -1225,6 +1418,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get chat_sendGif => 'GIF 보내기';
+
+  @override
+  String get chat_receivedGif => 'Received a GIF';
 
   @override
   String get chat_reply => '답변';
@@ -1338,7 +1534,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get debugFrame_textTypeCli => '명령줄 인터페이스 (CLI)';
 
   @override
-  String get debugFrame_textTypePlain => '단순한';
+  String get debugFrame_textTypePlain => '일반 텍스트';
 
   @override
   String debugFrame_text(String text) {
@@ -1347,34 +1543,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get debugFrame_hexDump => '헥스 덤프:';
-
-  @override
-  String get chat_pathManagement => '경로 관리';
-
-  @override
-  String get chat_ShowAllPaths => '모든 경로 표시';
-
-  @override
-  String get chat_routingMode => '라우팅 방식';
-
-  @override
-  String get chat_autoUseSavedPath => '자동 (저장된 경로 사용)';
-
-  @override
-  String get chat_forceFloodMode => '강수 모드 활성화';
-
-  @override
-  String get chat_recentAckPaths => '최근 사용한 ACK 경로 (사용하려면 탭):';
-
-  @override
-  String get chat_pathHistoryFull =>
-      '이력 기록은 이미 가득 차 있습니다. 항목을 삭제하여 새로운 항목을 추가할 수 있습니다.';
-
-  @override
-  String get chat_hopSingular => '점프';
-
-  @override
-  String get chat_hopPlural => '홉';
 
   @override
   String chat_hopsCount(int count) {
@@ -1388,68 +1556,156 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get chat_successes => '성공 사례';
-
-  @override
   String get chat_removePath => '경로 제거';
 
   @override
   String get chat_noPathHistoryYet => '아직 경로 기록이 없습니다.\n경로를 찾기 위해 메시지를 보내세요.';
 
   @override
-  String get chat_pathActions => '경로 작업:';
-
-  @override
-  String get chat_setCustomPath => '사용자 지정 경로 설정';
-
-  @override
-  String get chat_setCustomPathSubtitle => '수동으로 경로를 지정';
-
-  @override
-  String get chat_clearPath => '명확한 길';
-
-  @override
-  String get chat_clearPathSubtitle => '다음 전송 시, 강제 재전송 설정';
-
-  @override
   String get chat_pathCleared => '경로가 확보되었습니다. 다음 메시지는 경로를 다시 찾을 것입니다.';
-
-  @override
-  String get chat_floodModeSubtitle => '앱 바에서 라우팅 스위치를 사용';
-
-  @override
-  String get chat_floodModeEnabled =>
-      '홍수 모드 활성화됨. 앱 바의 경로 아이콘을 사용하여 다시 전환할 수 있습니다.';
 
   @override
   String get chat_fullPath => '전체 경로';
 
   @override
-  String get chat_pathDetailsNotAvailable =>
-      '경로 정보는 아직 제공되지 않습니다. 메시지를 보내어 다시 시도해 보세요.';
+  String get routing_title => '라우팅';
 
   @override
-  String chat_pathSetHops(int hopCount, String status) {
-    String _temp0 = intl.Intl.pluralLogic(
-      hopCount,
-      locale: localeName,
-      other: 'hops',
-      one: 'hop',
-    );
-    return 'Path set: $hopCount $_temp0 - $status';
+  String get routing_modeAuto => '자동';
+
+  @override
+  String get routing_modeFlood => '플러드';
+
+  @override
+  String get routing_modeManual => '수동';
+
+  @override
+  String get routing_modeAutoHint =>
+      '가장 잘 알려진 경로를 자동으로 선택하고, 경로가 없으면 플러드로 전환합니다.';
+
+  @override
+  String get routing_modeFloodHint =>
+      '모든 중계기를 통해 방송합니다. 가장 안정적이지만 송신 시간을 더 많이 사용합니다.';
+
+  @override
+  String get routing_modeManualHint => '항상 지정한 정확한 경로를 따릅니다.';
+
+  @override
+  String get routing_currentRoute => '현재 경로';
+
+  @override
+  String get routing_directNoHops => '직접 연결 - 중계 없음';
+
+  @override
+  String get routing_noPathYet => '아직 경로가 없습니다. 다음 메시지가 도착할 때까지 계속 탐색합니다.';
+
+  @override
+  String get routing_floodBroadcast => '모든 중계기를 통해 방송';
+
+  @override
+  String get routing_editPath => '경로 편집';
+
+  @override
+  String get routing_forgetPath => '경로 지우기';
+
+  @override
+  String get routing_knownPaths => '알려진 경로';
+
+  @override
+  String get routing_knownPathsHint => '전환할 경로를 선택하세요.';
+
+  @override
+  String get routing_inUse => '사용 중';
+
+  @override
+  String get routing_qualityStrong => '매우 좋음';
+
+  @override
+  String get routing_qualityGood => '좋음';
+
+  @override
+  String get routing_qualityFair => '보통';
+
+  @override
+  String get routing_qualityWorked => '작동함';
+
+  @override
+  String get routing_qualityFlood => '플러드로 수신됨';
+
+  @override
+  String get routing_qualityUntested => '미검증';
+
+  @override
+  String routing_lastWorked(String when) {
+    return '$when에 작동';
   }
 
   @override
-  String get chat_pathSavedLocally => '로컬에 저장. 동기화 연결';
+  String get routing_neverWorked => '아직 작동한 적 없음';
 
   @override
-  String get chat_pathDeviceConfirmed => '장치 확인 완료.';
+  String routing_deliveryCounts(int successes, int failures) {
+    return '$successes건 성공, $failures건 실패';
+  }
+
+  @override
+  String get routing_floodDelivery => '플러드 전송';
+
+  @override
+  String get pathEditor_title => '경로 만들기';
+
+  @override
+  String pathEditor_hopCounter(int count) {
+    return '64개 중 $count 홉';
+  }
+
+  @override
+  String get pathEditor_noHops =>
+      '아직 홉이 추가되지 않았습니다. 아래 탭을 사용해 순서대로 추가하거나, 홉 없이 바로 보내려면 \"홉 없음\"으로 저장하세요.';
+
+  @override
+  String get pathEditor_addHops => '홉을 순서대로 추가하세요.';
+
+  @override
+  String get pathEditor_searchRepeaters => '리피터 검색';
+
+  @override
+  String get pathEditor_advancedHex => '고급: 원시 HEX 경로';
+
+  @override
+  String get pathEditor_hexLabel => 'HEX 접두사';
+
+  @override
+  String get pathEditor_hexHelper => '각 홉마다 2개의 16진수 바이트, 쉼표로 구분';
+
+  @override
+  String pathEditor_invalidTokens(String tokens) {
+    return '유효하지 않음: $tokens';
+  }
+
+  @override
+  String get pathEditor_tooManyHops => '최대 64개의 홉';
+
+  @override
+  String get pathEditor_usePath => '이 경로 사용';
+
+  @override
+  String get pathEditor_removeHop => '홉 제거';
+
+  @override
+  String get pathEditor_unknownHop => '알 수 없는 중계기';
+
+  @override
+  String get chat_pathSavedLocally => '로컬에 저장되었습니다. 동기화할 장치에 연결하세요.';
+
+  @override
+  String get chat_pathDeviceConfirmed => '장치가 확인되었습니다.';
 
   @override
   String get chat_pathDeviceNotConfirmed => '기기가 아직 확인되지 않았습니다.';
 
   @override
-  String get chat_type => '종류';
+  String get chat_type => '유형';
 
   @override
   String get chat_path => '경로';
@@ -1461,18 +1717,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get chat_compressOutgoingMessages => '전송되는 메시지 압축';
 
   @override
-  String get chat_floodForced => '홍수 (강제)';
+  String get chat_floodForced => '플러드 (강제)';
 
   @override
-  String get chat_directForced => '직접적인 (강제적인)';
+  String get chat_directForced => '직접 (강제)';
 
   @override
   String chat_hopsForced(int count) {
-    return '$count번 띄우기 (강제)';
+    return '$count홉 (강제)';
   }
 
   @override
-  String get chat_floodAuto => '홍수 (자동)';
+  String get chat_floodAuto => '플러드 (자동)';
 
   @override
   String get chat_direct => '직접';
@@ -1484,6 +1740,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String chat_unread(int count) {
     return '읽지 않음: $count';
   }
+
+  @override
+  String get chat_markAsUnread => '미리 읽지 않음으로 표시';
+
+  @override
+  String get chat_newMessages => '새로운 메시지';
 
   @override
   String get chat_openLink => '링크를 열기?';
@@ -1504,6 +1766,39 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get map_title => '노드 매핑';
+
+  @override
+  String get map_searchHint => '노드 이름 또는 ID 검색';
+
+  @override
+  String get map_activity => '활동';
+
+  @override
+  String get map_online => '온라인';
+
+  @override
+  String get map_recent => '최근';
+
+  @override
+  String get map_stale => '오래됨';
+
+  @override
+  String get map_visible => '보임';
+
+  @override
+  String get map_hidden => '숨김';
+
+  @override
+  String get map_centerOnNode => '노드 중심으로 보기';
+
+  @override
+  String get map_details => '세부 정보';
+
+  @override
+  String get map_noGps => 'GPS 없음';
+
+  @override
+  String get map_noResults => '일치하는 노드가 없습니다.';
 
   @override
   String get map_lineOfSight => '시야';
@@ -1562,6 +1857,24 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get map_flags => '깃발';
+
+  @override
+  String get map_type => '유형';
+
+  @override
+  String get map_path => '경로';
+
+  @override
+  String get map_location => '위치';
+
+  @override
+  String get map_estLocation => '추정 위치';
+
+  @override
+  String get map_publicKey => '공개 키';
+
+  @override
+  String get map_publicKeyPrefixHint => '예: ab12';
 
   @override
   String get map_shareMarkerHere => '여기에서 마커 공유';
@@ -1647,6 +1960,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get map_sharedPin => '공유 비밀번호';
 
   @override
+  String get map_sharedAt => '공유됨';
+
+  @override
   String get map_joinRoom => '방에 참여';
 
   @override
@@ -1694,7 +2010,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String mapCache_cachedTilesWithFailed(int downloaded, int failed) {
-    return 'Cached $downloaded tiles ($failed failed)';
+    return '캐시된 타일 $downloaded개 ($failed개 실패)';
   }
 
   @override
@@ -1725,7 +2041,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String mapCache_downloadedTiles(int completed, int total) {
-    return 'Downloaded $completed / $total';
+    return '다운로드됨 $completed / $total';
   }
 
   @override
@@ -1737,6 +2053,42 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String mapCache_failedDownloads(int count) {
     return '실패한 다운로드: $count';
+  }
+
+  @override
+  String get mapCache_cachedTilesLabel => 'Cached tiles';
+
+  @override
+  String get mapCache_cachedTileSummaryLabel => 'Cached tile summary';
+
+  @override
+  String mapCache_bulkDownloadDisabledForSource(String source) {
+    return 'Offline bulk downloads are disabled for $source.';
+  }
+
+  @override
+  String mapCache_bulkDownloadDisabledInConfig(String source) {
+    return 'Offline bulk downloads are disabled for $source in this app configuration.';
+  }
+
+  @override
+  String mapCache_summarySource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String mapCache_summaryCachedTilesForSource(int count) {
+    return 'Cached tiles for source: $count';
+  }
+
+  @override
+  String mapCache_summaryCachedInSelection(int count) {
+    return 'Cached in selected area/zoom: $count';
+  }
+
+  @override
+  String mapCache_summaryApproxCacheSize(String size) {
+    return 'Approx cache size: $size';
   }
 
   @override
@@ -1759,7 +2111,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String time_hoursAgo(int hours) {
-    return '${hours}h ago';
+    return '$hours시간 전';
   }
 
   @override
@@ -1860,68 +2212,16 @@ class AppLocalizationsKo extends AppLocalizations {
       '로그인에 실패했습니다. 비밀번호가 잘못되었거나, 연결이 되지 않는 것 같습니다.';
 
   @override
-  String get common_reload => '다시 로드';
+  String get common_reload => '다시 불러오기';
 
   @override
-  String get common_clear => '명확하게';
-
-  @override
-  String path_currentPath(String path) {
-    return '현재 경로: $path';
-  }
-
-  @override
-  String path_usingHopsPath(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'hops',
-      one: 'hop',
-    );
-    return 'Using $count $_temp0 path';
-  }
-
-  @override
-  String get path_enterCustomPath => '사용자 지정 경로 입력';
+  String get common_clear => '지우기';
 
   @override
   String get path_currentPathLabel => '현재 경로';
 
   @override
-  String get path_hexPrefixInstructions =>
-      '각 단계에 대한 2자리 헥사데진 접두사를 쉼표로 구분하여 입력하세요.';
-
-  @override
-  String get path_hexPrefixExample =>
-      '예시: A1, F2, 3C (각 노드는 자신의 공개 키의 첫 번째 바이트를 사용)';
-
-  @override
-  String get path_labelHexPrefixes => '경로 (헥스 접두사)';
-
-  @override
-  String get path_helperMaxHops =>
-      '최대 64개의 홉. 각 접두사는 2개의 16진수 문자(1바이트)로 구성됩니다.';
-
-  @override
-  String get path_selectFromContacts => '또 연락처 목록에서 선택:';
-
-  @override
   String get path_noRepeatersFound => '반복 장치 또는 서버는 찾을 수 없습니다.';
-
-  @override
-  String get path_customPathsRequire =>
-      '사용자 정의 경로에는 메시지를 전달할 수 있는 중간 경로가 필요합니다.';
-
-  @override
-  String path_invalidHexPrefixes(String prefixes) {
-    return '유효하지 않은 16진수 접두사: $prefixes';
-  }
-
-  @override
-  String get path_tooLong => '경로가 너무 길어. 최대 64개의 연결만 허용됩니다.';
-
-  @override
-  String get path_setPath => '경로 설정';
 
   @override
   String get repeater_management => '리피터 관리';
@@ -1985,15 +2285,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_routingMode => '라우팅 방식';
 
   @override
-  String get repeater_autoUseSavedPath => '자동 (저장된 경로 사용)';
-
-  @override
-  String get repeater_forceFloodMode => '강수 모드 활성화';
-
-  @override
-  String get repeater_pathManagement => '경로 관리';
-
-  @override
   String get repeater_refresh => '새롭게';
 
   @override
@@ -2039,6 +2330,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_rxAirtime => 'RX 에어타임';
+
+  @override
+  String get repeater_chanUtil => '채널 활용도';
 
   @override
   String get repeater_packetStatistics => '패킷 통계';
@@ -2241,6 +2535,188 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_settingsSaved => '설정이 성공적으로 저장되었습니다.';
 
   @override
+  String get repeater_rxGain => '향상된 RX 성능';
+
+  @override
+  String get repeater_rxGainHelper =>
+      '더 높은 감도, 더 많은 전류 소모 (SX1262/SX1268에만 해당)';
+
+  @override
+  String get repeater_refreshRxGain => 'RX 성능 향상 효과 재확인';
+
+  @override
+  String get repeater_multiAcks => '다중 ACK';
+
+  @override
+  String get repeater_multiAcksSubtitle => '다양한 경로를 통해 메시지를 확인하여 전달 효율성을 높입니다.';
+
+  @override
+  String get repeater_refreshMultiAcks => '다중 ACK 재확인';
+
+  @override
+  String get repeater_networkHealth => '네트워크 상태';
+
+  @override
+  String get repeater_loopDetect => '루프 감지';
+
+  @override
+  String get repeater_loopDetectHelper => '라우팅 루프처럼 보이는 과도한 데이터 패킷을 전송';
+
+  @override
+  String get repeater_loopDetectOff => '거기';
+
+  @override
+  String get repeater_loopDetectMinimal => '최소';
+
+  @override
+  String get repeater_loopDetectModerate => '적당한';
+
+  @override
+  String get repeater_loopDetectStrict => '엄격한';
+
+  @override
+  String get repeater_dutyCycle => '작동 주기';
+
+  @override
+  String get repeater_dutyCycleHelper => '허용되는 최대 방송 시간 비율';
+
+  @override
+  String repeater_dutyCyclePercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get repeater_ownerInfo => '운영자 정보';
+
+  @override
+  String get repeater_ownerInfoHelper => '이 리피터에 대한 공개 메타데이터';
+
+  @override
+  String get repeater_refreshOwnerInfo => '운영자 정보 업데이트';
+
+  @override
+  String get repeater_floodMax => '최대 홉 수';
+
+  @override
+  String get repeater_floodMaxHelper => '최대 패킷이 이동할 수 있는 홉 수 (0-64)';
+
+  @override
+  String get repeater_advancedSettings => '고급';
+
+  @override
+  String get repeater_advancedSettingsSubtitle => '숙련된 운영자를 위한 조절 노브';
+
+  @override
+  String get repeater_pathHashMode => '패스 해시 모드';
+
+  @override
+  String get repeater_pathHashModeHelper =>
+      '이 리피터의 ID를 플러드 경로/루프 감지 태그에 인코딩하는 데 사용되는 바이트 수입니다. 0=1바이트(256개 ID, 최대 64홉), 1=2바이트(65,000개 ID, 최대 32홉), 2=3바이트(1,600만 개 ID, 최대 21홉). v1.14 이전 펌웨어는 항상 1바이트 경로를 사용했으며, v1.14 이상은 2바이트 또는 3바이트 경로로 설정할 수 있습니다.';
+
+  @override
+  String get repeater_keySettings => 'Change Identity Keys';
+
+  @override
+  String get repeater_keySettingsSubtitle =>
+      'Change the public/private keypair';
+
+  @override
+  String get repeater_prvKey => 'Private key';
+
+  @override
+  String get repeater_prvKeyHelper =>
+      'A new private key for the repeater, a 128-character hex string.';
+
+  @override
+  String get repeater_generatePrvKey => 'Generate a random keypair';
+
+  @override
+  String get repeater_stopGeneratingPrvKey => 'Interrupt search for keypair';
+
+  @override
+  String get repeater_pubKey => 'Public key';
+
+  @override
+  String get repeater_pubKeyHelper =>
+      'This is the public key that goes with the generated private key. You can\'t set this directly.';
+
+  @override
+  String get repeater_pubKeyPrefix => 'Desired prefix';
+
+  @override
+  String repeater_pubKeyPrefixHelper(int tries) {
+    return 'Find a public key that starts with these hex digits. Expected tries needed: $tries.';
+  }
+
+  @override
+  String get repeater_txDelay => '플러드 TX 지연';
+
+  @override
+  String get repeater_txDelayHelper =>
+      '홍수 시 교통량에 맞춰 재전송 간격을 설정합니다. 이는 패킷의 전송 시간을 곱한 값 (0-2, 기본값 0.5)으로 설정합니다. 값이 클수록 충돌이 줄어들지만 전송 속도가 느려집니다.';
+
+  @override
+  String get repeater_directTxDelay => '직접적인 TX 지연';
+
+  @override
+  String get repeater_directTxDelayHelper =>
+      '직접 (대량 전송이 아닌) 트래픽에 대한 재전송 간격을, 패킷의 전송 시간을 곱하여 설정 (0-2, 기본값 0.3).';
+
+  @override
+  String get repeater_intThresh => '간섭 허용치';
+
+  @override
+  String get repeater_intThreshHelper =>
+      '신호의 잡음 수준을 기준으로 작동하며, 이 수준 이상의 간섭은 차단합니다. 0은 비활성화 상태를 의미하며, 잡음이 심한 대역에서 RX 오류가 발생할 경우에만 활성화해야 합니다.';
+
+  @override
+  String get repeater_agcResetInterval => 'AGC 재설정 간격';
+
+  @override
+  String get repeater_agcResetIntervalHelper =>
+      '자동 게인 제어를 재설정하여 신호가 불안정해졌을 때 원래 상태로 복구하는 빈도를 설정하는 방법은 다음과 같습니다. 4의 배수 단위로 설정하면 주기적인 재설정이 수행됩니다. 0을 설정하면 주기적인 재설정이 수행되지 않습니다.';
+
+  @override
+  String get repeater_actionsTitle => '행동';
+
+  @override
+  String get repeater_sendAdvert => '홍수 관련 광고 전송';
+
+  @override
+  String get repeater_sendAdvertSubtitle => '네트워크를 통해 홍수 광고를 방송';
+
+  @override
+  String get repeater_sendAdvertZeroHop => '제로 홉 광고 전송';
+
+  @override
+  String get repeater_sendAdvertZeroHopSubtitle => '단일 중계 (중계 없이) 광고를 송출';
+
+  @override
+  String get repeater_clockSync => '현재 시계 동기화';
+
+  @override
+  String get repeater_clockSyncSubtitle => '스마트폰의 시간을 리피터로 설정';
+
+  @override
+  String repeater_actionSucceeded(String action) {
+    return '$action이 성공적으로 완료되었습니다.';
+  }
+
+  @override
+  String repeater_actionFailed(String action, String error) {
+    return '$action 실패: $error';
+  }
+
+  @override
+  String get repeater_settingsSavedRebootNeeded =>
+      '설정이 저장되었습니다. 다시 시작하여 설정을 적용하세요.';
+
+  @override
+  String repeater_settingsPartialFailure(String failures) {
+    return '다음 설정에 실패했습니다: $failures';
+  }
+
+  @override
   String repeater_errorSavingSettings(String error) {
     return '설정 저장 오류: $error';
   }
@@ -2255,9 +2731,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_refreshTxPower => 'TX 전원 재설정';
 
   @override
-  String get repeater_refreshLocationSettings => '위치 설정 초기화';
-
-  @override
   String get repeater_refreshPacketForwarding => '패킷 전송 재시작';
 
   @override
@@ -2265,9 +2738,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_refreshPrivacyMode => '개인 정보 보호 모드 재설정';
-
-  @override
-  String get repeater_refreshAdvertisementSettings => '광고 설정 재설정';
 
   @override
   String repeater_refreshed(String label) {
@@ -2572,6 +3042,246 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_gpsNote => 'GPS 명령이 위치 관련 주제를 관리하기 위해 도입되었습니다.';
 
   @override
+  String get repeater_getCategory => '가치 얻기';
+
+  @override
+  String get repeater_powerMgmt => '전력 관리';
+
+  @override
+  String get repeater_sensors => '센서';
+
+  @override
+  String get repeater_cliHelpPowerOff => '장치를 끄는 기능 (응답이 없을 것으로 예상)';
+
+  @override
+  String get repeater_cliHelpClkReboot => '시계를 알려진 시점으로 재설정하고 장치를 재부팅합니다.';
+
+  @override
+  String get repeater_cliHelpAdvertZeroHop => '직접적인 연결 없이 이웃에게만 광고를 전송합니다.';
+
+  @override
+  String get repeater_cliHelpStartOta => '지원되는 보드에서 무선으로 펌웨어 업데이트를 시작합니다.';
+
+  @override
+  String get repeater_cliHelpTime =>
+      '장치를 주어진 유닉스 에포크 초부터 시간으로 설정합니다. 시간은 이전으로 이동할 수 없습니다.';
+
+  @override
+  String get repeater_cliHelpBoard => '제조사/하드웨어 식별 정보를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpDiscoverNeighbors =>
+      '인접한 노드에 대한 탐색 요청을 보냅니다. (리피터만 해당)';
+
+  @override
+  String get repeater_cliHelpPowersaving => '절전 모드가 켜져 있는지 확인하는 표시';
+
+  @override
+  String get repeater_cliHelpPowersavingOnOff =>
+      '절전 모드를 활성화하거나 비활성화할 수 있습니다 (지원되는 경우).';
+
+  @override
+  String get repeater_cliHelpErase =>
+      '(단일 사용) 장치 파일 시스템을 포맷합니다. 모든 설정 및 연락처를 삭제합니다.';
+
+  @override
+  String get repeater_cliHelpSetDutyCycle =>
+      '최대 허용 전송 주기(백분율)를 설정합니다(1~100%). 내부적으로 통신 시간을 조정합니다.';
+
+  @override
+  String get repeater_cliHelpSetPrvKey =>
+      '(시리얼 키만 해당) 장치 식별용 개인 키를 대체합니다. 적용하려면 재부팅이 필요합니다. 새로운 공개 키를 생성합니다.';
+
+  @override
+  String get repeater_cliHelpSetRadioRxGain =>
+      '(SX126x 전용) 더 높은 전류를 사용할 때 더 나은 감도를 위해 증폭된 RX 감쇠 기능을 전환합니다.';
+
+  @override
+  String get repeater_cliHelpSetOwnerInfo =>
+      '광고에 포함된 소유자 연락처 정보를 지정합니다. 줄 바꿈을 위해 \'|\' 문자를 사용합니다.';
+
+  @override
+  String get repeater_cliHelpSetPathHashMode =>
+      '경로 해시 모드를 설정합니다. 0 = 고전 방식, 1 = 표준 방식, 2 = 엄격한 방식. 경로 매칭 방식에 영향을 미칩니다.';
+
+  @override
+  String get repeater_cliHelpSetLoopDetect =>
+      '라우팅 루프 감지 감도 설정: 끄기, 최소, 중간, 또는 엄격';
+
+  @override
+  String get repeater_cliHelpSetFreq =>
+      '(단일 기능) 특정 주파수만 빠르게 설정합니다. 재부팅이 필요합니다. 전체 라디오 파라미터 설정에는 \"라디오 설정\" 기능을 사용하는 것이 좋습니다.';
+
+  @override
+  String get repeater_cliHelpSetBridgeChannel =>
+      '(ESPNow 브리지만 해당) 브리지에서 사용되는 WiFi 채널(1~14)을 설정합니다.';
+
+  @override
+  String get repeater_cliHelpGetName => '구성된 노드의 이름을 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetRole => '펌웨어 역할(리피터, 룸 서버 등)을 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetPublicKey => '장치의 공개 키를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetPrvKey => '(전용) 장치의 개인 키를 표시합니다. 비밀 정보로 취급합니다.';
+
+  @override
+  String get repeater_cliHelpGetRepeat => '패킷 전달(리피터 기능)이 활성화되어 있는지 여부를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetTx => '현재 TX 전력(dBm)을 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetFreq => '구성된 무선 주파수를 MHz 단위로 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetRadio =>
+      '전체 무선 파라미터 표시: 주파수, 대역폭, 스프레딩 계수, 인코딩 속도';
+
+  @override
+  String get repeater_cliHelpGetRadioRxGain =>
+      '(SX126x 전용) RX의 증폭 이득 상태를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetAf => '현재 공기 시간 요소를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetDutyCycle => '현재 허용되는 작업 주기를 백분율로 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetIntThresh => '채널 간섭 임계값을 dB 단위로 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetAgcResetInterval => 'AGC 재설정 간격을 초 단위로 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetMultiAcks =>
+      '더블 ACK 모드가 활성화되어 있는지 (1) 또는 비활성화되어 있는지 (0)를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetAllowReadOnly =>
+      '게스트의 읽기 전용 액세스가 허용되는지 여부를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetAdvertInterval => '지역 광고 시간 간격을 분 단위로 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetFloodAdvertInterval =>
+      '홍수 광고 시간 간격을 시간 단위로 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetGuestPassword => '구성된 게스트 비밀번호를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetLat => '설정된 위도를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetLon => '설정된 경도를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetRxDelay => 'Rxdelay 기본 값을 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetTxDelay => '홍수 모드에서의 전송 지연 계수를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetDirectTxDelay => '직렬 모드에서의 딜레이 계수를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetFloodMax => '최대 홍수 발생 횟수를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetOwnerInfo => '소유주 연락처 정보를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetPathHashMode => '경로 해시 모드 (0/1/2)를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetLoopDetect => '루프 탐지 감도를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetAcl =>
+      '(단순히 목록만 표시) 리피터에 설정된 접근 제어 항목 목록을 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetBridgeEnabled => '다리 기능이 활성화되어 있는지 여부를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetBridgeDelay => '다리 통과 시간(밀리초)을 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetBridgeSource =>
+      '브리지 로그가 RX 또는 TX 패킷을 기록하는지 여부를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetBridgeBaud =>
+      '(RS232 브리지 기능만) 브리지의 보드 속도를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetBridgeChannel =>
+      '(ESPNow 브리지만 해당) 브리지의 Wi-Fi 채널을 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetBridgeSecret =>
+      '(ESPNow 브리지만 해당) 브리지에서 공유된 비밀을 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetBootloaderVer => '(NRF52만 해당) 부팅 로더 버전을 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetAdcMultiplier =>
+      '배터리 전압을 스케일링하는 ADC 멀티플라이어를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetPwrMgtSupport =>
+      '이 보드가 전력 관리 기능을 지원하는지 여부를 나타냅니다.';
+
+  @override
+  String get repeater_cliHelpGetPwrMgtSource =>
+      '현재 전원 공급 장치 (외부 전원 또는 배터리)를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpGetPwrMgtBootReason => '가장 최근 재설정 및 종료 이유를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpGetPwrMgtBootMv => '부팅 시 배터리 전압을 mV 단위로 표시합니다.';
+
+  @override
+  String get repeater_cliHelpSensorGet => '키를 사용하여 사용자 정의 센서 설정을 읽습니다.';
+
+  @override
+  String get repeater_cliHelpSensorSet => '사용자 정의 센서 설정을 작성합니다.';
+
+  @override
+  String get repeater_cliHelpSensorList =>
+      '사용자 정의 센서 설정 목록을, 선택적으로 지정된 시작 인덱스부터 페이지 나누어 표시합니다.';
+
+  @override
+  String get repeater_cliHelpRegionDefault => '현재 기본 지역 범위를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpRegionDefaultSet =>
+      '기본 지역 범위를 설정합니다. \"<null>\"을 사용하여 초기화합니다.';
+
+  @override
+  String get repeater_cliHelpRegionListAllowed => '홍수 피해 차량 통행이 가능한 지역 목록';
+
+  @override
+  String get repeater_cliHelpRegionListDenied => '홍수 발생 시 통행 금지 지역 목록';
+
+  @override
+  String get repeater_cliHelpStatsPackets => '(전송 속도만 표시) 패킷 수준의 통계 정보를 보여줍니다.';
+
+  @override
+  String get repeater_cliHelpStatsRadio => '(특정 시리즈만 해당) 라디오 통계 정보를 표시합니다.';
+
+  @override
+  String get repeater_cliHelpStatsCore => '(시리얼 번호만 표시) 핵심 펌웨어 통계 정보를 보여줍니다.';
+
+  @override
   String get telemetry_receivedData => '수신된 통신 데이터';
 
   @override
@@ -2626,6 +3336,139 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get telemetry_digitalInputLabel => '디지털 입력';
+
+  @override
+  String get telemetry_digitalOutputLabel => '디지털 출력';
+
+  @override
+  String get telemetry_analogInputLabel => '아날로그 입력';
+
+  @override
+  String get telemetry_analogOutputLabel => '아날로그 출력';
+
+  @override
+  String get telemetry_genericLabel => '일반 센서';
+
+  @override
+  String get telemetry_luminosityLabel => '조도';
+
+  @override
+  String get telemetry_presenceLabel => '존재 감지';
+
+  @override
+  String get telemetry_humidityLabel => '습도';
+
+  @override
+  String get telemetry_accelerometerLabel => '가속도계';
+
+  @override
+  String get telemetry_pressureLabel => '압력';
+
+  @override
+  String get telemetry_altitudeLabel => '고도';
+
+  @override
+  String get telemetry_frequencyLabel => '주파수';
+
+  @override
+  String get telemetry_percentageLabel => '백분율';
+
+  @override
+  String get telemetry_concentrationLabel => '농도';
+
+  @override
+  String get telemetry_powerLabel => '전력';
+
+  @override
+  String get telemetry_distanceLabel => '거리';
+
+  @override
+  String get telemetry_energyLabel => '에너지';
+
+  @override
+  String get telemetry_directionLabel => '방향';
+
+  @override
+  String get telemetry_timeLabel => '시간';
+
+  @override
+  String get telemetry_gyrometerLabel => '자이로미터';
+
+  @override
+  String get telemetry_colourLabel => '색상';
+
+  @override
+  String get telemetry_gpsLabel => 'GPS';
+
+  @override
+  String get telemetry_switchLabel => '스위치';
+
+  @override
+  String get telemetry_polylineLabel => '폴리라인';
+
+  @override
+  String telemetry_altitudeValue(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String telemetry_frequencyValue(String hertz) {
+    return '$hertz Hz';
+  }
+
+  @override
+  String telemetry_pressureValue(String hpa) {
+    return '$hpa hPa';
+  }
+
+  @override
+  String telemetry_luminosityValue(String lux) {
+    return '$lux lx';
+  }
+
+  @override
+  String telemetry_powerValue(String watts) {
+    return '$watts W';
+  }
+
+  @override
+  String telemetry_distanceValue(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String telemetry_energyValue(String kilowattHours) {
+    return '$kilowattHours kWh';
+  }
+
+  @override
+  String telemetry_directionValue(String degrees) {
+    return '$degrees°';
+  }
+
+  @override
+  String telemetry_concentrationValue(String ppm) {
+    return '$ppm ppm';
+  }
+
+  @override
+  String telemetry_percentageValue(String percent) {
+    return '$percent%';
+  }
+
+  @override
+  String telemetry_analogValue(String value) {
+    return '$value';
+  }
+
+  @override
+  String get telemetry_autoFetchQuantity => '요청 수';
+
+  @override
+  String get telemetry_error => '데이터를 가져올 수 없습니다';
+
+  @override
   String get neighbors_receivedData => '이웃 정보 수집';
 
   @override
@@ -2649,7 +3492,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String neighbors_heardAgo(String time) {
-    return 'Heard: $time ago';
+    return '수신: $time 전';
   }
 
   @override
@@ -2721,7 +3564,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String channelPath_observedSomeOf(int observed, int total) {
-    return '$observed of $total hops';
+    return '$observed/$total 홉 관찰됨';
   }
 
   @override
@@ -3022,7 +3865,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String losAntennaB(String value, String unit) {
-    return 'Antenna B: $value $unit';
+    return '안테나 B: $value $unit';
   }
 
   @override
@@ -3038,7 +3881,7 @@ class AppLocalizationsKo extends AppLocalizations {
     String clearance,
     String heightUnit,
   ) {
-    return '$distance $distanceUnit, clear LOS, min clearance $clearance $heightUnit';
+    return '$distance $distanceUnit, LOS 확보, 최소 여유 $clearance $heightUnit';
   }
 
   @override
@@ -3048,7 +3891,7 @@ class AppLocalizationsKo extends AppLocalizations {
     String obstruction,
     String heightUnit,
   ) {
-    return '$distance $distanceUnit, blocked by $obstruction $heightUnit';
+    return '$distance $distanceUnit, $obstruction $heightUnit에 의해 차단됨';
   }
 
   @override
@@ -3091,6 +3934,36 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get losLegendTerrain => '지형';
+
+  @override
+  String get losBlockedSpotsTitle => '차단된 공간';
+
+  @override
+  String get losBlockedSpotsHint => '지도에서 특정 위치를 강조하려면 해당 위치를 클릭하세요.';
+
+  @override
+  String losBlockedSpotChip(
+    String distance,
+    String distanceUnit,
+    String obstruction,
+    String heightUnit,
+  ) {
+    return '$distance $distanceUnit • $obstruction $heightUnit';
+  }
+
+  @override
+  String get losSelectedObstructionTitle => '선택된 장애물';
+
+  @override
+  String losSelectedObstructionDetails(
+    String obstruction,
+    String heightUnit,
+    String distanceFromA,
+    String distanceUnit,
+    String distanceFromB,
+  ) {
+    return '$obstruction $heightUnit에 의해 차단됨, A에서 $distanceFromA, B에서 $distanceFromB ($distanceUnit)';
+  }
 
   @override
   String get losFrequencyLabel => '빈도';
@@ -3442,6 +4315,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get translation_composerSubtitle => '컴포저 번역 아이콘의 기본 상태를 제어합니다.';
 
   @override
+  String get translation_autoIncomingTitle => '메시지 자동 번역';
+
+  @override
+  String get translation_autoIncomingSubtitle =>
+      '알림과 채팅 또는 채널의 메시지를 자동으로 번역합니다.';
+
+  @override
+  String get translation_translateMessage => '메시지 번역';
+
+  @override
   String get translation_targetLanguage => '목표 언어';
 
   @override
@@ -3527,4 +4410,171 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get translation_systemLanguage => '시스템 언어';
+
+  @override
+  String get background_serviceTitle => 'MeshCore 실행 중';
+
+  @override
+  String get background_serviceText => 'BLE 연결 유지 중';
+
+  @override
+  String appSettings_translationModelDeleted(String name) {
+    return '$name 삭제됨';
+  }
+
+  @override
+  String appSettings_translationModelDeleteFailed(String error) {
+    return '삭제 실패: $error';
+  }
+
+  @override
+  String channels_channelUpdateFailed(String error) {
+    return '채널 업데이트 실패: $error';
+  }
+
+  @override
+  String get contact_typeChat => '채팅';
+
+  @override
+  String get contact_typeRepeater => '리피터';
+
+  @override
+  String get contact_typeRoom => '룸';
+
+  @override
+  String get contact_typeSensor => '센서';
+
+  @override
+  String get contact_typeUnknown => '알 수 없음';
+
+  @override
+  String get map_zoomIn => '확대';
+
+  @override
+  String get map_zoomOut => '축소';
+
+  @override
+  String get map_centerMap => '지도 중앙 맞추기';
+
+  @override
+  String get chrome_bluetoothRequiresChromium =>
+      '웹 블루투스는 Chromium 기반 브라우저가 필요합니다.';
+
+  @override
+  String channels_communityShortId(String id) {
+    return 'ID: $id...';
+  }
+
+  @override
+  String get pathTrace_legendGpsConfirmed => 'GPS로 확인됨';
+
+  @override
+  String get pathTrace_legendInferred => '추정된 위치';
+
+  @override
+  String get pathMap_viewSingle => '단일';
+
+  @override
+  String get pathMap_viewCombined => '결합';
+
+  @override
+  String get pathMap_play => '재생';
+
+  @override
+  String get pathMap_pause => '일시 정지';
+
+  @override
+  String get pathMap_replay => '다시 재생';
+
+  @override
+  String get pathMap_stepBack => '이전 홉';
+
+  @override
+  String get pathMap_stepForward => '다음 홉';
+
+  @override
+  String get pathMap_animationOn => '패킷 애니메이션 표시';
+
+  @override
+  String get pathMap_animationOff => '패킷 애니메이션 숨기기';
+
+  @override
+  String pathMap_hopOf(int current, int total) {
+    return '$current/$total 홉';
+  }
+
+  @override
+  String pathMap_observedPaths(int count) {
+    return '관찰된 경로: $count';
+  }
+
+  @override
+  String get pathMap_primary => '주 경로';
+
+  @override
+  String pathMap_alternate(int index) {
+    return '대체 $index';
+  }
+
+  @override
+  String pathMap_hopCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 홉',
+      one: '1 홉',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pathMap_gpsCount(int confirmed, int total) {
+    return '$confirmed/$total GPS';
+  }
+
+  @override
+  String get pathMap_legendShared => '공유 구간';
+
+  @override
+  String get pathMap_legendEstimated => '추정 구간';
+
+  @override
+  String pathMap_sharedNodeCount(int count) {
+    return '$count개의 경로에서 사용됨';
+  }
+
+  @override
+  String pathMap_partialAnimation(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 홉은 위치가 없어 표시된 경로가 일부입니다',
+      one: '1 홉은 위치가 없어 표시된 경로가 일부입니다',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pathMap_showAllPaths => '모두 보기';
+
+  @override
+  String get pathMap_hidePath => '경로 숨기기';
+
+  @override
+  String get pathMap_showPath => '경로 표시';
+
+  @override
+  String get pathMap_collapsePanel => '패널 접기';
+
+  @override
+  String get pathMap_expandPanel => '패널 펼치기';
+
+  @override
+  String get pathMap_noLocation => '위치 없음';
+
+  @override
+  String get pathMap_followPacket => '패킷 고정';
+
+  @override
+  String get pathMap_unfollowPacket => '패킷 고정 해제';
 }

@@ -22,7 +22,7 @@ MeshCore Open provides both **system notifications** (push-style OS alerts) and 
 
 ### 3. Advertisement Notifications
 - **Triggered when**: A new node is discovered on the mesh for the first time
-- **Title**: "New [type] discovered" (e.g., "New chat node discovered")
+- **Title**: "New [type] discovered" (e.g., "New Chat discovered")
 - **Body**: Contact's name
 - **Priority**: Default
 - **Android channel**: `adverts`
@@ -43,7 +43,7 @@ Red numeric badges appear throughout the UI:
 - **Contacts list**: Each contact row shows a red pill badge (e.g., "3") for unread messages
 - **Channels list**: Each channel row shows an unread badge
 - **Chat screen subtitle**: Shows unread count inline
-- Badges cap at "99+" for display
+- Badges cap at "9999+" for display
 
 ### How Unread Counts Work
 
@@ -73,7 +73,7 @@ There is no per-contact muting.
 
 The notification system prevents notification storms:
 - **Minimum interval**: 3 seconds between individual notifications
-- **Batch window**: If multiple notifications arrive within 5 seconds, they are combined into a single summary notification on a fourth Android channel (`batch_summary`): "MeshCore Activity — 2 messages, 1 channel message, 3 new nodes". Note: batch summaries are Android-only; on Apple platforms individual notifications are shown
+- **Batch window**: If multiple notifications arrive within 5 seconds, they are combined into a single summary notification on a fourth Android channel (`batch_summary`). The title is "MeshCore Activity" and the body lists the grouped counts (e.g., "2 messages, 1 channel message, 3 new nodes"). Batch summaries are Android-only; queued notifications that overflow the batch window are silently dropped on other platforms
 
 ## Notification Clearing
 

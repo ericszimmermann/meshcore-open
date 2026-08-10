@@ -4,7 +4,7 @@
 
 Channels are broadcast group-chat spaces secured by a 16-byte pre-shared key (PSK). Any device with the same channel index and PSK will receive and decrypt channel messages. Unlike direct messages, channel messages are broadcast to the entire mesh.
 
-Up to 8 channels (indices 0–7) can be active simultaneously on one device.
+The number of active channels is determined by the firmware (default 40); the device reports its actual limit at login.
 
 ## How to Access
 
@@ -17,7 +17,7 @@ QuickSwitchBar tab 1 (middle) from any main screen.
 | Public | Globe | Green | Fixed well-known PSK; any device can join |
 | Hashtag | Hash tag | Blue | PSK derived from the hashtag name via SHA-256; discoverable by convention |
 | Private | Lock | Blue | Random PSK; requires out-of-band sharing of the 32-hex key |
-| Community | Groups/Tag | Purple | PSK derived via HMAC-SHA256 from a community's shared secret |
+| Community | Groups/Tag | Magenta | PSK derived via HMAC-SHA256 from a community's shared secret |
 
 ## Channels List Screen
 
@@ -26,13 +26,12 @@ QuickSwitchBar tab 1 (middle) from any main screen.
 - **Search bar** with live text filtering (300ms debounce)
 - **Sort/filter button**
 - **Scrollable list of channel cards**, each showing:
-  - Type icon with color coding (purple badge overlay for community channels)
+  - Type icon with color coding (magenta badge overlay for community channels)
   - Channel name (or "Channel N" if unnamed)
-  - Subtitle: "Public channel", "Hashtag channel", "Private channel", or "Community channel - {name}"
   - Unread badge (if messages are unread)
   - Drag handle (when manual sort is active)
 - **"+" FAB** to add a new channel
-- **Overflow menu**: Disconnect, Manage Communities (only shown when at least one community exists), Settings
+- **Overflow menu**: Disconnect, Manage Communities, Settings
 
 If no channels exist, an empty state with an "Add Public Channel" shortcut is shown. If a search produces no results, a separate "no results" empty state with a search-off icon is shown.
 
@@ -60,7 +59,7 @@ Tap the "+" FAB to open a dialog with six options:
 
 | Action | Description |
 |---|---|
-| Edit | Change name, PSK (with a dice icon to generate a random PSK), or SMAZ compression toggle (compresses outgoing messages to allow longer text within the byte limit) |
+| Edit | Change name, PSK (with a dice icon to generate a random PSK), SMAZ compression toggle (compresses outgoing messages to allow longer text within the byte limit), or Cyr2Lat encoding toggle (transliterates Cyrillic to Latin for compatibility) |
 | Mute / Unmute | Toggle push notification suppression for this channel |
 | Delete | Remove the channel from the device (confirmation required) |
 
@@ -70,9 +69,9 @@ Tap a channel card to open the channel chat screen.
 
 ### App Bar
 
-- Type icon (public/private/hashtag)
+- Type icon: globe for public channels, tag (#) for all other channel types
 - Channel name
-- Subtitle: "{type} - {N} unread"
+- Subtitle: "{Public|Private} • {N} unread" (e.g., "Public • 3 unread")
 
 ### Message Display
 
@@ -101,8 +100,7 @@ Tap a channel card to open the channel chat screen.
 
 ### Message Path Viewing
 
-- **Mobile**: Tap a message bubble to view its routing path
-- **Desktop**: Long-press/right-click → "Path" (tapping the bubble does nothing on desktop)
+- **All platforms**: Long-press (or right-click on desktop) a message bubble → "Path"
 - Opens the Channel Message Path Screen (see [Additional Features](additional-features.md))
 
 ### Context Actions (Long-Press / Right-Click)
@@ -110,19 +108,11 @@ Tap a channel card to open the channel chat screen.
 | Action | Availability | Description |
 |---|---|---|
 | Reply | All messages | Triggers reply mode |
-| Path | Desktop only | Opens message path view |
+| Path | All messages | Opens message path view |
 | Add Reaction | Incoming messages only | Opens emoji picker (cannot react to your own messages) |
 | Copy | All messages | Copies text to clipboard |
+| Mark as Unread | Incoming messages only | Marks this message and all subsequent incoming messages as unread |
 | Delete | All messages | Removes locally (not from mesh) |
-
-### Message Path Viewing
-
-Tap a message bubble to open the Channel Message Path Screen, which shows:
-- Each hop in the path as a visual chain
-- Known contacts identified by name at each hop
-- Observed vs. declared hop counts
-- Alternative path variants (if received via multiple paths)
-- Map view buttons for geographic path visualization
 
 ## Communities
 
@@ -151,7 +141,7 @@ From the channels screen overflow menu → "Manage Communities". Opens a draggab
 - **Tap a community** to directly show its QR code for sharing
 - **Popup menu** per community:
   - **Show QR** — displays the QR code for sharing with new members
-  - **Delete** — removes the community locally and deletes all associated device channels (confirmation dialog warns how many channels will be removed)
+  - **Leave Community** — removes the community locally and deletes all associated device channels (confirmation dialog warns how many channels will be removed)
 
 ## How Channels Differ from Direct Messages
 

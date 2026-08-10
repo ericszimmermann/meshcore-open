@@ -39,6 +39,8 @@
   "common_notAvailable": "—",
   "common_voltageValue": "{volts} В",
   "common_percentValue": "{percent}%",
+  "common_autoRefresh": "Автообновление",
+  "common_interval": "Интервал",
   "scanner_title": "MeshCore Open",
   "scanner_scanning": "Поиск устройств...",
   "scanner_connecting": "Подключение...",
@@ -75,12 +77,16 @@
   "settings_locationIntervalInvalid": "Интервал должен составлять не менее 60 секунд и не более 86400 секунд.",
   "settings_latitude": "Широта",
   "settings_longitude": "Долгота",
+  "settings_autoZeroHopAdvertOnGpsUpdate": "Авто-объявление без хопов при обновлении GPS",
+  "settings_autoZeroHopAdvertOnGpsUpdateSubtitle": "Когда GPS-местоположение меняется, отправлять объявление без хопов (требуется геопозиция в объявлении).",
   "settings_privacyMode": "Режим конфиденциальности",
   "settings_privacyModeSubtitle": "Скрыть имя/позицию в анонсировании",
   "settings_privacyModeToggle": "Включите режим конфиденциальности, чтобы скрыть свое имя и местоположение в анонсировании.",
   "settings_privacyModeEnabled": "Режим конфиденциальности включен",
   "settings_privacyModeDisabled": "Режим конфиденциальности выключен",
   "settings_actions": "Действия",
+  "settings_deleteAllPaths": "Delete All Paths",
+  "settings_deleteAllPathsSubtitle": "Clear all path data from contacts.",
   "settings_sendAdvertisement": "Отправить анонсирование",
   "settings_sendAdvertisementSubtitle": "Отправить анонсирование о присутствии сейчас",
   "settings_advertisementSent": "Анонсирование отправлено",
@@ -186,6 +192,19 @@
   "appSettings_last6Hours": "Последние 6 часов",
   "appSettings_last24Hours": "Последние 24 часа",
   "appSettings_lastWeek": "Последнюю неделю",
+  "appSettings_rasterTileSource": "Источник растровых тайлов",
+  "appSettings_stadiaEndpoint": "Конечная точка Stadia",
+  "appSettings_stadiaApiKey": "Ключ API Stadia",
+  "appSettings_stadiaApiKeyRequired": "Требуется для использования Stadia Maps",
+  "appSettings_stadiaApiKeyConfigured": "Настроено: {maskedKey}",
+  "@appSettings_stadiaApiKeyConfigured": {
+    "placeholders": {
+      "maskedKey": {
+        "type": "String"
+      }
+    }
+  },
+  "appSettings_stadiaApiKeyDialogDescription": "Введите свой ключ API Stadia Maps. Приложение использует его для запросов растровых тайлов.",
   "appSettings_offlineMapCache": "Кэш офлайн-карты",
   "appSettings_noAreaSelected": "Область не выбрана",
   "appSettings_areaSelectedZoom": "Область выбрана (масштаб {minZoom}–{maxZoom})",
@@ -229,11 +248,8 @@
   "channels_searchChannels": "Поиск каналов...",
   "channels_noChannelsFound": "Каналы не найдены",
   "channels_channelIndex": "Канал {index}",
-  "channels_hashtagChannel": "Хэштег-канал",
   "channels_public": "Публичный",
   "channels_private": "Приватный",
-  "channels_publicChannel": "Публичный канал",
-  "channels_privateChannel": "Приватный канал",
   "channels_editChannel": "Изменить канал",
   "channels_muteChannel": "Отключить уведомления канала",
   "channels_unmuteChannel": "Включить уведомления канала",
@@ -252,6 +268,22 @@
   "channels_channelAdded": "Канал \"{name}\" добавлен",
   "channels_editChannelTitle": "Изменить канал {index}",
   "channels_smazCompression": "Сжатие SMAZ",
+  "channels_cyr2latCompression": "Сжатие Cyr2Lat",
+  "channels_cyr2latCompressionDscr": "Заменяет некоторые кириллические символы на латиницу при отправке.",
+  "channels_cyr2latSettingsHeading": "Настройка Cyr2Lat",
+  "channels_cyr2latSettingsSubheading": "Список замен",
+  "channels_cyr2latSettingsDscr": "Редактировать JSON-конфигурацию замены символов",
+  "channels_cyr2latSettingsDialogHint": "JSON-карта замен",
+  "channels_cyr2latSettingsDialogWrongJSON": "Некорректный JSON: {error}",
+  "settings_cyr2latProfileAdd": "Добавить профиль Cyr2Lat",
+  "settings_cyr2latProfileName": "Название профиля",
+  "settings_cyr2latProfileNameEmpty": "Название профиля не может быть пустым",
+  "settings_cyr2latProfileAdded": "Профиль добавлен",
+  "settings_cyr2latProfileUpdated": "Профиль успешно обновлен",
+  "settings_cyr2latProfileEdit": "Редактировать профиль Cyr2Lat",
+  "settings_cyr2latProfileDelete": "Удалить профиль Cyr2Lat",
+  "settings_cyr2latProfileDeleted": "Профиль успешно удален",
+  "settings_cyr2latProfileDeleteDscr": "Вы действительно хотите удалить профиль \"{name}\"?",
   "channels_channelUpdated": "Канал \"{name}\" обновлён",
   "channels_publicChannelAdded": "Публичный канал добавлен",
   "channels_sortBy": "Сортировка",
@@ -358,6 +390,8 @@
   "chat_direct": "Прямой",
   "chat_poiShared": "Точка интереса отправлена",
   "chat_unread": "Непрочитанных: {count}",
+  "chat_markAsUnread": "Пометить как непрочитанные",
+  "chat_newMessages": "Новые сообщения",
   "map_title": "Карта нод",
   "map_noNodesWithLocation": "Нет нод с данными о местоположении",
   "map_nodesNeedGps": "Ноды должны передавать свои GPS-координаты, чтобы отображаться на карте",
@@ -419,6 +453,56 @@
   "mapCache_downloadTilesButton": "Загрузить плитки",
   "mapCache_clearCacheButton": "Очистить кэш",
   "mapCache_failedDownloads": "Неудачных загрузок: {count}",
+  "mapCache_cachedTilesLabel": "Cached tiles",
+  "mapCache_cachedTileSummaryLabel": "Cached tile summary",
+  "mapCache_bulkDownloadDisabledForSource": "Offline bulk downloads are disabled for {source}.",
+  "@mapCache_bulkDownloadDisabledForSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_bulkDownloadDisabledInConfig": "Offline bulk downloads are disabled for {source} in this app configuration.",
+  "@mapCache_bulkDownloadDisabledInConfig": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summarySource": "Source: {source}",
+  "@mapCache_summarySource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summaryCachedTilesForSource": "Cached tiles for source: {count}",
+  "@mapCache_summaryCachedTilesForSource": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryCachedInSelection": "Cached in selected area/zoom: {count}",
+  "@mapCache_summaryCachedInSelection": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryApproxCacheSize": "Approx cache size: {size}",
+  "@mapCache_summaryApproxCacheSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "mapCache_boundsLabel": "С {north}, Ю {south}, В {east}, З {west}",
   "time_justNow": "Только что",
   "time_minutesAgo": "{minutes} мин назад",
@@ -669,6 +753,43 @@
   "telemetry_voltageValue": "{volts}В",
   "telemetry_currentValue": "{amps}А",
   "telemetry_temperatureValue": "{celsius}°C / {fahrenheit}°F",
+  "telemetry_digitalInputLabel": "Цифровой вход",
+  "telemetry_digitalOutputLabel": "Цифровой выход",
+  "telemetry_analogInputLabel": "Аналоговый вход",
+  "telemetry_analogOutputLabel": "Аналоговый выход",
+  "telemetry_genericLabel": "Общий датчик",
+  "telemetry_luminosityLabel": "Освещённость",
+  "telemetry_presenceLabel": "Присутствие",
+  "telemetry_humidityLabel": "Влажность",
+  "telemetry_accelerometerLabel": "Акселерометр",
+  "telemetry_pressureLabel": "Давление",
+  "telemetry_altitudeLabel": "Высота",
+  "telemetry_frequencyLabel": "Частота",
+  "telemetry_percentageLabel": "Процент",
+  "telemetry_concentrationLabel": "Концентрация",
+  "telemetry_powerLabel": "Мощность",
+  "telemetry_distanceLabel": "Расстояние",
+  "telemetry_energyLabel": "Энергия",
+  "telemetry_directionLabel": "Направление",
+  "telemetry_timeLabel": "Время",
+  "telemetry_gyrometerLabel": "Гирометр",
+  "telemetry_colourLabel": "Цвет",
+  "telemetry_gpsLabel": "GPS",
+  "telemetry_switchLabel": "Переключатель",
+  "telemetry_polylineLabel": "Полилиния",
+  "telemetry_altitudeValue": "{meters} м",
+  "telemetry_frequencyValue": "{hertz} Гц",
+  "telemetry_pressureValue": "{hpa} гПа",
+  "telemetry_luminosityValue": "{lux} лк",
+  "telemetry_powerValue": "{watts} Вт",
+  "telemetry_distanceValue": "{meters} м",
+  "telemetry_energyValue": "{kilowattHours} кВт⋅ч",
+  "telemetry_directionValue": "{degrees}°",
+  "telemetry_concentrationValue": "{ppm} ppm",
+  "telemetry_percentageValue": "{percent}%",
+  "telemetry_analogValue": "{value}",
+  "telemetry_autoFetchQuantity": "Количество запросов",
+  "telemetry_error": "Не удалось получить данные",
   "neighbors_receivedData": "Полученные данные о соседях",
   "neighbors_requestTimedOut": "Время ожидания данных о соседях истекло.",
   "neighbors_errorLoading": "Ошибка загрузки соседей: {error}",
@@ -1162,13 +1283,6 @@
   "contact_clearChat": "Очистить чат",
   "contact_lastSeen": "Последний раз видели",
   "contact_teleBaseSubtitle": "Разрешить обмен уровнем заряда батареи и базовой телеметрией",
-  "@settings_multiAck": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "appSettings_maxRouteWeight": "Максимальный допустимый вес маршрута",
   "appSettings_maxRouteWeightSubtitle": "Максимальный вес, который может быть перевезён по определённому маршруту при успешных доставках.",
   "appSettings_initialRouteWeightSubtitle": "Начальный вес для новых, только что открытых маршрутов",
@@ -1181,7 +1295,6 @@
   "appSettings_maxMessageRetriesSubtitle": "Количество попыток повторной отправки сообщения перед тем, как пометить его как неудачное.",
   "path_routeWeight": "{weight}/{max}",
   "settings_telemetryModeUpdated": "Режим телеметрии обновлен",
-  "settings_multiAck": "Мульти-ACK: {value}",
   "map_showOverlaps": "Перекрытия ключа повтора",
   "map_runTraceWithReturnPath": "Вернуться обратно по тому же пути",
   "@radioStats_noiseFloor": {
@@ -1259,6 +1372,9 @@
   "translation_title": "Перевод",
   "translation_enableTitle": "Включить перевод",
   "translation_composerSubtitle": "Управляет исходным состоянием значка перевода, предоставляемого редактором.",
+  "translation_autoIncomingTitle": "Автоматически переводить сообщения",
+  "translation_autoIncomingSubtitle": "Автоматически переводит сообщения для уведомлений, а также для чатов и каналов.",
+  "translation_translateMessage": "Перевести сообщение",
   "translation_targetLanguage": "Целевой язык",
   "translation_useAppLanguage": "Используйте язык приложения",
   "translation_downloadedModelLabel": "Загруженная модель",
@@ -1313,5 +1429,484 @@
   "chat_sendMessage": "Отправить сообщение",
   "repeater_guest": "Информация о ретрансляторе",
   "room_guest": "Информация о сервере",
-  "repeater_guestTools": "Инструменты для гостей"
+  "repeater_guestTools": "Инструменты для гостей",
+  "common_done": "Готово",
+  "background_serviceTitle": "MeshCore работает",
+  "background_serviceText": "Поддерживает BLE-соединение",
+  "appSettings_translationModelDeleted": "Удалено {name}",
+  "@appSettings_translationModelDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "appSettings_translationModelDeleteFailed": "Не удалось удалить: {error}",
+  "@appSettings_translationModelDeleteFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "channels_channelUpdateFailed": "Не удалось обновить канал: {error}",
+  "@channels_channelUpdateFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "map_type": "Тип",
+  "map_path": "Путь",
+  "map_location": "Местоположение",
+  "map_estLocation": "Прибл. местоположение",
+  "map_publicKey": "Публичный ключ",
+  "map_publicKeyPrefixHint": "напр. ab12",
+  "contact_typeChat": "Чат",
+  "contact_typeRepeater": "Ретранслятор",
+  "contact_typeRoom": "Комната",
+  "contact_typeSensor": "Датчик",
+  "contact_typeUnknown": "Неизвестно",
+  "channels_via": "через {path}",
+  "chat_score": "Оценка",
+  "settings_multiAck": "Несколько подтверждений",
+  "map_sharedAt": "Поделено",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losBlockedSpotsHint": "Щелкните по заблокированной области, чтобы выделить ее на карте.",
+  "losBlockedSpotsTitle": "Зарезервированные места",
+  "losSelectedObstructionTitle": "Выбранный объект, препятствующий движению",
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}",
+  "losSelectedObstructionDetails": "Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit}).",
+  "repeater_rxGain": "Увеличенная эффективность RX",
+  "repeater_rxGainHelper": "Более высокая чувствительность, больший ток потребления (только для SX1262/SX1268)",
+  "repeater_refreshRxGain": "Обновите усиление RX",
+  "repeater_multiAcks": "Несколько подтверждений",
+  "repeater_multiAcksSubtitle": "Обеспечьте доставку сообщений по нескольким каналам для повышения эффективности.",
+  "repeater_refreshMultiAcks": "Обновление нескольких подтверждений",
+  "repeater_networkHealth": "Состояние сети",
+  "repeater_loopDetect": "Обнаружение циклов",
+  "repeater_loopDetectHelper": "Создайте пакеты данных, которые выглядят как циклы маршрутизации.",
+  "repeater_loopDetectOff": "Отключено",
+  "repeater_loopDetectMinimal": "Минимальный",
+  "repeater_loopDetectModerate": "Умеренный",
+  "repeater_loopDetectStrict": "Строгий",
+  "repeater_dutyCycle": "Цикл работы",
+  "repeater_dutyCycleHelper": "Максимальный процент времени, выделенного на трансляцию.",
+  "repeater_dutyCyclePercent": "{percent}%",
+  "@repeater_dutyCyclePercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "repeater_ownerInfo": "Информация о операторе",
+  "repeater_ownerInfoHelper": "Общая метаинформация для этого ретранслятора",
+  "repeater_refreshOwnerInfo": "Обновить информацию о операторе",
+  "repeater_floodMax": "Максимальное количество прыжков при наводнении",
+  "repeater_floodMaxHelper": "Максимальное количество пакетов, которые могут быть отправлены в одном потоке (0-64)",
+  "repeater_advancedSettings": "Продвинутый",
+  "repeater_advancedSettingsSubtitle": "Регуляторы для опытных операторов",
+  "repeater_pathHashMode": "Режим хеширования пути",
+  "repeater_pathHashModeHelper": "Байты, используемые для кодирования идентификатора этого ретранслятора в тегах flood-маршрута/обнаружения циклов. 0 = 1 байт (256 идентификаторов, до 64 переходов), 1 = 2 байта (65 000 идентификаторов, до 32 переходов), 2 = 3 байта (16 миллионов идентификаторов, до 21 перехода). Прошивки до v1.14 всегда использовали 1-байтовые маршруты; v1.14 и новее можно настроить на 2- или 3-байтовые маршруты.",
+  "repeater_txDelay": "Задержка в работе системы Flood TX",
+  "repeater_txDelayHelper": "Передача с увеличенным интервалом для трафика во время наводнения, в качестве коэффициента, умножающего время передачи пакета (от 0 до 2, по умолчанию 0,5). Более высокое значение означает меньшее количество столкновений, но более медленную передачу.",
+  "repeater_directTxDelay": "Прямая задержка сигнала TX",
+  "repeater_directTxDelayHelper": "Передача промежуточных данных для прямого (немассового) трафика, в качестве коэффициента, равного времени передачи пакета (от 0 до 2, по умолчанию 0,3).",
+  "repeater_intThresh": "Пороговое значение помех",
+  "repeater_intThreshHelper": "Порог устанавливается для калибровки уровня шума радио, чтобы оно отсеивало помехи, превышающие этот уровень. Значение \"0\" означает отключение – используйте только в случае, если вы наблюдаете ошибки при приеме сигнала в шумном диапазоне.",
+  "repeater_agcResetInterval": "Интервал сброса AGC",
+  "repeater_agcResetIntervalHelper": "Как часто следует сбрасывать автоматическую регулировку усиления радио, чтобы вернуться к нормальному состоянию после заклинивания? Интервал сброса составляет несколько секунд, кратный 4. Отключение периодического сброса осуществляется с помощью параметра 0.",
+  "repeater_actionsTitle": "Действия",
+  "repeater_sendAdvert": "Отправить объявление о наводнении",
+  "repeater_sendAdvertSubtitle": "Разместите рекламу о наводнении в эфире по всей сети.",
+  "repeater_sendAdvertZeroHop": "Опубликуйте рекламу, не требующую промежуточного распространения.",
+  "repeater_sendAdvertZeroHopSubtitle": "Разместите рекламу, распространяемую одним способом (без использования ретрансляторов).",
+  "repeater_clockSync": "Синхронизировать время сейчас",
+  "repeater_clockSyncSubtitle": "Установите время на вашем телефоне, чтобы оно совпадало со временем ретранслятора.",
+  "repeater_actionSucceeded": "{action} succeeded",
+  "@repeater_actionSucceeded": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "repeater_actionFailed": "{action} failed: {error}",
+  "@repeater_actionFailed": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "repeater_settingsSavedRebootNeeded": "Настройки сохранены — перезагрузите ретранслятор, чтобы применить их.",
+  "repeater_settingsPartialFailure": "Некоторые настройки не удалось применить: {failures}",
+  "@repeater_settingsPartialFailure": {
+    "placeholders": {
+      "failures": {
+        "type": "String"
+      }
+    }
+  },
+  "@settings_multiAck": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@common_percentValue": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "@settings_aboutVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "@telemetry_temperatureValue": {
+    "placeholders": {
+      "celsius": {
+        "type": "String"
+      },
+      "fahrenheit": {
+        "type": "String"
+      }
+    }
+  },
+  "@channelPath_timeWithDate": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "month": {
+        "type": "int"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@channelPath_timeOnly": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@channelPath_selectedPathLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "prefixes": {
+        "type": "String"
+      }
+    }
+  },
+  "repeater_getCategory": "Получить значения",
+  "repeater_powerMgmt": "Управление энергопотреблением",
+  "repeater_sensors": "Датчики",
+  "repeater_cliHelpPowerOff": "Отключает устройство. (ожидается отсутствие ответа).",
+  "repeater_cliHelpClkReboot": "Сбрасывает часы до известной эпохи и перезапускает устройство.",
+  "repeater_cliHelpAdvertZeroHop": "Отправляет рекламу, распространяемую только среди ближайших соседей (без промежуточных узлов).",
+  "repeater_cliHelpStartOta": "Запускает обновление прошивки по воздуху на поддерживаемых устройствах.",
+  "repeater_cliHelpTime": "Устанавливает время устройства в соответствии с заданными секундами от начала эпохи Unix. Время не может сброситься назад.",
+  "repeater_cliHelpBoard": "Отображает информацию о производителе платы / идентификатор аппаратного обеспечения.",
+  "repeater_cliHelpDiscoverNeighbors": "Отправляет запрос на обнаружение соседних узлов. (Только для ретранслятора)",
+  "repeater_cliHelpPowersavingOnOff": "Включает или выключает режим экономии энергии (если он поддерживается).",
+  "repeater_cliHelpPowersaving": "Показывает, включен ли режим экономии энергии.",
+  "repeater_cliHelpErase": "(Только для серийного использования) Форматирует файловую систему устройства. Удаляет все настройки и контакты.",
+  "repeater_cliHelpSetDutyCycle": "Устанавливает максимальный допустимый цикл передачи данных в процентах (от 1 до 100). Внутренне корректирует коэффициент времени передачи.",
+  "repeater_cliHelpSetPrvKey": "(Только для серийного использования) Заменяет приватный ключ, идентифицирующий устройство. Требуется перезагрузка для применения. Генерирует новый публичный ключ.",
+  "repeater_cliHelpSetRadioRxGain": "(Только для SX126x) Переключает усиление RX для повышения чувствительности при больших токах потребления.",
+  "repeater_cliHelpSetOwnerInfo": "Указывает строку с контактной информацией владельца, которая должна быть включена в объявления. Используйте '|' для переносов строк.",
+  "repeater_cliHelpSetPathHashMode": "Устанавливает режим хеширования пути. 0 = устаревший, 1 = стандартный, 2 = строгий. Влияет на то, как определяются маршруты.",
+  "repeater_cliHelpSetLoopDetect": "Устанавливает чувствительность обнаружения циклов маршрутизации: \"выключено\", \"минимальная\", \"умеренная\" или \"строгая\".",
+  "repeater_cliHelpSetFreq": "(Только для настройки) Быстро устанавливает только частоту. Требуется перезагрузка. Рекомендуется использовать функцию \"настройка радио\" для полного набора параметров.",
+  "repeater_cliHelpSetBridgeChannel": "(Только для моста ESPNow) Устанавливает канал Wi-Fi (от 1 до 14), используемый мостом.",
+  "repeater_cliHelpGetName": "Отображает имя настроенного узла.",
+  "repeater_cliHelpGetRole": "Отображает роль прошивки (ретранслятор, сервер для комнаты и т.д.).",
+  "repeater_cliHelpGetPublicKey": "Отображает открытый ключ устройства.",
+  "repeater_cliHelpGetPrvKey": "(Только для серийного использования) Отображает приватный ключ устройства. Рассматривайте его как секретную информацию.",
+  "repeater_cliHelpGetRepeat": "Отображает, включена ли функция перенаправления пакетов (функция ретранслятора) или нет.",
+  "repeater_cliHelpGetTx": "Отображает текущую мощность передатчика в дБм.",
+  "repeater_cliHelpGetFreq": "Отображает настроенную частоту радиосигнала в мегагерцах.",
+  "repeater_cliHelpGetRadio": "Отображает все параметры радиосигнала: частоту, полосу пропускания, коэффициент модуляции, скорость кодирования.",
+  "repeater_cliHelpGetRadioRxGain": "(Только для SX126x) Отображает состояние усиления сигнала на входе RX.",
+  "repeater_cliHelpGetAf": "Отображает текущий коэффициент времени эфира.",
+  "repeater_cliHelpGetDutyCycle": "Отображает текущий допустимый цикл работы в процентах.",
+  "repeater_cliHelpGetIntThresh": "Отображает порог помех в децибелах.",
+  "repeater_cliHelpGetAgcResetInterval": "Отображает интервал сброса автоматической регулировки усиления в секундах.",
+  "repeater_cliHelpGetMultiAcks": "Показывает, включен ли режим двойной подтверждения (1) или выключен (0).",
+  "repeater_cliHelpGetAllowReadOnly": "Отображает, разрешен ли доступ для чтения только для гостей.",
+  "repeater_cliHelpGetAdvertInterval": "Отображает продолжительность рекламного блока в минутах.",
+  "repeater_cliHelpGetFloodAdvertInterval": "Отображает интервал времени показа рекламного ролика в часах.",
+  "repeater_cliHelpGetGuestPassword": "Отображает установленный пароль для гостя.",
+  "repeater_cliHelpGetLat": "Отображает заданную широту.",
+  "repeater_cliHelpGetLon": "Отображает заданную долготу.",
+  "repeater_cliHelpGetRxDelay": "Отображает базовое значение задержки.",
+  "repeater_cliHelpGetTxDelay": "Отображает коэффициент задержки при работе в режиме затопления.",
+  "repeater_cliHelpGetDirectTxDelay": "Отображает коэффициент задержки в режиме прямого подключения.",
+  "repeater_cliHelpGetFloodMax": "Отображает максимальное количество переходов при затоплении.",
+  "repeater_cliHelpGetOwnerInfo": "Отображает строку с контактной информацией владельца.",
+  "repeater_cliHelpGetPathHashMode": "Отображает режим работы с хэшем пути (0/1/2).",
+  "repeater_cliHelpGetLoopDetect": "Отображает чувствительность к обнаружению циклов.",
+  "repeater_cliHelpGetAcl": "(Только для серий) Перечисляет записи управления доступом на ретрансляторе.",
+  "repeater_cliHelpGetBridgeEnabled": "Показывает, включена ли функция моста.",
+  "repeater_cliHelpGetBridgeDelay": "Отображает задержку в миллисекундах.",
+  "repeater_cliHelpGetBridgeSource": "Отображает, какие пакеты RX или TX передаются через мост.",
+  "repeater_cliHelpGetBridgeBaud": "(Только для интерфейса RS232) Отображает скорость передачи данных на интерфейсе RS232.",
+  "repeater_cliHelpGetBridgeChannel": "(Только для моста ESPNow) Отображает канал WiFi, используемый мостом.",
+  "repeater_cliHelpGetBridgeSecret": "(Только для моста ESPNow) Отображает общий секрет, используемый мостом.",
+  "repeater_cliHelpGetBootloaderVer": "(Только для NRF52) Отображает версию загрузчика.",
+  "repeater_cliHelpGetAdcMultiplier": "Отображает коэффициент умножения аналого-цифрового преобразователя (масштабирование напряжения от батареи).",
+  "repeater_cliHelpGetPwrMgtSupport": "Сообщает, есть ли у совета поддержки функций управления питанием.",
+  "repeater_cliHelpGetPwrMgtSource": "Отображает текущий источник питания: внешний или аккумулятор.",
+  "repeater_cliHelpGetPwrMgtBootReason": "Отображает последние причины сброса и выключения.",
+  "repeater_cliHelpGetPwrMgtBootMv": "Отображает напряжение батареи при запуске системы в милливольтах (мВ).",
+  "repeater_cliHelpSensorGet": "Считывает пользовательское значение для датчика по указанному ключу.",
+  "repeater_cliHelpSensorSet": "Создает пользовательские настройки для датчика.",
+  "repeater_cliHelpSensorList": "Перечисляет все пользовательские настройки датчиков, разбитые на страницы с возможностью указания начального индекса.",
+  "repeater_cliHelpRegionDefault": "Отображает текущий область действия по умолчанию.",
+  "repeater_cliHelpRegionDefaultSet": "Устанавливает значение региона по умолчанию. Используйте \"<null>\", чтобы сбросить значение.",
+  "repeater_cliHelpRegionListAllowed": "Перечисляет регионы, где разрешено движение транспорта во время наводнений.",
+  "repeater_cliHelpRegionListDenied": "Перечисляет регионы, где запрещено движение транспорта во время наводнений.",
+  "repeater_cliHelpStatsPackets": "(Только для серийной версии) Отображает статистику на уровне пакетов.",
+  "repeater_cliHelpStatsRadio": "(Только для серий) Отображает статистику радио.",
+  "repeater_cliHelpStatsCore": "(Только для серийного оборудования) Отображает основные статистические данные прошивки.",
+  "settings_companionDebugLogSubtitle": "Команды, ответы и необработанные данные, используемые для протоколов BLE, TCP и USB.",
+  "repeater_chanUtil": "Использование канала",
+  "settings_companionDebugLog": "Журнал отладки (для сопутствующего приложения)",
+  "@routing_lastWorked": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "@routing_deliveryCounts": {
+    "placeholders": {
+      "successes": {
+        "type": "int"
+      },
+      "failures": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathEditor_hopCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathEditor_invalidTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "@channels_communityShortId": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "messageStatus_pending": "Отправка",
+  "common_undo": "Отменить",
+  "messageStatus_delivered": "Доставлено",
+  "messageStatus_sent": "Отправлено",
+  "messageStatus_failed": "Не удалось отправить",
+  "messageStatus_repeated": "Услышал несколько раз",
+  "contacts_moreOptions": "Больше вариантов",
+  "contacts_searchOpen": "Найти контакты",
+  "contacts_searchClose": "Закрыть поиск",
+  "routing_title": "Маршрутизация",
+  "routing_modeAuto": "Авто",
+  "routing_modeFlood": "Наводнение",
+  "routing_modeManual": "Инструкция",
+  "routing_modeAutoHint": "Автоматически выбирает наиболее известный путь, и если такой путь неизвестен, использует алгоритм поиска пути.",
+  "routing_modeFloodHint": "Передача сигнала через все ретрансляторы. Самый надежный способ, но требует больше времени на передачу.",
+  "routing_modeManualHint": "Всегда следует точно по указанному вами маршруту.",
+  "routing_currentRoute": "Текущий маршрут",
+  "routing_directNoHops": "Прямое соединение – без использования ретрансляторов",
+  "routing_noPathYet": "Пока нет пути. Следующее сообщение будет отправлено до тех пор, пока не будет обнаружен маршрут.",
+  "routing_floodBroadcast": "Транслируется через все ретрансляторы",
+  "routing_editPath": "Изменить путь",
+  "routing_forgetPath": "Забудьте о маршруте",
+  "routing_knownPaths": "Известные маршруты",
+  "routing_knownPathsHint": "Создайте маршрут для переключения на этот пункт.",
+  "routing_inUse": "В эксплуатации",
+  "routing_qualityStrong": "Сильный первый скачок",
+  "routing_qualityGood": "Хорошее начало",
+  "routing_qualityFair": "Первый хороший урожай",
+  "routing_qualityWorked": "Осуществлено",
+  "routing_qualityFlood": "Узнал из новостей, распространяющихся в интернете.",
+  "routing_qualityUntested": "Непроверенный",
+  "routing_neverWorked": "никогда не было подтверждено",
+  "routing_floodDelivery": "Доставка при затоплении",
+  "pathEditor_title": "Создать маршрут",
+  "pathEditor_hopCounter": "{count} из 64 хмеля",
+  "pathEditor_noHops": "На данный момент хмель еще не добавлен. Чтобы добавить его, нажмите на соответствующие кнопки ниже в нужном порядке, или сохраните рецепт без хмеля, чтобы отправить его напрямую.",
+  "pathEditor_addHops": "Добавляйте хмель в соответствии с указанным порядком.",
+  "pathEditor_searchRepeaters": "Поиск повторителей",
+  "pathEditor_advancedHex": "Продвинутый уровень: прямой путь в шестнадцатеричном формате",
+  "pathEditor_hexLabel": "Префиксы шестнадцатеричной системы",
+  "pathEditor_hexHelper": "Два шестнадцатеричных символа на каждом шаге, разделенные запятыми.",
+  "pathEditor_invalidTokens": "Неверно: {tokens}",
+  "routing_lastWorked": "worked {when}",
+  "routing_deliveryCounts": "{successes} delivered, {failures} failed",
+  "pathEditor_tooManyHops": "Максимальное количество ингредиентов – 64",
+  "pathEditor_usePath": "Используйте этот путь",
+  "pathEditor_removeHop": "Удалить хмель",
+  "pathEditor_unknownHop": "Неизвестный ретранслятор",
+  "map_zoomIn": "Увеличить масштаб",
+  "map_zoomOut": "Увеличить масштаб",
+  "map_centerMap": "Карта центра",
+  "chrome_bluetoothRequiresChromium": "Для работы Web Bluetooth требуется браузер на основе Chromium.",
+  "channels_communityShortId": "Идентификатор: {id}...",
+  "pathTrace_legendGpsConfirmed": "GPS подтверждено",
+  "pathTrace_legendInferred": "Выведенная позиция",
+  "@pathMap_hopOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_observedPaths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_alternate": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_hopCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_gpsCount": {
+    "placeholders": {
+      "confirmed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_sharedNodeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_partialAnimation": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "map_searchHint": "Поиск по имени или ID узла",
+  "map_online": "Онлайн",
+  "scanner_bluetoothWebUnsupported": "Bluetooth недоступен в браузере. Подключитесь через USB.",
+  "map_activity": "Активность",
+  "map_recent": "Недавно",
+  "map_stale": "Устаревший",
+  "map_visible": "Видимый",
+  "map_hidden": "Скрытый",
+  "map_centerOnNode": "Центрировать на узле",
+  "map_details": "Детали",
+  "map_noGps": "Без GPS",
+  "map_noResults": "Не найдено соответствующих узлов",
+  "pathMap_viewSingle": "Одиночный",
+  "pathMap_viewCombined": "Объединённые",
+  "pathMap_play": "Воспроизвести",
+  "pathMap_pause": "Пауза",
+  "pathMap_replay": "Повтор",
+  "pathMap_stepBack": "Предыдущий хоп",
+  "pathMap_stepForward": "Следующий хоп",
+  "pathMap_animationOn": "Показать анимацию пакета",
+  "pathMap_animationOff": "Скрыть анимацию пакета",
+  "pathMap_hopOf": "Хоп {current} из {total}",
+  "pathMap_observedPaths": "Наблюдаемые маршруты: {count}",
+  "pathMap_primary": "Основной",
+  "pathMap_alternate": "Альт {index}",
+  "pathMap_hopCount": "{count, plural, one{{count} хоп} few{{count} хопа} many{{count} хопов} other{{count} хопов}}",
+  "pathMap_legendShared": "Общий сегмент",
+  "pathMap_legendEstimated": "Расчётный сегмент",
+  "pathMap_sharedNodeCount": "Используется в {count} маршрутах",
+  "pathMap_partialAnimation": "{count, plural, one{{count} хоп не имеет координат — показанный путь неполный} few{{count} хопа не имеют координат — показанный путь неполный} many{{count} хопов не имеют координат — показанный путь неполный} other{{count} хопов не имеют координат — показанный путь неполный}}",
+  "pathMap_showAllPaths": "Показать всё",
+  "pathMap_hidePath": "Скрыть путь",
+  "pathMap_collapsePanel": "Скрыть панель",
+  "pathMap_showPath": "Показать маршрут",
+  "pathMap_expandPanel": "Расширить панель",
+  "pathMap_noLocation": "Нет координат",
+  "pathMap_followPacket": "Следить за пакетом",
+  "pathMap_unfollowPacket": "Не следить за пакетом",
+  "pathMap_gpsCount": "{confirmed}/{total} GPS"
 }

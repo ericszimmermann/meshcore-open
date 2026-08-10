@@ -17,6 +17,7 @@ class Contact {
   final double? longitude;
   final DateTime lastSeen;
   final DateTime lastMessageAt;
+  final DateTime? lastModified;
   final bool isActive;
   final bool wasPulled;
   final Uint8List? rawPacket;
@@ -33,6 +34,7 @@ class Contact {
     this.latitude,
     this.longitude,
     required this.lastSeen,
+    this.lastModified,
     DateTime? lastMessageAt,
     this.isActive = true,
     this.wasPulled = false,
@@ -41,7 +43,10 @@ class Contact {
 
   String get publicKeyHex => pubKeyToHex(publicKey);
 
-  String get typeLabel {
+  /// Non-localized type label, intended for logs and non-UI exports
+  /// (e.g. GPX). For UI use the `typeLabel(l10n)` extension in
+  /// `lib/l10n/contact_localization.dart`.
+  String get typeLabelRaw {
     switch (type) {
       case advTypeChat:
         return 'Chat';
@@ -54,17 +59,6 @@ class Contact {
       default:
         return 'Unknown';
     }
-  }
-
-  String get pathLabel {
-    if (pathOverride != null) {
-      if (pathOverride! < 0) return 'Flood (forced)';
-      if (pathOverride == 0) return 'Direct (forced)';
-      return '$pathOverride hops (forced)';
-    }
-    if (pathLength < 0) return 'Flood';
-    if (pathLength == 0) return 'Direct';
-    return '$pathLength hops';
   }
 
   bool get hasLocation {
@@ -94,6 +88,7 @@ class Contact {
     double? longitude,
     DateTime? lastSeen,
     DateTime? lastMessageAt,
+    DateTime? lastModified,
     bool? isActive,
     Uint8List? rawPacket,
   }) {
@@ -114,6 +109,7 @@ class Contact {
       longitude: longitude ?? this.longitude,
       lastSeen: lastSeen ?? this.lastSeen,
       lastMessageAt: lastMessageAt ?? this.lastMessageAt,
+      lastModified: lastModified ?? this.lastModified,
       isActive: isActive ?? this.isActive,
       rawPacket: rawPacket ?? this.rawPacket,
     );
@@ -123,7 +119,7 @@ class Contact {
   String pathFormattedIdList(int hashByteWidth) {
     final pathBytes = pathBytesForDisplay;
     if (pathBytes.isEmpty) return '';
-    final w = hashByteWidth.clamp(1, 8);
+    final w = hashByteWidth.clamp(1, 4);
     final parts = <String>[];
     for (int i = 0; i < pathBytes.length; i += w) {
       final end = (i + w) <= pathBytes.length ? (i + w) : pathBytes.length;
@@ -170,8 +166,18 @@ class Contact {
       final type = reader.readByte();
       final flags = reader.readByte();
       final pathLen = reader.readByte();
-      final safePathLen = pathLen > 0
-          ? (pathLen > maxPathSize ? maxPathSize : pathLen)
+      int hopCount = 0;
+      int byteLen = 0;
+      if (pathLen == 0xFF) {
+        hopCount = -1;
+      } else {
+        final mode = (pathLen & 0xC0) >> 6;
+        hopCount = pathLen & 0x3F;
+        final width = mode + 1;
+        byteLen = hopCount * width;
+      }
+      final safePathLen = byteLen > 0
+          ? (byteLen > maxPathSize ? maxPathSize : byteLen)
           : 0;
       final pathBytes = reader.readBytes(maxPathSize).sublist(0, safePathLen);
       final name = reader.readCStringGreedy(maxNameSize);
@@ -182,16 +188,34 @@ class Contact {
         return null;
       }
 
-      final lastMod = reader.readUInt32LE();
+      // mandatory last_advert_timestamp
+      final lastAdvertTimestamp = reader.readUInt32LE();
 
       double? lat, lon;
-      if (reader.remaining >= 8) {
+      DateTime? lastModified;
+      if (reader.remaining >= 12) {
+        final latRaw = reader.readInt32LE();
+        final lonRaw = reader.readInt32LE();
+        final lastModRaw = reader.readUInt32LE();
+        // TODO: should this be &&?
+        if (latRaw != 0 || lonRaw != 0) {
+          lat = latRaw / 1e6;
+          lon = lonRaw / 1e6;
+        }
+        if (lastModRaw != 0) {
+          lastModified = DateTime.fromMillisecondsSinceEpoch(lastModRaw * 1000);
+        }
+      } else if (reader.remaining >= 8) {
+        // Old layout: gps without lastmod
         final latRaw = reader.readInt32LE();
         final lonRaw = reader.readInt32LE();
         if (latRaw != 0 || lonRaw != 0) {
           lat = latRaw / 1e6;
           lon = lonRaw / 1e6;
         }
+        appLogger.info(
+          'Contact ${pubKeyToHex(pubKey).substring(0, 8)} has gps but no lastmod (legacy firmware layout)',
+        );
       }
 
       return Contact(
@@ -199,11 +223,14 @@ class Contact {
         name: name.isEmpty ? 'Unknown' : name,
         type: type,
         flags: flags,
-        pathLength: (pathLen == 0xFF || pathLen > maxPathSize) ? -1 : pathLen,
+        pathLength: hopCount,
         path: pathBytes,
         latitude: lat,
         longitude: lon,
-        lastSeen: DateTime.fromMillisecondsSinceEpoch(lastMod * 1000),
+        lastSeen: DateTime.fromMillisecondsSinceEpoch(
+          lastAdvertTimestamp * 1000,
+        ),
+        lastModified: lastModified,
         isActive: true,
         rawPacket: null,
       );

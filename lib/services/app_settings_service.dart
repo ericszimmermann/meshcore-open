@@ -4,6 +4,7 @@ import '../models/app_settings.dart';
 import '../models/translation_support.dart';
 import '../storage/prefs_manager.dart';
 import '../utils/app_logger.dart';
+import '../helpers/cyr2lat.dart';
 
 class AppSettingsService extends ChangeNotifier {
   static const String _settingsKey = 'app_settings';
@@ -11,6 +12,14 @@ class AppSettingsService extends ChangeNotifier {
   AppSettings _settings = AppSettings();
 
   AppSettings get settings => _settings;
+
+  int resolvedGpsIntervalSeconds(Map<String, String>? deviceCustomVars) {
+    final deviceValue = int.tryParse(deviceCustomVars?['gps_interval'] ?? '');
+    if (deviceValue != null && deviceValue >= 0) {
+      return deviceValue;
+    }
+    return _settings.gpsIntervalSeconds;
+  }
 
   String batteryChemistryForDevice(String deviceId) {
     final stored = _settings.batteryChemistryByDeviceId[deviceId];
@@ -32,16 +41,22 @@ class AppSettingsService extends ChangeNotifier {
       try {
         final json = jsonDecode(jsonStr) as Map<String, dynamic>;
         _settings = AppSettings.fromJson(json);
+        Cyr2Lat.setCharMap(_settings.cyr2latCharMap);
         notifyListeners();
       } catch (e) {
         // If parsing fails, use defaults
         _settings = AppSettings();
+        Cyr2Lat.setCharMap(_settings.cyr2latCharMap);
       }
+    } else {
+      _settings = AppSettings();
+      Cyr2Lat.setCharMap(_settings.cyr2latCharMap);
     }
   }
 
   Future<void> updateSettings(AppSettings newSettings) async {
     _settings = newSettings;
+    Cyr2Lat.setCharMap(_settings.cyr2latCharMap);
     notifyListeners();
 
     final prefs = PrefsManager.instance;
@@ -105,6 +120,25 @@ class AppSettingsService extends ChangeNotifier {
     );
   }
 
+  Future<void> setMapRasterSourceId(String value) async {
+    await updateSettings(_settings.copyWith(mapRasterSourceId: value));
+  }
+
+  Future<void> setMapTileEndpointId(String value) async {
+    await updateSettings(_settings.copyWith(mapTileEndpointId: value));
+  }
+
+  Future<void> setMapTileApiKey(String? value) async {
+    final normalized = value?.trim();
+    await updateSettings(
+      _settings.copyWith(
+        mapTileApiKey: (normalized == null || normalized.isEmpty)
+            ? null
+            : normalized,
+      ),
+    );
+  }
+
   Future<void> setNotificationsEnabled(bool value) async {
     await updateSettings(_settings.copyWith(notificationsEnabled: value));
   }
@@ -119,6 +153,28 @@ class AppSettingsService extends ChangeNotifier {
 
   Future<void> setNotifyOnNewAdvert(bool value) async {
     await updateSettings(_settings.copyWith(notifyOnNewAdvert: value));
+  }
+
+  Future<void> setAutoSendZeroHopAdvertOnGpsUpdate(bool value) async {
+    await updateSettings(
+      _settings.copyWith(autoSendZeroHopAdvertOnGpsUpdate: value),
+    );
+  }
+
+  Future<void> setGpsIntervalSeconds(
+    int value, {
+    Future<void> Function(int value)? writeToDevice,
+  }) async {
+    await updateSettings(_settings.copyWith(gpsIntervalSeconds: value));
+    if (writeToDevice == null) return;
+    try {
+      await writeToDevice(value);
+    } catch (e) {
+      appLogger.warn(
+        'Failed to write GPS interval to device: $e',
+        tag: 'AppSettings',
+      );
+    }
   }
 
   Future<void> setAutoRouteRotationEnabled(bool value) async {
@@ -228,6 +284,12 @@ class AppSettingsService extends ChangeNotifier {
     await updateSettings(_settings.copyWith(translationEnabled: value));
   }
 
+  Future<void> setAutoTranslateIncomingMessages(bool value) async {
+    await updateSettings(
+      _settings.copyWith(autoTranslateIncomingMessages: value),
+    );
+  }
+
   Future<void> setTranslationTargetLanguageCode(String? value) async {
     await updateSettings(
       _settings.copyWith(translationTargetLanguageCode: value),
@@ -251,6 +313,58 @@ class AppSettingsService extends ChangeNotifier {
   ) async {
     await updateSettings(
       _settings.copyWith(translationDownloadedModels: value),
+    );
+  }
+
+  Cyr2LatProfile getSelectedCyr2LatProfile() {
+    return _settings.cyr2latProfiles.firstWhere(
+      (p) => p.id == _settings.selectedCyr2latProfileId,
+      orElse: () => _settings.cyr2latProfiles.first,
+    );
+  }
+
+  Cyr2LatProfile? getCyr2LatProfileById(String profileId) {
+    return _settings.cyr2latProfiles.cast<Cyr2LatProfile?>().firstWhere(
+      (p) => p?.id == profileId,
+      orElse: () => null,
+    );
+  }
+
+  Future<void> setSelectedCyr2LatProfile(String profileId) async {
+    await updateSettings(
+      _settings.copyWith(selectedCyr2latProfileId: profileId),
+    );
+  }
+
+  Future<void> addCyr2LatProfile(Cyr2LatProfile profile) async {
+    final updated = List<Cyr2LatProfile>.from(_settings.cyr2latProfiles)
+      ..add(profile);
+    await updateSettings(_settings.copyWith(cyr2latProfiles: updated));
+  }
+
+  Future<void> updateCyr2LatProfile(Cyr2LatProfile updatedProfile) async {
+    final updated = _settings.cyr2latProfiles
+        .map((p) => p.id == updatedProfile.id ? updatedProfile : p)
+        .toList();
+    await updateSettings(_settings.copyWith(cyr2latProfiles: updated));
+  }
+
+  Future<void> removeCyr2LatProfile(String profileId) async {
+    if (_settings.cyr2latProfiles.length <= 1) {
+      return; // Don't remove the last profile
+    }
+    final updated = _settings.cyr2latProfiles
+        .where((p) => p.id != profileId)
+        .toList();
+    var newSelectedId = _settings.selectedCyr2latProfileId;
+    if (newSelectedId == profileId) {
+      newSelectedId = updated.first.id;
+    }
+    await updateSettings(
+      _settings.copyWith(
+        cyr2latProfiles: updated,
+        selectedCyr2latProfileId: newSelectedId,
+      ),
     );
   }
 }

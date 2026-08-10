@@ -33,6 +33,8 @@
   "common_remove": "Usuń",
   "common_enable": "Włącz",
   "common_disable": "Wyłącz",
+  "common_autoRefresh": "Automatyczne odświeżanie",
+  "common_interval": "Interwał",
   "common_reboot": "Uruchom ponownie",
   "common_loading": "Ładowanie...",
   "common_notAvailable": "—",
@@ -52,7 +54,7 @@
       }
     }
   },
-  "scanner_title": "MeshCore Open",
+  "scanner_title": "MeshCore – wersja open source",
   "scanner_scanning": "Skanowanie urządzeń...",
   "scanner_connecting": "Łączenie...",
   "scanner_disconnecting": "Odłączanie...",
@@ -98,12 +100,16 @@
   "settings_locationInvalid": "Nieprawidłowa szerokość geograficzna lub długość geograficzna.",
   "settings_latitude": "Szerokość",
   "settings_longitude": "Długość",
+  "settings_autoZeroHopAdvertOnGpsUpdate": "Automatyczne ogłoszenie zero-hop przy aktualizacji GPS",
+  "settings_autoZeroHopAdvertOnGpsUpdateSubtitle": "Gdy lokalizacja GPS się zmieni, wyślij ogłoszenie zero-hop (wymaga lokalizacji w ogłoszeniu).",
   "settings_privacyMode": "Tryb prywatności",
   "settings_privacyModeSubtitle": "Ukryj imię/lokalizację w rozgłoszeniach",
   "settings_privacyModeToggle": "Włącz tryb prywatności, aby ukryć swoje imię i lokalizację w rozgłoszeniach.",
   "settings_privacyModeEnabled": "Tryb prywatności włączony",
   "settings_privacyModeDisabled": "Tryb prywatności wyłączony",
   "settings_actions": "Działania",
+  "settings_deleteAllPaths": "Delete All Paths",
+  "settings_deleteAllPathsSubtitle": "Clear all path data from contacts.",
   "settings_sendAdvertisement": "Wyślij rozgłoszenie",
   "settings_sendAdvertisementSubtitle": "Nadaj obecność teraz",
   "settings_advertisementSent": "Rozgłoszenie wysłane",
@@ -115,13 +121,13 @@
   "settings_rebootDevice": "Zrestartuj Urządzenie",
   "settings_rebootDeviceSubtitle": "Zrestartuj urządzenie MeshCore",
   "settings_rebootDeviceConfirm": "Czy na pewno chcesz zrestartować urządzenie? Będziesz odłączony.",
-  "settings_debug": "Debug",
+  "settings_debug": "Naprawianie błędów",
   "settings_bleDebugLog": "Dziennik debugowania BLE",
   "settings_bleDebugLogSubtitle": "Polecenia BLE, odpowiedzi i surowe dane",
   "settings_appDebugLog": "Dziennik debugowania aplikacji",
   "settings_appDebugLogSubtitle": "Komunikaty debugowania aplikacji",
   "settings_about": "O aplikacji",
-  "settings_aboutVersion": "MeshCore Open v{version}",
+  "settings_aboutVersion": "MeshCore Open w wersji {version}",
   "@settings_aboutVersion": {
     "placeholders": {
       "version": {
@@ -133,7 +139,7 @@
   "settings_aboutDescription": "Otwartoźródłowy klient Flutter dla urządzeń MeshCore LoRa do sieci mesh.",
   "settings_infoName": "Nazwa",
   "settings_infoId": "ID",
-  "settings_infoStatus": "Status",
+  "settings_infoStatus": "Stan",
   "settings_infoBattery": "Bateria",
   "settings_infoPublicKey": "Klucz Publiczny",
   "settings_infoContactsCount": "Liczba kontaktów",
@@ -146,7 +152,7 @@
   "settings_spreadingFactor": "Współczynnik rozpraszania",
   "settings_codingRate": "Współczynnik kodowania",
   "settings_txPower": "Moc TX (dBm)",
-  "settings_txPowerHelper": "0 - 22",
+  "settings_txPowerHelper": "0 – 22",
   "settings_txPowerInvalid": "Nieprawidłowa moc TX (0-22 dBm)",
   "settings_error": "Błąd: {message}",
   "@settings_error": {
@@ -164,19 +170,19 @@
   "appSettings_themeDark": "Ciemny",
   "appSettings_language": "Język",
   "appSettings_languageSystem": "Domyślny systemowy",
-  "appSettings_languageEn": "English",
-  "appSettings_languageFr": "Français",
-  "appSettings_languageEs": "Español",
-  "appSettings_languageDe": "Deutsch",
+  "appSettings_languageEn": "Angielski",
+  "appSettings_languageFr": "Francuski",
+  "appSettings_languageEs": "Hiszpański",
+  "appSettings_languageDe": "Niemiecki",
   "appSettings_languagePl": "Polski",
-  "appSettings_languageSl": "Slovenščina",
-  "appSettings_languagePt": "Português",
-  "appSettings_languageIt": "Italiano",
-  "appSettings_languageZh": "中文",
-  "appSettings_languageSv": "Svenska",
-  "appSettings_languageNl": "Nederlands",
-  "appSettings_languageSk": "Slovenčina",
-  "appSettings_languageBg": "Български",
+  "appSettings_languageSl": "Słoweński",
+  "appSettings_languagePt": "Portugalski",
+  "appSettings_languageIt": "Włoski",
+  "appSettings_languageZh": "Chiński",
+  "appSettings_languageSv": "Szwedzki",
+  "appSettings_languageNl": "Niderlandzki",
+  "appSettings_languageSk": "Słoweniština",
+  "appSettings_languageBg": "Българский",
   "appSettings_notifications": "Powiadomienia",
   "appSettings_enableNotifications": "Włącz Powiadomienia",
   "appSettings_enableNotificationsSubtitle": "Otrzymuj powiadomienia o wiadomościach i rozgłoszeniach.",
@@ -236,6 +242,19 @@
   "appSettings_last6Hours": "Ostatnie 6 godzin",
   "appSettings_last24Hours": "Ostatnie 24 godziny",
   "appSettings_lastWeek": "Ostatni tydzień",
+  "appSettings_rasterTileSource": "Źródło kafelków rastrowych",
+  "appSettings_stadiaEndpoint": "Punkt końcowy Stadia",
+  "appSettings_stadiaApiKey": "Klucz API Stadia",
+  "appSettings_stadiaApiKeyRequired": "Wymagane do korzystania ze Stadia Maps",
+  "appSettings_stadiaApiKeyConfigured": "Skonfigurowano: {maskedKey}",
+  "@appSettings_stadiaApiKeyConfigured": {
+    "placeholders": {
+      "maskedKey": {
+        "type": "String"
+      }
+    }
+  },
+  "appSettings_stadiaApiKeyDialogDescription": "Wprowadź swój klucz API Stadia Maps. Aplikacja używa go do żądań kafelków rastrowych.",
   "appSettings_offlineMapCache": "Pamięć podręczna map offline",
   "appSettings_noAreaSelected": "Nie wybrano żadnego obszaru.",
   "appSettings_areaSelectedZoom": "Wybrany obszar (skala {minZoom}-{maxZoom})",
@@ -249,7 +268,7 @@
       }
     }
   },
-  "appSettings_debugCard": "Debug",
+  "appSettings_debugCard": "Naprawianie błędów",
   "appSettings_appDebugLogging": "Logowanie Debugowania Aplikacji",
   "appSettings_appDebugLoggingSubtitle": "Rejestruj komunikaty debugowania aplikacji w celu diagnozowania problemów.",
   "appSettings_appDebugLoggingEnabled": "Logowanie debugowania aplikacji włączone",
@@ -347,11 +366,8 @@
       }
     }
   },
-  "channels_hashtagChannel": "Kanał hashtagów",
   "channels_public": "Publiczny",
   "channels_private": "Prywatny",
-  "channels_publicChannel": "Kanał publiczny",
-  "channels_privateChannel": "Prywatny kanał",
   "channels_editChannel": "Edytuj kanał",
   "channels_muteChannel": "Wycisz kanał",
   "channels_unmuteChannel": "Wyłącz wyciszenie kanału",
@@ -377,7 +393,7 @@
   "channels_channelName": "Nazwa kanału",
   "channels_usePublicChannel": "Użyj kanału publicznego",
   "channels_standardPublicPsk": "Standardowy publiczny PSK",
-  "channels_pskHex": "PSK (Hex)",
+  "channels_pskHex": "PSK (heksadecymalne)",
   "channels_generateRandomPsk": "Wygeneruj losowy klucz PSK",
   "channels_enterChannelName": "Proszę podać nazwę kanału.",
   "channels_pskMustBe32Hex": "PSK musi składać się z 32 znaków szesnastkowych.",
@@ -398,6 +414,22 @@
     }
   },
   "channels_smazCompression": "Kompresja SMAZ",
+  "channels_cyr2latCompression": "Kompresja Cyr2Lat",
+  "channels_cyr2latCompressionDscr": "Zastępuje niektóre znaki cyrylicy alfabetem łacińskim podczas wysyłania.",
+  "channels_cyr2latSettingsHeading": "Ustawienia Cyr2Lat",
+  "channels_cyr2latSettingsSubheading": "Lista zamian",
+  "channels_cyr2latSettingsDscr": "Edytuj konfigurację JSON zamiany znaków",
+  "channels_cyr2latSettingsDialogHint": "Mapa zamian JSON",
+  "channels_cyr2latSettingsDialogWrongJSON": "Nieprawidłowy JSON: {error}",
+  "settings_cyr2latProfileAdd": "Dodaj profil Cyr2Lat",
+  "settings_cyr2latProfileName": "Nazwa profilu",
+  "settings_cyr2latProfileNameEmpty": "Nazwa profilu nie może być pusta",
+  "settings_cyr2latProfileAdded": "Profil dodano pomyślnie",
+  "settings_cyr2latProfileUpdated": "Profil został pomyślnie zaktualizowany",
+  "settings_cyr2latProfileEdit": "Edytuj profil Cyr2Lat",
+  "settings_cyr2latProfileDelete": "Usuń profil Cyr2Lat",
+  "settings_cyr2latProfileDeleted": "Profil został pomyślnie usunięty",
+  "settings_cyr2latProfileDeleteDscr": "Czy na pewno chcesz usunąć profil \"{name}\"?",
   "channels_channelUpdated": "Kanał \"{name}\" został zaktualizowany",
   "@channels_channelUpdated": {
     "placeholders": {
@@ -409,7 +441,7 @@
   "channels_publicChannelAdded": "Kanał publiczny dodany",
   "channels_sortBy": "Sortuj po",
   "channels_sortManual": "Ręczna",
-  "channels_sortAZ": "A-Z",
+  "channels_sortAZ": "Od A do Z",
   "channels_sortLatestMessages": "Najnowsze wiadomości",
   "channels_sortUnread": "Nieprzeczytane",
   "chat_noMessages": "Brak jeszcze wiadomości",
@@ -541,7 +573,7 @@
       }
     }
   },
-  "debugFrame_textTypeCli": "CLI",
+  "debugFrame_textTypeCli": "Interfejs wiersza poleceń",
   "debugFrame_textTypePlain": "Zwykły",
   "debugFrame_text": "- Tekst: \"{text}\"",
   "@debugFrame_text": {
@@ -762,6 +794,56 @@
       }
     }
   },
+  "mapCache_cachedTilesLabel": "Cached tiles",
+  "mapCache_cachedTileSummaryLabel": "Cached tile summary",
+  "mapCache_bulkDownloadDisabledForSource": "Offline bulk downloads are disabled for {source}.",
+  "@mapCache_bulkDownloadDisabledForSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_bulkDownloadDisabledInConfig": "Offline bulk downloads are disabled for {source} in this app configuration.",
+  "@mapCache_bulkDownloadDisabledInConfig": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summarySource": "Source: {source}",
+  "@mapCache_summarySource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summaryCachedTilesForSource": "Cached tiles for source: {count}",
+  "@mapCache_summaryCachedTilesForSource": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryCachedInSelection": "Cached in selected area/zoom: {count}",
+  "@mapCache_summaryCachedInSelection": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryApproxCacheSize": "Approx cache size: {size}",
+  "@mapCache_summaryApproxCacheSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "mapCache_boundsLabel": "N {north}, S {south}, E {east}, W {west}",
   "@mapCache_boundsLabel": {
     "placeholders": {
@@ -889,11 +971,11 @@
   "path_setPath": "Ustaw Ścieżkę",
   "repeater_management": "Zarządzanie przekaźnikami",
   "repeater_managementTools": "Narzędzia Zarządzania",
-  "repeater_status": "Status",
+  "repeater_status": "Stan",
   "repeater_statusSubtitle": "Wyświetl status przekaźnika, statystyki i sąsiadów.",
   "repeater_telemetry": "Telemetria",
   "repeater_telemetrySubtitle": "Wyświetl dane telemetryczne z czujników i statystyki systemu",
-  "repeater_cli": "CLI",
+  "repeater_cli": "Interfejs wiersza poleceń",
   "repeater_cliSubtitle": "Wyślij polecenia do przekaźnika",
   "repeater_settings": "Ustawienia",
   "repeater_settingsSubtitle": "Skonfiguruj parametry przekaźnika",
@@ -1002,7 +1084,7 @@
   "repeater_guestPasswordHelper": "Hasło tylko do odczytu",
   "repeater_radioSettings": "Ustawienia radia",
   "repeater_frequencyMhz": "Częstotliwość (MHz)",
-  "repeater_frequencyHelper": "300-2500 MHz",
+  "repeater_frequencyHelper": "300–2500 MHz",
   "repeater_txPower": "Moc TX",
   "repeater_txPowerHelper": "1-30 dBm",
   "repeater_bandwidth": "Przepustowość",
@@ -1069,6 +1151,81 @@
   },
   "repeater_confirm": "Potwierdź",
   "repeater_settingsSaved": "Ustawienia zostały pomyślnie zapisane.",
+  "repeater_rxGain": "Zwiększony zysk RX",
+  "repeater_rxGainHelper": "Większa czułość, większe pobieranie prądu (dotyczy tylko SX1262/SX1268)",
+  "repeater_refreshRxGain": "Zaktualizuj zwiększone zyski RX",
+  "repeater_multiAcks": "Wielokrotne potwierdzenia odbioru",
+  "repeater_multiAcksSubtitle": "Potwierdź odbiór wiadomości za pomocą różnych ścieżek, aby zapewnić lepszą dostawę.",
+  "repeater_refreshMultiAcks": "Odświeżanie wielokrotnych potwierdzeń",
+  "repeater_networkHealth": "Stan sieci",
+  "repeater_loopDetect": "Wykrywanie pętli",
+  "repeater_loopDetectHelper": "Wysyłaj pakiety, które wyglądają jak pętle routingu.",
+  "repeater_loopDetectOff": "Z domu",
+  "repeater_loopDetectMinimal": "Minimalny",
+  "repeater_loopDetectModerate": "Umiarkowany",
+  "repeater_loopDetectStrict": "Surowe",
+  "repeater_dutyCycle": "Cykl pracy",
+  "repeater_dutyCycleHelper": "Maksymalny procent czasu, który stacja może wykorzystać.",
+  "repeater_dutyCyclePercent": "{percent}%",
+  "@repeater_dutyCyclePercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "repeater_ownerInfo": "Informacje o operatorze",
+  "repeater_ownerInfoHelper": "Publiczne metadane dla tego urządzenia powielającego",
+  "repeater_refreshOwnerInfo": "Aktualizacja danych dotyczących operatora",
+  "repeater_floodMax": "Maksymalna liczba skoków podczas powodzi",
+  "repeater_floodMaxHelper": "Maksymalna liczba pakietów, które mogą przemieszczać się w jednym strumieniu (0-64)",
+  "repeater_advancedSettings": "Zaawansowany",
+  "repeater_advancedSettingsSubtitle": "Regulowane pokrętła dla doświadczonych operatorów",
+  "repeater_pathHashMode": "Tryb haszujący ścieżkę",
+  "repeater_pathHashModeHelper": "Bajty używane do kodowania identyfikatora tego repeatera w tagach ścieżki flood/wykrywania pętli. 0=1 bajt (256 identyfikatorów, do 64 skoków), 1=2 bajty (65 000 identyfikatorów, do 32 skoków), 2=3 bajty (16 milionów identyfikatorów, do 21 skoków). Firmware sprzed v1.14 zawsze używał ścieżek 1-bajtowych; v1.14 i nowsze można skonfigurować na ścieżki 2- lub 3-bajtowe.",
+  "repeater_txDelay": "Opóźnienie w Flood, TX",
+  "repeater_txDelayHelper": "Ustawienie odstępu dla ruchu związanego z powodzią, jako mnożnik czasu przesyłania pakietu (0-2, domyślnie 0,5). Wyższe wartości oznaczają mniejszą liczbę kolizji, ale wolniejszą prędkość przesyłania.",
+  "repeater_directTxDelay": "Bezpośrednie opóźnienie sygnału TX",
+  "repeater_directTxDelayHelper": "Ustawienie odstępu dla ruchu bezpośredniego (bez rozgłaszania), jako mnożnika czasu przesyłania pakietu (0-2, domyślnie 0,3).",
+  "repeater_intThresh": "Próg zakłóceń",
+  "repeater_intThreshHelper": "Próg został ustawiony na poziom szumów w radiu, dzięki czemu odrzuca sygnały zakłócające powyżej tego poziomu. 0 oznacza wyłączenie – ustaw tylko wtedy, gdy występują błędy odbierania w szumie.",
+  "repeater_agcResetInterval": "Interwał resetowania AGC",
+  "repeater_agcResetIntervalHelper": "Jak często należy resetować automatyczną regulację głośności radia, aby odzyskać z sytuacji, w której głośność jest ustawiona na stałe. Ustawienie \"0\" dezaktywuje okresowe resetowanie.",
+  "repeater_actionsTitle": "Działania",
+  "repeater_sendAdvert": "Wysłać reklamę dotyczącą powodzi",
+  "repeater_sendAdvertSubtitle": "Wyemituj reklamę dotyczącą powodzi w sieci.",
+  "repeater_sendAdvertZeroHop": "Wysłać reklamę bez pośrednictwa",
+  "repeater_sendAdvertZeroHopSubtitle": "Napisz reklamę, która będzie transmitowana bezpośrednio (bez powtarzania).",
+  "repeater_clockSync": "Synchronizuj zegar",
+  "repeater_clockSyncSubtitle": "Przekaż czas z telefonu do urządzenia powielającego",
+  "repeater_actionSucceeded": "{action} zakończyło się pomyślnie",
+  "@repeater_actionSucceeded": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "repeater_actionFailed": "{action} failed: {error}",
+  "@repeater_actionFailed": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "repeater_settingsSavedRebootNeeded": "Ustawienia zapisane – uruchom ponownie repeater, aby zastosować zmiany.",
+  "repeater_settingsPartialFailure": "Niektóre ustawienia nie zostały zaimplementowane: {failures}",
+  "@repeater_settingsPartialFailure": {
+    "placeholders": {
+      "failures": {
+        "type": "String"
+      }
+    }
+  },
   "repeater_errorSavingSettings": "Błąd zapisu ustawień: {error}",
   "@repeater_errorSavingSettings": {
     "placeholders": {
@@ -1080,11 +1237,9 @@
   "repeater_refreshBasicSettings": "Odśwież Podstawowe Ustawienia",
   "repeater_refreshRadioSettings": "Odśwież ustawienia radia",
   "repeater_refreshTxPower": "Odśwież moc TX",
-  "repeater_refreshLocationSettings": "Odśwież Ustawienia Lokalizacji",
   "repeater_refreshPacketForwarding": "Odśwież trasowanie pakietów",
   "repeater_refreshGuestAccess": "Odśwież dostęp gościa",
   "repeater_refreshPrivacyMode": "Odśwież Tryb Prywatności",
-  "repeater_refreshAdvertisementSettings": "Odśwież ustawienia rozgłoszeń",
   "repeater_refreshed": "{label} odświeżone",
   "@repeater_refreshed": {
     "placeholders": {
@@ -1202,6 +1357,43 @@
       }
     }
   },
+  "telemetry_digitalInputLabel": "Wejście cyfrowe",
+  "telemetry_digitalOutputLabel": "Wyjście cyfrowe",
+  "telemetry_analogInputLabel": "Wejście analogowe",
+  "telemetry_analogOutputLabel": "Wyjście analogowe",
+  "telemetry_genericLabel": "Czujnik ogólny",
+  "telemetry_luminosityLabel": "Jasność",
+  "telemetry_presenceLabel": "Obecność",
+  "telemetry_humidityLabel": "Wilgotność",
+  "telemetry_accelerometerLabel": "Akcelerometr",
+  "telemetry_pressureLabel": "Ciśnienie",
+  "telemetry_altitudeLabel": "Wysokość",
+  "telemetry_frequencyLabel": "Częstotliwość",
+  "telemetry_percentageLabel": "Procent",
+  "telemetry_concentrationLabel": "Stężenie",
+  "telemetry_powerLabel": "Moc",
+  "telemetry_distanceLabel": "Odległość",
+  "telemetry_energyLabel": "Energia",
+  "telemetry_directionLabel": "Kierunek",
+  "telemetry_timeLabel": "Czas",
+  "telemetry_gyrometerLabel": "Żyrometr",
+  "telemetry_colourLabel": "Kolor",
+  "telemetry_gpsLabel": "GPS",
+  "telemetry_switchLabel": "Przełącznik",
+  "telemetry_polylineLabel": "Polilinia",
+  "telemetry_altitudeValue": "{meters} m",
+  "telemetry_frequencyValue": "{hertz} Hz",
+  "telemetry_pressureValue": "{hpa} hPa",
+  "telemetry_luminosityValue": "{lux} lx",
+  "telemetry_powerValue": "{watts} W",
+  "telemetry_distanceValue": "{meters} m",
+  "telemetry_energyValue": "{kilowattHours} kWh",
+  "telemetry_directionValue": "{degrees}°",
+  "telemetry_concentrationValue": "{ppm} ppm",
+  "telemetry_percentageValue": "{percent}%",
+  "telemetry_analogValue": "{value}",
+  "telemetry_autoFetchQuantity": "Liczba żądań",
+  "telemetry_error": "Nie udało się pobrać danych",
   "telemetry_noData": "Brak dostępnych danych telemetrycznych.",
   "telemetry_channelTitle": "Kanał {channel}",
   "@telemetry_channelTitle": {
@@ -1216,7 +1408,7 @@
   "telemetry_mcuTemperatureLabel": "Temperatura MCU",
   "telemetry_temperatureLabel": "Temperatura",
   "telemetry_currentLabel": "Prąd",
-  "telemetry_batteryValue": "{percent}% / {volts}V",
+  "telemetry_batteryValue": "{percent}% / {volts} W",
   "@telemetry_batteryValue": {
     "placeholders": {
       "percent": {
@@ -1357,7 +1549,7 @@
   "listFilter_sortBy": "Sortuj po",
   "listFilter_latestMessages": "Najnowsze wiadomości",
   "listFilter_heardRecently": "Słyszano niedawno",
-  "listFilter_az": "A-Z",
+  "listFilter_az": "Od A do Z",
   "listFilter_filters": "Filtry",
   "listFilter_all": "Wszystko",
   "listFilter_users": "Użytkownicy",
@@ -1472,7 +1664,7 @@
   "community_createDesc": "Utwórz nową społeczność i udostępnij za pomocą kodu QR.",
   "community_title": "Społeczność",
   "community_create": "Utwórz Społeczność",
-  "common_ok": "OK",
+  "common_ok": "Dobrze",
   "community_join": "Dołącz",
   "community_joinTitle": "Dołącz do społeczności",
   "community_joinConfirmation": "Czy chcesz dołączyć do społeczności \"{name}\"?",
@@ -1960,13 +2152,6 @@
   "contact_settings": "Ustawienia kontaktowe",
   "contact_lastSeen": "Ostatnio widziany",
   "contact_teleBaseSubtitle": "Pozwól na udostępnianie poziomu naładowania baterii i podstawowych danych telemetrycznych",
-  "@settings_multiAck": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "appSettings_initialRouteWeight": "Początkowa waga trasy",
   "appSettings_maxRouteWeight": "Maksymalny dopuszczalny ciężar pojazdu",
   "appSettings_initialRouteWeightSubtitle": "Początkowa waga dla nowych, odkrytych ścieżek",
@@ -1979,7 +2164,6 @@
   "appSettings_maxMessageRetriesSubtitle": "Liczba prób ponownego wysłania wiadomości przed oznaczaniem jej jako nieudanej",
   "path_routeWeight": "{weight}/{max}",
   "settings_telemetryModeUpdated": "Tryb telemetryczny zaktualizowany",
-  "settings_multiAck": "Wielokrotne ACK: {value}",
   "map_showOverlaps": "Nakładające się klucze przekaźników",
   "map_runTraceWithReturnPath": "Wróć tą samą ścieżką",
   "@radioStats_noiseFloor": {
@@ -2057,6 +2241,9 @@
   "translation_enableTitle": "Włącz tłumaczenie",
   "translation_enableSubtitle": "Tłumaczenie otrzymywanych wiadomości oraz umożliwienie tłumaczenia przed wysłaniem.",
   "translation_composerSubtitle": "Kontroluje domyślny stan ikony tłumaczenia w edytorze.",
+  "translation_autoIncomingTitle": "Automatycznie tłumacz wiadomości",
+  "translation_autoIncomingSubtitle": "Automatycznie tłumaczy wiadomości do powiadomień oraz do czatów lub kanałów.",
+  "translation_translateMessage": "Przetłumacz wiadomość",
   "translation_targetLanguage": "Język docelowy",
   "translation_useAppLanguage": "Użyj języka aplikacji",
   "translation_downloadedModelLabel": "Pobudowany model",
@@ -2111,5 +2298,350 @@
   "chat_sendMessage": "Wyślij wiadomość",
   "repeater_guestTools": "Narzędzia dla gości",
   "repeater_guest": "Informacje dotyczące urządzenia powtarzającego",
-  "room_guest": "Informacje o serwerze"
+  "room_guest": "Informacje o serwerze",
+  "repeater_getCategory": "Uzyskaj wartości",
+  "repeater_powerMgmt": "Zarządzanie energią",
+  "repeater_sensors": "Czujniki",
+  "repeater_cliHelpPowerOff": "Wyłącza urządzenie. (oczekiwanie na brak reakcji)",
+  "repeater_cliHelpClkReboot": "Przywraca zegar do znanego punktu odniesienia i resetuje urządzenie.",
+  "repeater_cliHelpAdvertZeroHop": "Wysyła reklamę, która dociera bezpośrednio do sąsiadów (bez pośrednictwa).",
+  "repeater_cliHelpStartOta": "Rozpoczyna aktualizację oprogramowania przez sieć (bezpośrednio z urządzenia).",
+  "repeater_cliHelpTime": "Ustawia zegar urządzenia na określone sekundy od epoki Unix. Zegar nie może się cofać.",
+  "repeater_cliHelpBoard": "Wyświetla informacje o producencie płyty głównej / identyfikator sprzętu.",
+  "repeater_cliHelpDiscoverNeighbors": "Wysyła żądanie wykrywania sąsiednich węzłów. (Działa tylko w urządzeniu powielającym sygnał)",
+  "repeater_cliHelpPowersaving": "Pokazuje, czy tryb oszczędzania energii jest włączony, czy wyłączony.",
+  "repeater_cliHelpPowersavingOnOff": "Umożliwia lub wyłącza tryb oszczędzania energii (jeśli jest obsługiwany).",
+  "repeater_cliHelpErase": "(Dla urządzeń) Formatuje system plików urządzenia. Usuwa wszystkie ustawienia i kontakty.",
+  "repeater_cliHelpSetDutyCycle": "Ustawia maksymalny dopuszczalny cykl przesyłania w procentach (1-100). Automatycznie dostosowuje współczynnik czasu przesyłania.",
+  "repeater_cliHelpSetPrvKey": "(Dla urządzeń) Zastępuje klucz prywatny identyfikujący urządzenie. Wymagana jest ponowna uruchomienie urządzenia, aby zastosować zmianę. Generuje nowy klucz publiczny.",
+  "repeater_cliHelpSetRadioRxGain": "(tylko SX126x) Włącza wzmocniony sygnał RX, co poprawia czułość przy wyższym poborze prądu.",
+  "repeater_cliHelpSetOwnerInfo": "Określa ciąg znaków zawierający dane kontaktowe właściciela, który znajduje się w ogłoszeniach. Użyj '|' jako separatora wierszy.",
+  "repeater_cliHelpSetPathHashMode": "Ustawia tryb haszowania ścieżki. 0 = stary, 1 = standardowy, 2 = restrykcyjny. Wpływa na sposób dopasowywania ścieżek routingu.",
+  "repeater_cliHelpSetLoopDetect": "Ustawia czułość detekcji pętli routingu: wyłączona, minimalna, umiarkowana lub rygorystyczna.",
+  "repeater_cliHelpSetFreq": "(Dla urządzeń szeregowych) Szybko ustawia tylko częstotliwość. Wymagana ponowna uruchomienie. Zaleca się użycie opcji \"ustawienie radia\" w celu ustawienia wszystkich parametrów radia.",
+  "repeater_cliHelpSetBridgeChannel": "(Tylko most ESPNow) Ustawia kanał WiFi (od 1 do 14), który jest wykorzystywany przez most.",
+  "repeater_cliHelpGetName": "Wyświetla nazwę skonfigurowanego węzła.",
+  "repeater_cliHelpGetRole": "Pokazuje rolę oprogramowania (np. repeater, serwer dla pokoju).",
+  "repeater_cliHelpGetPublicKey": "Wyświetla publiczny klucz urządzenia.",
+  "repeater_cliHelpGetPrvKey": "(Tylko dla serialu) Wyświetla prywatny klucz urządzenia. Traktuj go jako poufny.",
+  "repeater_cliHelpGetRepeat": "Pokazuje, czy funkcja przekierowywania pakietów (funkcja repeatera) jest włączona lub wyłączona.",
+  "repeater_cliHelpGetTx": "Pokazuje aktualną moc transmisji w dBm.",
+  "repeater_cliHelpGetFreq": "Pokazuje skonfigurowaną częstotliwość radiową w MHz.",
+  "repeater_cliHelpGetRadio": "Wyświetla pełne parametry radia: częstotliwość, szerokość pasma, współczynnik modulacji, stopień kodowania.",
+  "repeater_cliHelpGetRadioRxGain": "(tylko SX126x) Wyświetla stan wzmocnienia sygnału RX.",
+  "repeater_cliHelpGetAf": "Pokazuje aktualny współczynnik czasu emisji.",
+  "repeater_cliHelpGetDutyCycle": "Pokazuje aktualny dopuszczalny cykl pracy w procentach.",
+  "repeater_cliHelpGetIntThresh": "Pokazuje próg zakłóceń kanału w dB.",
+  "repeater_cliHelpGetAgcResetInterval": "Pokazuje interwał resetowania AGC w sekundach.",
+  "repeater_cliHelpGetMultiAcks": "Pokazuje, czy tryb podwójnego potwierdzania jest włączony (1) czy wyłączony (0).",
+  "repeater_cliHelpGetAllowReadOnly": "Pokazuje, czy dostęp dla gości jest ograniczony do odczytu tylko.",
+  "repeater_cliHelpGetAdvertInterval": "Pokazuje czas trwania lokalnej reklamy w minutach.",
+  "repeater_cliHelpGetFloodAdvertInterval": "Pokazuje interwał reklamowy dotyczący powodzi w godzinach.",
+  "repeater_cliHelpGetGuestPassword": "Wyświetla ustawione hasło dla gościa.",
+  "repeater_cliHelpGetLat": "Pokazuje ustawioną szerokość geograficzną.",
+  "repeater_cliHelpGetLon": "Pokazuje ustawioną długość geograficzną.",
+  "repeater_cliHelpGetRxDelay": "Pokazuje bazową wartość opóźnienia RX.",
+  "repeater_cliHelpGetTxDelay": "Pokazuje współczynnik opóźnienia transmisji w trybie zalewowym.",
+  "repeater_cliHelpGetDirectTxDelay": "Pokazuje współczynnik opóźnienia w trybie bezpośrednim.",
+  "repeater_cliHelpGetFloodMax": "Pokazuje maksymalną liczbę skoków spowodowanych powodzią.",
+  "repeater_cliHelpGetOwnerInfo": "Wyświetla ciąg znaków zawierający dane kontaktowe właściciela.",
+  "repeater_cliHelpGetPathHashMode": "Pokazuje tryb haszujący ścieżkę (0/1/2).",
+  "repeater_cliHelpGetLoopDetect": "Pokazuje czułość detekcji pętli.",
+  "repeater_cliHelpGetAcl": "(Tylko dla seriali) Wyświetla wpisy kontroli dostępu w repeaterze.",
+  "repeater_cliHelpGetBridgeEnabled": "Pokazuje, czy most jest włączony.",
+  "repeater_cliHelpGetBridgeDelay": "Pokazuje opóźnienie mostu w milisekundach.",
+  "repeater_cliHelpGetBridgeSource": "Pokazuje, czy most odbiera pakiety RX lub TX.",
+  "repeater_cliHelpGetBridgeBaud": "(Tylko interfejs RS232) Wyświetla prędkość transmisji na interfejsie RS232.",
+  "repeater_cliHelpGetBridgeChannel": "(Tylko moduł ESPNow) Wyświetla kanał WiFi modułu.",
+  "repeater_cliHelpGetBridgeSecret": "(Tylko most ESPNow) Wyświetla sekret udostępniony przez most.",
+  "repeater_cliHelpGetBootloaderVer": "(tylko dla NRF52) Wyświetla wersję bootloadera.",
+  "repeater_cliHelpGetAdcMultiplier": "Pokazuje wzmacniacz ADC (skalowanie napięcia baterii).",
+  "repeater_cliHelpGetPwrMgtSupport": "Informuje, czy rada nadzorcza posiada wsparcie w zakresie zarządzania energią.",
+  "repeater_cliHelpGetPwrMgtSource": "Pokazuje aktualne źródło zasilania: zewnętrzne lub bateryjne.",
+  "repeater_cliHelpGetPwrMgtBootReason": "Pokazuje najnowsze przyczyny resetowania i wyłączania.",
+  "repeater_cliHelpGetPwrMgtBootMv": "Pokazuje napięcie baterii podczas uruchamiania systemu w milivoltach (mV).",
+  "repeater_cliHelpSensorGet": "Odczytuje ustawienie czujnika zdefiniowane za pomocą klawisza.",
+  "repeater_cliHelpSensorSet": "Tworzy niestandardowe ustawienia dla czujnika.",
+  "repeater_cliHelpSensorList": "Wyświetla wszystkie ustawienia dla niestandardowych czujników, podzielone na strony, z opcjonalnym indeksem początkowym.",
+  "repeater_cliHelpRegionDefault": "Pokazuje aktualny domyślny zakres regionu.",
+  "repeater_cliHelpRegionDefaultSet": "Ustawia domyślny zakres regionu. Użyj wartości \"<null>\", aby go zresetować.",
+  "repeater_cliHelpRegionListAllowed": "Wymienia regiony, w których dopuszczony jest ruch związany z powodzami.",
+  "repeater_cliHelpRegionListDenied": "Wymienia regiony, w których ruch związany z powodziami jest ograniczony.",
+  "repeater_cliHelpStatsPackets": "(Tylko dla serialu) Prezentuje statystyki na poziomie pakietów.",
+  "repeater_cliHelpStatsRadio": "(Tylko serial) Prezentuje statystyki dotyczące nadawania radiowego.",
+  "repeater_cliHelpStatsCore": "(Tylko wersja serialowa) Wyświetla podstawowe statystyki o oprogramowaniu.",
+  "common_done": "Done",
+  "background_serviceTitle": "MeshCore running",
+  "background_serviceText": "Keeping BLE connected",
+  "appSettings_translationModelDeleted": "Deleted {name}",
+  "@appSettings_translationModelDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "appSettings_translationModelDeleteFailed": "Failed to delete: {error}",
+  "@appSettings_translationModelDeleteFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "channels_channelUpdateFailed": "Failed to update channel: {error}",
+  "@channels_channelUpdateFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "map_type": "Type",
+  "map_path": "Path",
+  "map_location": "Location",
+  "map_estLocation": "Est. Location",
+  "map_publicKey": "Public Key",
+  "map_publicKeyPrefixHint": "e.g. ab12",
+  "contact_typeChat": "Chat",
+  "contact_typeRepeater": "Repeater",
+  "contact_typeRoom": "Room",
+  "contact_typeSensor": "Sensor",
+  "contact_typeUnknown": "Unknown",
+  "channels_via": "via {path}",
+  "chat_score": "Score",
+  "settings_multiAck": "Wielokrotne potwierdzenia odbioru",
+  "map_sharedAt": "Udostępnione",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losSelectedObstructionTitle": "Wybór przeszkody",
+  "losBlockedSpotsTitle": "Zablokowane miejsca",
+  "losBlockedSpotsHint": "Kliknij zablokowane miejsce, aby je zaznaczyć na mapie.",
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}",
+  "losSelectedObstructionDetails": "Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit}).",
+  "chat_newMessages": "Nowe wiadomości",
+  "settings_companionDebugLogSubtitle": "Polecenia, odpowiedzi i surowe dane związane z protokołami BLE/TCP/USB",
+  "chat_markAsUnread": "Oznacz jako nieprzeczytane",
+  "settings_companionDebugLog": "Log debugowania (dla pomocy w rozwiązywaniu problemów)",
+  "repeater_chanUtil": "Wykorzystanie kanału",
+  "@routing_lastWorked": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "@routing_deliveryCounts": {
+    "placeholders": {
+      "successes": {
+        "type": "int"
+      },
+      "failures": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathEditor_hopCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathEditor_invalidTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "@channels_communityShortId": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "messageStatus_sent": "Wysłane",
+  "messageStatus_delivered": "Dostarczone",
+  "messageStatus_pending": "Wysyłanie",
+  "common_undo": "Wycofaj",
+  "messageStatus_failed": "Nie udało się wysłać",
+  "messageStatus_repeated": "Usłyszałem to wielokrotnie",
+  "contacts_moreOptions": "Więcej opcji",
+  "contacts_searchOpen": "Wyszukaj kontakty",
+  "contacts_searchClose": "Zaawansowane wyszukiwanie",
+  "routing_title": "Planowanie tras",
+  "routing_modeAuto": "Samochód",
+  "routing_modeFlood": "Powódź",
+  "routing_modeManual": "Instrukcja obsługi",
+  "routing_modeAutoHint": "Automatycznie wybiera najpopularniejszą ścieżkę, a w przypadku braku znanej, przechodzi do trybu \"przepływu\".",
+  "routing_modeFloodHint": "Transmisje za pośrednictwem każdego repeatera. Najbardziej niezawodna metoda, ale zużywa więcej czasu transmisji.",
+  "routing_modeManualHint": "Zawsze prowadzi dokładnie po trasie, którą określiłeś.",
+  "routing_currentRoute": "Obecna trasa",
+  "routing_directNoHops": "Bezpośrednio – bez pośrednictwa repeaterów",
+  "routing_noPathYet": "Na razie nie ma żadnej ścieżki. Komunikacja trwa do momentu, gdy zostanie odkryta trasa.",
+  "routing_floodBroadcast": "Transmisja za pośrednictwem każdego urządzenia powielającego",
+  "routing_editPath": "Edytuj ścieżkę",
+  "routing_forgetPath": "Zapomnij o ścieżce",
+  "routing_knownPaths": "Znane trasy",
+  "routing_knownPathsHint": "Wybierz ścieżkę, aby przełączyć się na nią.",
+  "routing_inUse": "W użyciu",
+  "routing_qualityStrong": "Silny pierwszy skok",
+  "routing_qualityGood": "Świetny początek",
+  "routing_qualityFair": "Świetny pierwszy krzak",
+  "routing_qualityWorked": "Zostało dostarczone",
+  "routing_qualityFlood": "Usłyszano dzięki doniesieniom",
+  "routing_qualityUntested": "Nieużywany",
+  "routing_lastWorked": "pracował {when}",
+  "routing_neverWorked": "nigdy nie zostało potwierdzone",
+  "routing_floodDelivery": "Dostawa w przypadku powodzi",
+  "pathEditor_title": "Stworzenie ścieżki",
+  "pathEditor_hopCounter": "{count} z 64 rodzajów chmielu",
+  "pathEditor_noHops": "Na razie nie dodano żadnych chmielu. Aby dodać je w odpowiedniej kolejności, kliknij w odpowiednie przyciski poniżej, lub zapisz przepis bez chmielu, aby wysłać go bezpośrednio.",
+  "pathEditor_addHops": "Dodawaj chmiel zgodnie z kolejnością.",
+  "pathEditor_searchRepeaters": "Funkcje powtarzania",
+  "pathEditor_advancedHex": "Zaawansowane: ścieżka w formacie szesnastkowym",
+  "pathEditor_hexLabel": "Prefiksy heksadecymalne",
+  "pathEditor_hexHelper": "Dwa znaki szesnastkowe na każdym kroku, oddzielone przecinkami",
+  "pathEditor_invalidTokens": "Nieprawidłowe: {tokens}",
+  "pathEditor_tooManyHops": "Maksymalnie 64 hopów",
+  "pathEditor_usePath": "Użyj tej ścieżki.",
+  "pathEditor_removeHop": "Usuń dziką psiankę",
+  "pathEditor_unknownHop": "Nieznany repeater",
+  "map_zoomIn": "Przybliż",
+  "routing_deliveryCounts": "{successes} delivered, {failures} failed",
+  "map_zoomOut": "Przybliż z powrotem",
+  "map_centerMap": "Mapa centrum",
+  "chrome_bluetoothRequiresChromium": "Web Bluetooth wymaga przeglądarki Chromium.",
+  "channels_communityShortId": "ID: {id}...",
+  "pathTrace_legendGpsConfirmed": "GPS potwierdzone",
+  "pathTrace_legendInferred": "Wywnioskowana pozycja",
+  "@pathMap_hopOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_observedPaths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_alternate": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_hopCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_gpsCount": {
+    "placeholders": {
+      "confirmed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_sharedNodeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_partialAnimation": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "map_online": "Online",
+  "map_searchHint": "Wyszukaj nazwę lub identyfikator węzła",
+  "scanner_bluetoothWebUnsupported": "Bluetooth nie jest dostępny w przeglądarce. Połącz się przez USB.",
+  "map_activity": "Aktywność",
+  "map_recent": "Ostatnie",
+  "map_stale": "Nieaktualne",
+  "map_visible": "Widoczny",
+  "map_hidden": "Ukryty",
+  "map_centerOnNode": "Wyśrodkuj na węźle",
+  "map_details": "Szczegóły",
+  "map_noGps": "Brak GPS",
+  "map_noResults": "Brak pasujących węzłów",
+  "pathMap_viewSingle": "Pojedyncza",
+  "pathMap_viewCombined": "Połączone",
+  "pathMap_play": "Odtwórz",
+  "pathMap_pause": "Wstrzymaj",
+  "pathMap_replay": "Odtwórz ponownie",
+  "pathMap_stepBack": "Poprzedni skok",
+  "pathMap_stepForward": "Następny skok",
+  "pathMap_animationOn": "Pokaż animację pakietu",
+  "pathMap_animationOff": "Ukryj animację pakietu",
+  "pathMap_hopOf": "Skok {current} z {total}",
+  "pathMap_observedPaths": "Obserwowane trasy: {count}",
+  "pathMap_primary": "Główna",
+  "pathMap_alternate": "Alt. {index}",
+  "pathMap_hopCount": "{count, plural, =1{1 skok} few{{count} skoki} many{{count} skoków} other{{count} skoku}}",
+  "pathMap_legendShared": "Wspólny segment",
+  "pathMap_legendEstimated": "Szacunkowy segment",
+  "pathMap_sharedNodeCount": "Wykorzystywane przez {count} ścieżek",
+  "pathMap_partialAnimation": "{count, plural, =1{1 skok nie ma lokalizacji — pokazana ścieżka jest niekompletna} few{{count} skoki nie mają lokalizacji — pokazana ścieżka jest niekompletna} many{{count} skoków nie ma lokalizacji — pokazana ścieżka jest niekompletna} other{{count} skoku nie ma lokalizacji — pokazana ścieżka jest niekompletna}}",
+  "pathMap_showAllPaths": "Pokaż wszystkie",
+  "pathMap_hidePath": "Ukryj ścieżkę",
+  "pathMap_showPath": "Wyświetl trasę",
+  "pathMap_collapsePanel": "Zwiń panel",
+  "pathMap_expandPanel": "Rozwiń panel",
+  "pathMap_noLocation": "Brak lokalizacji",
+  "pathMap_followPacket": "Śledź pakiet",
+  "pathMap_unfollowPacket": "Przestań śledzić pakiet",
+  "pathMap_gpsCount": "{confirmed}/{total} GPS"
 }

@@ -87,6 +87,10 @@ keystore.properties
 # IDE
 .vscode/launch.json
 .vscode/settings.json
+.contextstream/
 
 # Cloudflare Wrangler
 .wrangler
+
+# Claude Code local working dir (worktrees, jobs, settings)
+.claude/

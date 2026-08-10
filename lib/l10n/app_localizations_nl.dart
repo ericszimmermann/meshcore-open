@@ -24,7 +24,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get common_cancel => 'Annuleren';
 
   @override
-  String get common_ok => 'OK';
+  String get common_ok => 'Prima';
 
   @override
   String get common_connect => 'Verbinden';
@@ -43,6 +43,9 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get common_close => 'Sluiten';
+
+  @override
+  String get common_done => 'Done';
 
   @override
   String get common_edit => 'Bewerken';
@@ -90,6 +93,24 @@ class AppLocalizationsNl extends AppLocalizations {
   String get common_disable => 'Uitschakelen';
 
   @override
+  String get common_undo => 'Achterhalen/Annuleren';
+
+  @override
+  String get messageStatus_sent => 'Verzonden';
+
+  @override
+  String get messageStatus_delivered => 'Leverd';
+
+  @override
+  String get messageStatus_pending => 'Verzenden';
+
+  @override
+  String get messageStatus_failed => 'Niet verzonden';
+
+  @override
+  String get messageStatus_repeated => 'Hearsay, herhaald';
+
+  @override
   String get common_reboot => 'Herstarten';
 
   @override
@@ -107,6 +128,12 @@ class AppLocalizationsNl extends AppLocalizations {
   String common_percentValue(int percent) {
     return '$percent%';
   }
+
+  @override
+  String get common_autoRefresh => 'Automatisch vernieuwen';
+
+  @override
+  String get common_interval => 'Tijdsinterval';
 
   @override
   String get scanner_title => 'MeshCore Open';
@@ -271,7 +298,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get scanner_stop => 'Stoppen';
 
   @override
-  String get scanner_scan => 'Scan';
+  String get scanner_scan => 'Scannen';
 
   @override
   String get scanner_bluetoothOff => 'Bluetooth is uitgeschakeld';
@@ -289,6 +316,10 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get scanner_enableBluetooth => 'Activeer Bluetooth';
+
+  @override
+  String get scanner_bluetoothWebUnsupported =>
+      'Bluetooth is niet beschikbaar in de browser. Verbind dan via USB.';
 
   @override
   String get device_quickSwitch => 'Snelle overschakeling';
@@ -335,6 +366,45 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settings_radioSettingsUpdated => 'Radio instellingen bijgewerkt';
 
   @override
+  String get settings_regionSettings => 'Regions';
+
+  @override
+  String get settings_regionSettingsSubtitle => 'Manage stored regions';
+
+  @override
+  String get settings_regionManagement_screenTitle => 'Region Management';
+
+  @override
+  String get settings_regionNameHint => 'Enter region name';
+
+  @override
+  String get settings_regionAddRegion => 'Add region';
+
+  @override
+  String get settings_regionFetchRegions => 'Fetch regions from repeaters';
+
+  @override
+  String get settings_regionFetchRegionsFail => 'No regions were found';
+
+  @override
+  String get settings_regionFetchRegionsAlreadyExists =>
+      'This region has already been added';
+
+  @override
+  String get settings_regionName => 'Region Name';
+
+  @override
+  String get settings_regionDeleted => 'Region deleted';
+
+  @override
+  String get settings_deleteRegion => 'Delete Region';
+
+  @override
+  String settings_deleteRegionConfirm(String region) {
+    return 'Remove \"$region\" from region list?';
+  }
+
+  @override
   String get settings_location => 'Locatie';
 
   @override
@@ -379,7 +449,7 @@ class AppLocalizationsNl extends AppLocalizations {
       'Instellingen voor het toevoegen van contacten';
 
   @override
-  String get settings_privacyMode => 'Privacy Mode';
+  String get settings_privacyMode => 'Privacy-modus';
 
   @override
   String get settings_privacyModeSubtitle =>
@@ -432,15 +502,28 @@ class AppLocalizationsNl extends AppLocalizations {
       'Locatie opnemen in advertentie';
 
   @override
-  String settings_multiAck(String value) {
-    return 'Multi-ACKs: $value';
-  }
+  String get settings_autoZeroHopAdvertOnGpsUpdate =>
+      'Automatische zero-hop-advertentie bij GPS-update';
+
+  @override
+  String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle =>
+      'Wanneer de GPS-locatie verandert, een zero-hop-advertentie verzenden (vereist locatie in advertentie).';
+
+  @override
+  String get settings_multiAck => 'Meerdere bevestigingen';
 
   @override
   String get settings_telemetryModeUpdated => 'Telemetrie-modus bijgewerkt';
 
   @override
   String get settings_actions => 'Acties';
+
+  @override
+  String get settings_deleteAllPaths => 'Delete All Paths';
+
+  @override
+  String get settings_deleteAllPathsSubtitle =>
+      'Clear all path data from contacts.';
 
   @override
   String get settings_sendAdvertisement => 'Verzend Advertentie';
@@ -479,17 +562,18 @@ class AppLocalizationsNl extends AppLocalizations {
       'Ben je er zeker van dat je het apparaat opnieuw wilt opstarten? Je wordt losgekoppeld.';
 
   @override
-  String get settings_debug => 'Debug';
+  String get settings_debug => 'Foutopsporing';
 
   @override
-  String get settings_bleDebugLog => 'BLE Debug Log';
+  String get settings_companionDebugLog =>
+      'Debuglog voor aanvullende informatie';
 
   @override
-  String get settings_bleDebugLogSubtitle =>
-      'BLE commando\'s, antwoorden en ruwe data';
+  String get settings_companionDebugLogSubtitle =>
+      'BLE/TCP/USB commando\'s, antwoorden en ruwe data';
 
   @override
-  String get settings_appDebugLog => 'App Debug Log';
+  String get settings_appDebugLog => 'Debuglog van de app';
 
   @override
   String get settings_appDebugLogSubtitle => 'Toepassingsdebugberichten';
@@ -499,7 +583,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String settings_aboutVersion(String version) {
-    return 'MeshCore Open v$version';
+    return 'MeshCore Open versie $version';
   }
 
   @override
@@ -535,7 +619,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settings_infoChannelCount => 'Aantal Kanalen';
 
   @override
-  String get settings_presets => 'Presets';
+  String get settings_infoHardware => 'Hardware';
+
+  @override
+  String get settings_infoFirmware => 'Firmware';
+
+  @override
+  String get settings_presets => 'Voorgeprogrammeerde instellingen';
 
   @override
   String get settings_frequency => 'Frequentie (MHz)';
@@ -605,49 +695,61 @@ class AppLocalizationsNl extends AppLocalizations {
   String get appSettings_languageSystem => 'Standaardinstelling';
 
   @override
-  String get appSettings_languageEn => 'English';
+  String get appSettings_languageEn => 'Engels';
 
   @override
-  String get appSettings_languageFr => 'Français';
+  String get appSettings_languageFr => 'Frans';
 
   @override
-  String get appSettings_languageEs => 'Español';
+  String get appSettings_languageEs => 'Spaans';
 
   @override
-  String get appSettings_languageDe => 'Deutsch';
+  String get appSettings_languageDe => 'Duits';
 
   @override
-  String get appSettings_languagePl => 'Polski';
+  String get appSettings_languagePl => 'Pools';
 
   @override
-  String get appSettings_languageSl => 'Slovenščina';
+  String get appSettings_languageSl => 'Sloveens';
 
   @override
-  String get appSettings_languagePt => 'Português';
+  String get appSettings_languagePt => 'Portugees';
 
   @override
-  String get appSettings_languageIt => 'Italiano';
+  String get appSettings_languageIt => 'Italiaans';
 
   @override
-  String get appSettings_languageZh => '中文';
+  String get appSettings_languageZh => 'Chinees';
 
   @override
-  String get appSettings_languageSv => 'Svenska';
+  String get appSettings_languageSv => 'Zweeds';
 
   @override
   String get appSettings_languageNl => 'Nederlands';
 
   @override
-  String get appSettings_languageSk => 'Slovenčina';
+  String get appSettings_languageSk => 'Sloveens';
 
   @override
-  String get appSettings_languageBg => 'Български';
+  String get appSettings_languageBg => 'Bulgaars';
 
   @override
   String get appSettings_languageRu => 'Russisch';
 
   @override
   String get appSettings_languageUk => 'Oekraïens';
+
+  @override
+  String get repeater_pathHashModeOption0 => '0 - 1 byte';
+
+  @override
+  String get repeater_pathHashModeOption1 => '1 - 2 bytes';
+
+  @override
+  String get repeater_pathHashModeOption2 => '2 - 3 bytes';
+
+  @override
+  String get repeater_pathHashModeOption3 => '3 - 4 bytes';
 
   @override
   String get appSettings_enableMessageTracing => 'Berichttracking inschakelen';
@@ -772,11 +874,6 @@ class AppLocalizationsNl extends AppLocalizations {
       'Aantal pogingen om een bericht opnieuw te versturen voordat het als mislukt wordt gemarkeerd';
 
   @override
-  String path_routeWeight(String weight, String max) {
-    return '$weight/$max';
-  }
-
-  @override
   String get appSettings_battery => 'Batterij';
 
   @override
@@ -799,6 +896,9 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get appSettings_batteryLipo => 'LiPo (3,0-4,2V)';
+
+  @override
+  String get appSettings_batteryLipoHv => 'LiPo HV (3.0-4.35V)';
 
   @override
   String get appSettings_mapDisplay => 'Kaartweergave';
@@ -858,6 +958,28 @@ class AppLocalizationsNl extends AppLocalizations {
   String get appSettings_lastWeek => 'Afgelopen week';
 
   @override
+  String get appSettings_rasterTileSource => 'Rastertegelbron';
+
+  @override
+  String get appSettings_stadiaEndpoint => 'Stadia-eindpunt';
+
+  @override
+  String get appSettings_stadiaApiKey => 'Stadia API-sleutel';
+
+  @override
+  String get appSettings_stadiaApiKeyRequired =>
+      'Vereist voor gebruik van Stadia Maps';
+
+  @override
+  String appSettings_stadiaApiKeyConfigured(String maskedKey) {
+    return 'Geconfigureerd: $maskedKey';
+  }
+
+  @override
+  String get appSettings_stadiaApiKeyDialogDescription =>
+      'Voer je Stadia Maps API-sleutel in. De app gebruikt die voor rastertegelverzoeken.';
+
+  @override
   String get appSettings_offlineMapCache => 'Offline Kaartcache';
 
   @override
@@ -878,7 +1000,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get appSettings_debugCard => 'Debug';
+  String get appSettings_debugCard => 'Foutopsporing';
 
   @override
   String get appSettings_appDebugLogging => 'App Debuggen Loggen';
@@ -960,7 +1082,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get contacts_roomLogin => 'Ruimte Inloggen';
 
   @override
-  String get contacts_openChat => 'Open Chat';
+  String get contacts_openChat => 'Open gesprek';
 
   @override
   String get contacts_editGroup => 'Groep bewerken';
@@ -975,6 +1097,15 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get contacts_newGroup => 'Nieuwe Groep';
+
+  @override
+  String get contacts_moreOptions => 'Meer opties';
+
+  @override
+  String get contacts_searchOpen => 'Zoek contactpersonen';
+
+  @override
+  String get contacts_searchClose => 'Zoeken';
 
   @override
   String get contacts_groupName => 'Groepnaam';
@@ -1079,19 +1210,15 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get channels_hashtagChannel => 'Hashtag kanaal';
-
-  @override
   String get channels_public => 'Openbaar';
 
   @override
+  String channels_via(String path) {
+    return 'via $path';
+  }
+
+  @override
   String get channels_private => 'Privé';
-
-  @override
-  String get channels_publicChannel => 'Open kanaal';
-
-  @override
-  String get channels_privateChannel => 'Private kanaal';
 
   @override
   String get channels_editChannel => 'Kanaal bewerken';
@@ -1162,8 +1289,63 @@ class AppLocalizationsNl extends AppLocalizations {
   String get channels_smazCompression => 'SMAZ compressie';
 
   @override
+  String get channels_cyr2latCompression => 'Cyr2Lat compressie';
+
+  @override
+  String get channels_cyr2latCompressionDscr =>
+      'Vervangt sommige Cyrillische tekens door Latijnse tekens bij het verzenden.';
+
+  @override
+  String get channels_cyr2latSettingsHeading => 'Instellingen Cyr2Lat';
+
+  @override
+  String get channels_cyr2latSettingsSubheading => 'Lijst met vervangingen';
+
+  @override
+  String get channels_cyr2latSettingsDscr =>
+      'Bewerk de JSON-configuratie voor tekenvervanging';
+
+  @override
+  String get channels_cyr2latSettingsDialogHint => 'JSON-vervangingskaart';
+
+  @override
+  String channels_cyr2latSettingsDialogWrongJSON(Object error) {
+    return 'Onjuiste JSON: $error';
+  }
+
+  @override
   String channels_channelUpdated(String name) {
     return 'Kanaal \"$name\" is bijgewerkt';
+  }
+
+  @override
+  String get settings_cyr2latProfileAdd => 'Cyr2Lat-profiel toevoegen';
+
+  @override
+  String get settings_cyr2latProfileName => 'Profielnaam';
+
+  @override
+  String get settings_cyr2latProfileNameEmpty =>
+      'Profielnaam mag niet leeg zijn';
+
+  @override
+  String get settings_cyr2latProfileAdded => 'Profiel succesvol toegevoegd';
+
+  @override
+  String get settings_cyr2latProfileUpdated => 'Profiel succesvol bijgewerkt';
+
+  @override
+  String get settings_cyr2latProfileEdit => 'Cyr2Lat-profiel bewerken';
+
+  @override
+  String get settings_cyr2latProfileDelete => 'Cyr2Lat-profiel verwijderen';
+
+  @override
+  String get settings_cyr2latProfileDeleted => 'Profiel succesvol verwijderd';
+
+  @override
+  String settings_cyr2latProfileDeleteDscr(String name) {
+    return 'Weet u zeker dat u het profiel \"$name\" wilt verwijderen?';
   }
 
   @override
@@ -1176,7 +1358,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get channels_sortManual => 'Handmatig';
 
   @override
-  String get channels_sortAZ => 'A-Z';
+  String get channels_sortAZ => 'Alfabetisch';
 
   @override
   String get channels_sortLatestMessages => 'Recent berichten';
@@ -1223,6 +1405,20 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get channels_hashtagHint => 'bijv. #team';
+
+  @override
+  String channels_regionSetTo(String region) {
+    return 'Region: $region';
+  }
+
+  @override
+  String get channels_regionNotSet => 'Region: none';
+
+  @override
+  String get channels_regionSelect_Title => 'Select a region';
+
+  @override
+  String get channels_clearRegion => 'Clear region';
 
   @override
   String get chat_noMessages => 'Nog geen berichten.';
@@ -1280,6 +1476,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get chat_sendGif => 'GIF verzenden';
 
   @override
+  String get chat_receivedGif => 'Received a GIF';
+
+  @override
   String get chat_reply => 'Reageren';
 
   @override
@@ -1322,7 +1521,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get gifPicker_noInternet => 'Geen internetverbinding';
 
   @override
-  String get debugLog_appTitle => 'App Debug Log';
+  String get debugLog_appTitle => 'Debuglog van de app';
 
   @override
   String get debugLog_bleTitle => 'BLE Debug Log';
@@ -1350,7 +1549,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get debugLog_frames => 'Ramen';
 
   @override
-  String get debugLog_rawLogRx => 'Raw Log-RX';
+  String get debugLog_rawLogRx => 'Niet-verwerkt Log-RX';
 
   @override
   String get debugLog_noBleActivity => 'Geen BLE-activiteit nog.';
@@ -1400,35 +1599,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get debugFrame_hexDump => 'Hex Dump:';
-
-  @override
-  String get chat_pathManagement => 'Beheer van Paden';
-
-  @override
-  String get chat_ShowAllPaths => 'Toon alle paden';
-
-  @override
-  String get chat_routingMode => 'Routeerwijze';
-
-  @override
-  String get chat_autoUseSavedPath => 'Automatisch (gebruik opgeslagen pad)';
-
-  @override
-  String get chat_forceFloodMode => 'Dwing Floodsmodus';
-
-  @override
-  String get chat_recentAckPaths => 'Recente ACK Paden (tik om te gebruiken):';
-
-  @override
-  String get chat_pathHistoryFull =>
-      'De voorgeschiedenis is vol. Verwijder vermeldingen om er nieuwe aan toe te voegen.';
-
-  @override
-  String get chat_hopSingular => 'Hop';
-
-  @override
-  String get chat_hopPlural => 'hoppen';
+  String get debugFrame_hexDump => 'Hex-dump:';
 
   @override
   String chat_hopsCount(int count) {
@@ -1442,9 +1613,6 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get chat_successes => 'Succesvol';
-
-  @override
   String get chat_removePath => 'Pad verwijderen';
 
   @override
@@ -1452,50 +1620,142 @@ class AppLocalizationsNl extends AppLocalizations {
       'Geen geschiedenis van paden nog beschikbaar.\nVerzend een bericht om paden te ontdekken.';
 
   @override
-  String get chat_pathActions => 'Padacties:';
-
-  @override
-  String get chat_setCustomPath => 'Stel aangepaste pad in';
-
-  @override
-  String get chat_setCustomPathSubtitle => 'Handmatig routepad specificeren';
-
-  @override
-  String get chat_clearPath => 'Duidelijke Pad';
-
-  @override
-  String get chat_clearPathSubtitle =>
-      'Dwing herontdekking bij volgende verzending';
-
-  @override
   String get chat_pathCleared =>
       'Pad is vrijgegeven. Volgende bericht herontdekt route.';
-
-  @override
-  String get chat_floodModeSubtitle =>
-      'Gebruik de route-schakelaar in de app-balk';
-
-  @override
-  String get chat_floodModeEnabled =>
-      'Floodmodus is ingeschakeld. Schakel dit uit via het route-icoon in de app-balk.';
 
   @override
   String get chat_fullPath => 'Volledige Pad';
 
   @override
-  String get chat_pathDetailsNotAvailable =>
-      'De paddetails zijn nog niet beschikbaar. Probeer een bericht te sturen om te vernieuwen.';
+  String get routing_title => 'Routeplanning';
 
   @override
-  String chat_pathSetHops(int hopCount, String status) {
-    String _temp0 = intl.Intl.pluralLogic(
-      hopCount,
-      locale: localeName,
-      other: 'hops',
-      one: 'hop',
-    );
-    return 'Pad ingesteld: $hopCount $_temp0 - $status';
+  String get routing_modeAuto => 'Auto';
+
+  @override
+  String get routing_modeFlood => 'Overstroming';
+
+  @override
+  String get routing_modeManual => 'Handleiding';
+
+  @override
+  String get routing_modeAutoHint =>
+      'Selecteert automatisch het bekendste pad, en gebruikt een flood-algoritme als er geen bekend pad is.';
+
+  @override
+  String get routing_modeFloodHint =>
+      'Uitzendingen via elke zender. De meest betrouwbare methode, maar vereist meer uitzendtijd.';
+
+  @override
+  String get routing_modeManualHint =>
+      'Stuurt altijd de exacte route die u heeft aangegeven.';
+
+  @override
+  String get routing_currentRoute => 'Huidige route';
+
+  @override
+  String get routing_directNoHops => 'Direct – zonder tussenliggende schakels';
+
+  @override
+  String get routing_noPathYet =>
+      'Er is nog geen route gevonden. De berichten blijven binnenkomen totdat een route is ontdekt.';
+
+  @override
+  String get routing_floodBroadcast => 'Uitgestoten via elke zender.';
+
+  @override
+  String get routing_editPath => 'Pad bewerken';
+
+  @override
+  String get routing_forgetPath => 'Vergeet het pad';
+
+  @override
+  String get routing_knownPaths => 'Bekende routes';
+
+  @override
+  String get routing_knownPathsHint => 'Maak een route om er naartoe te gaan.';
+
+  @override
+  String get routing_inUse => 'In gebruik';
+
+  @override
+  String get routing_qualityStrong => 'Sterke eerste sprong';
+
+  @override
+  String get routing_qualityGood => 'Een goede eerste stap';
+
+  @override
+  String get routing_qualityFair => 'Een goede eerste hop';
+
+  @override
+  String get routing_qualityWorked => 'Is geleverd';
+
+  @override
+  String get routing_qualityFlood => 'Hears via een overstroming';
+
+  @override
+  String get routing_qualityUntested => 'Niet getest';
+
+  @override
+  String routing_lastWorked(String when) {
+    return 'worked $when';
   }
+
+  @override
+  String get routing_neverWorked => 'nooit bevestigd';
+
+  @override
+  String routing_deliveryCounts(int successes, int failures) {
+    return '$successes zijn behaald, $failures zijn mislukt';
+  }
+
+  @override
+  String get routing_floodDelivery => 'Levering bij overstroming';
+
+  @override
+  String get pathEditor_title => 'Pad creëren';
+
+  @override
+  String pathEditor_hopCounter(int count) {
+    return '$count van 64 hopgranen';
+  }
+
+  @override
+  String get pathEditor_noHops =>
+      'Er zijn nog geen hop toegevoegd. Klik op de onderstaande knoppen om ze in de juiste volgorde toe te voegen, of sla de bestelling op zonder hop om deze direct te versturen.';
+
+  @override
+  String get pathEditor_addHops => 'Voeg hop toe in de juiste volgorde.';
+
+  @override
+  String get pathEditor_searchRepeaters => 'Zoek naar herhaaldelijke zenders';
+
+  @override
+  String get pathEditor_advancedHex => 'Geavanceerd: ruwe hex-pad';
+
+  @override
+  String get pathEditor_hexLabel => 'Hex-voorkanten';
+
+  @override
+  String get pathEditor_hexHelper =>
+      'Twee hex-tekens per stap, gescheiden door komma\'s';
+
+  @override
+  String pathEditor_invalidTokens(String tokens) {
+    return 'Ongeldig: $tokens';
+  }
+
+  @override
+  String get pathEditor_tooManyHops => 'Maximaal 64 hopken';
+
+  @override
+  String get pathEditor_usePath => 'Gebruik deze route.';
+
+  @override
+  String get pathEditor_removeHop => 'Verwijder de hop';
+
+  @override
+  String get pathEditor_unknownHop => 'Onbekend type zender';
 
   @override
   String get chat_pathSavedLocally =>
@@ -1532,7 +1792,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get chat_floodAuto => 'Flood (auto)';
+  String get chat_floodAuto => 'Overstroming (van een auto)';
 
   @override
   String get chat_direct => 'Direct';
@@ -1544,6 +1804,12 @@ class AppLocalizationsNl extends AppLocalizations {
   String chat_unread(int count) {
     return 'Nieuw: $count';
   }
+
+  @override
+  String get chat_markAsUnread => 'Markeer als ongelezen';
+
+  @override
+  String get chat_newMessages => 'Nieuwe berichten';
 
   @override
   String get chat_openLink => 'Link openen?';
@@ -1564,7 +1830,40 @@ class AppLocalizationsNl extends AppLocalizations {
   String get chat_invalidLink => 'Ongeldig linkformaat';
 
   @override
-  String get map_title => 'Node Map';
+  String get map_title => 'Kaart van de knopen';
+
+  @override
+  String get map_searchHint => 'Zoek op naam of ID van de knoop';
+
+  @override
+  String get map_activity => 'Activiteit';
+
+  @override
+  String get map_online => 'Online';
+
+  @override
+  String get map_recent => 'Recent';
+
+  @override
+  String get map_stale => 'Verouderd';
+
+  @override
+  String get map_visible => 'Zichtbaar';
+
+  @override
+  String get map_hidden => 'Verborgen';
+
+  @override
+  String get map_centerOnNode => 'Centreer op node';
+
+  @override
+  String get map_details => 'Details';
+
+  @override
+  String get map_noGps => 'Geen GPS';
+
+  @override
+  String get map_noResults => 'Geen overeenkomende nodes';
 
   @override
   String get map_lineOfSight => 'Zichtlijn';
@@ -1581,7 +1880,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String map_nodesCount(int count) {
-    return 'Nodes: $count';
+    return 'Knooppunten: $count';
   }
 
   @override
@@ -1593,7 +1892,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get map_chat => 'Chat';
 
   @override
-  String get map_repeater => 'Repeater';
+  String get map_repeater => 'Herhaald';
 
   @override
   String get map_room => 'Ruimte';
@@ -1627,6 +1926,24 @@ class AppLocalizationsNl extends AppLocalizations {
   String get map_flags => 'Vlaggen';
 
   @override
+  String get map_type => 'Type';
+
+  @override
+  String get map_path => 'Path';
+
+  @override
+  String get map_location => 'Location';
+
+  @override
+  String get map_estLocation => 'Est. Location';
+
+  @override
+  String get map_publicKey => 'Public Key';
+
+  @override
+  String get map_publicKeyPrefixHint => 'e.g. ab12';
+
+  @override
   String get map_shareMarkerHere => 'Deel marker hier';
 
   @override
@@ -1636,7 +1953,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get map_pinLabel => 'Label vastzetten';
 
   @override
-  String get map_label => 'Label';
+  String get map_label => 'Etiket';
 
   @override
   String get map_pointOfInterest => 'Interessepunt';
@@ -1663,7 +1980,7 @@ class AppLocalizationsNl extends AppLocalizations {
       'Verbind met een apparaat om markers te delen';
 
   @override
-  String get map_filterNodes => 'Filter Nodes';
+  String get map_filterNodes => 'Filternodes';
 
   @override
   String get map_nodeTypes => 'Nodetypes';
@@ -1672,7 +1989,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get map_chatNodes => 'Chatnodes';
 
   @override
-  String get map_repeaters => 'Repeaters';
+  String get map_repeaters => 'Herhaalders';
 
   @override
   String get map_otherNodes => 'Andere Nodes';
@@ -1710,6 +2027,9 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get map_sharedPin => 'Gedeelde pin';
+
+  @override
+  String get map_sharedAt => 'Gedeeld';
 
   @override
   String get map_joinRoom => 'Kamer Toetreden';
@@ -1753,7 +2073,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get mapCache_downloadAction => 'Download';
+  String get mapCache_downloadAction => 'Downloaden';
 
   @override
   String mapCache_cachedTiles(int count) {
@@ -1806,6 +2126,42 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String mapCache_failedDownloads(int count) {
     return 'Mislukte downloads: $count';
+  }
+
+  @override
+  String get mapCache_cachedTilesLabel => 'Cached tiles';
+
+  @override
+  String get mapCache_cachedTileSummaryLabel => 'Cached tile summary';
+
+  @override
+  String mapCache_bulkDownloadDisabledForSource(String source) {
+    return 'Offline bulk downloads are disabled for $source.';
+  }
+
+  @override
+  String mapCache_bulkDownloadDisabledInConfig(String source) {
+    return 'Offline bulk downloads are disabled for $source in this app configuration.';
+  }
+
+  @override
+  String mapCache_summarySource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String mapCache_summaryCachedTilesForSource(int count) {
+    return 'Cached tiles for source: $count';
+  }
+
+  @override
+  String mapCache_summaryCachedInSelection(int count) {
+    return 'Cached in selected area/zoom: $count';
+  }
+
+  @override
+  String mapCache_summaryApproxCacheSize(String size) {
+    return 'Approx cache size: $size';
   }
 
   @override
@@ -1901,7 +2257,7 @@ class AppLocalizationsNl extends AppLocalizations {
       'Voer het wachtwoord van de kamer in om toegang te krijgen tot instellingen en status.';
 
   @override
-  String get login_routing => 'Routing';
+  String get login_routing => 'Routeplanning';
 
   @override
   String get login_routingMode => 'Routeerwijze';
@@ -1939,63 +2295,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get common_clear => 'Schoonmaken';
 
   @override
-  String path_currentPath(String path) {
-    return 'Huidige pad: $path';
-  }
-
-  @override
-  String path_usingHopsPath(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'hops',
-      one: 'hop',
-    );
-    return 'Gebruik $count $_temp0 pad';
-  }
-
-  @override
-  String get path_enterCustomPath => 'Voer aangepaste pad in';
-
-  @override
   String get path_currentPathLabel => 'Huidige pad';
 
   @override
-  String get path_hexPrefixInstructions =>
-      'Voer 2-letter hex-voorgiffen voor elke hop in, gescheiden door komma\'s.';
-
-  @override
-  String get path_hexPrefixExample =>
-      'Voorbeeld: A1,F2,3C (elke node gebruikt het eerste byte van zijn openbare sleutel)';
-
-  @override
-  String get path_labelHexPrefixes => 'Pad (hex-voorkeursletters)';
-
-  @override
-  String get path_helperMaxHops =>
-      'Maximaal 64 sprongen. Elke prefix is 2 hexadecimale tekens (1 byte)';
-
-  @override
-  String get path_selectFromContacts => 'Of select contacten:';
-
-  @override
   String get path_noRepeatersFound => 'Geen repeaters of roomservers gevonden.';
-
-  @override
-  String get path_customPathsRequire =>
-      'Aangepaste paden vereisen tussentse overstappen die berichten kunnen doorgeven.';
-
-  @override
-  String path_invalidHexPrefixes(String prefixes) {
-    return 'Ongeldige hex-voorkeursletters: $prefixes';
-  }
-
-  @override
-  String get path_tooLong =>
-      'Pad is te lang. Maximaal 64 sprongen zijn toegestaan.';
-
-  @override
-  String get path_setPath => 'Stel Pad in';
 
   @override
   String get repeater_management => 'Beheer Repeaters';
@@ -2023,7 +2326,7 @@ class AppLocalizationsNl extends AppLocalizations {
       'Status, statistieken en buren bekijken';
 
   @override
-  String get repeater_telemetry => 'Telemetry';
+  String get repeater_telemetry => 'Telemetrie';
 
   @override
   String get repeater_telemetrySubtitle =>
@@ -2060,16 +2363,6 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get repeater_routingMode => 'Routeerwijze';
-
-  @override
-  String get repeater_autoUseSavedPath =>
-      'Automatisch (gebruik opgeslagen pad)';
-
-  @override
-  String get repeater_forceFloodMode => 'Dwing Floodmodus Af';
-
-  @override
-  String get repeater_pathManagement => 'Beheer van paden';
 
   @override
   String get repeater_refresh => 'Vernieuwen';
@@ -2119,6 +2412,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get repeater_rxAirtime => 'RX-zendtijd';
 
   @override
+  String get repeater_chanUtil => 'Gebruik van het kanaal';
+
+  @override
   String get repeater_packetStatistics => 'Pakketstatistieken';
 
   @override
@@ -2152,7 +2448,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String repeater_duplicatesFloodDirect(String flood, String direct) {
-    return 'Flood: $flood, Direct: $direct';
+    return 'Overstroming: $flood, Direct: $direct';
   }
 
   @override
@@ -2327,6 +2623,199 @@ class AppLocalizationsNl extends AppLocalizations {
   String get repeater_settingsSaved => 'Instellingen succesvol opgeslagen';
 
   @override
+  String get repeater_rxGain => 'Verhoogde RX-uitgang';
+
+  @override
+  String get repeater_rxGainHelper =>
+      'Hogere gevoeligheid, grotere stroomverbruik (alleen voor SX1262/SX1268)';
+
+  @override
+  String get repeater_refreshRxGain =>
+      'Versterk de reeds bestaande RX-verbetering.';
+
+  @override
+  String get repeater_multiAcks => 'Meerdere bevestigingen';
+
+  @override
+  String get repeater_multiAcksSubtitle =>
+      'Bevestig berichten via verschillende routes voor een betere levering.';
+
+  @override
+  String get repeater_refreshMultiAcks => 'Herhaal meerdere bevestigingen';
+
+  @override
+  String get repeater_networkHealth => 'Netwerkgezondheid';
+
+  @override
+  String get repeater_loopDetect => 'Detectie van beweging';
+
+  @override
+  String get repeater_loopDetectHelper =>
+      'Verzend pakketten die eruitzien als routing-lusjes';
+
+  @override
+  String get repeater_loopDetectOff => 'Af';
+
+  @override
+  String get repeater_loopDetectMinimal => 'Minimaal';
+
+  @override
+  String get repeater_loopDetectModerate => 'Matig';
+
+  @override
+  String get repeater_loopDetectStrict => 'Strikte';
+
+  @override
+  String get repeater_dutyCycle => 'Werkcyclus';
+
+  @override
+  String get repeater_dutyCycleHelper =>
+      'Maximale percentage van de beschikbare uitzendtijd';
+
+  @override
+  String repeater_dutyCyclePercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get repeater_ownerInfo => 'Informatie over de operator';
+
+  @override
+  String get repeater_ownerInfoHelper => 'Openbare metadata voor deze repeater';
+
+  @override
+  String get repeater_refreshOwnerInfo => 'Herstel informatie over de operator';
+
+  @override
+  String get repeater_floodMax => 'Maximale hoeveelheid hop';
+
+  @override
+  String get repeater_floodMaxHelper =>
+      'Maximale hoeveelheid hop die een pakket kan bevatten (0-64)';
+
+  @override
+  String get repeater_advancedSettings => 'Geavanceerd';
+
+  @override
+  String get repeater_advancedSettingsSubtitle =>
+      'Regelhendels voor ervaren gebruikers';
+
+  @override
+  String get repeater_pathHashMode => 'Hash-modus voor paden';
+
+  @override
+  String get repeater_pathHashModeHelper =>
+      'Bytes die gebruikt worden om de ID van deze repeater te coderen in flood-pad/lusdetectietags. 0=1 byte (256 ID\'s, tot 64 hops), 1=2 bytes (65.000 ID\'s, tot 32 hops), 2=3 bytes (16 miljoen ID\'s, tot 21 hops). Firmware vóór v1.14 gebruikte altijd 1-byte paden; v1.14 en nieuwer kunnen worden ingesteld op 2- of 3-byte paden.';
+
+  @override
+  String get repeater_keySettings => 'Change Identity Keys';
+
+  @override
+  String get repeater_keySettingsSubtitle =>
+      'Change the public/private keypair';
+
+  @override
+  String get repeater_prvKey => 'Private key';
+
+  @override
+  String get repeater_prvKeyHelper =>
+      'A new private key for the repeater, a 128-character hex string.';
+
+  @override
+  String get repeater_generatePrvKey => 'Generate a random keypair';
+
+  @override
+  String get repeater_stopGeneratingPrvKey => 'Interrupt search for keypair';
+
+  @override
+  String get repeater_pubKey => 'Public key';
+
+  @override
+  String get repeater_pubKeyHelper =>
+      'This is the public key that goes with the generated private key. You can\'t set this directly.';
+
+  @override
+  String get repeater_pubKeyPrefix => 'Desired prefix';
+
+  @override
+  String repeater_pubKeyPrefixHelper(int tries) {
+    return 'Find a public key that starts with these hex digits. Expected tries needed: $tries.';
+  }
+
+  @override
+  String get repeater_txDelay => 'Vertraging bij Flood TX';
+
+  @override
+  String get repeater_txDelayHelper =>
+      'Herzendinterval voor verkeer tijdens overstromingen, als een veelvoud van de tijd die het pakket nodig heeft (0-2, standaard 0.5). Een hoger getal betekent minder botsingen, maar ook een langere leveringstijd.';
+
+  @override
+  String get repeater_directTxDelay => 'Directe vertraging';
+
+  @override
+  String get repeater_directTxDelayHelper =>
+      'De overzending van tijdslots voor directe (niet-massaal) verkeer, als een vermenigvuldigingsfactor van de tijd die een pakket nodig heeft (0-2, standaard 0,3).';
+
+  @override
+  String get repeater_intThresh => 'Grenswaarde voor interferentie';
+
+  @override
+  String get repeater_intThreshHelper =>
+      'De drempelwaarde is ingesteld zodat de radio storingen boven deze waarde kan detecteren en blokkeren. 0 staat voor \"uitgezet\" – alleen verhoog deze waarde als u fouten in een storingrijke band ziet.';
+
+  @override
+  String get repeater_agcResetInterval =>
+      'Interval voor het opnieuw instellen van AGC';
+
+  @override
+  String get repeater_agcResetIntervalHelper =>
+      'Hoe vaak moet u de automatische gainregeling van de radio opnieuw instellen om terug te keren van een situatie waarin de gain vastzit? Elke seconde, of elke 4e seconde. Het uitschakelen van de periodieke reset (0) zorgt ervoor dat de gain niet automatisch wordt aangepast.';
+
+  @override
+  String get repeater_actionsTitle => 'Acties';
+
+  @override
+  String get repeater_sendAdvert => 'Verzend advertentie over overstromingen';
+
+  @override
+  String get repeater_sendAdvertSubtitle =>
+      'Zend een advertentie over overstromingen uit via het netwerk.';
+
+  @override
+  String get repeater_sendAdvertZeroHop =>
+      'Verzend een advertentie zonder tussenliggende stap';
+
+  @override
+  String get repeater_sendAdvertZeroHopSubtitle =>
+      'Zend een advertentie met één enkele verbinding (zonder tussenliggende zenders).';
+
+  @override
+  String get repeater_clockSync => 'Synchroniseer klok nu';
+
+  @override
+  String get repeater_clockSyncSubtitle =>
+      'Stel de tijd van je telefoon in op de repeater.';
+
+  @override
+  String repeater_actionSucceeded(String action) {
+    return '$action is gelukt';
+  }
+
+  @override
+  String repeater_actionFailed(String action, String error) {
+    return '$action failed: $error';
+  }
+
+  @override
+  String get repeater_settingsSavedRebootNeeded =>
+      'Instellingen opgeslagen – start de zender opnieuw om de wijzigingen toe te passen.';
+
+  @override
+  String repeater_settingsPartialFailure(String failures) {
+    return 'Sommige instellingen zijn niet correct uitgevoerd: $failures';
+  }
+
+  @override
   String repeater_errorSavingSettings(String error) {
     return 'Fout bij het opslaan van de instellingen: $error';
   }
@@ -2342,10 +2831,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get repeater_refreshTxPower => 'Nieuw laden TX-vermogen';
 
   @override
-  String get repeater_refreshLocationSettings =>
-      'Instellingen Locatie Vernieuwen';
-
-  @override
   String get repeater_refreshPacketForwarding =>
       'Vernieuwen Pakket Doorversturing';
 
@@ -2354,10 +2839,6 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get repeater_refreshPrivacyMode => 'Privacymode vernieuwen';
-
-  @override
-  String get repeater_refreshAdvertisementSettings =>
-      'Instellingen Advertentie Bijwerken';
 
   @override
   String repeater_refreshed(String label) {
@@ -2370,7 +2851,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get repeater_cliTitle => 'Repeater CLI';
+  String get repeater_cliTitle => 'CLI-interface voor de repeater';
 
   @override
   String get repeater_debugNextCommand => 'Debug Volgende Commando';
@@ -2662,7 +3143,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get repeater_bridge => 'Bruggen';
 
   @override
-  String get repeater_logging => 'Logging';
+  String get repeater_logging => 'Loggen';
 
   @override
   String get repeater_neighborsRepeaterOnly => 'Buren (Alleen repeaters)';
@@ -2681,6 +3162,283 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get repeater_gpsNote =>
       'De GPS-commando is geïntroduceerd om locatiegerelateerde onderwerpen te beheren.';
+
+  @override
+  String get repeater_getCategory => 'Waarden verkrijgen';
+
+  @override
+  String get repeater_powerMgmt => 'Energiebeheer';
+
+  @override
+  String get repeater_sensors => 'Sensoren';
+
+  @override
+  String get repeater_cliHelpPowerOff =>
+      'Zorgt ervoor dat het apparaat wordt uitgeschakeld. (geen reactie verwacht)';
+
+  @override
+  String get repeater_cliHelpClkReboot =>
+      'Stelt de klok terug naar een bekende tijd en start het apparaat opnieuw op.';
+
+  @override
+  String get repeater_cliHelpAdvertZeroHop =>
+      'Verstuurt een advertentie die alleen naar directe buren wordt gericht (geen tussenliggende stops).';
+
+  @override
+  String get repeater_cliHelpStartOta =>
+      'Start een firmware-update via de lucht op ondersteunde boards.';
+
+  @override
+  String get repeater_cliHelpTime =>
+      'Stelt de klok van het apparaat in op de gegeven Unix-tijd (aantal seconden vanaf de Unix-epoch). De klok kan niet teruggedraaid worden.';
+
+  @override
+  String get repeater_cliHelpBoard =>
+      'Geeft de fabrikant van het bord en/of de hardware-identificatie weer.';
+
+  @override
+  String get repeater_cliHelpDiscoverNeighbors =>
+      'Stuurt een verzoek om buren in de buurt te ontdekken. (Alleen van toepassing op een repeater)';
+
+  @override
+  String get repeater_cliHelpPowersaving =>
+      'Geeft aan of de energiebesparingsmodus is ingeschakeld of uitgeschakeld.';
+
+  @override
+  String get repeater_cliHelpPowersavingOnOff =>
+      'Activeert of deactiveert de energiebesparingsmodus (indien ondersteund).';
+
+  @override
+  String get repeater_cliHelpErase =>
+      '(Alleen voor seriële verbindingen) Formateert het bestandssysteem van het apparaat. Verwijdert alle instellingen en contacten.';
+
+  @override
+  String get repeater_cliHelpSetDutyCycle =>
+      'Stelt het maximale toegestane transmissiepercentage in (in procenten, 1-100). Past intern de tijdsschaal aan.';
+
+  @override
+  String get repeater_cliHelpSetPrvKey =>
+      '(Alleen voor seriële toepassingen) Vervangt de private sleutel van het apparaat. Een herstart is vereist om deze wijziging toe te passen. Genereert een nieuwe publieke sleutel.';
+
+  @override
+  String get repeater_cliHelpSetRadioRxGain =>
+      '(Alleen voor SX126x-chips) Schakelt de versterkte RX-gain in om de gevoeligheid te verbeteren bij een hoger stroomverbruik.';
+
+  @override
+  String get repeater_cliHelpSetOwnerInfo =>
+      'Definieert de string met contactgegevens van de eigenaar, die in de advertenties wordt opgenomen. Gebruik \'|\' voor nieuwe regels.';
+
+  @override
+  String get repeater_cliHelpSetPathHashMode =>
+      'Stelt de modus voor het berekenen van de hash van de route in. 0 = voorheen, 1 = standaard, 2 = strikt. Beïnvloedt hoe de routes worden gematched.';
+
+  @override
+  String get repeater_cliHelpSetLoopDetect =>
+      'Stelt de gevoeligheid voor het detecteren van een lus in de routing in: uit, minimaal, matig of strikt.';
+
+  @override
+  String get repeater_cliHelpSetFreq =>
+      '(Alleen voor seriële communicatie) Stelt snel alleen de frequentie in. Herstart is vereist. Het is aan te raden om \"radio instellingen\" te gebruiken voor alle radioparameters.';
+
+  @override
+  String get repeater_cliHelpSetBridgeChannel =>
+      '(Alleen voor ESPNow-brug) Stelt het WiFi-kanaal (1-14) in dat door de brug wordt gebruikt.';
+
+  @override
+  String get repeater_cliHelpGetName =>
+      'Toont de naam van de geconfigureerde knoop.';
+
+  @override
+  String get repeater_cliHelpGetRole =>
+      'Geeft de rol van de firmware aan (herhaald, server voor een kamer, enz.).';
+
+  @override
+  String get repeater_cliHelpGetPublicKey =>
+      'Toont het openbare sleutel van het apparaat.';
+
+  @override
+  String get repeater_cliHelpGetPrvKey =>
+      '(Alleen voor seriële communicatie) Toont de private sleutel van het apparaat. Behandel dit als een geheim.';
+
+  @override
+  String get repeater_cliHelpGetRepeat =>
+      'Geeft aan of het doorsturen van pakketten (als repeater) is ingeschakeld of uitgeschakeld.';
+
+  @override
+  String get repeater_cliHelpGetTx => 'Toont de huidige zendvermogen in dBm.';
+
+  @override
+  String get repeater_cliHelpGetFreq =>
+      'Toont de geconfigureerde frequentie in MHz.';
+
+  @override
+  String get repeater_cliHelpGetRadio =>
+      'Geeft alle radioparameters weer: frequentie, bandbreedte, spreidfactor, codegraad.';
+
+  @override
+  String get repeater_cliHelpGetRadioRxGain =>
+      '(Alleen voor SX126x-chips) Toont de status van de versterking van de RX-ontvangst.';
+
+  @override
+  String get repeater_cliHelpGetAf => 'Geeft de huidige tijdsfactor weer.';
+
+  @override
+  String get repeater_cliHelpGetDutyCycle =>
+      'Toont de huidige toegestane duty cycle als een percentage.';
+
+  @override
+  String get repeater_cliHelpGetIntThresh =>
+      'Toont het drempelwaarde voor signaalinterferentie in dB.';
+
+  @override
+  String get repeater_cliHelpGetAgcResetInterval =>
+      'Geeft het interval in seconden aan voor het resetten van de AGC (Automatic Gain Control).';
+
+  @override
+  String get repeater_cliHelpGetMultiAcks =>
+      'Geeft aan of de modus \"dubbele bevestiging\" is ingeschakeld (1) of uitgeschakeld (0).';
+
+  @override
+  String get repeater_cliHelpGetAllowReadOnly =>
+      'Geeft aan of er toegang is voor gastgebruikers zonder rechten.';
+
+  @override
+  String get repeater_cliHelpGetAdvertInterval =>
+      'Geeft de duur van de lokale reclame in minuten aan.';
+
+  @override
+  String get repeater_cliHelpGetFloodAdvertInterval =>
+      'Geeft de duur van de reclame-interval in uren aan.';
+
+  @override
+  String get repeater_cliHelpGetGuestPassword =>
+      'Toont het ingestelde gastwachtwoord.';
+
+  @override
+  String get repeater_cliHelpGetLat => 'Toont de ingestelde breedtegraad.';
+
+  @override
+  String get repeater_cliHelpGetLon => 'Toont de ingestelde lengtegraad.';
+
+  @override
+  String get repeater_cliHelpGetRxDelay =>
+      'Toont de basiswaarde van de rx-vertraging.';
+
+  @override
+  String get repeater_cliHelpGetTxDelay =>
+      'Geeft de factor weer die de vertraging in de flood-modus bepaalt.';
+
+  @override
+  String get repeater_cliHelpGetDirectTxDelay =>
+      'Geeft de factor voor de vertraging in de directe modus weer.';
+
+  @override
+  String get repeater_cliHelpGetFloodMax =>
+      'Toont het maximale aantal keer dat een overstroming heeft plaatsgevonden.';
+
+  @override
+  String get repeater_cliHelpGetOwnerInfo =>
+      'Toont de string met contactgegevens van de eigenaar.';
+
+  @override
+  String get repeater_cliHelpGetPathHashMode =>
+      'Toont de modus voor het berekenen van de hash (0/1/2).';
+
+  @override
+  String get repeater_cliHelpGetLoopDetect =>
+      'Geeft de gevoeligheid voor het detecteren van lusvorming weer.';
+
+  @override
+  String get repeater_cliHelpGetAcl =>
+      '(Alleen voor seriële communicatie) Geeft de toegangscontroles weer op een repeater.';
+
+  @override
+  String get repeater_cliHelpGetBridgeEnabled =>
+      'Geeft aan of de brug is ingeschakeld.';
+
+  @override
+  String get repeater_cliHelpGetBridgeDelay =>
+      'Geeft de vertraging van de brug in milliseconden weer.';
+
+  @override
+  String get repeater_cliHelpGetBridgeSource =>
+      'Geeft aan of de brug RX- of TX-pakketten verwerkt.';
+
+  @override
+  String get repeater_cliHelpGetBridgeBaud =>
+      '(Alleen RS232-brug) Toont de baud-snelheid van de brug.';
+
+  @override
+  String get repeater_cliHelpGetBridgeChannel =>
+      '(Alleen voor ESPNow-brug) Toont het WiFi-kanaal van de brug.';
+
+  @override
+  String get repeater_cliHelpGetBridgeSecret =>
+      '(Alleen voor ESPNow-brug) Toont het gedeelde geheime sleutel.';
+
+  @override
+  String get repeater_cliHelpGetBootloaderVer =>
+      '(Alleen voor NRF52) Toont de versie van de bootloader.';
+
+  @override
+  String get repeater_cliHelpGetAdcMultiplier =>
+      'Toont de ADC-vermenigvuldiging (schalen van de batterijspanning).';
+
+  @override
+  String get repeater_cliHelpGetPwrMgtSupport =>
+      'Geeft aan of het bestuur ondersteuning heeft voor het beheer van energieverbruik.';
+
+  @override
+  String get repeater_cliHelpGetPwrMgtSource =>
+      'Geeft de huidige stroombron aan: extern of batterij.';
+
+  @override
+  String get repeater_cliHelpGetPwrMgtBootReason =>
+      'Geeft de meest recente redenen voor het opnieuw opstarten en afsluiten weer.';
+
+  @override
+  String get repeater_cliHelpGetPwrMgtBootMv =>
+      'Geeft de batterijspanning in mV weer, direct na het opstarten.';
+
+  @override
+  String get repeater_cliHelpSensorGet =>
+      'Leest een aangepaste sensorgegevens op basis van een sleutel.';
+
+  @override
+  String get repeater_cliHelpSensorSet =>
+      'Maakt een aangepaste instelling voor een sensor.';
+
+  @override
+  String get repeater_cliHelpSensorList =>
+      'Toont alle aangepaste instellingen voor sensoren, gegroepeerd op basis van een optionele startindex.';
+
+  @override
+  String get repeater_cliHelpRegionDefault =>
+      'Toont het huidige standaard regio-bereik.';
+
+  @override
+  String get repeater_cliHelpRegionDefaultSet =>
+      'Stelt de standaard regio-omvang in. Gebruik \"<null>\" om deze te resetten.';
+
+  @override
+  String get repeater_cliHelpRegionListAllowed =>
+      'Lijst van gebieden waar doorstromen tijdens overstromingen is toegestaan.';
+
+  @override
+  String get repeater_cliHelpRegionListDenied =>
+      'Geeft een lijst van regio\'s die het verkeer tijdens overstromingen verbieden.';
+
+  @override
+  String get repeater_cliHelpStatsPackets =>
+      '(Alleen voor seriële verbindingen) Toont statistieken op pakketniveau.';
+
+  @override
+  String get repeater_cliHelpStatsRadio =>
+      '(Alleen voor serienummers) Toont radio-statistieken.';
+
+  @override
+  String get repeater_cliHelpStatsCore =>
+      '(Alleen voor seriële communicatie) Toont de belangrijkste firmware-statistieken.';
 
   @override
   String get telemetry_receivedData => 'Ontvangen Telemetriedata';
@@ -2737,6 +3495,139 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String get telemetry_digitalInputLabel => 'Digitale ingang';
+
+  @override
+  String get telemetry_digitalOutputLabel => 'Digitale uitgang';
+
+  @override
+  String get telemetry_analogInputLabel => 'Analoge ingang';
+
+  @override
+  String get telemetry_analogOutputLabel => 'Analoge uitgang';
+
+  @override
+  String get telemetry_genericLabel => 'Algemene sensor';
+
+  @override
+  String get telemetry_luminosityLabel => 'Lichtsterkte';
+
+  @override
+  String get telemetry_presenceLabel => 'Aanwezigheid';
+
+  @override
+  String get telemetry_humidityLabel => 'Luchtvochtigheid';
+
+  @override
+  String get telemetry_accelerometerLabel => 'Versnellingsmeter';
+
+  @override
+  String get telemetry_pressureLabel => 'Druk';
+
+  @override
+  String get telemetry_altitudeLabel => 'Hoogte';
+
+  @override
+  String get telemetry_frequencyLabel => 'Frequentie';
+
+  @override
+  String get telemetry_percentageLabel => 'Percentage';
+
+  @override
+  String get telemetry_concentrationLabel => 'Concentratie';
+
+  @override
+  String get telemetry_powerLabel => 'Vermogen';
+
+  @override
+  String get telemetry_distanceLabel => 'Afstand';
+
+  @override
+  String get telemetry_energyLabel => 'Energie';
+
+  @override
+  String get telemetry_directionLabel => 'Richting';
+
+  @override
+  String get telemetry_timeLabel => 'Tijd';
+
+  @override
+  String get telemetry_gyrometerLabel => 'Gyrometer';
+
+  @override
+  String get telemetry_colourLabel => 'Kleur';
+
+  @override
+  String get telemetry_gpsLabel => 'GPS';
+
+  @override
+  String get telemetry_switchLabel => 'Schakelaar';
+
+  @override
+  String get telemetry_polylineLabel => 'Polylijn';
+
+  @override
+  String telemetry_altitudeValue(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String telemetry_frequencyValue(String hertz) {
+    return '$hertz Hz';
+  }
+
+  @override
+  String telemetry_pressureValue(String hpa) {
+    return '$hpa hPa';
+  }
+
+  @override
+  String telemetry_luminosityValue(String lux) {
+    return '$lux lx';
+  }
+
+  @override
+  String telemetry_powerValue(String watts) {
+    return '$watts W';
+  }
+
+  @override
+  String telemetry_distanceValue(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String telemetry_energyValue(String kilowattHours) {
+    return '$kilowattHours kWh';
+  }
+
+  @override
+  String telemetry_directionValue(String degrees) {
+    return '$degrees°';
+  }
+
+  @override
+  String telemetry_concentrationValue(String ppm) {
+    return '$ppm ppm';
+  }
+
+  @override
+  String telemetry_percentageValue(String percent) {
+    return '$percent%';
+  }
+
+  @override
+  String telemetry_analogValue(String value) {
+    return '$value';
+  }
+
+  @override
+  String get telemetry_autoFetchQuantity => 'Aantal aanvragen';
+
+  @override
+  String get telemetry_error => 'Kan gegevens niet ophalen';
+
+  @override
   String get neighbors_receivedData => 'Ontvangen Buurdata';
 
   @override
@@ -2774,7 +3665,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get channelPath_otherObservedPaths => 'Overige Waargenomen Paden';
 
   @override
-  String get channelPath_repeaterHops => 'Repeater Hops';
+  String get channelPath_repeaterHops => 'Herhaalde sprongen';
 
   @override
   String get channelPath_noHopDetails =>
@@ -2790,7 +3681,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get channelPath_timeLabel => 'Tijd';
 
   @override
-  String get channelPath_repeatsLabel => 'Repeats';
+  String get channelPath_repeatsLabel => 'Herhaalt';
 
   @override
   String channelPath_pathLabel(int index) {
@@ -2822,7 +3713,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get channelPath_unknownPath => 'Onbekend';
 
   @override
-  String get channelPath_floodPath => 'Flood';
+  String get channelPath_floodPath => 'Overstroming';
 
   @override
   String get channelPath_directPath => 'Direct';
@@ -3051,7 +3942,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get listFilter_heardRecently => 'Recent gezien';
 
   @override
-  String get listFilter_az => 'A-Z';
+  String get listFilter_az => 'Alfabetisch';
 
   @override
   String get listFilter_filters => 'Filters';
@@ -3072,7 +3963,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get listFilter_users => 'Gebruikers';
 
   @override
-  String get listFilter_repeaters => 'Repeaters';
+  String get listFilter_repeaters => 'Herhalers';
 
   @override
   String get listFilter_roomServers => 'Roomservers';
@@ -3223,6 +4114,37 @@ class AppLocalizationsNl extends AppLocalizations {
   String get losLegendTerrain => 'Terrein';
 
   @override
+  String get losBlockedSpotsTitle => 'Geplande plaatsen';
+
+  @override
+  String get losBlockedSpotsHint =>
+      'Tik op een geblokkeerd gebied om het op de kaart te markeren.';
+
+  @override
+  String losBlockedSpotChip(
+    String distance,
+    String distanceUnit,
+    String obstruction,
+    String heightUnit,
+  ) {
+    return '$distance $distanceUnit • $obstruction $heightUnit';
+  }
+
+  @override
+  String get losSelectedObstructionTitle => 'Geselecteerde obstakel';
+
+  @override
+  String losSelectedObstructionDetails(
+    String obstruction,
+    String heightUnit,
+    String distanceFromA,
+    String distanceUnit,
+    String distanceFromB,
+  ) {
+    return 'Blocked by $obstruction $heightUnit, $distanceFromA from A and $distanceFromB from B ($distanceUnit).';
+  }
+
+  @override
   String get losFrequencyLabel => 'Frequentie';
 
   @override
@@ -3251,7 +4173,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get contacts_repeaterPathTrace => 'Pad traceren naar repeater';
 
   @override
-  String get contacts_repeaterPing => 'Ping repeater';
+  String get contacts_repeaterPing => 'Ping-repeater';
 
   @override
   String get contacts_roomPathTrace => 'Padtrace naar room server';
@@ -3264,7 +4186,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String contacts_pathTraceTo(String name) {
-    return 'Trace route to $name';
+    return 'Volg de route naar $name';
   }
 
   @override
@@ -3596,6 +4518,16 @@ class AppLocalizationsNl extends AppLocalizations {
       'Stelt de standaardstatus van het pictogram voor de vertaling van de componist in.';
 
   @override
+  String get translation_autoIncomingTitle => 'Berichten automatisch vertalen';
+
+  @override
+  String get translation_autoIncomingSubtitle =>
+      'Vertaalt berichten automatisch voor meldingen en voor chats of kanalen.';
+
+  @override
+  String get translation_translateMessage => 'Bericht vertalen';
+
+  @override
   String get translation_targetLanguage => 'Doeltaal';
 
   @override
@@ -3686,4 +4618,172 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get translation_systemLanguage => 'Taal van het systeem';
+
+  @override
+  String get background_serviceTitle => 'MeshCore running';
+
+  @override
+  String get background_serviceText => 'Keeping BLE connected';
+
+  @override
+  String appSettings_translationModelDeleted(String name) {
+    return 'Deleted $name';
+  }
+
+  @override
+  String appSettings_translationModelDeleteFailed(String error) {
+    return 'Failed to delete: $error';
+  }
+
+  @override
+  String channels_channelUpdateFailed(String error) {
+    return 'Failed to update channel: $error';
+  }
+
+  @override
+  String get contact_typeChat => 'Chat';
+
+  @override
+  String get contact_typeRepeater => 'Repeater';
+
+  @override
+  String get contact_typeRoom => 'Room';
+
+  @override
+  String get contact_typeSensor => 'Sensor';
+
+  @override
+  String get contact_typeUnknown => 'Unknown';
+
+  @override
+  String get map_zoomIn => 'Inzoomen';
+
+  @override
+  String get map_zoomOut => 'Inzoomen';
+
+  @override
+  String get map_centerMap => 'Centraal overzicht';
+
+  @override
+  String get chrome_bluetoothRequiresChromium =>
+      'Web Bluetooth vereist een Chromium-browser.';
+
+  @override
+  String channels_communityShortId(String id) {
+    return 'ID: $id...';
+  }
+
+  @override
+  String get pathTrace_legendGpsConfirmed => 'GPS-locatie bevestigd';
+
+  @override
+  String get pathTrace_legendInferred => 'Afgeleide positie';
+
+  @override
+  String get pathMap_viewSingle => 'Enkel';
+
+  @override
+  String get pathMap_viewCombined => 'Gezamenlijk';
+
+  @override
+  String get pathMap_play => 'Afspelen';
+
+  @override
+  String get pathMap_pause => 'Pauze';
+
+  @override
+  String get pathMap_replay => 'Herhalen';
+
+  @override
+  String get pathMap_stepBack => 'Vorige hop';
+
+  @override
+  String get pathMap_stepForward => 'Volgende hop';
+
+  @override
+  String get pathMap_animationOn => 'Pakketanimatie tonen';
+
+  @override
+  String get pathMap_animationOff => 'Pakketanimatie verbergen';
+
+  @override
+  String pathMap_hopOf(int current, int total) {
+    return 'Hop $current van $total';
+  }
+
+  @override
+  String pathMap_observedPaths(int count) {
+    return 'Waargenomen paden: $count';
+  }
+
+  @override
+  String get pathMap_primary => 'Primair';
+
+  @override
+  String pathMap_alternate(int index) {
+    return 'Alternatief $index';
+  }
+
+  @override
+  String pathMap_hopCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hops',
+      one: '1 hop',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pathMap_gpsCount(int confirmed, int total) {
+    return '$confirmed/$total GPS';
+  }
+
+  @override
+  String get pathMap_legendShared => 'Gedeeld segment';
+
+  @override
+  String get pathMap_legendEstimated => 'Geschat segment';
+
+  @override
+  String pathMap_sharedNodeCount(int count) {
+    return 'Gebruikt door $count paden';
+  }
+
+  @override
+  String pathMap_partialAnimation(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count hops hebben geen locatie — het weergegeven pad is onvolledig',
+      one: '1 hop heeft geen locatie — het weergegeven pad is onvolledig',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pathMap_showAllPaths => 'Toon alles';
+
+  @override
+  String get pathMap_hidePath => 'Verberg pad';
+
+  @override
+  String get pathMap_showPath => 'Toon pad';
+
+  @override
+  String get pathMap_collapsePanel => 'Paneel inklappen';
+
+  @override
+  String get pathMap_expandPanel => 'Paneel uitklappen';
+
+  @override
+  String get pathMap_noLocation => 'Geen locatie';
+
+  @override
+  String get pathMap_followPacket => 'Weergave vergrendelen op pakket';
+
+  @override
+  String get pathMap_unfollowPacket => 'Weergave ontgrendelen van pakket';
 }

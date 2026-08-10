@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:llamadart/llamadart.dart';
+import 'package:flutter_langdetect/flutter_langdetect.dart';
 
 import '../models/app_settings.dart';
 import '../models/translation_support.dart';
@@ -41,8 +42,12 @@ class TranslationService extends ChangeNotifier {
   TranslationService(
     this._appSettingsService, {
     TranslationFileStore? fileStore,
-  }) : _fileStore = fileStore ?? TranslationFileStore();
+  }) : _fileStore = fileStore ?? TranslationFileStore() {
+    // Initialize langdetect once at service construction.
+    _langDetectInit = initLangDetect();
+  }
 
+  bool _disposed = false;
   bool _isBusy = false;
   bool _isDownloading = false;
   bool _cancelDownloadRequested = false;
@@ -51,6 +56,7 @@ class TranslationService extends ChangeNotifier {
   LlamaEngine? _engine;
   String? _loadedModelPath;
   String? _failedModelPath;
+  Future<void>? _langDetectInit;
   int _downloadedBytes = 0;
   int? _downloadTotalBytes;
   String? _downloadFileName;
@@ -84,7 +90,22 @@ class TranslationService extends ChangeNotifier {
         'en';
   }
 
-  bool shouldTranslateIncoming({
+  bool shouldAutoTranslateIncoming({
+    required String text,
+    required bool isCli,
+    required bool isOutgoing,
+  }) {
+    if (!_settings.autoTranslateIncomingMessages) {
+      return false;
+    }
+    return canTranslateIncoming(
+      text: text,
+      isCli: isCli,
+      isOutgoing: isOutgoing,
+    );
+  }
+
+  bool canTranslateIncoming({
     required String text,
     required bool isCli,
     required bool isOutgoing,
@@ -195,7 +216,7 @@ class TranslationService extends ChangeNotifier {
         }
 
         _downloadTotalBytes = totalSize;
-        notifyListeners();
+        _notify();
 
         DownloadedModelFile downloaded;
         if (supportsRange &&
@@ -248,7 +269,7 @@ class TranslationService extends ChangeNotifier {
         throw StateError('Model download failed: HTTP ${response.statusCode}');
       }
       _downloadTotalBytes ??= response.contentLength;
-      notifyListeners();
+      _notify();
       final trackedStream = _trackDownloadProgress(response.stream);
       return await _fileStore.writeModelBytes(
         fileName: fileName,
@@ -293,7 +314,7 @@ class TranslationService extends ChangeNotifier {
         throw const TranslationDownloadCancelled();
       }
       _downloadFileName = 'Merging chunks...';
-      notifyListeners();
+      _notify();
       combineReached = true;
       return await _fileStore.combineChunks(
         fileName: fileName,
@@ -341,7 +362,7 @@ class TranslationService extends ChangeNotifier {
     }
     _cancelDownloadRequested = true;
     _lastError = 'Download stopped.';
-    notifyListeners();
+    _notify();
   }
 
   Future<void> removeModel(TranslationModelRecord model) async {
@@ -368,7 +389,9 @@ class TranslationService extends ChangeNotifier {
     if (targetLanguageCode == null || !_isPlainTextEligible(text)) {
       return null;
     }
-    final detectedLanguageCode = await detectLanguage(text);
+    final detectedLanguageCode = await detectLanguage(
+      _stripReplyInfoForDetection(text),
+    );
     if (detectedLanguageCode != null &&
         detectedLanguageCode == targetLanguageCode) {
       return const TranslationResult(
@@ -409,7 +432,9 @@ class TranslationService extends ChangeNotifier {
     if (targetLanguageCode == null || !_isPlainTextEligible(text)) {
       return null;
     }
-    final detectedLanguageCode = await detectLanguage(text);
+    final detectedLanguageCode = await detectLanguage(
+      _stripReplyInfoForDetection(text),
+    );
     if (detectedLanguageCode != null &&
         detectedLanguageCode == targetLanguageCode) {
       return const TranslationResult(
@@ -436,7 +461,26 @@ class TranslationService extends ChangeNotifier {
   }
 
   Future<String?> detectLanguage(String text) async {
-    return _heuristicLanguageCode(text);
+    try {
+      // Ensure the detector is initialized (constructor starts init).
+      await (_langDetectInit ??= initLangDetect());
+      final code = detect(text);
+      if (code.isEmpty) return null;
+      return code;
+    } catch (error) {
+      _lastError = error.toString();
+      appLogger.warn('Language detection failed: $error');
+      _notify();
+      return null;
+    }
+  }
+
+  String _stripReplyInfoForDetection(String text) {
+    final match = RegExp(
+      r'@\[([^\]]+)\]\s+(.+)$',
+      dotAll: true,
+    ).firstMatch(text);
+    return match?.group(2) ?? text;
   }
 
   Future<String?> _translateText({
@@ -495,7 +539,7 @@ class TranslationService extends ChangeNotifier {
     } catch (error) {
       _lastError = error.toString();
       appLogger.warn('Translation request failed: $error');
-      notifyListeners();
+      _notify();
       return null;
     }
   }
@@ -516,27 +560,6 @@ class TranslationService extends ChangeNotifier {
     return !(trimmed.startsWith('m:') ||
         trimmed.startsWith('V1|') ||
         trimmed.startsWith('r:'));
-  }
-
-  String? _heuristicLanguageCode(String text) {
-    if (RegExp(r'[іїєґІЇЄҐ]').hasMatch(text)) {
-      return 'uk';
-    }
-    if (RegExp(r'[а-яёА-ЯЁ]').hasMatch(text)) {
-      return 'ru';
-    }
-    if (RegExp(r'[ぁ-んァ-ン]').hasMatch(text)) {
-      return 'ja';
-    }
-    if (RegExp(r'[가-힣]').hasMatch(text)) {
-      return 'ko';
-    }
-    if (RegExp(r'[\u4e00-\u9fff]').hasMatch(text)) {
-      return 'zh';
-    }
-    // Latin-script languages can't be reliably distinguished by characters
-    // alone — return null so the translator always attempts translation.
-    return null;
   }
 
   String _languageLabel(String code) {
@@ -609,6 +632,10 @@ class TranslationService extends ChangeNotifier {
     final completer = Completer<T>();
     _setBusy(true);
     _queue = _queue.then((_) async {
+      if (_disposed) {
+        completer.completeError(StateError('TranslationService disposed.'));
+        return;
+      }
       try {
         completer.complete(await action());
       } catch (error, stackTrace) {
@@ -626,9 +653,16 @@ class TranslationService extends ChangeNotifier {
         throw const TranslationDownloadCancelled();
       }
       _downloadedBytes += chunk.length;
-      notifyListeners();
+      _notify();
       yield chunk;
     }
+  }
+
+  void _notify() {
+    if (_disposed) {
+      return;
+    }
+    notifyListeners();
   }
 
   void _setBusy(bool value) {
@@ -636,7 +670,7 @@ class TranslationService extends ChangeNotifier {
       return;
     }
     _isBusy = value;
-    notifyListeners();
+    _notify();
   }
 
   void _setDownloading(bool value) {
@@ -647,11 +681,12 @@ class TranslationService extends ChangeNotifier {
       _downloadTotalBytes = null;
       _downloadFileName = null;
     }
-    notifyListeners();
+    _notify();
   }
 
   @override
   void dispose() {
+    _disposed = true;
     final engine = _engine;
     _engine = null;
     _loadedModelPath = null;

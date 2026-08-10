@@ -33,7 +33,6 @@ RX (device → host):  [0x3E][len_lo][len_hi][payload...]
 - Length: 2-byte little-endian, payload only
 - Max payload: 172 bytes
 - TCP: `tcpNoDelay: true` (Nagle disabled), writes serialized to prevent interleaving
-- USB: 10ms post-write delay between frames
 
 ## Connection State Machine
 
@@ -53,9 +52,12 @@ enum MeshCoreConnectionState {
     - `MeshCore-`
     - `Whisper-`
     - `WisCore-`
+    - `Seeed`
+    - `Lilygo`
     - `HT-`
     - `LowMesh_MC_`
-2. **Connect** with 15-second timeout
+    - `NRF52`
+2. **Connect** with 15-second timeout (6 seconds on Linux)
 3. **Request MTU** 185 bytes (non-web only)
 4. **Discover services** and locate NUS
 5. **Enable TX notifications** (up to 3 attempts on native)
@@ -79,7 +81,7 @@ On unexpected disconnection, auto-reconnect with exponential backoff:
 | Max path size | 64 bytes | Maximum path data |
 | Max name size | 32 bytes | Maximum node name |
 | Max text payload | 160 bytes | Firmware `MAX_TEXT_LEN` |
-| App protocol version | 3 | Sent in device query |
+| App protocol version | 4 | Sent in device query |
 | Contact frame size | 148 bytes | Fixed-size contact record |
 
 ## Command Codes (App → Device)
@@ -114,13 +116,17 @@ On unexpected disconnection, auto-reconnect with exponential backoff:
 | 32 | CMD_SET_CHANNEL | Set channel name and PSK |
 | 36 | CMD_SEND_TRACE_PATH | Request path trace |
 | 38 | CMD_SET_OTHER_PARAMS | Set misc parameters |
-| 39 | CMD_GET_TELEMETRY_REQ | Request sensor telemetry |
+| 39 | CMD_SEND_TELEMETRY_REQ | Request sensor telemetry |
 | 40 | CMD_GET_CUSTOM_VAR | Get custom variables |
 | 41 | CMD_SET_CUSTOM_VAR | Set a custom variable |
 | 50 | CMD_SEND_BINARY_REQ | Send binary request |
+| 54 | CMD_SET_FLOOD_SCOPE | Set flood routing scope (v8+) |
+| 55 | CMD_SEND_CONTROL_DATA | Send control data (e.g. zero-hop discovery, v8+) |
+| 56 | CMD_GET_STATS | Request companion radio stats |
 | 57 | CMD_SEND_ANON_REQ | Send anonymous request |
 | 58 | CMD_SET_AUTO_ADD_CONFIG | Set auto-add configuration |
 | 59 | CMD_GET_AUTO_ADD_CONFIG | Get auto-add configuration |
+| 61 | CMD_SET_PATH_HASH_MODE | Set path hash width (bytes per hop) |
 
 ## Response / Push Codes (Device → App)
 
@@ -144,6 +150,7 @@ On unexpected disconnection, auto-reconnect with exponential backoff:
 | 17 | RESP_CODE_CHANNEL_MSG_RECV_V3 | Incoming channel message (v3) |
 | 18 | RESP_CODE_CHANNEL_INFO | Channel definition |
 | 21 | RESP_CODE_CUSTOM_VARS | Custom variables |
+| 24 | RESP_CODE_STATS | Companion radio stats |
 | 25 | RESP_CODE_AUTO_ADD_CONFIG | Auto-add flags |
 | 0x80 | PUSH_CODE_ADVERT | Known contact re-seen |
 | 0x81 | PUSH_CODE_PATH_UPDATED | Better path found; carries the 32-byte public key of the updated contact |
@@ -157,6 +164,7 @@ On unexpected disconnection, auto-reconnect with exponential backoff:
 | 0x8A | PUSH_CODE_NEW_ADVERT | New node discovered |
 | 0x8B | PUSH_CODE_TELEMETRY_RESPONSE | Sensor telemetry data |
 | 0x8C | PUSH_CODE_BINARY_RESPONSE | Binary data response |
+| 0x8E | PUSH_CODE_CONTROL_DATA | Control data push (e.g. zero-hop discovery response) |
 
 ## Data Models
 

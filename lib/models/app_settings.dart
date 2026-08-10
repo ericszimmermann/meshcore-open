@@ -13,8 +13,70 @@ extension UnitSystemValue on UnitSystem {
   }
 }
 
+const Map<String, String> defaultCyr2LatCharMap = {
+  'А': 'A',
+  'В': 'B',
+  'Е': 'E',
+  'Ё': 'E',
+  'З': '3',
+  'К': 'K',
+  'М': 'M',
+  'Н': 'H',
+  'О': 'O',
+  'Р': 'P',
+  'С': 'C',
+  'Т': 'T',
+  'Х': 'X',
+  'Ь': 'b',
+  'а': 'a',
+  'е': 'e',
+  'ё': 'e',
+  'о': 'o',
+  'р': 'p',
+  'с': 'c',
+  'у': 'y',
+  'х': 'x',
+};
+
+class Cyr2LatProfile {
+  final String id;
+  final String name;
+  final Map<String, String> charMap;
+
+  Cyr2LatProfile({required this.id, required this.name, required this.charMap});
+
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'name': name, 'char_map': charMap};
+  }
+
+  factory Cyr2LatProfile.fromJson(Map<String, dynamic> json) {
+    return Cyr2LatProfile(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      charMap:
+          (json['char_map'] as Map?)?.map(
+            (key, value) => MapEntry(key.toString(), value.toString()),
+          ) ??
+          {},
+    );
+  }
+
+  Cyr2LatProfile copyWith({
+    String? id,
+    String? name,
+    Map<String, String>? charMap,
+  }) {
+    return Cyr2LatProfile(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      charMap: charMap ?? this.charMap,
+    );
+  }
+}
+
 class AppSettings {
   static const Object _unset = Object();
+  static const String stadiaDemo = '51bd0381-4685-4666-bae8-48940f6d77c0';
 
   final bool clearPathOnMaxRetry;
   final bool mapShowRepeaters;
@@ -30,10 +92,15 @@ class AppSettings {
   final Map<String, double>? mapCacheBounds;
   final int mapCacheMinZoom;
   final int mapCacheMaxZoom;
+  final String mapRasterSourceId;
+  final String mapTileEndpointId;
+  final String? mapTileApiKey;
   final bool notificationsEnabled;
   final bool notifyOnNewMessage;
   final bool notifyOnNewChannelMessage;
   final bool notifyOnNewAdvert;
+  final bool autoSendZeroHopAdvertOnGpsUpdate;
+  final int gpsIntervalSeconds;
   final bool autoRouteRotationEnabled;
   final double maxRouteWeight;
   final double initialRouteWeight;
@@ -52,11 +119,32 @@ class AppSettings {
   final int tcpServerPort;
   final bool jumpToOldestUnread;
   final bool translationEnabled;
+  final bool autoTranslateIncomingMessages;
   final String? translationTargetLanguageCode;
   final bool composerTranslationEnabled;
   final String? translationModelSourceUrl;
   final String? translationSelectedModelId;
   final List<TranslationModelRecord> translationDownloadedModels;
+  final List<Cyr2LatProfile> cyr2latProfiles;
+  final String selectedCyr2latProfileId;
+
+  String get effectiveMapTileApiKey {
+    final apiKey = mapTileApiKey?.trim();
+    if (apiKey == null || apiKey.isEmpty) {
+      return stadiaDemo;
+    }
+    return apiKey;
+  }
+
+  bool get usesstadiaDemo => effectiveMapTileApiKey == stadiaDemo;
+
+  Map<String, String> get cyr2latCharMap {
+    final profile = cyr2latProfiles.firstWhere(
+      (p) => p.id == selectedCyr2latProfileId,
+      orElse: () => cyr2latProfiles.first,
+    );
+    return profile.charMap;
+  }
 
   AppSettings({
     this.clearPathOnMaxRetry = false,
@@ -69,15 +157,20 @@ class AppSettings {
     this.mapKeyPrefix = '',
     this.mapShowMarkers = true,
     this.mapShowGuessedLocations = true,
-    this.enableMessageTracing = false,
+    this.enableMessageTracing = true,
     this.mapCacheBounds,
     this.mapCacheMinZoom = 10,
     this.mapCacheMaxZoom = 15,
+    this.mapRasterSourceId = 'osm_auto',
+    this.mapTileEndpointId = 'standard_2x',
+    this.mapTileApiKey,
     this.notificationsEnabled = true,
     this.notifyOnNewMessage = true,
     this.notifyOnNewChannelMessage = true,
     this.notifyOnNewAdvert = true,
-    this.autoRouteRotationEnabled = false,
+    this.autoSendZeroHopAdvertOnGpsUpdate = false,
+    this.gpsIntervalSeconds = 900,
+    this.autoRouteRotationEnabled = true,
     this.maxRouteWeight = 5.0,
     this.initialRouteWeight = 3.0,
     this.routeWeightSuccessIncrement = 0.5,
@@ -95,15 +188,28 @@ class AppSettings {
     this.tcpServerPort = 0,
     this.jumpToOldestUnread = false,
     this.translationEnabled = false,
+    this.autoTranslateIncomingMessages = true,
     this.translationTargetLanguageCode,
     this.composerTranslationEnabled = false,
     this.translationModelSourceUrl,
     this.translationSelectedModelId,
     List<TranslationModelRecord>? translationDownloadedModels,
+    List<Cyr2LatProfile>? cyr2latProfiles,
+    String? selectedCyr2latProfileId,
   }) : batteryChemistryByDeviceId = batteryChemistryByDeviceId ?? {},
        batteryChemistryByRepeaterId = batteryChemistryByRepeaterId ?? {},
        mutedChannels = mutedChannels ?? {},
-       translationDownloadedModels = translationDownloadedModels ?? const [];
+       translationDownloadedModels = translationDownloadedModels ?? const [],
+       cyr2latProfiles =
+           cyr2latProfiles ??
+           [
+             Cyr2LatProfile(
+               id: 'default',
+               name: 'Default',
+               charMap: defaultCyr2LatCharMap,
+             ),
+           ],
+       selectedCyr2latProfileId = selectedCyr2latProfileId ?? 'default';
 
   Map<String, dynamic> toJson() {
     return {
@@ -121,10 +227,16 @@ class AppSettings {
       'map_cache_bounds': mapCacheBounds,
       'map_cache_min_zoom': mapCacheMinZoom,
       'map_cache_max_zoom': mapCacheMaxZoom,
+      'map_raster_source_id': mapRasterSourceId,
+      'map_tile_endpoint_id': mapTileEndpointId,
+      'map_tile_api_key': mapTileApiKey,
       'notifications_enabled': notificationsEnabled,
       'notify_on_new_message': notifyOnNewMessage,
       'notify_on_new_channel_message': notifyOnNewChannelMessage,
       'notify_on_new_advert': notifyOnNewAdvert,
+      'auto_send_zero_hop_advert_on_gps_update':
+          autoSendZeroHopAdvertOnGpsUpdate,
+      'gps_interval_seconds': gpsIntervalSeconds,
       'auto_route_rotation_enabled': autoRouteRotationEnabled,
       'max_route_weight': maxRouteWeight,
       'initial_route_weight': initialRouteWeight,
@@ -143,6 +255,7 @@ class AppSettings {
       'tcp_server_port': tcpServerPort,
       'jump_to_oldest_unread': jumpToOldestUnread,
       'translation_enabled': translationEnabled,
+      'auto_translate_incoming_messages': autoTranslateIncomingMessages,
       'translation_target_language_code': translationTargetLanguageCode,
       'composer_translation_enabled': composerTranslationEnabled,
       'translation_model_source_url': translationModelSourceUrl,
@@ -150,6 +263,10 @@ class AppSettings {
       'translation_downloaded_models': translationDownloadedModels
           .map((model) => model.toJson())
           .toList(),
+      'cyr2lat_profiles': cyr2latProfiles
+          .map((profile) => profile.toJson())
+          .toList(),
+      'selected_cyr2lat_profile_id': selectedCyr2latProfileId,
     };
   }
 
@@ -174,19 +291,26 @@ class AppSettings {
       mapShowMarkers: json['map_show_markers'] as bool? ?? true,
       mapShowGuessedLocations:
           json['map_show_guessed_locations'] as bool? ?? true,
-      enableMessageTracing: json['enable_message_tracing'] as bool? ?? false,
+      enableMessageTracing: json['enable_message_tracing'] as bool? ?? true,
       mapCacheBounds: (json['map_cache_bounds'] as Map?)?.map(
         (key, value) => MapEntry(key.toString(), (value as num).toDouble()),
       ),
       mapCacheMinZoom: json['map_cache_min_zoom'] as int? ?? 10,
       mapCacheMaxZoom: json['map_cache_max_zoom'] as int? ?? 15,
+      mapRasterSourceId: json['map_raster_source_id'] as String? ?? 'osm_auto',
+      mapTileEndpointId: json['map_tile_endpoint_id'] as String? ?? 'standard',
+      mapTileApiKey: json['map_tile_api_key'] as String?,
       notificationsEnabled: json['notifications_enabled'] as bool? ?? true,
       notifyOnNewMessage: json['notify_on_new_message'] as bool? ?? true,
       notifyOnNewChannelMessage:
           json['notify_on_new_channel_message'] as bool? ?? true,
       notifyOnNewAdvert: json['notify_on_new_advert'] as bool? ?? true,
+      autoSendZeroHopAdvertOnGpsUpdate:
+          json['auto_send_zero_hop_advert_on_gps_update'] as bool? ?? false,
+      gpsIntervalSeconds:
+          (json['gps_interval_seconds'] as num?)?.toInt() ?? 900,
       autoRouteRotationEnabled:
-          json['auto_route_rotation_enabled'] as bool? ?? false,
+          json['auto_route_rotation_enabled'] as bool? ?? true,
       maxRouteWeight: (json['max_route_weight'] as num?)?.toDouble() ?? 5.0,
       initialRouteWeight:
           (json['initial_route_weight'] as num?)?.toDouble() ?? 3.0,
@@ -220,6 +344,8 @@ class AppSettings {
       tcpServerPort: json['tcp_server_port'] as int? ?? 0,
       jumpToOldestUnread: json['jump_to_oldest_unread'] as bool? ?? false,
       translationEnabled: json['translation_enabled'] as bool? ?? false,
+      autoTranslateIncomingMessages:
+          json['auto_translate_incoming_messages'] as bool? ?? true,
       translationTargetLanguageCode:
           json['translation_target_language_code'] as String?,
       composerTranslationEnabled:
@@ -237,6 +363,38 @@ class AppSettings {
               )
               .toList() ??
           const [],
+      cyr2latProfiles:
+          (json['cyr2lat_profiles'] as List<dynamic>?)
+              ?.map(
+                (entry) => Cyr2LatProfile.fromJson(
+                  Map<String, dynamic>.from(entry as Map),
+                ),
+              )
+              .toList() ??
+          // Backward compatibility: if old cyr2lat_char_map exists, create a profile from it
+          (json['cyr2lat_char_map'] != null
+              ? [
+                  Cyr2LatProfile(
+                    id: 'migrated',
+                    name: 'Migrated Profile',
+                    charMap:
+                        (json['cyr2lat_char_map'] as Map?)?.map(
+                          (key, value) =>
+                              MapEntry(key.toString(), value.toString()),
+                        ) ??
+                        defaultCyr2LatCharMap,
+                  ),
+                ]
+              : [
+                  Cyr2LatProfile(
+                    id: 'default',
+                    name: 'Default',
+                    charMap: defaultCyr2LatCharMap,
+                  ),
+                ]),
+      selectedCyr2latProfileId:
+          json['selected_cyr2lat_profile_id'] as String? ??
+          (json['cyr2lat_char_map'] != null ? 'migrated' : 'default'),
     );
   }
 
@@ -255,10 +413,15 @@ class AppSettings {
     Object? mapCacheBounds = _unset,
     int? mapCacheMinZoom,
     int? mapCacheMaxZoom,
+    String? mapRasterSourceId,
+    String? mapTileEndpointId,
+    Object? mapTileApiKey = _unset,
     bool? notificationsEnabled,
     bool? notifyOnNewMessage,
     bool? notifyOnNewChannelMessage,
     bool? notifyOnNewAdvert,
+    bool? autoSendZeroHopAdvertOnGpsUpdate,
+    int? gpsIntervalSeconds,
     bool? autoRouteRotationEnabled,
     double? maxRouteWeight,
     double? initialRouteWeight,
@@ -277,11 +440,14 @@ class AppSettings {
     int? tcpServerPort,
     bool? jumpToOldestUnread,
     bool? translationEnabled,
+    bool? autoTranslateIncomingMessages,
     Object? translationTargetLanguageCode = _unset,
     bool? composerTranslationEnabled,
     Object? translationModelSourceUrl = _unset,
     Object? translationSelectedModelId = _unset,
     List<TranslationModelRecord>? translationDownloadedModels,
+    List<Cyr2LatProfile>? cyr2latProfiles,
+    String? selectedCyr2latProfileId,
   }) {
     return AppSettings(
       clearPathOnMaxRetry: clearPathOnMaxRetry ?? this.clearPathOnMaxRetry,
@@ -301,11 +467,20 @@ class AppSettings {
           : mapCacheBounds as Map<String, double>?,
       mapCacheMinZoom: mapCacheMinZoom ?? this.mapCacheMinZoom,
       mapCacheMaxZoom: mapCacheMaxZoom ?? this.mapCacheMaxZoom,
+      mapRasterSourceId: mapRasterSourceId ?? this.mapRasterSourceId,
+      mapTileEndpointId: mapTileEndpointId ?? this.mapTileEndpointId,
+      mapTileApiKey: mapTileApiKey == _unset
+          ? this.mapTileApiKey
+          : mapTileApiKey as String?,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       notifyOnNewMessage: notifyOnNewMessage ?? this.notifyOnNewMessage,
       notifyOnNewChannelMessage:
           notifyOnNewChannelMessage ?? this.notifyOnNewChannelMessage,
       notifyOnNewAdvert: notifyOnNewAdvert ?? this.notifyOnNewAdvert,
+      autoSendZeroHopAdvertOnGpsUpdate:
+          autoSendZeroHopAdvertOnGpsUpdate ??
+          this.autoSendZeroHopAdvertOnGpsUpdate,
+      gpsIntervalSeconds: gpsIntervalSeconds ?? this.gpsIntervalSeconds,
       autoRouteRotationEnabled:
           autoRouteRotationEnabled ?? this.autoRouteRotationEnabled,
       maxRouteWeight: maxRouteWeight ?? this.maxRouteWeight,
@@ -332,6 +507,8 @@ class AppSettings {
       tcpServerPort: tcpServerPort ?? this.tcpServerPort,
       jumpToOldestUnread: jumpToOldestUnread ?? this.jumpToOldestUnread,
       translationEnabled: translationEnabled ?? this.translationEnabled,
+      autoTranslateIncomingMessages:
+          autoTranslateIncomingMessages ?? this.autoTranslateIncomingMessages,
       translationTargetLanguageCode: translationTargetLanguageCode == _unset
           ? this.translationTargetLanguageCode
           : translationTargetLanguageCode as String?,
@@ -345,6 +522,9 @@ class AppSettings {
           : translationSelectedModelId as String?,
       translationDownloadedModels:
           translationDownloadedModels ?? this.translationDownloadedModels,
+      cyr2latProfiles: cyr2latProfiles ?? this.cyr2latProfiles,
+      selectedCyr2latProfileId:
+          selectedCyr2latProfileId ?? this.selectedCyr2latProfileId,
     );
   }
 }

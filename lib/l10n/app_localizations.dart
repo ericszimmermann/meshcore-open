@@ -202,6 +202,12 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get common_close;
 
+  /// No description provided for @common_done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get common_done;
+
   /// No description provided for @common_edit.
   ///
   /// In en, this message translates to:
@@ -292,6 +298,42 @@ abstract class AppLocalizations {
   /// **'Disable'**
   String get common_disable;
 
+  /// No description provided for @common_undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get common_undo;
+
+  /// No description provided for @messageStatus_sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get messageStatus_sent;
+
+  /// No description provided for @messageStatus_delivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get messageStatus_delivered;
+
+  /// No description provided for @messageStatus_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending'**
+  String get messageStatus_pending;
+
+  /// No description provided for @messageStatus_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send'**
+  String get messageStatus_failed;
+
+  /// No description provided for @messageStatus_repeated.
+  ///
+  /// In en, this message translates to:
+  /// **'Heard repeated'**
+  String get messageStatus_repeated;
+
   /// No description provided for @common_reboot.
   ///
   /// In en, this message translates to:
@@ -321,6 +363,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{percent}%'**
   String common_percentValue(int percent);
+
+  /// No description provided for @common_autoRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Autorefresh'**
+  String get common_autoRefresh;
+
+  /// No description provided for @common_interval.
+  ///
+  /// In en, this message translates to:
+  /// **'Interval'**
+  String get common_interval;
 
   /// No description provided for @scanner_title.
   ///
@@ -355,13 +409,13 @@ abstract class AppLocalizations {
   /// No description provided for @tcpHostLabel.
   ///
   /// In en, this message translates to:
-  /// **'IP Address'**
+  /// **'Endpoint'**
   String get tcpHostLabel;
 
   /// No description provided for @tcpHostHint.
   ///
   /// In en, this message translates to:
-  /// **'192.168.40.10'**
+  /// **'192.168.40.10 / example.com'**
   String get tcpHostHint;
 
   /// No description provided for @tcpPortLabel.
@@ -391,7 +445,7 @@ abstract class AppLocalizations {
   /// No description provided for @tcpErrorHostRequired.
   ///
   /// In en, this message translates to:
-  /// **'IP address is required.'**
+  /// **'Host is required.'**
   String get tcpErrorHostRequired;
 
   /// No description provided for @tcpErrorPortInvalid.
@@ -640,6 +694,12 @@ abstract class AppLocalizations {
   /// **'Enable Bluetooth'**
   String get scanner_enableBluetooth;
 
+  /// No description provided for @scanner_bluetoothWebUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Bluetooth isn\'t available in the browser. Connect over USB instead.'**
+  String get scanner_bluetoothWebUnsupported;
+
   /// No description provided for @device_quickSwitch.
   ///
   /// In en, this message translates to:
@@ -723,6 +783,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Radio settings updated'**
   String get settings_radioSettingsUpdated;
+
+  /// No description provided for @settings_regionSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Regions'**
+  String get settings_regionSettings;
+
+  /// No description provided for @settings_regionSettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage stored regions'**
+  String get settings_regionSettingsSubtitle;
+
+  /// No description provided for @settings_regionManagement_screenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Region Management'**
+  String get settings_regionManagement_screenTitle;
+
+  /// No description provided for @settings_regionNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter region name'**
+  String get settings_regionNameHint;
+
+  /// No description provided for @settings_regionAddRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Add region'**
+  String get settings_regionAddRegion;
+
+  /// No description provided for @settings_regionFetchRegions.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch regions from repeaters'**
+  String get settings_regionFetchRegions;
+
+  /// No description provided for @settings_regionFetchRegionsFail.
+  ///
+  /// In en, this message translates to:
+  /// **'No regions were found'**
+  String get settings_regionFetchRegionsFail;
+
+  /// No description provided for @settings_regionFetchRegionsAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'This region has already been added'**
+  String get settings_regionFetchRegionsAlreadyExists;
+
+  /// No description provided for @settings_regionName.
+  ///
+  /// In en, this message translates to:
+  /// **'Region Name'**
+  String get settings_regionName;
+
+  /// No description provided for @settings_regionDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Region deleted'**
+  String get settings_regionDeleted;
+
+  /// No description provided for @settings_deleteRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Region'**
+  String get settings_deleteRegion;
+
+  /// No description provided for @settings_deleteRegionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove \"{region}\" from region list?'**
+  String settings_deleteRegionConfirm(String region);
 
   /// No description provided for @settings_location.
   ///
@@ -898,11 +1030,23 @@ abstract class AppLocalizations {
   /// **'Include location in advert.'**
   String get settings_advertLocationSubtitle;
 
+  /// No description provided for @settings_autoZeroHopAdvertOnGpsUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Zero-Hop Advert On GPS Update'**
+  String get settings_autoZeroHopAdvertOnGpsUpdate;
+
+  /// No description provided for @settings_autoZeroHopAdvertOnGpsUpdateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When GPS location changes, send a zero-hop advert (requires Advert Location).'**
+  String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle;
+
   /// No description provided for @settings_multiAck.
   ///
   /// In en, this message translates to:
-  /// **'Multi-ACKs: {value}'**
-  String settings_multiAck(String value);
+  /// **'Multi-ACKs'**
+  String get settings_multiAck;
 
   /// No description provided for @settings_telemetryModeUpdated.
   ///
@@ -915,6 +1059,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Actions'**
   String get settings_actions;
+
+  /// No description provided for @settings_deleteAllPaths.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All Paths'**
+  String get settings_deleteAllPaths;
+
+  /// No description provided for @settings_deleteAllPathsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all path data from contacts.'**
+  String get settings_deleteAllPathsSubtitle;
 
   /// No description provided for @settings_sendAdvertisement.
   ///
@@ -988,17 +1144,17 @@ abstract class AppLocalizations {
   /// **'Debug'**
   String get settings_debug;
 
-  /// No description provided for @settings_bleDebugLog.
+  /// No description provided for @settings_companionDebugLog.
   ///
   /// In en, this message translates to:
-  /// **'BLE Debug Log'**
-  String get settings_bleDebugLog;
+  /// **'Companion Debug Log'**
+  String get settings_companionDebugLog;
 
-  /// No description provided for @settings_bleDebugLogSubtitle.
+  /// No description provided for @settings_companionDebugLogSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'BLE commands, responses, and raw data'**
-  String get settings_bleDebugLogSubtitle;
+  /// **'BLE/TCP/USB commands, responses, and raw data'**
+  String get settings_companionDebugLogSubtitle;
 
   /// No description provided for @settings_appDebugLog.
   ///
@@ -1083,6 +1239,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Channel Count'**
   String get settings_infoChannelCount;
+
+  /// No description provided for @settings_infoHardware.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardware'**
+  String get settings_infoHardware;
+
+  /// No description provided for @settings_infoFirmware.
+  ///
+  /// In en, this message translates to:
+  /// **'Firmware'**
+  String get settings_infoFirmware;
 
   /// No description provided for @settings_presets.
   ///
@@ -1306,6 +1474,30 @@ abstract class AppLocalizations {
   /// **'Українська'**
   String get appSettings_languageUk;
 
+  /// No description provided for @repeater_pathHashModeOption0.
+  ///
+  /// In en, this message translates to:
+  /// **'0 - 1 byte'**
+  String get repeater_pathHashModeOption0;
+
+  /// No description provided for @repeater_pathHashModeOption1.
+  ///
+  /// In en, this message translates to:
+  /// **'1 - 2 bytes'**
+  String get repeater_pathHashModeOption1;
+
+  /// No description provided for @repeater_pathHashModeOption2.
+  ///
+  /// In en, this message translates to:
+  /// **'2 - 3 bytes'**
+  String get repeater_pathHashModeOption2;
+
+  /// No description provided for @repeater_pathHashModeOption3.
+  ///
+  /// In en, this message translates to:
+  /// **'3 - 4 bytes'**
+  String get repeater_pathHashModeOption3;
+
   /// No description provided for @appSettings_enableMessageTracing.
   ///
   /// In en, this message translates to:
@@ -1504,12 +1696,6 @@ abstract class AppLocalizations {
   /// **'Number of retry attempts before marking a message as failed'**
   String get appSettings_maxMessageRetriesSubtitle;
 
-  /// No description provided for @path_routeWeight.
-  ///
-  /// In en, this message translates to:
-  /// **'{weight}/{max}'**
-  String path_routeWeight(String weight, String max);
-
   /// No description provided for @appSettings_battery.
   ///
   /// In en, this message translates to:
@@ -1551,6 +1737,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'LiPo (3.0-4.2V)'**
   String get appSettings_batteryLipo;
+
+  /// No description provided for @appSettings_batteryLipoHv.
+  ///
+  /// In en, this message translates to:
+  /// **'LiPo HV (3.0-4.35V)'**
+  String get appSettings_batteryLipoHv;
 
   /// No description provided for @appSettings_mapDisplay.
   ///
@@ -1653,6 +1845,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last week'**
   String get appSettings_lastWeek;
+
+  /// No description provided for @appSettings_rasterTileSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Raster Tile Source'**
+  String get appSettings_rasterTileSource;
+
+  /// No description provided for @appSettings_stadiaEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Stadia Endpoint'**
+  String get appSettings_stadiaEndpoint;
+
+  /// No description provided for @appSettings_stadiaApiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Stadia API Key'**
+  String get appSettings_stadiaApiKey;
+
+  /// No description provided for @appSettings_stadiaApiKeyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required for Stadia Maps usage'**
+  String get appSettings_stadiaApiKeyRequired;
+
+  /// No description provided for @appSettings_stadiaApiKeyConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Configured: {maskedKey}'**
+  String appSettings_stadiaApiKeyConfigured(String maskedKey);
+
+  /// No description provided for @appSettings_stadiaApiKeyDialogDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your Stadia Maps API key. This app uses it for raster tile requests.'**
+  String get appSettings_stadiaApiKeyDialogDescription;
 
   /// No description provided for @appSettings_offlineMapCache.
   ///
@@ -1852,6 +2080,24 @@ abstract class AppLocalizations {
   /// **'New Group'**
   String get contacts_newGroup;
 
+  /// No description provided for @contacts_moreOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'More options'**
+  String get contacts_moreOptions;
+
+  /// No description provided for @contacts_searchOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Search contacts'**
+  String get contacts_searchOpen;
+
+  /// No description provided for @contacts_searchClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close search'**
+  String get contacts_searchClose;
+
   /// No description provided for @contacts_groupName.
   ///
   /// In en, this message translates to:
@@ -2032,35 +2278,23 @@ abstract class AppLocalizations {
   /// **'Channel {index}'**
   String channels_channelIndex(int index);
 
-  /// No description provided for @channels_hashtagChannel.
-  ///
-  /// In en, this message translates to:
-  /// **'Hashtag channel'**
-  String get channels_hashtagChannel;
-
   /// No description provided for @channels_public.
   ///
   /// In en, this message translates to:
   /// **'Public'**
   String get channels_public;
 
+  /// No description provided for @channels_via.
+  ///
+  /// In en, this message translates to:
+  /// **'via {path}'**
+  String channels_via(String path);
+
   /// No description provided for @channels_private.
   ///
   /// In en, this message translates to:
   /// **'Private'**
   String get channels_private;
-
-  /// No description provided for @channels_publicChannel.
-  ///
-  /// In en, this message translates to:
-  /// **'Public channel'**
-  String get channels_publicChannel;
-
-  /// No description provided for @channels_privateChannel.
-  ///
-  /// In en, this message translates to:
-  /// **'Private channel'**
-  String get channels_privateChannel;
 
   /// No description provided for @channels_editChannel.
   ///
@@ -2176,11 +2410,107 @@ abstract class AppLocalizations {
   /// **'SMAZ compression'**
   String get channels_smazCompression;
 
+  /// No description provided for @channels_cyr2latCompression.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyr2Lat compression'**
+  String get channels_cyr2latCompression;
+
+  /// No description provided for @channels_cyr2latCompressionDscr.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces some Cyrillic characters with Latin characters when sending.'**
+  String get channels_cyr2latCompressionDscr;
+
+  /// No description provided for @channels_cyr2latSettingsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyr2Lat Setup'**
+  String get channels_cyr2latSettingsHeading;
+
+  /// No description provided for @channels_cyr2latSettingsSubheading.
+  ///
+  /// In en, this message translates to:
+  /// **'List of replacements'**
+  String get channels_cyr2latSettingsSubheading;
+
+  /// No description provided for @channels_cyr2latSettingsDscr.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit the JSON configuration of character replacement'**
+  String get channels_cyr2latSettingsDscr;
+
+  /// No description provided for @channels_cyr2latSettingsDialogHint.
+  ///
+  /// In en, this message translates to:
+  /// **'JSON replacement map'**
+  String get channels_cyr2latSettingsDialogHint;
+
+  /// No description provided for @channels_cyr2latSettingsDialogWrongJSON.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid JSON: {error}'**
+  String channels_cyr2latSettingsDialogWrongJSON(Object error);
+
   /// No description provided for @channels_channelUpdated.
   ///
   /// In en, this message translates to:
   /// **'Channel \"{name}\" updated'**
   String channels_channelUpdated(String name);
+
+  /// No description provided for @settings_cyr2latProfileAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Cyr2Lat Profile'**
+  String get settings_cyr2latProfileAdd;
+
+  /// No description provided for @settings_cyr2latProfileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Name'**
+  String get settings_cyr2latProfileName;
+
+  /// No description provided for @settings_cyr2latProfileNameEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile name cannot be empty'**
+  String get settings_cyr2latProfileNameEmpty;
+
+  /// No description provided for @settings_cyr2latProfileAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile added successfully'**
+  String get settings_cyr2latProfileAdded;
+
+  /// No description provided for @settings_cyr2latProfileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get settings_cyr2latProfileUpdated;
+
+  /// No description provided for @settings_cyr2latProfileEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Cyr2Lat Profile'**
+  String get settings_cyr2latProfileEdit;
+
+  /// No description provided for @settings_cyr2latProfileDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Cyr2Lat Profile'**
+  String get settings_cyr2latProfileDelete;
+
+  /// No description provided for @settings_cyr2latProfileDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile deleted successfully'**
+  String get settings_cyr2latProfileDeleted;
+
+  /// No description provided for @settings_cyr2latProfileDeleteDscr.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the profile \"{name}\"?'**
+  String settings_cyr2latProfileDeleteDscr(String name);
 
   /// No description provided for @channels_publicChannelAdded.
   ///
@@ -2290,6 +2620,30 @@ abstract class AppLocalizations {
   /// **'e.g. #team'**
   String get channels_hashtagHint;
 
+  /// No description provided for @channels_regionSetTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Region: {region}'**
+  String channels_regionSetTo(String region);
+
+  /// No description provided for @channels_regionNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Region: none'**
+  String get channels_regionNotSet;
+
+  /// No description provided for @channels_regionSelect_Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a region'**
+  String get channels_regionSelect_Title;
+
+  /// No description provided for @channels_clearRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear region'**
+  String get channels_clearRegion;
+
   /// No description provided for @chat_noMessages.
   ///
   /// In en, this message translates to:
@@ -2379,6 +2733,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Send GIF'**
   String get chat_sendGif;
+
+  /// No description provided for @chat_receivedGif.
+  ///
+  /// In en, this message translates to:
+  /// **'Received a GIF'**
+  String get chat_receivedGif;
 
   /// No description provided for @chat_reply.
   ///
@@ -2596,71 +2956,11 @@ abstract class AppLocalizations {
   /// **'Hex Dump:'**
   String get debugFrame_hexDump;
 
-  /// No description provided for @chat_pathManagement.
-  ///
-  /// In en, this message translates to:
-  /// **'Path Management'**
-  String get chat_pathManagement;
-
-  /// No description provided for @chat_ShowAllPaths.
-  ///
-  /// In en, this message translates to:
-  /// **'Show all paths'**
-  String get chat_ShowAllPaths;
-
-  /// No description provided for @chat_routingMode.
-  ///
-  /// In en, this message translates to:
-  /// **'Routing mode'**
-  String get chat_routingMode;
-
-  /// No description provided for @chat_autoUseSavedPath.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto (use saved path)'**
-  String get chat_autoUseSavedPath;
-
-  /// No description provided for @chat_forceFloodMode.
-  ///
-  /// In en, this message translates to:
-  /// **'Force Flood Mode'**
-  String get chat_forceFloodMode;
-
-  /// No description provided for @chat_recentAckPaths.
-  ///
-  /// In en, this message translates to:
-  /// **'Recent ACK Paths (tap to use):'**
-  String get chat_recentAckPaths;
-
-  /// No description provided for @chat_pathHistoryFull.
-  ///
-  /// In en, this message translates to:
-  /// **'Path history is full. Remove entries to add new ones.'**
-  String get chat_pathHistoryFull;
-
-  /// No description provided for @chat_hopSingular.
-  ///
-  /// In en, this message translates to:
-  /// **'hop'**
-  String get chat_hopSingular;
-
-  /// No description provided for @chat_hopPlural.
-  ///
-  /// In en, this message translates to:
-  /// **'hops'**
-  String get chat_hopPlural;
-
   /// No description provided for @chat_hopsCount.
   ///
   /// In en, this message translates to:
   /// **'{count} {count, plural, =1{hop} other{hops}}'**
   String chat_hopsCount(int count);
-
-  /// No description provided for @chat_successes.
-  ///
-  /// In en, this message translates to:
-  /// **'successes'**
-  String get chat_successes;
 
   /// No description provided for @chat_removePath.
   ///
@@ -2674,53 +2974,11 @@ abstract class AppLocalizations {
   /// **'No path history yet.\nSend a message to discover paths.'**
   String get chat_noPathHistoryYet;
 
-  /// No description provided for @chat_pathActions.
-  ///
-  /// In en, this message translates to:
-  /// **'Path Actions:'**
-  String get chat_pathActions;
-
-  /// No description provided for @chat_setCustomPath.
-  ///
-  /// In en, this message translates to:
-  /// **'Set Custom Path'**
-  String get chat_setCustomPath;
-
-  /// No description provided for @chat_setCustomPathSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Manually specify routing path'**
-  String get chat_setCustomPathSubtitle;
-
-  /// No description provided for @chat_clearPath.
-  ///
-  /// In en, this message translates to:
-  /// **'Clear Path'**
-  String get chat_clearPath;
-
-  /// No description provided for @chat_clearPathSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Force rediscovery on next send'**
-  String get chat_clearPathSubtitle;
-
   /// No description provided for @chat_pathCleared.
   ///
   /// In en, this message translates to:
   /// **'Path cleared. Next message will rediscover route.'**
   String get chat_pathCleared;
-
-  /// No description provided for @chat_floodModeSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Use routing toggle in app bar'**
-  String get chat_floodModeSubtitle;
-
-  /// No description provided for @chat_floodModeEnabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Flood mode enabled. Toggle back via routing icon in app bar.'**
-  String get chat_floodModeEnabled;
 
   /// No description provided for @chat_fullPath.
   ///
@@ -2728,17 +2986,239 @@ abstract class AppLocalizations {
   /// **'Full Path'**
   String get chat_fullPath;
 
-  /// No description provided for @chat_pathDetailsNotAvailable.
+  /// No description provided for @routing_title.
   ///
   /// In en, this message translates to:
-  /// **'Path details not available yet. Try sending a message to refresh.'**
-  String get chat_pathDetailsNotAvailable;
+  /// **'Routing'**
+  String get routing_title;
 
-  /// No description provided for @chat_pathSetHops.
+  /// No description provided for @routing_modeAuto.
   ///
   /// In en, this message translates to:
-  /// **'Path set: {hopCount} {hopCount, plural, =1{hop} other{hops}} - {status}'**
-  String chat_pathSetHops(int hopCount, String status);
+  /// **'Auto'**
+  String get routing_modeAuto;
+
+  /// No description provided for @routing_modeFlood.
+  ///
+  /// In en, this message translates to:
+  /// **'Flood'**
+  String get routing_modeFlood;
+
+  /// No description provided for @routing_modeManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get routing_modeManual;
+
+  /// No description provided for @routing_modeAutoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Picks the best known path automatically, flooding when none is known.'**
+  String get routing_modeAutoHint;
+
+  /// No description provided for @routing_modeFloodHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcasts through every repeater. Most reliable, but uses more airtime.'**
+  String get routing_modeFloodHint;
+
+  /// No description provided for @routing_modeManualHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Always sends along the exact path you set.'**
+  String get routing_modeManualHint;
+
+  /// No description provided for @routing_currentRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Current route'**
+  String get routing_currentRoute;
+
+  /// No description provided for @routing_directNoHops.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct — no repeater hops'**
+  String get routing_directNoHops;
+
+  /// No description provided for @routing_noPathYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No path yet. The next message floods until a route is discovered.'**
+  String get routing_noPathYet;
+
+  /// No description provided for @routing_floodBroadcast.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcast through every repeater'**
+  String get routing_floodBroadcast;
+
+  /// No description provided for @routing_editPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit path'**
+  String get routing_editPath;
+
+  /// No description provided for @routing_forgetPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget path'**
+  String get routing_forgetPath;
+
+  /// No description provided for @routing_knownPaths.
+  ///
+  /// In en, this message translates to:
+  /// **'Known paths'**
+  String get routing_knownPaths;
+
+  /// No description provided for @routing_knownPathsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a path to switch to it.'**
+  String get routing_knownPathsHint;
+
+  /// No description provided for @routing_inUse.
+  ///
+  /// In en, this message translates to:
+  /// **'In use'**
+  String get routing_inUse;
+
+  /// No description provided for @routing_qualityStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong first hop'**
+  String get routing_qualityStrong;
+
+  /// No description provided for @routing_qualityGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good first hop'**
+  String get routing_qualityGood;
+
+  /// No description provided for @routing_qualityFair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair first hop'**
+  String get routing_qualityFair;
+
+  /// No description provided for @routing_qualityWorked.
+  ///
+  /// In en, this message translates to:
+  /// **'Has delivered'**
+  String get routing_qualityWorked;
+
+  /// No description provided for @routing_qualityFlood.
+  ///
+  /// In en, this message translates to:
+  /// **'Heard via flood'**
+  String get routing_qualityFlood;
+
+  /// No description provided for @routing_qualityUntested.
+  ///
+  /// In en, this message translates to:
+  /// **'Untested'**
+  String get routing_qualityUntested;
+
+  /// No description provided for @routing_lastWorked.
+  ///
+  /// In en, this message translates to:
+  /// **'worked {when}'**
+  String routing_lastWorked(String when);
+
+  /// No description provided for @routing_neverWorked.
+  ///
+  /// In en, this message translates to:
+  /// **'never confirmed'**
+  String get routing_neverWorked;
+
+  /// No description provided for @routing_deliveryCounts.
+  ///
+  /// In en, this message translates to:
+  /// **'{successes} delivered, {failures} failed'**
+  String routing_deliveryCounts(int successes, int failures);
+
+  /// No description provided for @routing_floodDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Flood delivery'**
+  String get routing_floodDelivery;
+
+  /// No description provided for @pathEditor_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Build Path'**
+  String get pathEditor_title;
+
+  /// No description provided for @pathEditor_hopCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of 64 hops'**
+  String pathEditor_hopCounter(int count);
+
+  /// No description provided for @pathEditor_noHops.
+  ///
+  /// In en, this message translates to:
+  /// **'No hops yet. Tap repeaters below to add them in order, or save with no hops to send direct.'**
+  String get pathEditor_noHops;
+
+  /// No description provided for @pathEditor_addHops.
+  ///
+  /// In en, this message translates to:
+  /// **'Add hops in order'**
+  String get pathEditor_addHops;
+
+  /// No description provided for @pathEditor_searchRepeaters.
+  ///
+  /// In en, this message translates to:
+  /// **'Search repeaters'**
+  String get pathEditor_searchRepeaters;
+
+  /// No description provided for @pathEditor_advancedHex.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced: raw hex path'**
+  String get pathEditor_advancedHex;
+
+  /// No description provided for @pathEditor_hexLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hex prefixes'**
+  String get pathEditor_hexLabel;
+
+  /// No description provided for @pathEditor_hexHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Two hex characters per hop, separated by commas'**
+  String get pathEditor_hexHelper;
+
+  /// No description provided for @pathEditor_invalidTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid: {tokens}'**
+  String pathEditor_invalidTokens(String tokens);
+
+  /// No description provided for @pathEditor_tooManyHops.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum 64 hops'**
+  String get pathEditor_tooManyHops;
+
+  /// No description provided for @pathEditor_usePath.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this path'**
+  String get pathEditor_usePath;
+
+  /// No description provided for @pathEditor_removeHop.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove hop'**
+  String get pathEditor_removeHop;
+
+  /// No description provided for @pathEditor_unknownHop.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown repeater'**
+  String get pathEditor_unknownHop;
 
   /// No description provided for @chat_pathSavedLocally.
   ///
@@ -2824,6 +3304,18 @@ abstract class AppLocalizations {
   /// **'Unread: {count}'**
   String chat_unread(int count);
 
+  /// No description provided for @chat_markAsUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Unread'**
+  String get chat_markAsUnread;
+
+  /// No description provided for @chat_newMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'New messages'**
+  String get chat_newMessages;
+
   /// No description provided for @chat_openLink.
   ///
   /// In en, this message translates to:
@@ -2859,6 +3351,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Node Map'**
   String get map_title;
+
+  /// No description provided for @map_searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search node name or ID'**
+  String get map_searchHint;
+
+  /// No description provided for @map_activity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get map_activity;
+
+  /// No description provided for @map_online.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get map_online;
+
+  /// No description provided for @map_recent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get map_recent;
+
+  /// No description provided for @map_stale.
+  ///
+  /// In en, this message translates to:
+  /// **'Stale'**
+  String get map_stale;
+
+  /// No description provided for @map_visible.
+  ///
+  /// In en, this message translates to:
+  /// **'Visible'**
+  String get map_visible;
+
+  /// No description provided for @map_hidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden'**
+  String get map_hidden;
+
+  /// No description provided for @map_centerOnNode.
+  ///
+  /// In en, this message translates to:
+  /// **'Center on node'**
+  String get map_centerOnNode;
+
+  /// No description provided for @map_details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get map_details;
+
+  /// No description provided for @map_noGps.
+  ///
+  /// In en, this message translates to:
+  /// **'No GPS'**
+  String get map_noGps;
+
+  /// No description provided for @map_noResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching nodes'**
+  String get map_noResults;
 
   /// No description provided for @map_lineOfSight.
   ///
@@ -2967,6 +3525,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Flags'**
   String get map_flags;
+
+  /// No description provided for @map_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get map_type;
+
+  /// No description provided for @map_path.
+  ///
+  /// In en, this message translates to:
+  /// **'Path'**
+  String get map_path;
+
+  /// No description provided for @map_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get map_location;
+
+  /// No description provided for @map_estLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Est. Location'**
+  String get map_estLocation;
+
+  /// No description provided for @map_publicKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Public Key'**
+  String get map_publicKey;
+
+  /// No description provided for @map_publicKeyPrefixHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. ab12'**
+  String get map_publicKeyPrefixHint;
 
   /// No description provided for @map_shareMarkerHere.
   ///
@@ -3130,6 +3724,12 @@ abstract class AppLocalizations {
   /// **'Shared pin'**
   String get map_sharedPin;
 
+  /// No description provided for @map_sharedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared'**
+  String get map_sharedAt;
+
   /// No description provided for @map_joinRoom.
   ///
   /// In en, this message translates to:
@@ -3291,6 +3891,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed downloads: {count}'**
   String mapCache_failedDownloads(int count);
+
+  /// No description provided for @mapCache_cachedTilesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cached tiles'**
+  String get mapCache_cachedTilesLabel;
+
+  /// No description provided for @mapCache_cachedTileSummaryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cached tile summary'**
+  String get mapCache_cachedTileSummaryLabel;
+
+  /// No description provided for @mapCache_bulkDownloadDisabledForSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline bulk downloads are disabled for {source}.'**
+  String mapCache_bulkDownloadDisabledForSource(String source);
+
+  /// No description provided for @mapCache_bulkDownloadDisabledInConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline bulk downloads are disabled for {source} in this app configuration.'**
+  String mapCache_bulkDownloadDisabledInConfig(String source);
+
+  /// No description provided for @mapCache_summarySource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {source}'**
+  String mapCache_summarySource(String source);
+
+  /// No description provided for @mapCache_summaryCachedTilesForSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Cached tiles for source: {count}'**
+  String mapCache_summaryCachedTilesForSource(int count);
+
+  /// No description provided for @mapCache_summaryCachedInSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Cached in selected area/zoom: {count}'**
+  String mapCache_summaryCachedInSelection(int count);
+
+  /// No description provided for @mapCache_summaryApproxCacheSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Approx cache size: {size}'**
+  String mapCache_summaryApproxCacheSize(String size);
 
   /// No description provided for @mapCache_boundsLabel.
   ///
@@ -3513,89 +4161,17 @@ abstract class AppLocalizations {
   /// **'Clear'**
   String get common_clear;
 
-  /// No description provided for @path_currentPath.
-  ///
-  /// In en, this message translates to:
-  /// **'Current path: {path}'**
-  String path_currentPath(String path);
-
-  /// No description provided for @path_usingHopsPath.
-  ///
-  /// In en, this message translates to:
-  /// **'Using {count} {count, plural, =1{hop} other{hops}} path'**
-  String path_usingHopsPath(int count);
-
-  /// No description provided for @path_enterCustomPath.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter Custom Path'**
-  String get path_enterCustomPath;
-
   /// No description provided for @path_currentPathLabel.
   ///
   /// In en, this message translates to:
   /// **'Current path'**
   String get path_currentPathLabel;
 
-  /// No description provided for @path_hexPrefixInstructions.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter 2-character hex prefixes for each hop, separated by commas.'**
-  String get path_hexPrefixInstructions;
-
-  /// No description provided for @path_hexPrefixExample.
-  ///
-  /// In en, this message translates to:
-  /// **'Example: A1,F2,3C (each node uses first byte of its public key)'**
-  String get path_hexPrefixExample;
-
-  /// No description provided for @path_labelHexPrefixes.
-  ///
-  /// In en, this message translates to:
-  /// **'Path (hex prefixes)'**
-  String get path_labelHexPrefixes;
-
-  /// No description provided for @path_helperMaxHops.
-  ///
-  /// In en, this message translates to:
-  /// **'Max 64 hops. Each prefix is 2 hex characters (1 byte)'**
-  String get path_helperMaxHops;
-
-  /// No description provided for @path_selectFromContacts.
-  ///
-  /// In en, this message translates to:
-  /// **'Or select from contacts:'**
-  String get path_selectFromContacts;
-
   /// No description provided for @path_noRepeatersFound.
   ///
   /// In en, this message translates to:
   /// **'No repeaters or room servers found.'**
   String get path_noRepeatersFound;
-
-  /// No description provided for @path_customPathsRequire.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom paths require intermediate hops that can relay messages.'**
-  String get path_customPathsRequire;
-
-  /// No description provided for @path_invalidHexPrefixes.
-  ///
-  /// In en, this message translates to:
-  /// **'Invalid hex prefixes: {prefixes}'**
-  String path_invalidHexPrefixes(String prefixes);
-
-  /// No description provided for @path_tooLong.
-  ///
-  /// In en, this message translates to:
-  /// **'Path too long. Maximum 64 hops allowed.'**
-  String get path_tooLong;
-
-  /// No description provided for @path_setPath.
-  ///
-  /// In en, this message translates to:
-  /// **'Set Path'**
-  String get path_setPath;
 
   /// No description provided for @repeater_management.
   ///
@@ -3717,24 +4293,6 @@ abstract class AppLocalizations {
   /// **'Routing mode'**
   String get repeater_routingMode;
 
-  /// No description provided for @repeater_autoUseSavedPath.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto (use saved path)'**
-  String get repeater_autoUseSavedPath;
-
-  /// No description provided for @repeater_forceFloodMode.
-  ///
-  /// In en, this message translates to:
-  /// **'Force Flood Mode'**
-  String get repeater_forceFloodMode;
-
-  /// No description provided for @repeater_pathManagement.
-  ///
-  /// In en, this message translates to:
-  /// **'Path management'**
-  String get repeater_pathManagement;
-
   /// No description provided for @repeater_refresh.
   ///
   /// In en, this message translates to:
@@ -3824,6 +4382,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'RX Airtime'**
   String get repeater_rxAirtime;
+
+  /// No description provided for @repeater_chanUtil.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel Utilization'**
+  String get repeater_chanUtil;
 
   /// No description provided for @repeater_packetStatistics.
   ///
@@ -4178,6 +4742,330 @@ abstract class AppLocalizations {
   /// **'Settings saved successfully'**
   String get repeater_settingsSaved;
 
+  /// No description provided for @repeater_rxGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Boosted RX gain'**
+  String get repeater_rxGain;
+
+  /// No description provided for @repeater_rxGainHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher sensitivity, more current draw (SX1262/SX1268 only)'**
+  String get repeater_rxGainHelper;
+
+  /// No description provided for @repeater_refreshRxGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh boosted RX gain'**
+  String get repeater_refreshRxGain;
+
+  /// No description provided for @repeater_multiAcks.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-ACKs'**
+  String get repeater_multiAcks;
+
+  /// No description provided for @repeater_multiAcksSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledge messages over multiple paths for better delivery'**
+  String get repeater_multiAcksSubtitle;
+
+  /// No description provided for @repeater_refreshMultiAcks.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh multi-ACKs'**
+  String get repeater_refreshMultiAcks;
+
+  /// No description provided for @repeater_networkHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Network health'**
+  String get repeater_networkHealth;
+
+  /// No description provided for @repeater_loopDetect.
+  ///
+  /// In en, this message translates to:
+  /// **'Loop detection'**
+  String get repeater_loopDetect;
+
+  /// No description provided for @repeater_loopDetectHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop flood packets that look like routing loops'**
+  String get repeater_loopDetectHelper;
+
+  /// No description provided for @repeater_loopDetectOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get repeater_loopDetectOff;
+
+  /// No description provided for @repeater_loopDetectMinimal.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimal'**
+  String get repeater_loopDetectMinimal;
+
+  /// No description provided for @repeater_loopDetectModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get repeater_loopDetectModerate;
+
+  /// No description provided for @repeater_loopDetectStrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Strict'**
+  String get repeater_loopDetectStrict;
+
+  /// No description provided for @repeater_dutyCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Duty cycle'**
+  String get repeater_dutyCycle;
+
+  /// No description provided for @repeater_dutyCycleHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum percentage of airtime'**
+  String get repeater_dutyCycleHelper;
+
+  /// No description provided for @repeater_dutyCyclePercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String repeater_dutyCyclePercent(int percent);
+
+  /// No description provided for @repeater_ownerInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Operator info'**
+  String get repeater_ownerInfo;
+
+  /// No description provided for @repeater_ownerInfoHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Public metadata for this repeater'**
+  String get repeater_ownerInfoHelper;
+
+  /// No description provided for @repeater_refreshOwnerInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh operator info'**
+  String get repeater_refreshOwnerInfo;
+
+  /// No description provided for @repeater_floodMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Flood max hops'**
+  String get repeater_floodMax;
+
+  /// No description provided for @repeater_floodMaxHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum hops a flood packet may travel (0-64)'**
+  String get repeater_floodMaxHelper;
+
+  /// No description provided for @repeater_advancedSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get repeater_advancedSettings;
+
+  /// No description provided for @repeater_advancedSettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuning knobs for experienced operators'**
+  String get repeater_advancedSettingsSubtitle;
+
+  /// No description provided for @repeater_pathHashMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Path hash mode'**
+  String get repeater_pathHashMode;
+
+  /// No description provided for @repeater_pathHashModeHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Bytes used to encode this repeater\'s ID in flood path/loop-detect tags. 0=1 byte (256 IDs, up to 64 hops), 1=2 bytes (65K IDs, up to 32 hops), 2=3 bytes (16M IDs, up to 21 hops). Firmware before v1.14 always used 1-byte paths; v1.14 and newer can be configured for 2- or 3-byte paths.'**
+  String get repeater_pathHashModeHelper;
+
+  /// No description provided for @repeater_keySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Identity Keys'**
+  String get repeater_keySettings;
+
+  /// No description provided for @repeater_keySettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the public/private keypair'**
+  String get repeater_keySettingsSubtitle;
+
+  /// No description provided for @repeater_prvKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Private key'**
+  String get repeater_prvKey;
+
+  /// No description provided for @repeater_prvKeyHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'A new private key for the repeater, a 128-character hex string.'**
+  String get repeater_prvKeyHelper;
+
+  /// No description provided for @repeater_generatePrvKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate a random keypair'**
+  String get repeater_generatePrvKey;
+
+  /// No description provided for @repeater_stopGeneratingPrvKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Interrupt search for keypair'**
+  String get repeater_stopGeneratingPrvKey;
+
+  /// No description provided for @repeater_pubKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Public key'**
+  String get repeater_pubKey;
+
+  /// No description provided for @repeater_pubKeyHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the public key that goes with the generated private key. You can\'t set this directly.'**
+  String get repeater_pubKeyHelper;
+
+  /// No description provided for @repeater_pubKeyPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Desired prefix'**
+  String get repeater_pubKeyPrefix;
+
+  /// No description provided for @repeater_pubKeyPrefixHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a public key that starts with these hex digits. Expected tries needed: {tries}.'**
+  String repeater_pubKeyPrefixHelper(int tries);
+
+  /// No description provided for @repeater_txDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Flood TX delay'**
+  String get repeater_txDelay;
+
+  /// No description provided for @repeater_txDelayHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Retransmit spacing for flood traffic, as a multiplier of the packet\'s airtime (0-2, default 0.5). Higher = fewer collisions but slower delivery.'**
+  String get repeater_txDelayHelper;
+
+  /// No description provided for @repeater_directTxDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct TX delay'**
+  String get repeater_directTxDelay;
+
+  /// No description provided for @repeater_directTxDelayHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Retransmit spacing for direct (non-flood) traffic, as a multiplier of the packet\'s airtime (0-2, default 0.3).'**
+  String get repeater_directTxDelayHelper;
+
+  /// No description provided for @repeater_intThresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Interference threshold'**
+  String get repeater_intThresh;
+
+  /// No description provided for @repeater_intThreshHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Threshold passed to the radio\'s noise-floor calibration so it rejects interference above this level. 0 disables — only raise if you see RX errors in a noisy band.'**
+  String get repeater_intThreshHelper;
+
+  /// No description provided for @repeater_agcResetInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'AGC reset interval'**
+  String get repeater_agcResetInterval;
+
+  /// No description provided for @repeater_agcResetIntervalHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'How often to reset the radio\'s automatic gain control to recover from a stuck gain state. Seconds, snapped down to a multiple of 4. 0 disables periodic resets.'**
+  String get repeater_agcResetIntervalHelper;
+
+  /// No description provided for @repeater_actionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get repeater_actionsTitle;
+
+  /// No description provided for @repeater_sendAdvert.
+  ///
+  /// In en, this message translates to:
+  /// **'Send flood advert'**
+  String get repeater_sendAdvert;
+
+  /// No description provided for @repeater_sendAdvertSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcast a flood advert through the network'**
+  String get repeater_sendAdvertSubtitle;
+
+  /// No description provided for @repeater_sendAdvertZeroHop.
+  ///
+  /// In en, this message translates to:
+  /// **'Send zero-hop advert'**
+  String get repeater_sendAdvertZeroHop;
+
+  /// No description provided for @repeater_sendAdvertZeroHopSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcast a one-hop advert (no relays)'**
+  String get repeater_sendAdvertZeroHopSubtitle;
+
+  /// No description provided for @repeater_clockSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync clock now'**
+  String get repeater_clockSync;
+
+  /// No description provided for @repeater_clockSyncSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Push your phone\'s time to the repeater'**
+  String get repeater_clockSyncSubtitle;
+
+  /// No description provided for @repeater_actionSucceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'{action} succeeded'**
+  String repeater_actionSucceeded(String action);
+
+  /// No description provided for @repeater_actionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'{action} failed: {error}'**
+  String repeater_actionFailed(String action, String error);
+
+  /// No description provided for @repeater_settingsSavedRebootNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings saved — reboot the repeater to apply'**
+  String get repeater_settingsSavedRebootNeeded;
+
+  /// No description provided for @repeater_settingsPartialFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Some settings failed: {failures}'**
+  String repeater_settingsPartialFailure(String failures);
+
   /// No description provided for @repeater_errorSavingSettings.
   ///
   /// In en, this message translates to:
@@ -4202,12 +5090,6 @@ abstract class AppLocalizations {
   /// **'Refresh TX power'**
   String get repeater_refreshTxPower;
 
-  /// No description provided for @repeater_refreshLocationSettings.
-  ///
-  /// In en, this message translates to:
-  /// **'Refresh Location Settings'**
-  String get repeater_refreshLocationSettings;
-
   /// No description provided for @repeater_refreshPacketForwarding.
   ///
   /// In en, this message translates to:
@@ -4225,12 +5107,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Refresh Privacy Mode'**
   String get repeater_refreshPrivacyMode;
-
-  /// No description provided for @repeater_refreshAdvertisementSettings.
-  ///
-  /// In en, this message translates to:
-  /// **'Refresh Advertisement Settings'**
-  String get repeater_refreshAdvertisementSettings;
 
   /// No description provided for @repeater_refreshed.
   ///
@@ -4760,6 +5636,432 @@ abstract class AppLocalizations {
   /// **'gps command has been introduced to manage location related topics.'**
   String get repeater_gpsNote;
 
+  /// No description provided for @repeater_getCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Values'**
+  String get repeater_getCategory;
+
+  /// No description provided for @repeater_powerMgmt.
+  ///
+  /// In en, this message translates to:
+  /// **'Power Management'**
+  String get repeater_powerMgmt;
+
+  /// No description provided for @repeater_sensors.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensors'**
+  String get repeater_sensors;
+
+  /// No description provided for @repeater_cliHelpPowerOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Powers the device off. (no response expected)'**
+  String get repeater_cliHelpPowerOff;
+
+  /// No description provided for @repeater_cliHelpClkReboot.
+  ///
+  /// In en, this message translates to:
+  /// **'Resets the clock to a known epoch and reboots the device.'**
+  String get repeater_cliHelpClkReboot;
+
+  /// No description provided for @repeater_cliHelpAdvertZeroHop.
+  ///
+  /// In en, this message translates to:
+  /// **'Sends a zero-hop advertisement (immediate neighbors only).'**
+  String get repeater_cliHelpAdvertZeroHop;
+
+  /// No description provided for @repeater_cliHelpStartOta.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts an over-the-air firmware update on supported boards.'**
+  String get repeater_cliHelpStartOta;
+
+  /// No description provided for @repeater_cliHelpTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets the device clock to the given Unix epoch seconds. Clock cannot move backwards.'**
+  String get repeater_cliHelpTime;
+
+  /// No description provided for @repeater_cliHelpBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the board manufacturer / hardware identifier.'**
+  String get repeater_cliHelpBoard;
+
+  /// No description provided for @repeater_cliHelpDiscoverNeighbors.
+  ///
+  /// In en, this message translates to:
+  /// **'Sends a node-discovery request to nearby neighbors. (Repeater only)'**
+  String get repeater_cliHelpDiscoverNeighbors;
+
+  /// No description provided for @repeater_cliHelpPowersaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows whether powersaving mode is on or off.'**
+  String get repeater_cliHelpPowersaving;
+
+  /// No description provided for @repeater_cliHelpPowersavingOnOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Enables or disables powersaving mode (where supported).'**
+  String get repeater_cliHelpPowersavingOnOff;
+
+  /// No description provided for @repeater_cliHelpErase.
+  ///
+  /// In en, this message translates to:
+  /// **'(Serial only) Formats the device file system. Wipes all settings and contacts.'**
+  String get repeater_cliHelpErase;
+
+  /// No description provided for @repeater_cliHelpSetDutyCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets the maximum allowed transmit duty cycle as a percentage (1-100). Internally adjusts the airtime factor.'**
+  String get repeater_cliHelpSetDutyCycle;
+
+  /// No description provided for @repeater_cliHelpSetPrvKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces the device identity private key. Reboot required to apply. Generates a new public key.'**
+  String get repeater_cliHelpSetPrvKey;
+
+  /// No description provided for @repeater_cliHelpSetRadioRxGain.
+  ///
+  /// In en, this message translates to:
+  /// **'(SX126x only) Toggles boosted RX gain for improved sensitivity at higher current draw.'**
+  String get repeater_cliHelpSetRadioRxGain;
+
+  /// No description provided for @repeater_cliHelpSetOwnerInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets the owner contact info string included in adverts. Use \'|\' for newlines.'**
+  String get repeater_cliHelpSetOwnerInfo;
+
+  /// No description provided for @repeater_cliHelpSetPathHashMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets the path-hash mode. 0 = legacy, 1 = standard, 2 = strict. Affects how routing paths are matched.'**
+  String get repeater_cliHelpSetPathHashMode;
+
+  /// No description provided for @repeater_cliHelpSetLoopDetect.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets the routing loop-detection sensitivity: off, minimal, moderate, or strict.'**
+  String get repeater_cliHelpSetLoopDetect;
+
+  /// No description provided for @repeater_cliHelpSetFreq.
+  ///
+  /// In en, this message translates to:
+  /// **'(Serial only) Quickly sets just the frequency. Reboot required. Prefer \"set radio\" for full radio params.'**
+  String get repeater_cliHelpSetFreq;
+
+  /// No description provided for @repeater_cliHelpSetBridgeChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'(ESPNow bridge only) Sets the WiFi channel (1-14) used by the bridge.'**
+  String get repeater_cliHelpSetBridgeChannel;
+
+  /// No description provided for @repeater_cliHelpGetName.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the configured node name.'**
+  String get repeater_cliHelpGetName;
+
+  /// No description provided for @repeater_cliHelpGetRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the firmware role (Repeater, Room Server, etc.).'**
+  String get repeater_cliHelpGetRole;
+
+  /// No description provided for @repeater_cliHelpGetPublicKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the device public key.'**
+  String get repeater_cliHelpGetPublicKey;
+
+  /// No description provided for @repeater_cliHelpGetPrvKey.
+  ///
+  /// In en, this message translates to:
+  /// **'(Serial only) Shows the device private key. Treat as a secret.'**
+  String get repeater_cliHelpGetPrvKey;
+
+  /// No description provided for @repeater_cliHelpGetRepeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows whether packet forwarding (repeater role) is on or off.'**
+  String get repeater_cliHelpGetRepeat;
+
+  /// No description provided for @repeater_cliHelpGetTx.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the current TX power in dBm.'**
+  String get repeater_cliHelpGetTx;
+
+  /// No description provided for @repeater_cliHelpGetFreq.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the configured radio frequency in MHz.'**
+  String get repeater_cliHelpGetFreq;
+
+  /// No description provided for @repeater_cliHelpGetRadio.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows full radio params: freq, bandwidth, spreading factor, coding rate.'**
+  String get repeater_cliHelpGetRadio;
+
+  /// No description provided for @repeater_cliHelpGetRadioRxGain.
+  ///
+  /// In en, this message translates to:
+  /// **'(SX126x only) Shows the RX boosted gain state.'**
+  String get repeater_cliHelpGetRadioRxGain;
+
+  /// No description provided for @repeater_cliHelpGetAf.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the current airtime factor.'**
+  String get repeater_cliHelpGetAf;
+
+  /// No description provided for @repeater_cliHelpGetDutyCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the current allowed duty cycle as a percentage.'**
+  String get repeater_cliHelpGetDutyCycle;
+
+  /// No description provided for @repeater_cliHelpGetIntThresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the channel interference threshold in dB.'**
+  String get repeater_cliHelpGetIntThresh;
+
+  /// No description provided for @repeater_cliHelpGetAgcResetInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the AGC reset interval in seconds.'**
+  String get repeater_cliHelpGetAgcResetInterval;
+
+  /// No description provided for @repeater_cliHelpGetMultiAcks.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows whether double-ACK mode is on (1) or off (0).'**
+  String get repeater_cliHelpGetMultiAcks;
+
+  /// No description provided for @repeater_cliHelpGetAllowReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows whether guest read-only access is allowed.'**
+  String get repeater_cliHelpGetAllowReadOnly;
+
+  /// No description provided for @repeater_cliHelpGetAdvertInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the local advertisement interval in minutes.'**
+  String get repeater_cliHelpGetAdvertInterval;
+
+  /// No description provided for @repeater_cliHelpGetFloodAdvertInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the flood advertisement interval in hours.'**
+  String get repeater_cliHelpGetFloodAdvertInterval;
+
+  /// No description provided for @repeater_cliHelpGetGuestPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the configured guest password.'**
+  String get repeater_cliHelpGetGuestPassword;
+
+  /// No description provided for @repeater_cliHelpGetLat.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the configured latitude.'**
+  String get repeater_cliHelpGetLat;
+
+  /// No description provided for @repeater_cliHelpGetLon.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the configured longitude.'**
+  String get repeater_cliHelpGetLon;
+
+  /// No description provided for @repeater_cliHelpGetRxDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the rxdelay base value.'**
+  String get repeater_cliHelpGetRxDelay;
+
+  /// No description provided for @repeater_cliHelpGetTxDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the flood-mode txdelay factor.'**
+  String get repeater_cliHelpGetTxDelay;
+
+  /// No description provided for @repeater_cliHelpGetDirectTxDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the direct-mode txdelay factor.'**
+  String get repeater_cliHelpGetDirectTxDelay;
+
+  /// No description provided for @repeater_cliHelpGetFloodMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the maximum flood hop count.'**
+  String get repeater_cliHelpGetFloodMax;
+
+  /// No description provided for @repeater_cliHelpGetOwnerInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the owner contact info string.'**
+  String get repeater_cliHelpGetOwnerInfo;
+
+  /// No description provided for @repeater_cliHelpGetPathHashMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the path-hash mode (0/1/2).'**
+  String get repeater_cliHelpGetPathHashMode;
+
+  /// No description provided for @repeater_cliHelpGetLoopDetect.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the loop-detection sensitivity.'**
+  String get repeater_cliHelpGetLoopDetect;
+
+  /// No description provided for @repeater_cliHelpGetAcl.
+  ///
+  /// In en, this message translates to:
+  /// **'(Serial only) Lists the access-control entries on a repeater.'**
+  String get repeater_cliHelpGetAcl;
+
+  /// No description provided for @repeater_cliHelpGetBridgeEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows whether the bridge is enabled.'**
+  String get repeater_cliHelpGetBridgeEnabled;
+
+  /// No description provided for @repeater_cliHelpGetBridgeDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the bridge delay in ms.'**
+  String get repeater_cliHelpGetBridgeDelay;
+
+  /// No description provided for @repeater_cliHelpGetBridgeSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows whether the bridge logs RX or TX packets.'**
+  String get repeater_cliHelpGetBridgeSource;
+
+  /// No description provided for @repeater_cliHelpGetBridgeBaud.
+  ///
+  /// In en, this message translates to:
+  /// **'(RS232 bridge only) Shows the bridge baud rate.'**
+  String get repeater_cliHelpGetBridgeBaud;
+
+  /// No description provided for @repeater_cliHelpGetBridgeChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'(ESPNow bridge only) Shows the bridge WiFi channel.'**
+  String get repeater_cliHelpGetBridgeChannel;
+
+  /// No description provided for @repeater_cliHelpGetBridgeSecret.
+  ///
+  /// In en, this message translates to:
+  /// **'(ESPNow bridge only) Shows the bridge shared secret.'**
+  String get repeater_cliHelpGetBridgeSecret;
+
+  /// No description provided for @repeater_cliHelpGetBootloaderVer.
+  ///
+  /// In en, this message translates to:
+  /// **'(NRF52 only) Shows the bootloader version.'**
+  String get repeater_cliHelpGetBootloaderVer;
+
+  /// No description provided for @repeater_cliHelpGetAdcMultiplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the ADC multiplier (battery-voltage scaling).'**
+  String get repeater_cliHelpGetAdcMultiplier;
+
+  /// No description provided for @repeater_cliHelpGetPwrMgtSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports whether the board has power-management support.'**
+  String get repeater_cliHelpGetPwrMgtSupport;
+
+  /// No description provided for @repeater_cliHelpGetPwrMgtSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the current power source: external or battery.'**
+  String get repeater_cliHelpGetPwrMgtSource;
+
+  /// No description provided for @repeater_cliHelpGetPwrMgtBootReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the most recent reset and shutdown reasons.'**
+  String get repeater_cliHelpGetPwrMgtBootReason;
+
+  /// No description provided for @repeater_cliHelpGetPwrMgtBootMv.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the boot-time battery voltage in mV.'**
+  String get repeater_cliHelpGetPwrMgtBootMv;
+
+  /// No description provided for @repeater_cliHelpSensorGet.
+  ///
+  /// In en, this message translates to:
+  /// **'Reads a custom sensor setting by key.'**
+  String get repeater_cliHelpSensorGet;
+
+  /// No description provided for @repeater_cliHelpSensorSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Writes a custom sensor setting.'**
+  String get repeater_cliHelpSensorSet;
+
+  /// No description provided for @repeater_cliHelpSensorList.
+  ///
+  /// In en, this message translates to:
+  /// **'Lists all custom sensor settings, paginated from optional start index.'**
+  String get repeater_cliHelpSensorList;
+
+  /// No description provided for @repeater_cliHelpRegionDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows the current default region scope.'**
+  String get repeater_cliHelpRegionDefault;
+
+  /// No description provided for @repeater_cliHelpRegionDefaultSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets the default region scope. Use \"<null>\" to clear.'**
+  String get repeater_cliHelpRegionDefaultSet;
+
+  /// No description provided for @repeater_cliHelpRegionListAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Lists regions that allow flood traffic.'**
+  String get repeater_cliHelpRegionListAllowed;
+
+  /// No description provided for @repeater_cliHelpRegionListDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Lists regions that deny flood traffic.'**
+  String get repeater_cliHelpRegionListDenied;
+
+  /// No description provided for @repeater_cliHelpStatsPackets.
+  ///
+  /// In en, this message translates to:
+  /// **'(Serial only) Shows packet-level statistics.'**
+  String get repeater_cliHelpStatsPackets;
+
+  /// No description provided for @repeater_cliHelpStatsRadio.
+  ///
+  /// In en, this message translates to:
+  /// **'(Serial only) Shows radio statistics.'**
+  String get repeater_cliHelpStatsRadio;
+
+  /// No description provided for @repeater_cliHelpStatsCore.
+  ///
+  /// In en, this message translates to:
+  /// **'(Serial only) Shows core firmware statistics.'**
+  String get repeater_cliHelpStatsCore;
+
   /// No description provided for @telemetry_receivedData.
   ///
   /// In en, this message translates to:
@@ -4843,6 +6145,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{celsius}°C / {fahrenheit}°F'**
   String telemetry_temperatureValue(String celsius, String fahrenheit);
+
+  /// No description provided for @telemetry_digitalInputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Digital Input'**
+  String get telemetry_digitalInputLabel;
+
+  /// No description provided for @telemetry_digitalOutputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Digital Output'**
+  String get telemetry_digitalOutputLabel;
+
+  /// No description provided for @telemetry_analogInputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Analog Input'**
+  String get telemetry_analogInputLabel;
+
+  /// No description provided for @telemetry_analogOutputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Analog Output'**
+  String get telemetry_analogOutputLabel;
+
+  /// No description provided for @telemetry_genericLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Generic Sensor'**
+  String get telemetry_genericLabel;
+
+  /// No description provided for @telemetry_luminosityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Luminosity'**
+  String get telemetry_luminosityLabel;
+
+  /// No description provided for @telemetry_presenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Presence'**
+  String get telemetry_presenceLabel;
+
+  /// No description provided for @telemetry_humidityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Humidity'**
+  String get telemetry_humidityLabel;
+
+  /// No description provided for @telemetry_accelerometerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Accelerometer'**
+  String get telemetry_accelerometerLabel;
+
+  /// No description provided for @telemetry_pressureLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pressure'**
+  String get telemetry_pressureLabel;
+
+  /// No description provided for @telemetry_altitudeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Altitude'**
+  String get telemetry_altitudeLabel;
+
+  /// No description provided for @telemetry_frequencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get telemetry_frequencyLabel;
+
+  /// No description provided for @telemetry_percentageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Percentage'**
+  String get telemetry_percentageLabel;
+
+  /// No description provided for @telemetry_concentrationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Concentration'**
+  String get telemetry_concentrationLabel;
+
+  /// No description provided for @telemetry_powerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Power'**
+  String get telemetry_powerLabel;
+
+  /// No description provided for @telemetry_distanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get telemetry_distanceLabel;
+
+  /// No description provided for @telemetry_energyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy'**
+  String get telemetry_energyLabel;
+
+  /// No description provided for @telemetry_directionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction'**
+  String get telemetry_directionLabel;
+
+  /// No description provided for @telemetry_timeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get telemetry_timeLabel;
+
+  /// No description provided for @telemetry_gyrometerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gyrometer'**
+  String get telemetry_gyrometerLabel;
+
+  /// No description provided for @telemetry_colourLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour'**
+  String get telemetry_colourLabel;
+
+  /// No description provided for @telemetry_gpsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS'**
+  String get telemetry_gpsLabel;
+
+  /// No description provided for @telemetry_switchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch'**
+  String get telemetry_switchLabel;
+
+  /// No description provided for @telemetry_polylineLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Polyline'**
+  String get telemetry_polylineLabel;
+
+  /// No description provided for @telemetry_altitudeValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String telemetry_altitudeValue(String meters);
+
+  /// No description provided for @telemetry_frequencyValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{hertz} Hz'**
+  String telemetry_frequencyValue(String hertz);
+
+  /// No description provided for @telemetry_pressureValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{hpa} hPa'**
+  String telemetry_pressureValue(String hpa);
+
+  /// No description provided for @telemetry_luminosityValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{lux} lx'**
+  String telemetry_luminosityValue(String lux);
+
+  /// No description provided for @telemetry_powerValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{watts} W'**
+  String telemetry_powerValue(String watts);
+
+  /// No description provided for @telemetry_distanceValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String telemetry_distanceValue(String meters);
+
+  /// No description provided for @telemetry_energyValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{kilowattHours} kWh'**
+  String telemetry_energyValue(String kilowattHours);
+
+  /// No description provided for @telemetry_directionValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{degrees}°'**
+  String telemetry_directionValue(String degrees);
+
+  /// No description provided for @telemetry_concentrationValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{ppm} ppm'**
+  String telemetry_concentrationValue(String ppm);
+
+  /// No description provided for @telemetry_percentageValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String telemetry_percentageValue(String percent);
+
+  /// No description provided for @telemetry_analogValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{value}'**
+  String telemetry_analogValue(String value);
+
+  /// No description provided for @telemetry_autoFetchQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests quantity'**
+  String get telemetry_autoFetchQuantity;
+
+  /// No description provided for @telemetry_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to retrieve data'**
+  String get telemetry_error;
 
   /// No description provided for @neighbors_receivedData.
   ///
@@ -5640,6 +7164,47 @@ abstract class AppLocalizations {
   /// **'Terrain'**
   String get losLegendTerrain;
 
+  /// No description provided for @losBlockedSpotsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked spots'**
+  String get losBlockedSpotsTitle;
+
+  /// No description provided for @losBlockedSpotsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a blocked spot to highlight it on the map.'**
+  String get losBlockedSpotsHint;
+
+  /// No description provided for @losBlockedSpotChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} {distanceUnit} • {obstruction} {heightUnit}'**
+  String losBlockedSpotChip(
+    String distance,
+    String distanceUnit,
+    String obstruction,
+    String heightUnit,
+  );
+
+  /// No description provided for @losSelectedObstructionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected obstruction'**
+  String get losSelectedObstructionTitle;
+
+  /// No description provided for @losSelectedObstructionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit}).'**
+  String losSelectedObstructionDetails(
+    String obstruction,
+    String heightUnit,
+    String distanceFromA,
+    String distanceUnit,
+    String distanceFromB,
+  );
+
   /// No description provided for @losFrequencyLabel.
   ///
   /// In en, this message translates to:
@@ -6227,6 +7792,24 @@ abstract class AppLocalizations {
   /// **'Controls the default state of the composer translation icon.'**
   String get translation_composerSubtitle;
 
+  /// No description provided for @translation_autoIncomingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-translate incoming messages'**
+  String get translation_autoIncomingTitle;
+
+  /// No description provided for @translation_autoIncomingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Translates Messages for notification and for chat or channel automatically.'**
+  String get translation_autoIncomingSubtitle;
+
+  /// No description provided for @translation_translateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Translate message'**
+  String get translation_translateMessage;
+
   /// No description provided for @translation_targetLanguage.
   ///
   /// In en, this message translates to:
@@ -6388,6 +7971,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System language'**
   String get translation_systemLanguage;
+
+  /// No description provided for @background_serviceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'MeshCore running'**
+  String get background_serviceTitle;
+
+  /// No description provided for @background_serviceText.
+  ///
+  /// In en, this message translates to:
+  /// **'Keeping BLE connected'**
+  String get background_serviceText;
+
+  /// No description provided for @appSettings_translationModelDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted {name}'**
+  String appSettings_translationModelDeleted(String name);
+
+  /// No description provided for @appSettings_translationModelDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete: {error}'**
+  String appSettings_translationModelDeleteFailed(String error);
+
+  /// No description provided for @channels_channelUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update channel: {error}'**
+  String channels_channelUpdateFailed(String error);
+
+  /// No description provided for @contact_typeChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get contact_typeChat;
+
+  /// No description provided for @contact_typeRepeater.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeater'**
+  String get contact_typeRepeater;
+
+  /// No description provided for @contact_typeRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get contact_typeRoom;
+
+  /// No description provided for @contact_typeSensor.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensor'**
+  String get contact_typeSensor;
+
+  /// No description provided for @contact_typeUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get contact_typeUnknown;
+
+  /// No description provided for @map_zoomIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom in'**
+  String get map_zoomIn;
+
+  /// No description provided for @map_zoomOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom out'**
+  String get map_zoomOut;
+
+  /// No description provided for @map_centerMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Center map'**
+  String get map_centerMap;
+
+  /// No description provided for @chrome_bluetoothRequiresChromium.
+  ///
+  /// In en, this message translates to:
+  /// **'Web Bluetooth requires a Chromium browser'**
+  String get chrome_bluetoothRequiresChromium;
+
+  /// No description provided for @channels_communityShortId.
+  ///
+  /// In en, this message translates to:
+  /// **'ID: {id}...'**
+  String channels_communityShortId(String id);
+
+  /// No description provided for @pathTrace_legendGpsConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS confirmed'**
+  String get pathTrace_legendGpsConfirmed;
+
+  /// No description provided for @pathTrace_legendInferred.
+  ///
+  /// In en, this message translates to:
+  /// **'Inferred position'**
+  String get pathTrace_legendInferred;
+
+  /// No description provided for @pathMap_viewSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Single'**
+  String get pathMap_viewSingle;
+
+  /// No description provided for @pathMap_viewCombined.
+  ///
+  /// In en, this message translates to:
+  /// **'Combined'**
+  String get pathMap_viewCombined;
+
+  /// No description provided for @pathMap_play.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get pathMap_play;
+
+  /// No description provided for @pathMap_pause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pathMap_pause;
+
+  /// No description provided for @pathMap_replay.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay'**
+  String get pathMap_replay;
+
+  /// No description provided for @pathMap_stepBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous hop'**
+  String get pathMap_stepBack;
+
+  /// No description provided for @pathMap_stepForward.
+  ///
+  /// In en, this message translates to:
+  /// **'Next hop'**
+  String get pathMap_stepForward;
+
+  /// No description provided for @pathMap_animationOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Show packet animation'**
+  String get pathMap_animationOn;
+
+  /// No description provided for @pathMap_animationOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide packet animation'**
+  String get pathMap_animationOff;
+
+  /// No description provided for @pathMap_hopOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Hop {current} of {total}'**
+  String pathMap_hopOf(int current, int total);
+
+  /// No description provided for @pathMap_observedPaths.
+  ///
+  /// In en, this message translates to:
+  /// **'Observed paths: {count}'**
+  String pathMap_observedPaths(int count);
+
+  /// No description provided for @pathMap_primary.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary'**
+  String get pathMap_primary;
+
+  /// No description provided for @pathMap_alternate.
+  ///
+  /// In en, this message translates to:
+  /// **'Alt {index}'**
+  String pathMap_alternate(int index);
+
+  /// No description provided for @pathMap_hopCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 hop} other{{count} hops}}'**
+  String pathMap_hopCount(int count);
+
+  /// No description provided for @pathMap_gpsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{confirmed}/{total} GPS'**
+  String pathMap_gpsCount(int confirmed, int total);
+
+  /// No description provided for @pathMap_legendShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared segment'**
+  String get pathMap_legendShared;
+
+  /// No description provided for @pathMap_legendEstimated.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated segment'**
+  String get pathMap_legendEstimated;
+
+  /// No description provided for @pathMap_sharedNodeCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Used by {count} paths'**
+  String pathMap_sharedNodeCount(int count);
+
+  /// No description provided for @pathMap_partialAnimation.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 hop has no location — the shown path is partial} other{{count} hops have no location — the shown path is partial}}'**
+  String pathMap_partialAnimation(int count);
+
+  /// No description provided for @pathMap_showAllPaths.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all'**
+  String get pathMap_showAllPaths;
+
+  /// No description provided for @pathMap_hidePath.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide path'**
+  String get pathMap_hidePath;
+
+  /// No description provided for @pathMap_showPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Show path'**
+  String get pathMap_showPath;
+
+  /// No description provided for @pathMap_collapsePanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse panel'**
+  String get pathMap_collapsePanel;
+
+  /// No description provided for @pathMap_expandPanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand panel'**
+  String get pathMap_expandPanel;
+
+  /// No description provided for @pathMap_noLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'No location'**
+  String get pathMap_noLocation;
+
+  /// No description provided for @pathMap_followPacket.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock view to packet'**
+  String get pathMap_followPacket;
+
+  /// No description provided for @pathMap_unfollowPacket.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock view from packet'**
+  String get pathMap_unfollowPacket;
 }
 
 class _AppLocalizationsDelegate

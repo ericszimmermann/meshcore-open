@@ -33,6 +33,8 @@
   "common_remove": "Izbrisati",
   "common_enable": "Omogoči",
   "common_disable": "Izklopiti",
+  "common_autoRefresh": "Samodejno osveževanje",
+  "common_interval": "Časovni interval",
   "common_reboot": "Ponoviti",
   "common_loading": "Naložanje...",
   "common_notAvailable": "—",
@@ -44,7 +46,7 @@
       }
     }
   },
-  "common_percentValue": "{percent}%",
+  "common_percentValue": "{percent} %",
   "@common_percentValue": {
     "placeholders": {
       "percent": {
@@ -52,7 +54,7 @@
       }
     }
   },
-  "scanner_title": "MeshCore Open",
+  "scanner_title": "MeshCore – Odprto",
   "scanner_scanning": "Skeniram za naprave...",
   "scanner_connecting": "Povezujem se...",
   "scanner_disconnecting": "Odklapljam se...",
@@ -98,12 +100,16 @@
   "settings_locationInvalid": "Neveljavna zemeljska širina ali dolžina.",
   "settings_latitude": "Širina",
   "settings_longitude": "Dolžina",
+  "settings_autoZeroHopAdvertOnGpsUpdate": "Samodejni zero-hop oglas ob posodobitvi GPS",
+  "settings_autoZeroHopAdvertOnGpsUpdateSubtitle": "Ko se GPS lokacija spremeni, pošlji zero-hop oglas (zahteva lokacijo v oglasu).",
   "settings_privacyMode": "Zasebnost",
   "settings_privacyModeSubtitle": "Skrita imena/lokacije v oglasih",
   "settings_privacyModeToggle": "Omogoči način zasebnosti, da skrijemo tvoje ime in lokacijo v oglasih.",
   "settings_privacyModeEnabled": "Privatni način je omogočen.",
   "settings_privacyModeDisabled": "Privatni način je onemogočen.",
   "settings_actions": "Akcije",
+  "settings_deleteAllPaths": "Delete All Paths",
+  "settings_deleteAllPathsSubtitle": "Clear all path data from contacts.",
   "settings_sendAdvertisement": "Pošlji Oglas",
   "settings_sendAdvertisementSubtitle": "Trenutna prisotnost v oddajah",
   "settings_advertisementSent": "Oglas poslan",
@@ -115,13 +121,13 @@
   "settings_rebootDevice": "Ponovni zagon naprave",
   "settings_rebootDeviceSubtitle": "Ponovno zaženi MeshCore napravo",
   "settings_rebootDeviceConfirm": "Ste prepričani, da želite ponovno zagnati napravo? Povezava bo prekinjena.",
-  "settings_debug": "Debug",
+  "settings_debug": "Odpravljanje napak",
   "settings_bleDebugLog": "BLE debug log (razhroščevanje)",
   "settings_bleDebugLogSubtitle": "BLE ukazi, odgovori in surovi podatki",
   "settings_appDebugLog": "Logi aplikacije",
   "settings_appDebugLogSubtitle": "Debug sporočila aplikacije",
   "settings_about": "Oglejte si",
-  "settings_aboutVersion": "MeshCore Open v{version}",
+  "settings_aboutVersion": "MeshCore, različ {version}",
   "@settings_aboutVersion": {
     "placeholders": {
       "version": {
@@ -133,7 +139,7 @@
   "settings_aboutDescription": "Odprtokodni Flutter klient za naprave za LoRa omrežje MeshCore.",
   "settings_infoName": "Ime",
   "settings_infoId": "ID",
-  "settings_infoStatus": "Status",
+  "settings_infoStatus": "Stanje",
   "settings_infoBattery": "Baterija",
   "settings_infoPublicKey": "Javni ključ",
   "settings_infoContactsCount": "Število stikov",
@@ -146,7 +152,7 @@
   "settings_spreadingFactor": "Razširitveni faktor",
   "settings_codingRate": "Programska hitrost",
   "settings_txPower": "TX Moč (dBm)",
-  "settings_txPowerHelper": "0 - 22",
+  "settings_txPowerHelper": "0 – 22",
   "settings_txPowerInvalid": "Neveljavna TX moč (0-22 dBm)",
   "settings_error": "Napaka: {message}",
   "@settings_error": {
@@ -164,18 +170,18 @@
   "appSettings_themeDark": "Temno",
   "appSettings_language": "Jezik",
   "appSettings_languageSystem": "Sistemska privzeta vrednost",
-  "appSettings_languageEn": "English",
-  "appSettings_languageFr": "Français",
-  "appSettings_languageEs": "Español",
-  "appSettings_languageDe": "Deutsch",
-  "appSettings_languagePl": "Polski",
+  "appSettings_languageEn": "Angleščina",
+  "appSettings_languageFr": "Francija",
+  "appSettings_languageEs": "Španščina",
+  "appSettings_languageDe": "Nemščina",
+  "appSettings_languagePl": "Poljski",
   "appSettings_languageSl": "Slovenščina",
-  "appSettings_languagePt": "Português",
-  "appSettings_languageIt": "Italiano",
+  "appSettings_languagePt": "Portugalski",
+  "appSettings_languageIt": "Italijanščina",
   "appSettings_languageZh": "中文",
-  "appSettings_languageSv": "Svenska",
-  "appSettings_languageNl": "Nederlands",
-  "appSettings_languageSk": "Slovenčina",
+  "appSettings_languageSv": "Švedska",
+  "appSettings_languageNl": "Nizozemsko",
+  "appSettings_languageSk": "Slovenščina",
   "appSettings_languageBg": "Български",
   "appSettings_notifications": "Obvestila",
   "appSettings_enableNotifications": "Omogoči obvestila",
@@ -236,6 +242,19 @@
   "appSettings_last6Hours": "Zadnjih 6 ur",
   "appSettings_last24Hours": "Zadnjih 24 ur",
   "appSettings_lastWeek": "Prejšnji teden",
+  "appSettings_rasterTileSource": "Vir rastrskih ploščic",
+  "appSettings_stadiaEndpoint": "Končna točka Stadia",
+  "appSettings_stadiaApiKey": "Ključ API Stadia",
+  "appSettings_stadiaApiKeyRequired": "Obvezno za uporabo Stadia Maps",
+  "appSettings_stadiaApiKeyConfigured": "Nastavljeno: {maskedKey}",
+  "@appSettings_stadiaApiKeyConfigured": {
+    "placeholders": {
+      "maskedKey": {
+        "type": "String"
+      }
+    }
+  },
+  "appSettings_stadiaApiKeyDialogDescription": "Vnesite svoj ključ API za Stadia Maps. Aplikacija ga uporablja za zahteve rastrskih ploščic.",
   "appSettings_offlineMapCache": "Shramba zemljevidov brez povezave",
   "appSettings_noAreaSelected": "Območje ni izbrano",
   "appSettings_areaSelectedZoom": "Izbrano območje (povečava {minZoom}-{maxZoom})",
@@ -337,11 +356,8 @@
       }
     }
   },
-  "channels_hashtagChannel": "Hashtag kanal",
   "channels_public": "Javni",
   "channels_private": "Zasebni",
-  "channels_publicChannel": "Javni kanal",
-  "channels_privateChannel": "Zasebni kanal",
   "channels_editChannel": "Uredi kanal",
   "channels_muteChannel": "Utišaj kanal",
   "channels_unmuteChannel": "Vklopi obvestila kanala",
@@ -388,6 +404,22 @@
     }
   },
   "channels_smazCompression": "Kompresija SMAZ",
+  "channels_cyr2latCompression": "Kompresija Cyr2Lat",
+  "channels_cyr2latCompressionDscr": "Pri pošiljanju nekatere cirilice nadomesti z latiničnimi.",
+  "channels_cyr2latSettingsHeading": "Nastavitve Cyr2Lat",
+  "channels_cyr2latSettingsSubheading": "Seznam zamenjav",
+  "channels_cyr2latSettingsDscr": "Uredi JSON-konfiguracijo zamenjav znakov",
+  "channels_cyr2latSettingsDialogHint": "JSON-tabela zamenjav",
+  "channels_cyr2latSettingsDialogWrongJSON": "Nepravilen JSON: {error}",
+  "settings_cyr2latProfileAdd": "Dodaj profil Cyr2Lat",
+  "settings_cyr2latProfileName": "Ime profila",
+  "settings_cyr2latProfileNameEmpty": "Ime profila ne sme biti prazno",
+  "settings_cyr2latProfileAdded": "Profil je bil uspešno dodan",
+  "settings_cyr2latProfileUpdated": "Profil je bil uspešno posodobljen",
+  "settings_cyr2latProfileEdit": "Uredi profil Cyr2Lat",
+  "settings_cyr2latProfileDelete": "Izbriši profil Cyr2Lat",
+  "settings_cyr2latProfileDeleted": "Profil je bil uspešno izbrisan",
+  "settings_cyr2latProfileDeleteDscr": "Ali res želite izbrisati profil \"{name}\"?",
   "channels_channelUpdated": "Kanal {name} je bil posodobljen",
   "@channels_channelUpdated": {
     "placeholders": {
@@ -399,7 +431,7 @@
   "channels_publicChannelAdded": "javna skupnost dodana",
   "channels_sortBy": "Sortiraj po",
   "channels_sortManual": "Ročno",
-  "channels_sortAZ": "A-Z",
+  "channels_sortAZ": "A do Z",
   "channels_sortLatestMessages": "Najnovejše sporočilo",
   "channels_sortUnread": "Nerešeno",
   "chat_noMessages": "Še ni sporočil.",
@@ -531,7 +563,7 @@
       }
     }
   },
-  "debugFrame_textTypeCli": "CLI",
+  "debugFrame_textTypeCli": "CLI (Command Line Interface)",
   "debugFrame_textTypePlain": "Preprosto",
   "debugFrame_text": "- Tekst: \"{text}\"",
   "@debugFrame_text": {
@@ -541,7 +573,7 @@
       }
     }
   },
-  "debugFrame_hexDump": "Hex Dump:",
+  "debugFrame_hexDump": "Izpis heksadecimalnih vrednosti:",
   "chat_pathManagement": "Upravljanje poti",
   "chat_routingMode": "Navodilo za usmerjevalni način",
   "chat_autoUseSavedPath": "Avto (uporabi shranjeno pot)",
@@ -550,7 +582,7 @@
   "chat_pathHistoryFull": "Zapiske o poti so popolni. Izbriši vnose, da dodaš nove.",
   "chat_hopSingular": "skok",
   "chat_hopPlural": "skokov",
-  "chat_hopsCount": "{count} {count, plural, =1{hop} other{hops}}",
+  "chat_hopsCount": "{count} {count, plural, =1{skok} other{skoki}}",
   "@chat_hopsCount": {
     "placeholders": {
       "count": {
@@ -752,6 +784,56 @@
       }
     }
   },
+  "mapCache_cachedTilesLabel": "Cached tiles",
+  "mapCache_cachedTileSummaryLabel": "Cached tile summary",
+  "mapCache_bulkDownloadDisabledForSource": "Offline bulk downloads are disabled for {source}.",
+  "@mapCache_bulkDownloadDisabledForSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_bulkDownloadDisabledInConfig": "Offline bulk downloads are disabled for {source} in this app configuration.",
+  "@mapCache_bulkDownloadDisabledInConfig": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summarySource": "Source: {source}",
+  "@mapCache_summarySource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCache_summaryCachedTilesForSource": "Cached tiles for source: {count}",
+  "@mapCache_summaryCachedTilesForSource": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryCachedInSelection": "Cached in selected area/zoom: {count}",
+  "@mapCache_summaryCachedInSelection": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapCache_summaryApproxCacheSize": "Approx cache size: {size}",
+  "@mapCache_summaryApproxCacheSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "mapCache_boundsLabel": "N {north}, S {south}, E {east}, W {west}",
   "@mapCache_boundsLabel": {
     "placeholders": {
@@ -879,11 +961,11 @@
   "path_setPath": "Nastavi Pot",
   "repeater_management": "Upravljanje ponovitve",
   "repeater_managementTools": "Upravne orodje",
-  "repeater_status": "Status",
+  "repeater_status": "Stanje",
   "repeater_statusSubtitle": "Pogledati stanje, statistike in sosede repeatera",
   "repeater_telemetry": "Telemetrija",
   "repeater_telemetrySubtitle": "Pogledate telemetrijo senzorjev in sistemske statistike",
-  "repeater_cli": "CLI",
+  "repeater_cli": "CLI (Command Line Interface)",
   "repeater_cliSubtitle": "Pošlji ukazne povelje na ponovitveno enoto.",
   "repeater_settings": "Nastavitve",
   "repeater_settingsSubtitle": "Konfigurirajte parametre ponovitelja",
@@ -992,7 +1074,7 @@
   "repeater_guestPasswordHelper": "Odpovedni dostopni geslo",
   "repeater_radioSettings": "Nastavitve Radija",
   "repeater_frequencyMhz": "Frekvenca (MHz)",
-  "repeater_frequencyHelper": "300-2500 MHz",
+  "repeater_frequencyHelper": "300–2500 MHz",
   "repeater_txPower": "TX Moč",
   "repeater_txPowerHelper": "1-30 dBm",
   "repeater_bandwidth": "Pasovna širina",
@@ -1059,6 +1141,81 @@
   },
   "repeater_confirm": "Potrdit",
   "repeater_settingsSaved": "Nastavitve so shranjene uspešno.",
+  "repeater_rxGain": "Povečana dobitka RX",
+  "repeater_rxGainHelper": "Veća občutljivost, večji porabljeni tok (velja samo za SX1262/SX1268)",
+  "repeater_refreshRxGain": "Povečana dobitka RX, posodobit",
+  "repeater_multiAcks": "Več potrdil",
+  "repeater_multiAcksSubtitle": "Potrdite sporočila po več poti za boljši dostop",
+  "repeater_refreshMultiAcks": "Ponovite več potrdil",
+  "repeater_networkHealth": "Zdravilo omrežja",
+  "repeater_loopDetect": "Detekcija ciklov",
+  "repeater_loopDetectHelper": "Izpišite pakete, ki izgledajo kot pete v omrežju.",
+  "repeater_loopDetectOff": "Izklopljeno",
+  "repeater_loopDetectMinimal": "Minimalen",
+  "repeater_loopDetectModerate": "Umiren",
+  "repeater_loopDetectStrict": "Strogi",
+  "repeater_dutyCycle": "Ciklus delovanja",
+  "repeater_dutyCycleHelper": "Najvišji odstotek časa, ki ga lahko posreduje.",
+  "repeater_dutyCyclePercent": "{percent} %",
+  "@repeater_dutyCyclePercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "repeater_ownerInfo": "Informacije o operaterju",
+  "repeater_ownerInfoHelper": "javni podatki o tej napravi",
+  "repeater_refreshOwnerInfo": "Prejmi informacije o operaterju",
+  "repeater_floodMax": "Največji možni odmerek",
+  "repeater_floodMaxHelper": "Največje število paketov, ki lahko potujejo v enem plovilnem paketu (0-64)",
+  "repeater_advancedSettings": "Napredno",
+  "repeater_advancedSettingsSubtitle": "Gumbi za nastavljanje za izkušene uporabnike",
+  "repeater_pathHashMode": "Način ustvarjanja hash-a poti",
+  "repeater_pathHashModeHelper": "Bajti, uporabljeni za kodiranje ID-ja tega repetitorja v oznakah flood poti/zaznavanja zank. 0=1 bajt (256 ID-jev, do 64 skokov), 1=2 bajta (65.000 ID-jev, do 32 skokov), 2=3 bajti (16 milijonov ID-jev, do 21 skokov). Vdelana programska oprema pred v1.14 je vedno uporabljala 1-bajtne poti; v1.14 in novejše je mogoče nastaviti na 2- ali 3-bajtne poti.",
+  "repeater_txDelay": "Zatemnitevanje zaradi poplav v Texasu",
+  "repeater_txDelayHelper": "Uporaba intervalov za ponovno pošiljanje v primeru prometa zaradi poplav, kot pomnožnik časovne trajanje paketa (0-2, privzeto 0,5). Veje vrednost = manjše kolizije, vendar počasnejše dostavo.",
+  "repeater_directTxDelay": "Neposredni časovno odlašanje",
+  "repeater_directTxDelayHelper": "Razdalja za ponovno pošiljanje za neposredno (neobvezen) promet, kot pomnožnik časovne trajanja paketa (0-2, privzeto 0,3).",
+  "repeater_intThresh": "Meja, pri kateri nastane motnja",
+  "repeater_intThreshHelper": "Tretja stopnja se uporablja za kalibracijo šumnega nivoja radija, kar omogoča, da se izklaplja pri šumu, ki presega to raven. 0 izklopi – uporabite le, če zaznate napake v šumnem pasu.",
+  "repeater_agcResetInterval": "Interval ponovne kalibracije AGC",
+  "repeater_agcResetIntervalHelper": "Kako pogosto je treba ponovno nastaviti samodejno regulacijo občutljivosti, da se vrnete v normalno stanje? Interval je nastavljen na nekaj sekund, natančno na 4. 0 izklopi periodično ponovno nastavljanje.",
+  "repeater_actionsTitle": "Dejanja",
+  "repeater_sendAdvert": "Pošlji oglas o poplavah",
+  "repeater_sendAdvertSubtitle": "Razpustite oglas o poplavah preko omrežja.",
+  "repeater_sendAdvertZeroHop": "Pošlji oglas, ki ne potrebuje posrednika.",
+  "repeater_sendAdvertZeroHopSubtitle": "Premejte oglas, ki uporablja eno povezavo (brez posrednikov).",
+  "repeater_clockSync": "Sinerizirajte uro zdaj",
+  "repeater_clockSyncSubtitle": "Nastavite čas na telefonu, da se sinhronizira s repeatrom.",
+  "repeater_actionSucceeded": "{action} je uspel",
+  "@repeater_actionSucceeded": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "repeater_actionFailed": "{action} ni bilo uspešno: {error}",
+  "@repeater_actionFailed": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "repeater_settingsSavedRebootNeeded": "Nastavitve shranjene – ponovni zagon repetitorja za uporabo",
+  "repeater_settingsPartialFailure": "Nekatna nastavitva niso uspešna: {failures}",
+  "@repeater_settingsPartialFailure": {
+    "placeholders": {
+      "failures": {
+        "type": "String"
+      }
+    }
+  },
   "repeater_errorSavingSettings": "Napaka pri shranjevanju nastavitev: {error}",
   "@repeater_errorSavingSettings": {
     "placeholders": {
@@ -1070,11 +1227,9 @@
   "repeater_refreshBasicSettings": "Ponovno nastavi osnovne nastavitve",
   "repeater_refreshRadioSettings": "Ponovno Nastavitve Radija",
   "repeater_refreshTxPower": "Ponovno nastavi TX moč",
-  "repeater_refreshLocationSettings": "Ponovno Nastavi Nastavitve Lokacije",
   "repeater_refreshPacketForwarding": "Ponovno nastavitve usmerjevanja paketa",
   "repeater_refreshGuestAccess": "Ponovno nastavitve dostopa gostov",
   "repeater_refreshPrivacyMode": "Ponovno aktiviraj način zasebnosti",
-  "repeater_refreshAdvertisementSettings": "Ponovno nastavi Oglede Oglasi",
   "repeater_refreshed": "{label} je bil/a posodobljen/a",
   "@repeater_refreshed": {
     "placeholders": {
@@ -1192,6 +1347,43 @@
       }
     }
   },
+  "telemetry_digitalInputLabel": "Digitalni vhod",
+  "telemetry_digitalOutputLabel": "Digitalni izhod",
+  "telemetry_analogInputLabel": "Analogni vhod",
+  "telemetry_analogOutputLabel": "Analogni izhod",
+  "telemetry_genericLabel": "Splošni senzor",
+  "telemetry_luminosityLabel": "Osvetljenost",
+  "telemetry_presenceLabel": "Prisotnost",
+  "telemetry_humidityLabel": "Vlažnost",
+  "telemetry_accelerometerLabel": "Merilnik pospeška",
+  "telemetry_pressureLabel": "Tlak",
+  "telemetry_altitudeLabel": "Nadmorska višina",
+  "telemetry_frequencyLabel": "Frekvenca",
+  "telemetry_percentageLabel": "Odstotek",
+  "telemetry_concentrationLabel": "Koncentracija",
+  "telemetry_powerLabel": "Moč",
+  "telemetry_distanceLabel": "Razdalja",
+  "telemetry_energyLabel": "Energija",
+  "telemetry_directionLabel": "Smer",
+  "telemetry_timeLabel": "Čas",
+  "telemetry_gyrometerLabel": "Žiroskop",
+  "telemetry_colourLabel": "Barva",
+  "telemetry_gpsLabel": "GPS",
+  "telemetry_switchLabel": "Stikalo",
+  "telemetry_polylineLabel": "Polilinija",
+  "telemetry_altitudeValue": "{meters} m",
+  "telemetry_frequencyValue": "{hertz} Hz",
+  "telemetry_pressureValue": "{hpa} hPa",
+  "telemetry_luminosityValue": "{lux} lx",
+  "telemetry_powerValue": "{watts} W",
+  "telemetry_distanceValue": "{meters} m",
+  "telemetry_energyValue": "{kilowattHours} kWh",
+  "telemetry_directionValue": "{degrees}°",
+  "telemetry_concentrationValue": "{ppm} ppm",
+  "telemetry_percentageValue": "{percent}%",
+  "telemetry_analogValue": "{value}",
+  "telemetry_autoFetchQuantity": "Število zahtev",
+  "telemetry_error": "Podatkov ni bilo mogoče pridobiti",
   "telemetry_noData": "Niso na voljo podatki o telemetriji.",
   "telemetry_channelTitle": "Kanal {channel}",
   "@telemetry_channelTitle": {
@@ -1347,7 +1539,7 @@
   "listFilter_sortBy": "Sortiraj po",
   "listFilter_latestMessages": "Najnovejše sporočilo",
   "listFilter_heardRecently": "Nedavno slišan",
-  "listFilter_az": "A-Z",
+  "listFilter_az": "A do Z",
   "listFilter_filters": "Filtri",
   "listFilter_all": "Vse",
   "listFilter_users": "Uporabniki",
@@ -1922,13 +2114,6 @@
   "contact_teleEnv": "Okolje telemetrije",
   "contact_teleEnvSubtitle": "Dovoli deljenje podatkov okoljskih senzorjev",
   "contact_teleLocSubtitle": "Dovoli deljenje podatkov o lokaciji",
-  "@settings_multiAck": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "appSettings_maxRouteWeightSubtitle": "Največja teža, ki jo lahko pot doseže s uspešnimi dostavnami.",
   "appSettings_initialRouteWeight": "Izvirna teža poti",
   "appSettings_initialRouteWeightSubtitle": "Izguba teže za nove, odkriti poti",
@@ -1940,7 +2125,6 @@
   "appSettings_maxMessageRetries": "Najve število poskusov pošiljanja sporočil",
   "appSettings_maxMessageRetriesSubtitle": "Število poskusov ponovnega poslanja, preden se sporočilo označuje kot neuspešno",
   "path_routeWeight": "{weight}/{max}",
-  "settings_multiAck": "Večkratni potrditvi: {value}",
   "settings_telemetryModeUpdated": "Način telemetrije posodobljen",
   "map_showOverlaps": "Prekrivanje ključa ponovnega predvajanja",
   "map_runTraceWithReturnPath": "Vrni se nazaj po isti poti.",
@@ -2019,6 +2203,9 @@
   "translation_enableSubtitle": "Prevedite vstopne sporočila in omogočite predhodno prevajanje.",
   "translation_enableTitle": "Omogočite prevod",
   "translation_composerSubtitle": "Ureja privzeto stanje ikone za prevod, ki jo uporablja avtor.",
+  "translation_autoIncomingTitle": "Samodejno prevajaj sporočila",
+  "translation_autoIncomingSubtitle": "Samodejno prevaja sporočila za obvestila ter za klepete ali kanale.",
+  "translation_translateMessage": "Prevedi sporočilo",
   "translation_targetLanguage": "Ciljna jezika",
   "translation_useAppLanguage": "Uporabite jezik aplikacije",
   "translation_downloadedModelLabel": "Naložen model",
@@ -2073,5 +2260,350 @@
   "repeater_guest": "Informacije o ponovljalniku",
   "chat_sendMessage": "Pošlji sporočilo",
   "room_guest": "Informacije o strežniku",
-  "repeater_guestTools": "Naložila za goste"
+  "repeater_guestTools": "Naložila za goste",
+  "repeater_getCategory": "Dobite vrednosti",
+  "repeater_powerMgmt": "Upravljanje z energijo",
+  "repeater_sensors": "Senzori",
+  "repeater_cliHelpPowerOff": "Izklopi naprave. (ne pričakujemo odziva)",
+  "repeater_cliHelpClkReboot": "Ponovno nastavi uro na znano točko in ponovno vklopi naprave.",
+  "repeater_cliHelpAdvertZeroHop": "Pošlje oglas, ki doseže samo neposredne sosede (brez posredovanja).",
+  "repeater_cliHelpStartOta": "Začne nadstrekovno ažuriranje programne opreme na podprtih ploščah.",
+  "repeater_cliHelpTime": "Nastavi časovni ukaz naprave na podano število sekund od Unixovega začetka. Časovni ukaz ne more iti nazaj.",
+  "repeater_cliHelpBoard": "Prikaže proizvajalca plošče / identifikator strojne opreme.",
+  "repeater_cliHelpDiscoverNeighbors": "Pošlje zahtevo za odkrivanje sosednjih naprav. (Samo za repeatere)",
+  "repeater_cliHelpPowersaving": "Prikaže, ali je vklopljen način varčevanja z energijo.",
+  "repeater_cliHelpPowersavingOnOff": "Omogoča ali onemogoča način varčevanja z energijo (če je podprt).",
+  "repeater_cliHelpErase": "(Samo za serijske naprave) Formira datotapno sistemsko okolje. Izbriše vse nastavitve in kontakte.",
+  "repeater_cliHelpSetDutyCycle": "Določi maksimalni dovoljeni čas, ki ga naprave lahko posredujejo, v odstotkih (1-100). Samodejno prilagodi faktor, ki odvisen je od časa, ki ga naprave lahko posredujejo.",
+  "repeater_cliHelpSetPrvKey": "(Samo za serijske naprave) Nadomesti zasebni ključ za identifikacijo naprave. Za uporabo je potrebna ponovna aktivacija. Ustvari nov javni ključ.",
+  "repeater_cliHelpSetRadioRxGain": "(Samo za SX126x) Vklopi povečano občutljivost RX za izboljšano delovanje pri večjih navorih.",
+  "repeater_cliHelpSetOwnerInfo": "Določi niz z informacijami o kontaktni osebi, ki je v oglasih. Za uporabo novih vrstic uporabite '|'.",
+  "repeater_cliHelpSetPathHashMode": "Nastavlja način \"hash poti\". 0 = za stare sisteme, 1 = za standard, 2 = za stroge. Vpliva na to, kako so poti uskladene.",
+  "repeater_cliHelpSetLoopDetect": "Nastavlja občutljivost detekcije ponavljajočih se povezav: izklopljeno, minimalno, umeren, ali strogo.",
+  "repeater_cliHelpSetFreq": "(Samo za serijske naprave) Hitro nastavi samo frekvenco. Potrebna je ponovna aktivacija. Za popolno nastavitev radio parametrov je priporočljivo uporabiti možnost \"nastavitev radia\".",
+  "repeater_cliHelpSetBridgeChannel": "(Samo za most ESPNow) Nastavlja kanal WiFi-ja (1-14), ki ga uporablja most.",
+  "repeater_cliHelpGetName": "Prikaže ime konfigurirane notranje.",
+  "repeater_cliHelpGetRole": "Prikaže vlogo programskega oprema (repeater, strežnik za sobo itd.).",
+  "repeater_cliHelpGetPublicKey": "Prikazuje javni ključ naprave.",
+  "repeater_cliHelpGetPrvKey": "(Samo za serijske naprave) Prikazuje zasebni ključ naprave. Sprejemajte ga kot skrivno informacijo.",
+  "repeater_cliHelpGetRepeat": "Pokaže, ali je omogočeno posredovanje paketov (delovanje kot repetitor).",
+  "repeater_cliHelpGetTx": "Prikazuje trenutno moč TX v dBm.",
+  "repeater_cliHelpGetFreq": "Prikaže nastavljeno frekvenco v MHz.",
+  "repeater_cliHelpGetRadio": "Prikaže vse parametre radija: frekvenco, širino pasu, faktor razširjanja, raven kodiranja.",
+  "repeater_cliHelpGetRadioRxGain": "(Samo za SX126x) Prikazuje stanje povečanega dobiča na RX.",
+  "repeater_cliHelpGetAf": "Prikazuje trenutni faktor, ki določa časovno obdobje.",
+  "repeater_cliHelpGetDutyCycle": "Prikazuje trenutno dovoljeno stopnjo delovanja kot odstotek.",
+  "repeater_cliHelpGetIntThresh": "Prikazuje prag medsebojnega vpliva kanala v dB.",
+  "repeater_cliHelpGetAgcResetInterval": "Prikazuje interval ponovne kalibracije AGC v sekundah.",
+  "repeater_cliHelpGetMultiAcks": "Pokaže, ali je vklopljen način dvojnega potrdila (1) ali je izklopljen (0).",
+  "repeater_cliHelpGetAllowReadOnly": "Pokaže, ali je omogočen le brani dostop za goste.",
+  "repeater_cliHelpGetAdvertInterval": "Prikazuje časovno obdobje lokalne reklame v minutah.",
+  "repeater_cliHelpGetFloodAdvertInterval": "Prikaže časovno obdobje, ko se prikazuje oglas o poplavah, v urah.",
+  "repeater_cliHelpGetGuestPassword": "Prikaže nastavljeno geslo za gostitelja.",
+  "repeater_cliHelpGetLat": "Prikaže določeno zemljepisno širino.",
+  "repeater_cliHelpGetLon": "Prikaže določeno merilo dolžine.",
+  "repeater_cliHelpGetRxDelay": "Prikazuje osnovno vrednost RX odlašanja.",
+  "repeater_cliHelpGetTxDelay": "Prikazuje faktor zamude v načinu delovanja pri plavlju.",
+  "repeater_cliHelpGetDirectTxDelay": "Prikazuje faktor odlašanja signala v režimu neposredne komunikacije.",
+  "repeater_cliHelpGetFloodMax": "Prikazuje največjo število, kolikokrat lahko voda doseže najvišjo višino.",
+  "repeater_cliHelpGetOwnerInfo": "Prikazuje niz z informacijami o lastniku.",
+  "repeater_cliHelpGetPathHashMode": "Prikaže način delovanja z hashjem poti (0/1/2).",
+  "repeater_cliHelpGetLoopDetect": "Prikazuje občutljivost na zaznavanje ciklov.",
+  "repeater_cliHelpGetAcl": "(Samo za serije) Navaja vnos za nadzor dostopa na ponovljalniku.",
+  "repeater_cliHelpGetBridgeEnabled": "Pokaže, ali je most omogočen.",
+  "repeater_cliHelpGetBridgeDelay": "Prikazuje zamik mosta v milisekundah.",
+  "repeater_cliHelpGetBridgeSource": "Pokaže, ali most prenaša pakete RX ali TX.",
+  "repeater_cliHelpGetBridgeBaud": "(Samo za most RS232) Prikazuje hitrost prenosa podatkov na mostu.",
+  "repeater_cliHelpGetBridgeChannel": "(Samo za most ESPNow) Prikazuje kanal WiFi mosta.",
+  "repeater_cliHelpGetBridgeSecret": "(Samo za most ESPNow) Prikazuje tajno, ki jo deli most.",
+  "repeater_cliHelpGetBootloaderVer": "(Samo za NRF52) Prikazuje različico programskega orodja.",
+  "repeater_cliHelpGetAdcMultiplier": "Prikazuje pomnoževalnik ADC (skaliranje napetosti baterije).",
+  "repeater_cliHelpGetPwrMgtSupport": "Navaja, ali ima uprava področje za upravljanje z energijo.",
+  "repeater_cliHelpGetPwrMgtSource": "Prikaže trenutni vir napajanja: zunanji ali baterija.",
+  "repeater_cliHelpGetPwrMgtBootReason": "Prikazuje najnovejšo razlog za ponovno nastavitve in izklop.",
+  "repeater_cliHelpGetPwrMgtBootMv": "Prikazuje napetost baterije v mV ob zagonu.",
+  "repeater_cliHelpSensorGet": "Prebere določeno vrednost senzorja preko tipke.",
+  "repeater_cliHelpSensorSet": "Ustvari prilagojeno nastavitev za senzor.",
+  "repeater_cliHelpSensorList": "Navaja vse nastavitve za uporabniške senzorje, razvrščene po želeni začetni indeksu.",
+  "repeater_cliHelpRegionDefault": "Prikaže trenutno privzeto območje.",
+  "repeater_cliHelpRegionDefaultSet": "Določi privzeto območje. Za izbris uporabite \"<null>\".",
+  "repeater_cliHelpRegionListAllowed": "Navaja regije, ki dovoljujejo promet v času poplav.",
+  "repeater_cliHelpRegionListDenied": "Navaja regije, ki preprečujejo promet zaradi poplav.",
+  "repeater_cliHelpStatsPackets": "(Samo za serijske povezave) Prikazuje statistiko na nivoju paketov.",
+  "repeater_cliHelpStatsRadio": "(Samo za serije) Prikazuje statistične podatke o radiju.",
+  "repeater_cliHelpStatsCore": "(Samo za serijske naprave) Prikazuje osnovne statistične podatke.",
+  "common_done": "Done",
+  "background_serviceTitle": "MeshCore running",
+  "background_serviceText": "Keeping BLE connected",
+  "appSettings_translationModelDeleted": "Deleted {name}",
+  "@appSettings_translationModelDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "appSettings_translationModelDeleteFailed": "Failed to delete: {error}",
+  "@appSettings_translationModelDeleteFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "channels_channelUpdateFailed": "Failed to update channel: {error}",
+  "@channels_channelUpdateFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "map_type": "Type",
+  "map_path": "Path",
+  "map_location": "Location",
+  "map_estLocation": "Est. Location",
+  "map_publicKey": "Public Key",
+  "map_publicKeyPrefixHint": "e.g. ab12",
+  "contact_typeChat": "Chat",
+  "contact_typeRepeater": "Repeater",
+  "contact_typeRoom": "Room",
+  "contact_typeSensor": "Sensor",
+  "contact_typeUnknown": "Unknown",
+  "channels_via": "via {path}",
+  "chat_score": "Score",
+  "settings_multiAck": "Več potrdil",
+  "map_sharedAt": "Deljeno",
+  "@losBlockedSpotChip": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "@losSelectedObstructionDetails": {
+    "placeholders": {
+      "obstruction": {
+        "type": "String"
+      },
+      "heightUnit": {
+        "type": "String"
+      },
+      "distanceFromA": {
+        "type": "String"
+      },
+      "distanceUnit": {
+        "type": "String"
+      },
+      "distanceFromB": {
+        "type": "String"
+      }
+    }
+  },
+  "losBlockedSpotsHint": "Dotaknite blokirano točko, da jo označite na zemljeplati.",
+  "losSelectedObstructionTitle": "Izbrano ovire",
+  "losBlockedSpotsTitle": "Zasedena parkirišča",
+  "losBlockedSpotChip": "{distance} {distanceUnit} • {obstruction} {heightUnit}",
+  "losSelectedObstructionDetails": "Blocked by {obstruction} {heightUnit}, {distanceFromA} from A and {distanceFromB} from B ({distanceUnit}).",
+  "settings_companionDebugLog": "Log zapis za odpravljanje napak",
+  "chat_markAsUnread": "Označiti kot neneobdelano",
+  "chat_newMessages": "Nove novice",
+  "settings_companionDebugLogSubtitle": "Navodila, odgovori in surova podatka za BLE/TCP/USB.",
+  "repeater_chanUtil": "Uporaba kanala",
+  "@routing_lastWorked": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "@routing_deliveryCounts": {
+    "placeholders": {
+      "successes": {
+        "type": "int"
+      },
+      "failures": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathEditor_hopCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathEditor_invalidTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "@channels_communityShortId": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "common_undo": "Preobrn",
+  "messageStatus_delivered": "Dostavljeno",
+  "messageStatus_sent": "Pošljeno",
+  "messageStatus_pending": "Pošiljanje",
+  "messageStatus_failed": "Uspešno ni bilo mogo, da se sporočilo pošlje",
+  "messageStatus_repeated": "Slišal sem večkrat",
+  "contacts_moreOptions": "Več možnosti",
+  "contacts_searchOpen": "Iskanje kontaktov",
+  "contacts_searchClose": "Izklopi iskanje",
+  "routing_title": "Navigacija",
+  "routing_modeAuto": "Avto",
+  "routing_modeFlood": "Poplavo",
+  "routing_modeManual": "Navodilo",
+  "routing_modeAutoHint": "Samodejno izbere najbolj poznano pot, in sicer, ko ni na voljo nobena.",
+  "routing_modeFloodHint": "Prenosi preko vseh repetitorjev. Najzanesljivejši način, vendar zahteva več časa.",
+  "routing_modeManualHint": "Vedno sledi natančni poti, ki jo ste določili.",
+  "routing_currentRoute": "Trenutna pot",
+  "routing_directNoHops": "Neposredno – brez prehodov",
+  "routing_noPathYet": "Žep trenutno ni mogoče najti. Naslednje sporočilo bo posredovano, dokler ne bo ugotovljeno, kje je pot.",
+  "routing_floodBroadcast": "Prenos preko vseh repetitiv",
+  "routing_editPath": "Uredi pot",
+  "routing_forgetPath": "Pozabi na pot",
+  "routing_knownPaths": "Poznati poti",
+  "routing_knownPathsHint": "Kliknite na pot, da jo izberete.",
+  "routing_inUse": "V uporabi",
+  "routing_qualityStrong": "Močan prvi korak",
+  "routing_qualityGood": "Prva uspešna faza",
+  "routing_qualityFair": "Prva, uspešna faza",
+  "routing_qualityWorked": "Izpolnil",
+  "routing_qualityFlood": "Slišano preko poplave",
+  "routing_qualityUntested": "Ne preizkušen",
+  "routing_lastWorked": "delal/a {when}",
+  "routing_neverWorked": "nikoli ni bilo potrjeno",
+  "routing_floodDelivery": "Dostava zaradi poplave",
+  "pathEditor_title": "Izgradnja poti",
+  "pathEditor_hopCounter": "{count} od 64 različnih sort hropa",
+  "pathEditor_noHops": "Še niso dodani hmelji. Za dodajanje hmelja v vrstnem redu kliknite na povezavo spodaj, ali pa shranite brez dodanega hmelja, da ga lahko posredujete neposredno.",
+  "pathEditor_addHops": "Dodajte suho travo v skladu s postopkom.",
+  "pathEditor_searchRepeaters": "Iskanje ponovitev",
+  "pathEditor_advancedHex": "Napredno: surovi šestnajstni pot",
+  "pathEditor_hexLabel": "Predfiks za heksadecimalno šifro",
+  "pathEditor_hexHelper": "Dva šestbitna znaka na vsak skok, ločena z vejico",
+  "pathEditor_invalidTokens": "Neveljaven: {tokens}",
+  "pathEditor_tooManyHops": "Največ 64 hopov",
+  "pathEditor_usePath": "Uporabite to poto",
+  "pathEditor_removeHop": "Odstranite hmelj",
+  "pathEditor_unknownHop": "Neznani ponovitelj",
+  "map_zoomIn": "Povečaj",
+  "routing_deliveryCounts": "{successes} delivered, {failures} failed",
+  "map_zoomOut": "Povečajte pogled",
+  "map_centerMap": "Krajšarska karta",
+  "chrome_bluetoothRequiresChromium": "Web Bluetooth zahteva brskalnik Chromium.",
+  "channels_communityShortId": "ID: {id}...",
+  "pathTrace_legendGpsConfirmed": "GPS potrdilo",
+  "pathTrace_legendInferred": "Izpeljana lokacija",
+  "@pathMap_hopOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_observedPaths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_alternate": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_hopCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_gpsCount": {
+    "placeholders": {
+      "confirmed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_sharedNodeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pathMap_partialAnimation": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "scanner_bluetoothWebUnsupported": "Funkcija Bluetooth v brskalniku ni na voljo. Povežite se preko USB-ja namesto tega.",
+  "map_searchHint": "Iščite ime ali ID vozlišča",
+  "map_online": "V omrežju",
+  "map_activity": "Dejavnost",
+  "map_recent": "Nedavni",
+  "map_stale": "Zastarelo",
+  "map_visible": "Vidno",
+  "map_hidden": "Skrit",
+  "map_centerOnNode": "Centriraj na vozlišče",
+  "map_details": "Podrobnosti",
+  "map_noGps": "Brez GPS",
+  "map_noResults": "Ni ujemajočih se vozlišč",
+  "pathMap_viewSingle": "Posamično",
+  "pathMap_viewCombined": "Skupno",
+  "pathMap_play": "Predvajaj",
+  "pathMap_pause": "Premor",
+  "pathMap_replay": "Ponovitev",
+  "pathMap_stepBack": "Prejšnji skok",
+  "pathMap_stepForward": "Naslednji skok",
+  "pathMap_animationOn": "Prikaži animacijo paketa",
+  "pathMap_animationOff": "Skrij animacijo paketa",
+  "pathMap_hopOf": "Skok {current} od {total}",
+  "pathMap_observedPaths": "Opazovane poti: {count}",
+  "pathMap_primary": "Primarna",
+  "pathMap_alternate": "Alternativa {index}",
+  "pathMap_legendShared": "Deljen segment",
+  "pathMap_legendEstimated": "Ocenjen segment",
+  "pathMap_sharedNodeCount": "Uporablja {count} poti",
+  "pathMap_partialAnimation": "{count, plural, =1{1 skok nima lokacije — prikazana pot je delna} =2{2 skoka nimata lokacije — prikazana pot je delna} few{{count} skoki nimajo lokacije — prikazana pot je delna} other{{count} skokov nima lokacije — prikazana pot je delna}}",
+  "pathMap_hopCount": "{count, plural, =1{1 skok} =2{2 skoka} few{{count} skoki} other{{count} skokov}}",
+  "pathMap_showAllPaths": "Pokaži vse",
+  "pathMap_hidePath": "Skrij pot",
+  "pathMap_showPath": "Pokaži pot",
+  "pathMap_collapsePanel": "Strni ploščo",
+  "pathMap_expandPanel": "Razširi ploščo",
+  "pathMap_noLocation": "Brez lokacije",
+  "pathMap_followPacket": "Zakleni pogled na paket",
+  "pathMap_unfollowPacket": "Odkleni pogled od paketa",
+  "pathMap_gpsCount": "{confirmed}/{total} GPS"
 }

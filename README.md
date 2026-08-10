@@ -6,6 +6,8 @@ Open-source Flutter client for MeshCore LoRa mesh networking devices.
 
 MeshCore Open is a cross-platform mobile application for communicating with MeshCore LoRa mesh network devices via Bluetooth Low Energy (BLE). The app enables long-range, off-grid communication through peer-to-peer messaging, public channels, and mesh networking capabilities.
 
+**Website:** [meshcoreopen.org](https://meshcoreopen.org/)
+
 <a href="http://apps.obtainium.imranr.dev/redirect.html?r=obtainium://add/https://github.com/zjs81/meshcore-open">
         <img src="assets/badges/badge_obtainium.png" height="80" align="center" alt="Get it on Obtainium"/>
 </a>
@@ -46,7 +48,7 @@ MeshCore Open is a cross-platform mobile application for communicating with Mesh
 - **Live Map View**: Real-time visualization of mesh network nodes on an interactive map
 - **Node Filtering**: Filter by node type (chat, repeater, sensor) and time range
 - **Location Sharing**: Share GPS coordinates and custom markers with contacts
-- **Offline Maps**: Download map tiles for offline use in remote areas
+- **Offline Maps**: Download map tiles for offline use in remote areas (with [StadiaMaps](https://stadiamaps.com/pricing/) Free Subscription API-Key)
 - **MGRS Coordinates**: Support for Military Grid Reference System coordinate format
 
 ### Device Management
@@ -92,12 +94,12 @@ MeshCore Open is a cross-platform mobile application for communicating with Mesh
 |---------|---------|
 | flutter_blue_plus | Bluetooth Low Energy communication |
 | provider | State management |
-| sqflite | Local database storage |
+| shared_preferences | Local key-value storage (scoped per device) |
 | flutter_map | Interactive map display |
 | latlong2 | Geographic coordinate handling |
 | flutter_local_notifications | Background notification support |
-| smaz | Message compression |
 | pointycastle | Cryptographic operations |
+| llamadart | On-device LLM message translation |
 | intl | Internationalization and date formatting |
 
 ## Getting Started
@@ -191,6 +193,7 @@ Devices are discovered by scanning for BLE advertisements with known MeshCore de
     - `WisCore-`
     - `HT-`
     - `LowMesh_MC_`
+    - `NRF52`
 
 New device prefixes can be added in `lib/connector/meshcore_uuids.dart`.
 
@@ -220,6 +223,10 @@ Messages are transmitted as binary frames using a custom protocol optimized for 
 ## Contributing
 
 This is an open-source project. Contributions are welcome!
+
+## SWHID and Archive badge
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/zjs81/meshcore-open/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/zjs81/meshcore-open)
+[![SWH](https://archive.softwareheritage.org/badge/swh:1:dir:d37a80b06359730864150ad2aeadd46cce9abd55/)](https://archive.softwareheritage.org/swh:1:dir:d37a80b06359730864150ad2aeadd46cce9abd55;origin=https://github.com/zjs81/meshcore-open;visit=swh:1:snp:47656c4b55ab40a689ff8d2f045196725f05096b;anchor=swh:1:rev:0fe250230905fdd05dbedc0f546736990beacf53)
 
 ### Development Guidelines
 

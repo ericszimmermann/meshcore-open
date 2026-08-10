@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/widgets.dart';
 
 // Buffer Reader - sequential binary data reader with pointer tracking
@@ -206,6 +207,8 @@ const int cmdSendTelemetryReq = 39;
 const int cmdGetCustomVar = 40;
 const int cmdSetCustomVar = 41;
 const int cmdSendBinaryReq = 50;
+const int cmdSetFloodScope = 54;
+const int cmdSendControlData = 55;
 const int cmdGetStats = 56;
 const int cmdSendAnonReq = 57;
 const int cmdSetAutoAddConfig = 58;
@@ -223,6 +226,18 @@ const int reqTypeKeepAlive = 0x02;
 const int reqTypeGetTelemetry = 0x03;
 const int reqTypeGetAccessList = 0x05;
 const int reqTypeGetNeighbors = 0x06;
+
+Uint8List buildTelemetryBinaryPayload() {
+  // Room servers/repeaters read byte 1 as an inverse telemetry permission mask.
+  // Zero means "request every telemetry field allowed for this contact".
+  return Uint8List.fromList([reqTypeGetTelemetry, 0x00, 0x00, 0x00, 0x00]);
+}
+
+const int anonReqTypeRegions = 0x01;
+
+// Control data sub-types used by MeshCore discovery packets.
+const int controlSubtypeDiscoverReq = 0x08;
+const int controlSubtypeDiscoverResp = 0x09;
 
 // Repeater response codes
 const int respServerLoginOk = 0;
@@ -266,6 +281,7 @@ const int pushCodeTraceData = 0x89;
 const int pushCodeNewAdvert = 0x8A;
 const int pushCodeTelemetryResponse = 0x8B;
 const int pushCodeBinaryResponse = 0x8C;
+const int pushCodeControlData = 0x8E;
 
 // Contact/advertisement types
 const int advTypeChat = 1;
@@ -320,7 +336,7 @@ const int maxPathSize = 64;
 const int pathHashSize = 1;
 const int maxNameSize = 32;
 const int maxFrameSize = 172;
-const int appProtocolVersion = 3;
+const int appProtocolVersion = 4;
 // Matches firmware MAX_TEXT_LEN (10 * CIPHER_BLOCK_SIZE).
 const int maxTextPayloadBytes = 160;
 const int _sendTextMsgOverheadBytes =
@@ -451,8 +467,13 @@ String pubKeyToHex(Uint8List pubKey) {
 
 // Helper to convert hex string to public key
 Uint8List hexToPubKey(String hex) {
+  if (hex.length != pubKeySize * 2) {
+    throw FormatException(
+      'Public key hex must be ${pubKeySize * 2} chars, got ${hex.length}',
+    );
+  }
   final result = Uint8List(pubKeySize);
-  for (int i = 0; i < pubKeySize && i * 2 + 1 < hex.length; i++) {
+  for (int i = 0; i < pubKeySize; i++) {
     result[i] = int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16);
   }
   return result;
@@ -566,9 +587,9 @@ Uint8List buildGetStatsFrame(int statsType) {
   return Uint8List.fromList([cmdGetStats, statsType & 0xFF]);
 }
 
-/// Path hash width on air: [61][0][mode], mode 0..2 → (mode+1) bytes per hop hash.
+/// Path hash width on air: [61][0][mode], mode 0..3 → (mode+1) bytes per hop hash.
 Uint8List buildSetPathHashModeFrame(int mode) {
-  final m = mode.clamp(0, 2);
+  final m = mode.clamp(0, 3).toInt();
   return Uint8List.fromList([cmdSetPathHashMode, 0, m]);
 }
 
@@ -720,25 +741,19 @@ Uint8List buildUpdateContactPathFrame(
   final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
   writer.writeUInt32LE(timestamp);
 
-  if ((lat == null || lon == null) && lastModified != null) {
-    // If lat/lon not provided, write zeros
-    writer.writeInt32LE(0);
-    writer.writeInt32LE(0);
-  } else {
-    // Latitude and Longitude are expected in degrees, convert to int by multiplying by 1e6
-    // Latitude
-    final latitude = lat ?? 0.0;
-    writer.writeInt32LE((latitude * 1e6).round());
-
-    // Longitude
-    final longitude = lon ?? 0.0;
-    writer.writeInt32LE((longitude * 1e6).round());
-  }
-
-  if (lastModified != null) {
-    // Last modified
-    final lastModifiedTimestamp = lastModified.millisecondsSinceEpoch ~/ 1000;
-    writer.writeUInt32LE(lastModifiedTimestamp);
+  // Optional [Lat x4, Lon x4][timestamp x4] tail per the doc comment above.
+  // Emit 8 bytes of position (zero-filled when only lastModified is provided)
+  // followed by an optional 4-byte timestamp. Earlier code emitted the
+  // position block twice, which corrupted the tail and caused the firmware
+  // to parse the second lat as the timestamp. See #427.
+  final hasLocation = lat != null && lon != null;
+  if (hasLocation || lastModified != null) {
+    writer.writeInt32LE(hasLocation ? (lat * 1e6).round() : 0);
+    writer.writeInt32LE(hasLocation ? (lon * 1e6).round() : 0);
+    if (lastModified != null) {
+      final lastModifiedTimestamp = lastModified.millisecondsSinceEpoch ~/ 1000;
+      writer.writeUInt32LE(lastModifiedTimestamp);
+    }
   }
 
   return writer.toBytes();
@@ -861,6 +876,67 @@ Uint8List buildSendBinaryReq(Uint8List repeaterPubKey, {Uint8List? payload}) {
   return writer.toBytes();
 }
 
+Uint8List buildSendControlDataFrame(Uint8List payload) {
+  final writer = BufferWriter();
+  writer.writeByte(cmdSendControlData);
+  writer.writeBytes(payload);
+  return writer.toBytes();
+}
+
+Uint8List buildDiscoveryRequestPayload(
+  int tag, {
+  bool prefixOnly = false,
+  int typeMask = 1 << advTypeRepeater,
+}) {
+  final writer = BufferWriter();
+  // The high bit must be set for CMD_SEND_CONTROL_DATA; DISCOVER_REQ uses
+  // subtype 0x8, with the low bit selecting short/full public keys in replies.
+  writer.writeByte(
+    (controlSubtypeDiscoverReq << 4) | (prefixOnly ? 0x01 : 0x00),
+  );
+  writer.writeByte(typeMask);
+  writer.writeUInt32LE(tag);
+  writer.writeUInt32LE(0); // since=0 asks nearby nodes for any recent advert.
+  return writer.toBytes();
+}
+
+Uint8List _reversePathByHop(Uint8List path, int pathHashWidth) {
+  if (path.isEmpty) return Uint8List(0);
+  final width = pathHashWidth.clamp(1, 4).toInt();
+  if (path.length % width != 0) {
+    return Uint8List.fromList(path.reversed.toList());
+  }
+
+  final reversed = Uint8List(path.length);
+  final hops = path.length ~/ width;
+  for (var i = 0; i < hops; i++) {
+    final from = (hops - 1 - i) * width;
+    reversed.setRange(i * width, (i + 1) * width, path, from);
+  }
+  return reversed;
+}
+
+// Build CMD_SEND_ANON_REQ frame.
+// Payload format for regions: [anon_req_type][reply_path_len][reply_path...].
+Uint8List buildSendAnonReqFrame(
+  Uint8List repeaterPubKey, {
+  required int requestType,
+  Uint8List? replyPath,
+  int replyHopCount = 0,
+  int pathHashWidth = pathHashSize,
+}) {
+  final width = pathHashWidth.clamp(1, 4).toInt();
+  final path = replyPath ?? Uint8List(0);
+  final encodedPathLen = ((width - 1) << 6) | (replyHopCount & 0x3F);
+  final writer = BufferWriter();
+  writer.writeByte(cmdSendAnonReq);
+  writer.writeBytes(repeaterPubKey);
+  writer.writeByte(requestType);
+  writer.writeByte(encodedPathLen);
+  writer.writeBytes(_reversePathByHop(path, width));
+  return writer.toBytes();
+}
+
 //Build a trace request frame
 //[cmd][tag x4][auth x4][flag][payload]
 Uint8List buildTraceReq(int tag, int auth, int flag, {Uint8List? payload}) {
@@ -951,7 +1027,22 @@ Uint8List buildSendTelemetryReq(Uint8List? pubKey) {
     writer.writeBytes(Uint8List(3)); // reserved bytes
     writer.writeBytes(pubKey);
   } else {
-    writer.writeBytes(Uint8List(4)); // reserved bytes
+    writer.writeBytes(Uint8List(3)); // reserved bytes
   }
   return writer.toBytes();
+}
+
+//Build CMD_SET_FLOOD_SCOPE
+// Format: [cmd][scope]
+Uint8List buildSetFloodScopeFrame(String region) {
+  if (region == '') {
+    // reset scope
+    return Uint8List.fromList([cmdSetFloodScope, 0]);
+  }
+
+  final name = region.startsWith('#') ? region : '#$region';
+  final hash = crypto.sha256.convert(utf8.encode(name)).bytes;
+  final scope = Uint8List.fromList(hash.sublist(0, 16));
+
+  return Uint8List.fromList([cmdSetFloodScope, 0, ...scope]);
 }
