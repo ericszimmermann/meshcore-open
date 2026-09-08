@@ -1269,6 +1269,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 await appSettingsService.setEvictDiscoveredContactsEnabled(
                   evictDiscoveredContactsEnabled,
                 );
+                if (evictDiscoveredContactsEnabled) {
+                  await connector.trimDiscoveredContactsToLimit();
+                }
                 _sendSettings(
                   connector,
                   autoAddChat,
