@@ -4023,11 +4023,9 @@ class MeshCoreConnector extends ChangeNotifier {
   Future<void> sendSelfAdvert({bool flood = true}) async {
     if (!isConnected) return;
     await sendFrame(buildSendSelfAdvertFrame(flood: flood));
-    if (!flood) {
-      _lastZeroHopAdvertAt = DateTime.now();
-      _lastZeroHopAdvertLatitude = _selfLatitude;
-      _lastZeroHopAdvertLongitude = _selfLongitude;
-    }
+    _lastZeroHopAdvertAt = DateTime.now();
+    _lastZeroHopAdvertLatitude = _selfLatitude;
+    _lastZeroHopAdvertLongitude = _selfLongitude;
   }
 
   Future<void> rebootDevice() async {
