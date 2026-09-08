@@ -111,6 +111,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get messageStatus_repeated => 'Escuchado repetidamente';
 
   @override
+  String get urlImage_enable => 'Enable URL images';
+
+  @override
+  String get urlImage_possible => 'Possible URL image; enable it in Settings.';
+
+  @override
   String get common_reboot => 'Reiniciar';
 
   @override
@@ -1485,10 +1491,13 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get chat_selectSendAction => 'Seleccionar acción de envío';
+
+  @override
   String get chat_sendGif => 'Enviar GIF';
 
   @override
-  String get chat_sendImage => 'Enviar imagen';
+  String get chat_sendImageLora => 'Enviar imagen mediante MeshCore';
 
   @override
   String get chat_imagePickFailed => 'No pude abrir esa imagen';
@@ -1504,6 +1513,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chat_me => 'Yo';
+
+  @override
+  String get reaction_report => 'Emoji Reactions';
 
   @override
   String get emojiCategorySmileys => 'Emoticones';
