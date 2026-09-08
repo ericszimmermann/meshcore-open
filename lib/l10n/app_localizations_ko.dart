@@ -111,6 +111,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get messageStatus_repeated => '반복 수신됨';
 
   @override
+  String get urlImage_enable => 'Enable URL images';
+
+  @override
+  String get urlImage_possible => 'Possible URL image; enable it in Settings.';
+
+  @override
   String get common_reboot => '재부팅';
 
   @override
@@ -1423,10 +1429,13 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get chat_selectSendAction => '전송 작업 선택';
+
+  @override
   String get chat_sendGif => 'GIF 보내기';
 
   @override
-  String get chat_sendImage => '이미지를 보내세요';
+  String get chat_sendImageLora => 'MeshCore를 통해 이미지 보내기';
 
   @override
   String get chat_imagePickFailed => '그 이미지를 열 수 없었어요.';
@@ -1442,6 +1451,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get chat_me => '나';
+
+  @override
+  String get reaction_report => 'Emoji Reactions';
 
   @override
   String get emojiCategorySmileys => '이모티콘';

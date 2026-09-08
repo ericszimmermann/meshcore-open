@@ -659,6 +659,7 @@
       }
     }
   },
+  "chat_selectSendAction": "Küldési művelet kiválasztása",
   "chat_sendGif": "GIF küldése",
   "chat_reply": "Válasz",
   "chat_addReaction": "Reakció hozzáadása",
@@ -2796,7 +2797,7 @@
   "channels_regionNotSet": "Tájékoztetés: nem",
   "channels_regionSelect_Title": "Válassz egy regionot",
   "channels_clearRegion": "Kéres kör",
-  "chat_sendImage": "Felhasználj az image",
+  "chat_sendImageLora": "Kép küldése MeshCore-on keresztül",
   "chat_imagePickFailed": "Nem tudtam ezt a fenti fényre kapni",
   "chat_receivedGif": "GIF-ot kapott",
   "repeater_keySettings": "Képzőítsekei jelölt",

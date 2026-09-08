@@ -111,6 +111,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get messageStatus_repeated => '多次听到';
 
   @override
+  String get urlImage_enable => 'Enable URL images';
+
+  @override
+  String get urlImage_possible => 'Possible URL image; enable it in Settings.';
+
+  @override
   String get common_reboot => '重启';
 
   @override
@@ -1406,10 +1412,13 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get chat_selectSendAction => '选择发送操作';
+
+  @override
   String get chat_sendGif => '发送 GIF';
 
   @override
-  String get chat_sendImage => '发送图片';
+  String get chat_sendImageLora => '通过 MeshCore 发送图片';
 
   @override
   String get chat_imagePickFailed => '无法打开该图片';
@@ -1425,6 +1434,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get chat_me => '我';
+
+  @override
+  String get reaction_report => 'Emoji Reactions';
 
   @override
   String get emojiCategorySmileys => '表情';
