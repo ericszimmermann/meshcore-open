@@ -2,28 +2,33 @@
   "bg": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "de": [
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "es": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "fr": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "hu": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
@@ -36,66 +41,76 @@
   "ja": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "ko": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "nl": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "pl": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "pt": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "ru": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "sk": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "sl": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "sv": [
     "urlImage_enable",
     "urlImage_possible",
-    "reaction_report"
+    "settings_publicKeyCopied"
   ],
 
   "uk": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "zh": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report"
   ]
 }

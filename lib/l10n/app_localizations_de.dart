@@ -634,6 +634,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settings_infoPublicKey => 'Öffentlicher Schlüssel';
 
   @override
+  String get settings_publicKeyCopied => 'Public key copied';
+
+  @override
   String get settings_infoContactsCount => 'Kontakte';
 
   @override

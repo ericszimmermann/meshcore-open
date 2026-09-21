@@ -629,6 +629,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settings_infoPublicKey => 'Openbare Sleutel';
 
   @override
+  String get settings_publicKeyCopied => 'Public key copied';
+
+  @override
   String get settings_infoContactsCount => 'Aantal Contacten';
 
   @override
