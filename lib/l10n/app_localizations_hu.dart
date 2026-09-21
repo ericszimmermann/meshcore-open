@@ -518,6 +518,14 @@ class AppLocalizationsHu extends AppLocalizations {
       'Ha a GPS-helyzet megváltozik, küldjön zero-hop hirdetést (a hirdetésben helymegadás szükséges).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Automatikus saját hirdetés küldése floodként';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Ha engedélyezve van, az automatikus saját hirdetések floodként kerülnek küldésre zero-hop helyett.';
+
+  @override
   String get settings_multiAck => 'Multi-ACK';
 
   @override
@@ -4238,6 +4246,36 @@ class AppLocalizationsHu extends AppLocalizations {
       'Nem sikerült importálni a névjegyet.';
 
   @override
+  String get discoveredContacts_export => 'Felfedezett kapcsolatok exportálása';
+
+  @override
+  String get discoveredContacts_import => 'Felfedezett kapcsolatok importálása';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'A felfedezett kapcsolatok exportálva ide: $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'A felfedezett kapcsolatok exportálása nem sikerült: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return '$count felfedezett kapcsolat importálva.';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'Az importfájlban nem találhatók kapcsolatok.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'A felfedezett kapcsolatok importálása nem sikerült: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => 'Zero Hop hirdetés';
 
   @override
@@ -4422,6 +4460,14 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Amikor a névjegylista megtelik, a legrégebbi, nem kedvenc névjegy lecserélődik.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Felfedezett kapcsolatok';

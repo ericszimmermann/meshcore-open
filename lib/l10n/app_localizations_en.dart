@@ -511,6 +511,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'When GPS location changes, send a zero-hop advert (requires Advert Location).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood => 'Send Auto Self Advert As Flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'When enabled, automated self adverts are sent as flood instead of zero-hop.';
+
+  @override
   String get settings_multiAck => 'Multi-ACKs';
 
   @override
@@ -4177,6 +4184,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contacts_contactImportFailed => 'Failed to import contact.';
 
   @override
+  String get discoveredContacts_export => 'Export discovered contacts';
+
+  @override
+  String get discoveredContacts_import => 'Import discovered contacts';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Exported discovered contacts to $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Failed to export discovered contacts: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return 'Imported $count discovered contacts.';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'No contacts found in import file.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Failed to import discovered contacts: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => 'Zero Hop Advert';
 
   @override
@@ -4354,6 +4391,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'When the contact list is full, the oldest non-favorited contact will be replaced.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Discovered Contacts';

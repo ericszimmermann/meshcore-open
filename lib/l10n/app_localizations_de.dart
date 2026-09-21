@@ -523,6 +523,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Wenn sich der GPS-Standort ändert, eine Zero-Hop-Ankündigung senden (erfordert Standort in der Ankündigung).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Automatische Ankündigung als Flood senden';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Wenn aktiviert, werden automatisierte Ankündigungen als Flood statt als Zero-Hop gesendet.';
+
+  @override
   String get settings_multiAck => 'Mehrfach-ACKs';
 
   @override
@@ -4247,6 +4255,36 @@ class AppLocalizationsDe extends AppLocalizations {
       'Kontakt konnte nicht importiert werden';
 
   @override
+  String get discoveredContacts_export => 'Entdeckte Kontakte exportieren';
+
+  @override
+  String get discoveredContacts_import => 'Entdeckte Kontakte importieren';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Entdeckte Kontakte exportiert nach $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Export von entdeckten Kontakten fehlgeschlagen: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return '$count entdeckte Kontakte importiert.';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'Keine Kontakte in Importdatei gefunden.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Import von entdeckten Kontakten fehlgeschlagen: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => 'Zero-Hop-Ankündigung';
 
   @override
@@ -4435,6 +4473,14 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Wenn die Kontaktliste voll ist, wird der älteste nicht favorisierte Kontakt ersetzt.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Kürze entdeckte Kontakte Liste';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'Wenn aktiviert, wird die Liste der entdeckten Kontackte auf 500 Kontakten begrenzt.';
 
   @override
   String get discoveredContacts_Title => 'Entdeckte Kontakte';

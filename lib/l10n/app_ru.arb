@@ -79,6 +79,8 @@
   "settings_longitude": "Долгота",
   "settings_autoZeroHopAdvertOnGpsUpdate": "Авто-объявление без хопов при обновлении GPS",
   "settings_autoZeroHopAdvertOnGpsUpdateSubtitle": "Когда GPS-местоположение меняется, отправлять объявление без хопов (требуется геопозиция в объявлении).",
+  "settings_autoSelfAdvertAsFlood": "Отправлять автоматические self-advert как flood",
+  "settings_autoSelfAdvertAsFloodSubtitle": "Если включено, автоматические self-advert отправляются как flood вместо zero-hop.",
   "settings_privacyMode": "Режим конфиденциальности",
   "settings_privacyModeSubtitle": "Скрыть имя/позицию в анонсировании",
   "settings_privacyModeToggle": "Включите режим конфиденциальности, чтобы скрыть свое имя и местоположение в анонсировании.",
@@ -1186,6 +1188,41 @@
   "discoveredContacts_addContact": "Добавить контакт",
   "discoveredContacts_Title": "Обнаруженные контакты",
   "discoveredContacts_deleteContact": "Удалить контакт",
+  "discoveredContacts_export": "Экспортировать обнаруженные контакты",
+  "discoveredContacts_import": "Импортировать обнаруженные контакты",
+  "discoveredContacts_exported": "Обнаруженные контакты экспортированы в {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Не удалось экспортировать обнаруженные контакты: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "Импортировано {count} обнаруженных контактов.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoContacts": "В файле импорта не найдены контакты.",
+  "discoveredContacts_importFailed": "Не удалось импортировать обнаруженные контакты: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "contactsSettings_overwriteOldestSubtitle": "Когда список контактов заполнен, будет заменен самый старый контакт, который не находится в избранном.",
   "common_deleteAll": "Удалить все",
   "discoveredContacts_deleteContactAllContent": "Вы уверены, что хотите удалить все обнаруженные контакты?",
@@ -1419,12 +1456,6 @@
   "scanner_linuxPairingPinTitle": "PIN‑код сопряжения Bluetooth",
   "repeater_cliQuickDiscovery": "Обнаружить Соседей",
   "repeater_cliQuickClockSync": "Синхронизация часов",
-  "@repeater_clockSyncAfterLogin": {
-    "description": "Repeater setting: auto sync device clock after successful login"
-  },
-  "@repeater_clockSyncAfterLoginSubtitle": {
-    "description": "Repeater setting subtitle: describes the clock sync after login behavior"
-  },
   "repeater_clockSyncAfterLogin": "Синхронизация часов после входа в систему",
   "repeater_clockSyncAfterLoginSubtitle": "Автоматически отправлять сообщение \"синхронизация времени\" после успешной авторизации.",
   "chat_sendMessage": "Отправить сообщение",

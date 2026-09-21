@@ -523,6 +523,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'Когда GPS-местоположение меняется, отправлять объявление без хопов (требуется геопозиция в объявлении).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Отправлять автоматические self-advert как flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Если включено, автоматические self-advert отправляются как flood вместо zero-hop.';
+
+  @override
   String get settings_multiAck => 'Несколько подтверждений';
 
   @override
@@ -4251,6 +4259,37 @@ class AppLocalizationsRu extends AppLocalizations {
   String get contacts_contactImportFailed => 'Контакт не удалось импортировать';
 
   @override
+  String get discoveredContacts_export =>
+      'Экспортировать обнаруженные контакты';
+
+  @override
+  String get discoveredContacts_import => 'Импортировать обнаруженные контакты';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Обнаруженные контакты экспортированы в $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Не удалось экспортировать обнаруженные контакты: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return 'Импортировано $count обнаруженных контактов.';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'В файле импорта не найдены контакты.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Не удалось импортировать обнаруженные контакты: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => 'Реклама Zero Hop';
 
   @override
@@ -4445,6 +4484,14 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Когда список контактов заполнен, будет заменен самый старый контакт, который не находится в избранном.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Обнаруженные контакты';

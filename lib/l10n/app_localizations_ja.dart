@@ -495,6 +495,13 @@ class AppLocalizationsJa extends AppLocalizations {
       'GPS位置が変化したときにゼロホップ広告を送信します（広告への位置情報の含有が必要）。';
 
   @override
+  String get settings_autoSelfAdvertAsFlood => '自動自己広告をフラッドとして送信';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      '有効な場合、自動の自己広告はゼロホップではなくフラッドとして送信されます。';
+
+  @override
   String get settings_multiAck => 'マルチ ACK';
 
   @override
@@ -4031,6 +4038,35 @@ class AppLocalizationsJa extends AppLocalizations {
   String get contacts_contactImportFailed => '連絡先のインポートに失敗しました。';
 
   @override
+  String get discoveredContacts_export => '発見済みの連絡先をエクスポート';
+
+  @override
+  String get discoveredContacts_import => '発見済みの連絡先をインポート';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return '発見済みの連絡先を $path にエクスポートしました。';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return '発見済みの連絡先のエクスポートに失敗しました: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return '$count 件の発見済み連絡先をインポートしました。';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts => 'インポートファイルに連絡先が見つかりませんでした。';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return '発見済みの連絡先のインポートに失敗しました: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => 'ゼロホップ広告';
 
   @override
@@ -4202,6 +4238,14 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       '連絡先リストが満杯になった場合、最も古いかつ「お気に入り」ではない連絡先が削除されます。';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => '連絡先が見つかった';

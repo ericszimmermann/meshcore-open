@@ -102,6 +102,8 @@
   "settings_longitude": "Longitude",
   "settings_autoZeroHopAdvertOnGpsUpdate": "Anúncio zero-hop automático na atualização do GPS",
   "settings_autoZeroHopAdvertOnGpsUpdateSubtitle": "Quando a localização GPS mudar, enviar um anúncio zero-hop (requer localização no anúncio).",
+  "settings_autoSelfAdvertAsFlood": "Enviar auto-anúncio próprio como flood",
+  "settings_autoSelfAdvertAsFloodSubtitle": "Quando ativado, os auto-anúncios próprios automatizados são enviados como flood em vez de zero-hop.",
   "settings_privacyMode": "Modo de Privacidade",
   "settings_privacyModeSubtitle": "Esconder nome/localização em anúncios",
   "settings_privacyModeToggle": "Ative o modo de privacidade para ocultar seu nome e localização em anúncios.",
@@ -2017,6 +2019,41 @@
   "discoveredContacts_deleteContact": "Excluir Contato",
   "discoveredContacts_contactAdded": "Contato adicionado",
   "discoveredContacts_addContact": "Adicionar Contato",
+  "discoveredContacts_export": "Exportar contatos descobertos",
+  "discoveredContacts_import": "Importar contatos descobertos",
+  "discoveredContacts_exported": "Contatos descobertos exportados para {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Falha ao exportar contatos descobertos: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "{count} contatos descobertos importados.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoContacts": "Nenhum contato encontrado no arquivo de importação.",
+  "discoveredContacts_importFailed": "Falha ao importar contatos descobertos: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "contactsSettings_overwriteOldestSubtitle": "Quando a lista de contatos estiver cheia, o contato mais antigo não favoritado será substituído.",
   "common_deleteAll": "Excluir Tudo",
   "discoveredContacts_deleteContactAll": "Excluir Todos os Contatos Descobertos",

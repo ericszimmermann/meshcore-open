@@ -1054,6 +1054,18 @@ abstract class AppLocalizations {
   /// **'When GPS location changes, send a zero-hop advert (requires Advert Location).'**
   String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle;
 
+  /// No description provided for @settings_autoSelfAdvertAsFlood.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Auto Self Advert As Flood'**
+  String get settings_autoSelfAdvertAsFlood;
+
+  /// No description provided for @settings_autoSelfAdvertAsFloodSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When enabled, automated self adverts are sent as flood instead of zero-hop.'**
+  String get settings_autoSelfAdvertAsFloodSubtitle;
+
   /// No description provided for @settings_multiAck.
   ///
   /// In en, this message translates to:
@@ -7348,6 +7360,48 @@ abstract class AppLocalizations {
   /// **'Failed to import contact.'**
   String get contacts_contactImportFailed;
 
+  /// No description provided for @discoveredContacts_export.
+  ///
+  /// In en, this message translates to:
+  /// **'Export discovered contacts'**
+  String get discoveredContacts_export;
+
+  /// No description provided for @discoveredContacts_import.
+  ///
+  /// In en, this message translates to:
+  /// **'Import discovered contacts'**
+  String get discoveredContacts_import;
+
+  /// No description provided for @discoveredContacts_exported.
+  ///
+  /// In en, this message translates to:
+  /// **'Exported discovered contacts to {path}.'**
+  String discoveredContacts_exported(String path);
+
+  /// No description provided for @discoveredContacts_exportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to export discovered contacts: {error}'**
+  String discoveredContacts_exportFailed(String error);
+
+  /// No description provided for @discoveredContacts_imported.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {count} discovered contacts.'**
+  String discoveredContacts_imported(int count);
+
+  /// No description provided for @discoveredContacts_importNoContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'No contacts found in import file.'**
+  String get discoveredContacts_importNoContacts;
+
+  /// No description provided for @discoveredContacts_importFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to import discovered contacts: {error}'**
+  String discoveredContacts_importFailed(String error);
+
   /// No description provided for @contacts_zeroHopAdvert.
   ///
   /// In en, this message translates to:
@@ -7623,6 +7677,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'When the contact list is full, the oldest non-favorited contact will be replaced.'**
   String get contactsSettings_overwriteOldestSubtitle;
+
+  /// No description provided for @contactsSettings_evictDiscoveredContactsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Evict discovered contacts'**
+  String get contactsSettings_evictDiscoveredContactsTitle;
+
+  /// No description provided for @contactsSettings_evictDiscoveredContactsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.'**
+  String get contactsSettings_evictDiscoveredContactsSubtitle;
 
   /// No description provided for @discoveredContacts_Title.
   ///

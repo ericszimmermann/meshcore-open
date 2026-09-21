@@ -162,6 +162,10 @@ class AppSettingsService extends ChangeNotifier {
     );
   }
 
+  Future<void> setAutoSendSelfAdvertAsFlood(bool value) async {
+    await updateSettings(_settings.copyWith(autoSendSelfAdvertAsFlood: value));
+  }
+
   Future<void> setGpsIntervalSeconds(
     int value, {
     Future<void> Function(int value)? writeToDevice,
@@ -222,6 +226,12 @@ class AppSettingsService extends ChangeNotifier {
 
   Future<void> setMapShowDiscoveryContacts(bool value) async {
     await updateSettings(_settings.copyWith(mapShowDiscoveryContacts: value));
+  }
+
+  Future<void> setEvictDiscoveredContactsEnabled(bool value) async {
+    await updateSettings(
+      _settings.copyWith(evictDiscoveredContactsEnabled: value),
+    );
   }
 
   Future<void> setBatteryChemistryForDevice(

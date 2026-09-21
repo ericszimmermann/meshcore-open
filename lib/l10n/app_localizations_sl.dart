@@ -516,6 +516,14 @@ class AppLocalizationsSl extends AppLocalizations {
       'Ko se GPS lokacija spremeni, pošlji zero-hop oglas (zahteva lokacijo v oglasu).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Pošlji samodejni lastni oglas kot flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Če je omogočeno, se samodejni lastni oglasi pošiljajo kot flood namesto zero-hop.';
+
+  @override
   String get settings_multiAck => 'Več potrdil';
 
   @override
@@ -4220,6 +4228,36 @@ class AppLocalizationsSl extends AppLocalizations {
   String get contacts_contactImportFailed => 'Kontakt ni bil uspešno uvožen.';
 
   @override
+  String get discoveredContacts_export => 'Izvozi odkrite stike';
+
+  @override
+  String get discoveredContacts_import => 'Uvozi odkrite stike';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return 'Odkriti stiki so izvoženi v $path.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return 'Izvoz odkritih stikov ni uspel: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return 'Uvoženih je bilo $count odkritih stikov.';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts =>
+      'V uvozni datoteki ni bilo najdenih stikov.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return 'Uvoz odkritih stikov ni uspel: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => 'Reklama brez posrednikov';
 
   @override
@@ -4408,6 +4446,14 @@ class AppLocalizationsSl extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Ko je seznam stikov poln, bo najstarejši nestarševski stik zamenjan.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Odkriti stiki';

@@ -489,6 +489,13 @@ class AppLocalizationsZh extends AppLocalizations {
       '当 GPS 位置变化时，发送零跳广告（需要在广告中包含位置）。';
 
   @override
+  String get settings_autoSelfAdvertAsFlood => '将自动自我广告作为 flood 发送';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      '启用后，自动自我广告将以 flood 而不是 zero-hop 发送。';
+
+  @override
   String get settings_multiAck => '多重ACK';
 
   @override
@@ -3955,6 +3962,35 @@ class AppLocalizationsZh extends AppLocalizations {
   String get contacts_contactImportFailed => '导入联系人失败。';
 
   @override
+  String get discoveredContacts_export => '导出已发现的联系人';
+
+  @override
+  String get discoveredContacts_import => '导入已发现的联系人';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return '已将已发现的联系人导出到$path。';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return '导出已发现的联系人失败：$error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return '已导入$count个已发现的联系人。';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts => '在导入文件中未找到联系人。';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return '导入已发现的联系人失败：$error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => '发送零跳广播';
 
   @override
@@ -4100,6 +4136,14 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       '当联系人列表已满时，将替换最老的非收藏联系人。';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => '已发现的联系人';

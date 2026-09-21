@@ -101,6 +101,7 @@ class AppSettings {
   final bool notifyOnNewChannelMessage;
   final bool notifyOnNewAdvert;
   final bool autoSendZeroHopAdvertOnGpsUpdate;
+  final bool autoSendSelfAdvertAsFlood;
   final int gpsIntervalSeconds;
   final bool autoRouteRotationEnabled;
   final double maxRouteWeight;
@@ -116,6 +117,7 @@ class AppSettings {
   final UnitSystem unitSystem;
   final Set<String> mutedChannels;
   final bool mapShowDiscoveryContacts;
+  final bool evictDiscoveredContactsEnabled;
   final String tcpServerAddress;
   final int tcpServerPort;
   final bool jumpToOldestUnread;
@@ -203,6 +205,7 @@ class AppSettings {
     this.notifyOnNewChannelMessage = true,
     this.notifyOnNewAdvert = true,
     this.autoSendZeroHopAdvertOnGpsUpdate = false,
+    this.autoSendSelfAdvertAsFlood = false,
     this.gpsIntervalSeconds = 900,
     this.autoRouteRotationEnabled = true,
     this.maxRouteWeight = 5.0,
@@ -218,6 +221,7 @@ class AppSettings {
     this.unitSystem = UnitSystem.metric,
     Set<String>? mutedChannels,
     this.mapShowDiscoveryContacts = true,
+    this.evictDiscoveredContactsEnabled = false,
     this.tcpServerAddress = '',
     this.tcpServerPort = 0,
     this.jumpToOldestUnread = false,
@@ -278,6 +282,7 @@ class AppSettings {
       'notify_on_new_advert': notifyOnNewAdvert,
       'auto_send_zero_hop_advert_on_gps_update':
           autoSendZeroHopAdvertOnGpsUpdate,
+      'auto_send_self_advert_as_flood': autoSendSelfAdvertAsFlood,
       'gps_interval_seconds': gpsIntervalSeconds,
       'auto_route_rotation_enabled': autoRouteRotationEnabled,
       'max_route_weight': maxRouteWeight,
@@ -293,6 +298,7 @@ class AppSettings {
       'unit_system': unitSystem.value,
       'muted_channels': mutedChannels.toList(),
       'map_show_discovery_contacts': mapShowDiscoveryContacts,
+      'evict_discovered_contacts_enabled': evictDiscoveredContactsEnabled,
       'tcp_server_address': tcpServerAddress,
       'tcp_server_port': tcpServerPort,
       'jump_to_oldest_unread': jumpToOldestUnread,
@@ -358,6 +364,8 @@ class AppSettings {
       notifyOnNewAdvert: json['notify_on_new_advert'] as bool? ?? true,
       autoSendZeroHopAdvertOnGpsUpdate:
           json['auto_send_zero_hop_advert_on_gps_update'] as bool? ?? false,
+      autoSendSelfAdvertAsFlood:
+          json['auto_send_self_advert_as_flood'] as bool? ?? false,
       gpsIntervalSeconds:
           (json['gps_interval_seconds'] as num?)?.toInt() ?? 900,
       autoRouteRotationEnabled:
@@ -391,6 +399,8 @@ class AppSettings {
           {},
       mapShowDiscoveryContacts:
           json['map_show_discovery_contacts'] as bool? ?? true,
+      evictDiscoveredContactsEnabled:
+          json['evict_discovered_contacts_enabled'] as bool? ?? false,
       tcpServerAddress: json['tcp_server_address'] as String? ?? '',
       tcpServerPort: json['tcp_server_port'] as int? ?? 0,
       jumpToOldestUnread: json['jump_to_oldest_unread'] as bool? ?? false,
@@ -489,6 +499,7 @@ class AppSettings {
     bool? notifyOnNewChannelMessage,
     bool? notifyOnNewAdvert,
     bool? autoSendZeroHopAdvertOnGpsUpdate,
+    bool? autoSendSelfAdvertAsFlood,
     int? gpsIntervalSeconds,
     bool? autoRouteRotationEnabled,
     double? maxRouteWeight,
@@ -504,6 +515,7 @@ class AppSettings {
     UnitSystem? unitSystem,
     Set<String>? mutedChannels,
     bool? mapShowDiscoveryContacts,
+    bool? evictDiscoveredContactsEnabled,
     String? tcpServerAddress,
     int? tcpServerPort,
     bool? jumpToOldestUnread,
@@ -555,6 +567,8 @@ class AppSettings {
       autoSendZeroHopAdvertOnGpsUpdate:
           autoSendZeroHopAdvertOnGpsUpdate ??
           this.autoSendZeroHopAdvertOnGpsUpdate,
+      autoSendSelfAdvertAsFlood:
+          autoSendSelfAdvertAsFlood ?? this.autoSendSelfAdvertAsFlood,
       gpsIntervalSeconds: gpsIntervalSeconds ?? this.gpsIntervalSeconds,
       autoRouteRotationEnabled:
           autoRouteRotationEnabled ?? this.autoRouteRotationEnabled,
@@ -578,6 +592,8 @@ class AppSettings {
       mutedChannels: mutedChannels ?? this.mutedChannels,
       mapShowDiscoveryContacts:
           mapShowDiscoveryContacts ?? this.mapShowDiscoveryContacts,
+      evictDiscoveredContactsEnabled:
+          evictDiscoveredContactsEnabled ?? this.evictDiscoveredContactsEnabled,
       tcpServerAddress: tcpServerAddress ?? this.tcpServerAddress,
       tcpServerPort: tcpServerPort ?? this.tcpServerPort,
       jumpToOldestUnread: jumpToOldestUnread ?? this.jumpToOldestUnread,

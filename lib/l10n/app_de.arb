@@ -102,6 +102,8 @@
   "settings_longitude": "Längengrad",
   "settings_autoZeroHopAdvertOnGpsUpdate": "Automatische Zero-Hop-Ankündigung bei GPS-Update",
   "settings_autoZeroHopAdvertOnGpsUpdateSubtitle": "Wenn sich der GPS-Standort ändert, eine Zero-Hop-Ankündigung senden (erfordert Standort in der Ankündigung).",
+  "settings_autoSelfAdvertAsFlood": "Automatische Ankündigung als Flood senden",
+  "settings_autoSelfAdvertAsFloodSubtitle": "Wenn aktiviert, werden automatisierte Ankündigungen als Flood statt als Zero-Hop gesendet.",
   "settings_privacyMode": "Privatsphärenmodus",
   "settings_privacyModeSubtitle": "Name und Standort in Ankündigungen verbergen",
   "settings_privacyModeToggle": "Privatsphärenmodus aktivieren, um Namen und Standort in Ankündigungen zu verbergen.",
@@ -2130,6 +2132,7 @@
   "contactsSettings_autoAddUsersTitle": "Automatische Hinzufügung von Benutzern",
   "settings_contactSettingsSubtitle": "Einstellungen für das Hinzufügen von Kontakten",
   "contactsSettings_autoAddSensorsTitle": "Automatisch Sensoren hinzufügen",
+  "contactsSettings_autoAddSensorsSubtitle": "Ermöglichen Sie dem Begleiter, automatisch entdeckte Sensoren hinzuzufügen",
   "contactsSettings_autoAddUsersSubtitle": "Ermöglichen Sie dem Begleiter, automatisch entdeckte Benutzer hinzuzufügen",
   "contactsSettings_autoAddRoomServersTitle": "Automatisch Raumservers hinzufügen",
   "contactsSettings_autoAddRoomServersSubtitle": "Ermöglichen Sie dem Begleiter, entdeckte Raumserver automatisch hinzuzufügen",
@@ -2143,11 +2146,47 @@
   "discoveredContacts_Title": "Entdeckte Kontakte",
   "discoveredContacts_copyContact": "Kontakt in die Zwischenablage kopieren",
   "contactsSettings_overwriteOldestTitle": "Überschreiben des Ältesten",
-  "contactsSettings_autoAddSensorsSubtitle": "Ermöglichen Sie dem Begleiter, automatisch entdeckte Sensoren hinzuzufügen",
   "contactsSettings_overwriteOldestSubtitle": "Wenn die Kontaktliste voll ist, wird der älteste nicht favorisierte Kontakt ersetzt.",
+  "contactsSettings_evictDiscoveredContactsTitle": "Kürze entdeckte Kontakte Liste",
+  "contactsSettings_evictDiscoveredContactsSubtitle": "Wenn aktiviert, wird die Liste der entdeckten Kontackte auf 500 Kontakten begrenzt.",
   "common_deleteAll": "Alles löschen",
   "discoveredContacts_deleteContactAllContent": "Sind Sie sicher, dass Sie alle gefundenen Kontakte löschen möchten?",
   "discoveredContacts_deleteContactAll": "Alle entdeckten Kontakte löschen",
+  "discoveredContacts_export": "Entdeckte Kontakte exportieren",
+  "discoveredContacts_import": "Entdeckte Kontakte importieren",
+  "discoveredContacts_exported": "Entdeckte Kontakte exportiert nach {path}.",
+  "@discoveredContacts_exported": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_exportFailed": "Export von entdeckten Kontakten fehlgeschlagen: {error}",
+  "@discoveredContacts_exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveredContacts_imported": "{count} entdeckte Kontakte importiert.",
+  "@discoveredContacts_imported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveredContacts_importNoContacts": "Keine Kontakte in Importdatei gefunden.",
+  "discoveredContacts_importFailed": "Import von entdeckten Kontakten fehlgeschlagen: {error}",
+  "@discoveredContacts_importFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "map_showGuessedLocations": "Vermutete Knotenstandorte anzeigen",
   "map_guessedLocation": "Vermuteter Standort",
   "usbScreenSubtitle": "Wählen Sie ein erkanntes serielles Gerät aus und verbinden Sie es direkt mit Ihrem MeshCore-Knoten.",

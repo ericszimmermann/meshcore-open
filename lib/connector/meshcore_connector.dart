@@ -477,6 +477,26 @@ class MeshCoreConnector extends ChangeNotifier {
     return List.unmodifiable(_discoveredContacts);
   }
 
+  String exportDiscoveredContactsJson() {
+    return _discoveryContactStore.exportContactsJson(_discoveredContacts);
+  }
+
+  Future<int> importDiscoveredContactsJson(String json) async {
+    final newCount = _discoveryContactStore.importContactsJson(
+      json: json,
+      existingContacts: _discoveredContacts,
+      knownContactKeys: _knownContactKeys,
+    );
+
+    if (newCount == 0 && _discoveredContacts.isEmpty) {
+      return 0;
+    }
+
+    await _persistDiscoveredContacts();
+    notifyListeners();
+    return newCount;
+  }
+
   List<Channel> get channels => List.unmodifiable(_channels);
   bool get isConnected => _state == MeshCoreConnectionState.connected;
   bool get isLoadingContacts => _isLoadingContacts;
@@ -1149,14 +1169,26 @@ class MeshCoreConnector extends ChangeNotifier {
     final cached = await _discoveryContactStore.loadContacts();
     // Trim a previously-saved oversized list down to the freshest entries so a
     // device that grew unbounded before the cap existed recovers on load.
-    if (cached.length > _maxDiscoveredContacts) {
-      cached.sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
-      cached.removeRange(_maxDiscoveredContacts, cached.length);
+    if (_appSettingsService?.settings.evictDiscoveredContactsEnabled == true &&
+        _trimDiscoveredContactsToLimit(cached)) {
       unawaited(_discoveryContactStore.saveContacts(cached));
     }
     _discoveredContacts
       ..clear()
       ..addAll(cached);
+  }
+
+  bool _trimDiscoveredContactsToLimit(List<Contact> contacts) {
+    if (contacts.length <= _maxDiscoveredContacts) return false;
+    contacts.sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
+    contacts.removeRange(_maxDiscoveredContacts, contacts.length);
+    return true;
+  }
+
+  Future<void> trimDiscoveredContactsToLimit() async {
+    if (!_trimDiscoveredContactsToLimit(_discoveredContacts)) return;
+    await _persistDiscoveredContacts();
+    notifyListeners();
   }
 
   Future<void> loadChannelSettings({int? maxChannels}) async {
@@ -4079,11 +4111,9 @@ class MeshCoreConnector extends ChangeNotifier {
   Future<void> sendSelfAdvert({bool flood = true}) async {
     if (!isConnected) return;
     await sendFrame(buildSendSelfAdvertFrame(flood: flood));
-    if (!flood) {
-      _lastZeroHopAdvertAt = DateTime.now();
-      _lastZeroHopAdvertLatitude = _selfLatitude;
-      _lastZeroHopAdvertLongitude = _selfLongitude;
-    }
+    _lastZeroHopAdvertAt = DateTime.now();
+    _lastZeroHopAdvertLatitude = _selfLatitude;
+    _lastZeroHopAdvertLongitude = _selfLongitude;
   }
 
   Future<void> rebootDevice() async {
@@ -4609,7 +4639,10 @@ class MeshCoreConnector extends ChangeNotifier {
         effectiveGpsIntervalSeconds > 0 &&
         timeSinceLastZeroHopAdvert.inSeconds >= effectiveGpsIntervalSeconds;
     if (shouldAutoSendZeroHopAdvert) {
-      unawaited(sendSelfAdvert(flood: false));
+      final autoSelfAdvertAsFlood =
+          (_clientRepeat ?? false) &&
+          (_appSettingsService?.settings.autoSendSelfAdvertAsFlood ?? false);
+      unawaited(sendSelfAdvert(flood: autoSelfAdvertAsFlood));
     }
 
     final selfName = _selfName?.trim();
@@ -7495,7 +7528,8 @@ class MeshCoreConnector extends ChangeNotifier {
       flags: 0,
     );
 
-    if (_discoveredContacts.length >= _maxDiscoveredContacts) {
+    if (_appSettingsService?.settings.evictDiscoveredContactsEnabled == true &&
+        _discoveredContacts.length >= _maxDiscoveredContacts) {
       _evictStalestDiscoveredContact();
     }
     _discoveredContacts.add(disContact);

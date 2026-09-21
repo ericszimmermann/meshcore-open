@@ -497,6 +497,13 @@ class AppLocalizationsKo extends AppLocalizations {
       'GPS 위치가 변경되면 제로 홉 광고를 전송합니다(광고에 위치 포함 필요).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood => '자동 자체 광고를 flood로 전송';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      '활성화되면 자동 자체 광고가 zero-hop 대신 flood로 전송됩니다.';
+
+  @override
   String get settings_multiAck => '다중 ACK';
 
   @override
@@ -4041,6 +4048,35 @@ class AppLocalizationsKo extends AppLocalizations {
   String get contacts_contactImportFailed => '연락처를 가져오지 못했습니다.';
 
   @override
+  String get discoveredContacts_export => '발견된 연락처 내보내기';
+
+  @override
+  String get discoveredContacts_import => '발견된 연락처 가져오기';
+
+  @override
+  String discoveredContacts_exported(String path) {
+    return '발견된 연락처를 $path(으)로 내보냈습니다.';
+  }
+
+  @override
+  String discoveredContacts_exportFailed(String error) {
+    return '발견된 연락처 내보내기에 실패했습니다: $error';
+  }
+
+  @override
+  String discoveredContacts_imported(int count) {
+    return '발견된 연락처 $count개를 가져왔습니다.';
+  }
+
+  @override
+  String get discoveredContacts_importNoContacts => '가져오기 파일에서 연락처를 찾을 수 없습니다.';
+
+  @override
+  String discoveredContacts_importFailed(String error) {
+    return '발견된 연락처 가져오기에 실패했습니다: $error';
+  }
+
+  @override
   String get contacts_zeroHopAdvert => '제로 홉 광고';
 
   @override
@@ -4211,6 +4247,14 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       '연락처 목록이 가득 차면, 가장 오래된 (선호하지 않은) 연락처가 대체됩니다.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => '연락처 찾기';
