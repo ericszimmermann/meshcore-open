@@ -2,18 +2,21 @@
   "bg": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
   ],
 
   "de": [
+    "settings_publicKeyCopied",
     "reaction_report"
   ],
 
   "es": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -22,6 +25,7 @@
   "fr": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -30,6 +34,7 @@
   "hu": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -46,6 +51,7 @@
   "ja": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -54,6 +60,7 @@
   "ko": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -62,6 +69,7 @@
   "nl": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -70,6 +78,7 @@
   "pl": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -78,6 +87,7 @@
   "pt": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -86,6 +96,7 @@
   "ru": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -94,6 +105,7 @@
   "sk": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -102,6 +114,7 @@
   "sl": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -110,7 +123,7 @@
   "sv": [
     "urlImage_enable",
     "urlImage_possible",
-    "reaction_report",
+    "settings_publicKeyCopied",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
   ],
@@ -118,6 +131,7 @@
   "uk": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"
@@ -126,6 +140,7 @@
   "zh": [
     "urlImage_enable",
     "urlImage_possible",
+    "settings_publicKeyCopied",
     "reaction_report",
     "contactsSettings_evictDiscoveredContactsTitle",
     "contactsSettings_evictDiscoveredContactsSubtitle"

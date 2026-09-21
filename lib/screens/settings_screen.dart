@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meshcore_open/utils/gpx_export.dart';
 import 'package:meshcore_open/widgets/elements_ui.dart';
 import 'package:provider/provider.dart';
@@ -299,12 +300,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           value: connector.selfName!,
                         ),
                       if (connector.selfPublicKey != null)
-                        _infoRow(
+                        _publicKeyRow(
                           context,
                           label: l10n.settings_infoPublicKey,
-                          value:
-                              '${pubKeyToHex(connector.selfPublicKey!).substring(0, 16)}...',
-                          mono: true,
+                          publicKeyHex: pubKeyToHex(connector.selfPublicKey!),
                         ),
                       _infoRow(
                         context,
@@ -322,6 +321,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
               : const SizedBox.shrink(),
         ),
       ],
+    );
+  }
+
+  /// Copies the key rendered in the row, not whatever the connector holds when
+  /// the tap lands: a disconnect in between clears `selfPublicKey`.
+  Widget _publicKeyRow(
+    BuildContext context, {
+    required String label,
+    required String publicKeyHex,
+  }) {
+    return _infoRow(
+      context,
+      label: label,
+      value: publicKeyHex,
+      mono: true,
+      onTap: () => _copyPublicKey(context, publicKeyHex),
+    );
+  }
+
+  Future<void> _copyPublicKey(BuildContext context, String publicKeyHex) async {
+    await Clipboard.setData(ClipboardData(text: publicKeyHex));
+    if (!context.mounted) return;
+    showDismissibleSnackBar(
+      context,
+      content: Text(context.l10n.settings_publicKeyCopied),
     );
   }
 

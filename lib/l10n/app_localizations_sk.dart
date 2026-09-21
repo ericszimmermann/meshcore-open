@@ -619,6 +619,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get settings_infoPublicKey => 'Verejný kľúč';
 
   @override
+  String get settings_publicKeyCopied => 'Public key copied';
+
+  @override
   String get settings_infoContactsCount => 'Počet kontaktov';
 
   @override
