@@ -375,12 +375,14 @@ class MeshCoreConnector extends ChangeNotifier {
   List<Channel> _cachedChannels = [];
   final Map<int, bool> _channelSmazEnabled = {};
   final Map<int, bool> _channelCyr2LatEnabled = {};
+  final Map<int, bool> _channelUrlImagesEnabled = {};
   final Map<int, String?> _channelCyr2LatProfileId = {};
   final Map<int, Region> _channelRegions = {};
   bool _lastSentWasCliCommand =
       false; // Track if last sent message was a CLI command
   final Map<String, bool> _contactSmazEnabled = {};
   final Map<String, bool> _contactCyr2LatEnabled = {};
+  final Map<String, bool> _contactUrlImagesEnabled = {};
   final Map<String, String?> _contactCyr2LatProfileId = {};
   final Set<String> _knownContactKeys = {};
   final Map<String, int> _contactUnreadCount = {};
@@ -451,6 +453,13 @@ class MeshCoreConnector extends ChangeNotifier {
     }
     return List.unmodifiable(
       _contacts.where((contact) => !listEquals(contact.publicKey, selfKey)),
+    );
+  }
+
+  Contact? getContactByPubKeyHex(String contactPubKeyHex) {
+    return _contacts.cast<Contact?>().firstWhere(
+      (c) => c?.publicKeyHex == contactPubKeyHex,
+      orElse: () => null,
     );
   }
 
@@ -802,6 +811,15 @@ class MeshCoreConnector extends ChangeNotifier {
     return _contactSmazEnabled[contactKeyHex] ?? false;
   }
 
+  bool isChannelUrlImagesEnabled(int channelIndex) {
+    return _channelUrlImagesEnabled[channelIndex] ?? false;
+  }
+
+  bool isContactUrlImagesEnabled(String contactKeyHex) {
+    _ensureContactUrlImagesSettingLoaded(contactKeyHex);
+    return _contactUrlImagesEnabled[contactKeyHex] ?? false;
+  }
+
   bool hasChannelRegion(int channelIndex) {
     return (_channelRegions[channelIndex] ?? '').isNotEmpty;
   }
@@ -941,6 +959,24 @@ class MeshCoreConnector extends ChangeNotifier {
   Future<void> setContactSmazEnabled(String contactKeyHex, bool enabled) async {
     _contactSmazEnabled[contactKeyHex] = enabled;
     await _contactSettingsStore.saveSmazEnabled(contactKeyHex, enabled);
+    notifyListeners();
+  }
+
+  Future<void> setChannelUrlImagesEnabled(
+    int channelIndex,
+    bool enabled,
+  ) async {
+    _channelUrlImagesEnabled[channelIndex] = enabled;
+    await _channelSettingsStore.saveUrlImagesEnabled(channelIndex, enabled);
+    notifyListeners();
+  }
+
+  Future<void> setContactUrlImagesEnabled(
+    String contactKeyHex,
+    bool enabled,
+  ) async {
+    _contactUrlImagesEnabled[contactKeyHex] = enabled;
+    await _contactSettingsStore.saveUrlImagesEnabled(contactKeyHex, enabled);
     notifyListeners();
   }
 
@@ -1114,6 +1150,7 @@ class MeshCoreConnector extends ChangeNotifier {
   }
 
   Future<void> loadContactCache() async {
+    _contactUrlImagesEnabled.clear();
     final cached = await _contactStore.loadContacts();
     _knownContactKeys
       ..clear()
@@ -1124,6 +1161,7 @@ class MeshCoreConnector extends ChangeNotifier {
     for (final contact in cached) {
       _ensureContactSmazSettingLoaded(contact.publicKeyHex);
       _ensureContactCyr2LatSettingLoaded(contact.publicKeyHex);
+      _ensureContactUrlImagesSettingLoaded(contact.publicKeyHex);
     }
   }
 
@@ -1144,12 +1182,15 @@ class MeshCoreConnector extends ChangeNotifier {
   Future<void> loadChannelSettings({int? maxChannels}) async {
     _channelSmazEnabled.clear();
     _channelCyr2LatEnabled.clear();
+    _channelUrlImagesEnabled.clear();
     _channelRegions.clear();
     final channelCount = maxChannels ?? _maxChannels;
     for (int i = 0; i < channelCount; i++) {
       _channelSmazEnabled[i] = await _channelSettingsStore.loadSmazEnabled(i);
       _channelCyr2LatEnabled[i] = await _channelSettingsStore
           .loadCyr2LatEnabled(i);
+      _channelUrlImagesEnabled[i] = await _channelSettingsStore
+          .loadUrlImagesEnabled(i);
       _channelRegions[i] = await _channelRegionStore.loadRegion(i);
     }
   }
@@ -3170,8 +3211,14 @@ class MeshCoreConnector extends ChangeNotifier {
     // Check if this is a reaction - apply locally with pending status and route through retry service
     final reactionInfo = ReactionHelper.parseReaction(text);
     if (reactionInfo != null) {
+      appLogger.info('Sending reaction: ${reactionInfo.identifier()}');
       _conversations.putIfAbsent(contact.publicKeyHex, () => []);
       final messages = _conversations[contact.publicKeyHex]!;
+
+      // No check for duplicates. If you want to do it again to resend, you can.
+      final String reactionID = reactionInfo.identifier();
+      _processedContactReactions.putIfAbsent(contact.publicKeyHex, () => {});
+      _processedContactReactions[contact.publicKeyHex]!.add(reactionID);
 
       // Apply reaction locally with pending status
       _processOutgoingContactReaction(messages, reactionInfo, contact);
@@ -3214,7 +3261,7 @@ class MeshCoreConnector extends ChangeNotifier {
         translatedLanguageCode: translatedLanguageCode,
         translationModelId: translationModelId,
       );
-      _addMessage(contact.publicKeyHex, message);
+      _addMessage(contact.publicKeyHex, message); // recipient as "sender"
       notifyListeners();
       final outboundText = prepareContactOutboundText(contact, text);
       await sendFrame(buildSendTextMsgFrame(contact.publicKey, outboundText));
@@ -3551,11 +3598,12 @@ class MeshCoreConnector extends ChangeNotifier {
     // Check if this is a reaction - if so, process it immediately instead of adding as a message
     final reactionInfo = ReactionHelper.parseReaction(text);
     if (reactionInfo != null) {
+      reactionInfo.senderName = selfName;
       // Check if we've already processed this reaction
       _processedChannelReactions.putIfAbsent(channel.index, () => {});
-      final reactionIdentifier =
-          '${reactionInfo.targetHash}_${reactionInfo.emoji}';
+      final reactionIdentifier = reactionInfo.identifier();
 
+      // Maybe we should allow resending. Recipients can drop duplicates.
       if (_processedChannelReactions[channel.index]!.contains(
         reactionIdentifier,
       )) {
@@ -3568,27 +3616,32 @@ class MeshCoreConnector extends ChangeNotifier {
       final messages = _channelMessages[channel.index]!;
 
       // Process reaction locally to update the UI immediately
-      _processReaction(messages, reactionInfo);
-      await _channelMessageStore.saveChannelMessages(channel.index, messages);
+      appLogger.info('Adding sent channel reaction, id: $reactionIdentifier');
+      final reactionApplied = _processReaction(messages, reactionInfo);
+      if (reactionApplied) {
+        await _channelMessageStore.saveChannelMessages(channel.index, messages);
 
-      // Mark this reaction as processed
-      _processedChannelReactions[channel.index]!.add(reactionIdentifier);
+        // Mark this reaction as processed
+        _processedChannelReactions[channel.index]!.add(reactionIdentifier);
 
-      notifyListeners();
+        notifyListeners();
 
-      // Send the reaction to the device (don't add as a visible message)
-      final reactionQueueId = _nextReactionSendQueueId();
-      _pendingChannelSentQueue.add(reactionQueueId);
-      await _runScopedChannelSend(() async {
-        await _waitForRadioQuiet(lastInboundRxTime: _lastChannelMsgRxTime);
-        await _sendFrameAndWaitForCommandAck(
-          buildSendChannelTextMsgFrame(channel.index, text),
-          channelSendQueueId: reactionQueueId,
-          expectsGenericAck: true,
-          successCode: respCodeSent,
-        );
-      }, region: getChannelRegion(channel.index));
-      return;
+        // Send the reaction to the device (don't add as a visible message)
+        final reactionQueueId = _nextReactionSendQueueId();
+        _pendingChannelSentQueue.add(reactionQueueId);
+        await _runScopedChannelSend(() async {
+          await _waitForRadioQuiet(lastInboundRxTime: _lastChannelMsgRxTime);
+          await _sendFrameAndWaitForCommandAck(
+            buildSendChannelTextMsgFrame(channel.index, text),
+            channelSendQueueId: reactionQueueId,
+            expectsGenericAck: true,
+            successCode: respCodeSent,
+          );
+        }, region: getChannelRegion(channel.index));
+        return;
+      }
+      // It looks like a reaction, but we did not find its target, so
+      // we continue to process it normally.
     }
 
     final message = ChannelMessage.outgoing(
@@ -5334,6 +5387,8 @@ class MeshCoreConnector extends ChangeNotifier {
               await _notificationService.showMessageNotification(
                 contactName: c?.name ?? 'Unknown',
                 message: resolvedText,
+                urlImagesEnabled:
+                    c != null && isContactUrlImagesEnabled(c.publicKeyHex),
                 contactId: msg.senderKeyHex,
                 badgeCount: getTotalUnreadCount(),
               );
@@ -5348,6 +5403,8 @@ class MeshCoreConnector extends ChangeNotifier {
               await _notificationService.showMessageNotification(
                 contactName: c?.name ?? 'Unknown Room',
                 message: resolvedText,
+                urlImagesEnabled:
+                    c != null && isContactUrlImagesEnabled(c.publicKeyHex),
                 contactId: msg.senderKeyHex,
                 badgeCount: getTotalUnreadCount(),
               );
@@ -5494,6 +5551,15 @@ class MeshCoreConnector extends ChangeNotifier {
     _contactSettingsStore.loadCyr2LatEnabled(contactKeyHex).then((enabled) {
       if (_contactCyr2LatEnabled[contactKeyHex] == enabled) return;
       _contactCyr2LatEnabled[contactKeyHex] = enabled;
+      notifyListeners();
+    });
+  }
+
+  void _ensureContactUrlImagesSettingLoaded(String contactKeyHex) {
+    if (_contactUrlImagesEnabled.containsKey(contactKeyHex)) return;
+    _contactSettingsStore.loadUrlImagesEnabled(contactKeyHex).then((enabled) {
+      if (_contactUrlImagesEnabled[contactKeyHex] == enabled) return;
+      _contactUrlImagesEnabled[contactKeyHex] = enabled;
       notifyListeners();
     });
   }
@@ -5652,6 +5718,7 @@ class MeshCoreConnector extends ChangeNotifier {
         channelName: label,
         senderName: message.senderName,
         message: resolvedText,
+        urlImagesEnabled: isChannelUrlImagesEnabled(channelIndex),
         channelIndex: message.channelIndex,
         badgeCount: getTotalUnreadCount(),
       );
@@ -6227,24 +6294,44 @@ class MeshCoreConnector extends ChangeNotifier {
     if (reactionInfo != null) {
       // Check if we've already processed this exact reaction
       _processedContactReactions.putIfAbsent(pubKeyHex, () => {});
-      final reactionIdentifier =
-          '${reactionInfo.targetHash}_${reactionInfo.emoji}';
-
+      reactionInfo.senderName = _resolveContactSenderName(message, null, false);
+      final reactionIdentifier = reactionInfo.identifier();
       final isDuplicate = _processedContactReactions[pubKeyHex]!.contains(
         reactionIdentifier,
       );
+      if (isDuplicate) return;
 
-      if (!isDuplicate) {
-        // New reaction - process it
-        _processContactReaction(messages, reactionInfo, pubKeyHex);
+      // New reaction - process it
+      // For hashing and dup checking, we use null for sender names in
+      // normal 1:1 chats. This way if we and they have different ideas
+      // about what their name is, reactions still work. But for reaction
+      // reports, we want to know who sent what, rather than infer it later,
+      // so we'll add it to the reactionInfo before storing it.
+      reactionInfo.senderName ??= message.isOutgoing
+          ? selfName
+          : getContactByPubKeyHex(pubKeyHex)?.name ?? '???';
+      final reactionApplied = _processContactReaction(
+        messages,
+        reactionInfo,
+        pubKeyHex,
+      );
+      if (reactionApplied) {
+        appLogger.info('Adding reaction, id: $reactionIdentifier');
         _messageStore.saveMessages(pubKeyHex, messages);
 
         // Mark as processed
         _processedContactReactions[pubKeyHex]!.add(reactionIdentifier);
 
         notifyListeners();
+        return; // Don't add reaction as a visible message
       }
-      return; // Don't add reaction as a visible message
+
+      // Looks like a reaction, but didn't match any message we have.
+      // for reactions matching our own format, because those are not very
+      // informative on their own, but the MC1 format is useful even if
+      // in raw form, so we'll let those through.
+      appLogger.info('No match for reaction, id: $reactionIdentifier');
+      if (reactionInfo.hashType == HashType.ours) return;
     }
 
     messages.add(message);
@@ -6255,18 +6342,15 @@ class MeshCoreConnector extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _processContactReaction(
+  bool _processContactReaction(
     List<Message> messages,
     ReactionInfo reactionInfo,
     String contactPubKeyHex,
   ) {
-    final contact = _contacts.cast<Contact?>().firstWhere(
-      (c) => c?.publicKeyHex == contactPubKeyHex,
-      orElse: () => null,
-    );
+    final contact = getContactByPubKeyHex(contactPubKeyHex);
     final isRoomServer = contact?.type == advTypeRoom;
 
-    ReactionHelper.applyReaction<Message>(
+    return ReactionHelper.applyReaction<Message>(
       messages: messages,
       reactionInfo: reactionInfo,
       // Incoming reactions in 1:1: match against outgoing messages only
@@ -6312,10 +6396,7 @@ class MeshCoreConnector extends ChangeNotifier {
   ) {
     final messages = _conversations[pubKeyHex];
     if (messages == null) return;
-    final contact = _contacts.cast<Contact?>().firstWhere(
-      (c) => c?.publicKeyHex == pubKeyHex,
-      orElse: () => null,
-    );
+    final contact = getContactByPubKeyHex(pubKeyHex);
     final isRoomServer = contact?.type == advTypeRoom;
     for (int i = messages.length - 1; i >= 0; i--) {
       final msg = messages[i];
@@ -6474,27 +6555,36 @@ class MeshCoreConnector extends ChangeNotifier {
     final messages = _channelMessages[channelIndex]!;
 
     // Parse reaction info
-    final reactionInfo = ChannelMessage.parseReaction(message.text);
+    final reactionInfo = message.parseReaction();
     if (reactionInfo != null) {
       // Check if we've already processed this exact reaction
       _processedChannelReactions.putIfAbsent(channelIndex, () => {});
-      final reactionIdentifier =
-          '${reactionInfo.targetHash}_${reactionInfo.emoji}';
+      final reactionIdentifier = reactionInfo.identifier();
 
       final isDuplicate = _processedChannelReactions[channelIndex]!.contains(
         reactionIdentifier,
       );
 
-      if (!isDuplicate) {
-        // New reaction - process it
-        _processReaction(messages, reactionInfo);
+      if (isDuplicate) return false;
+
+      // New reaction - process it
+      final reactionApplied = _processReaction(messages, reactionInfo);
+      if (reactionApplied) {
+        appLogger.info('Adding channel reaction, id: $reactionIdentifier');
         // Save updated messages
         _channelMessageStore.saveChannelMessages(channelIndex, messages);
 
         // Mark as processed
         _processedChannelReactions[channelIndex]!.add(reactionIdentifier);
+        return false; // Don't add reaction as a visible message
       }
-      return false; // Don't add reaction as a visible message
+      // Looks like a reaction, but didn't match any message we have.
+      // Old behavior is to silently drop these. We'll continue doing that
+      // for reactions matching our own format, because those are not very
+      // informative on their own, but the MC1 format is useful even if
+      // in raw form, so we'll let those through.
+      appLogger.info('No match for reaction, id: $reactionIdentifier');
+      if (reactionInfo.hashType == HashType.ours) return false;
     }
 
     // Parse reply info from message text
@@ -6596,11 +6686,11 @@ class MeshCoreConnector extends ChangeNotifier {
     return null;
   }
 
-  void _processReaction(
+  bool _processReaction(
     List<ChannelMessage> messages,
     ReactionInfo reactionInfo,
   ) {
-    ReactionHelper.applyReaction<ChannelMessage>(
+    return ReactionHelper.applyReaction<ChannelMessage>(
       messages: messages,
       reactionInfo: reactionInfo,
       shouldSkip: (_) => false,

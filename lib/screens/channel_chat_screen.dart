@@ -18,6 +18,7 @@ import '../helpers/chat_scroll_controller.dart';
 import '../connector/meshcore_protocol.dart';
 import '../helpers/cyr2lat.dart';
 import '../helpers/gif_helper.dart';
+import '../helpers/message_url_image_helper.dart';
 import '../helpers/path_helper.dart';
 import '../helpers/reaction_helper.dart';
 import '../helpers/snack_bar_builder.dart';
@@ -41,7 +42,6 @@ import '../widgets/emoji_picker.dart';
 import '../widgets/gif_message.dart';
 import '../widgets/jump_to_bottom_button.dart';
 import '../widgets/gif_picker.dart';
-import '../widgets/image_send_button.dart';
 import '../widgets/image_send_codec_binding.dart';
 import '../widgets/image_send_preview_sheet.dart';
 import '../widgets/message_translation_button.dart';
@@ -413,6 +413,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                     );
                   }
 
+                  final urlImagesEnabled = connector.isChannelUrlImagesEnabled(
+                    widget.channel.index,
+                  );
                   // Images are not ChannelMessages: they arrive as GRP_DATA
                   // chunks and are owned by ReceivedImageStore, so the two
                   // sources are merged here in timestamp order and the list
@@ -501,7 +504,11 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                                       );
                                   final message = row.message;
                                   final bubble = message != null
-                                      ? _buildMessageBubble(message, textScale)
+                                      ? _buildMessageBubble(
+                                          message,
+                                          textScale,
+                                          urlImagesEnabled,
+                                        )
                                       : _buildImageBubble(
                                           row.image!,
                                           textScale,
@@ -525,7 +532,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                 },
               ),
             ),
-            _buildMessageComposer(),
+            _buildInputBar(),
           ],
         ),
       ),
@@ -544,7 +551,11 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     connector.setChannelUnreadCount(widget.channel.index, count);
   }
 
-  Widget _buildMessageBubble(ChannelMessage message, double textScale) {
+  Widget _buildMessageBubble(
+    ChannelMessage message,
+    double textScale,
+    bool urlImagesEnabled,
+  ) {
     final settingsService = context.watch<AppSettingsService>();
     final enableTracing = settingsService.settings.enableMessageTracing;
     final isOutgoing = message.isOutgoing;
@@ -583,6 +594,33 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     final textColor = isOutgoing ? MeshPalette.meInk : scheme.onSurface;
     final metaColor = textColor.withValues(alpha: 0.65);
     const bodyFontSize = 14.0;
+
+    Widget buildTextContent() {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Flexible(
+            child: TranslatedMessageContent(
+              displayText: translatedDisplayText,
+              originalText: originalDisplayText,
+              style: TextStyle(
+                color: textColor,
+                fontSize: bodyFontSize * textScale,
+              ),
+              originalStyle: TextStyle(
+                fontSize: bodyFontSize * textScale,
+                fontStyle: FontStyle.italic,
+                color: textColor.withValues(alpha: 0.72),
+              ),
+              onSecondaryTap: PlatformInfo.isDesktop
+                  ? () => _showMessageActions(message)
+                  : null,
+            ),
+          ),
+        ],
+      );
+    }
 
     // Asymmetric radius matching chat_screen bubbles.
     final borderRadius = isOutgoing
@@ -689,29 +727,76 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                               ),
                             ],
                           )
+                        else if (urlImagesEnabled)
+                          MessageUrlImageFutureBuilder(
+                            messageId: message.messageId,
+                            text: message.text,
+                            builder: (context, snapshot) {
+                              final imageAttachment = snapshot.data;
+
+                              if (imageAttachment != null) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 4,
+                                      ),
+                                      child: Align(
+                                        alignment: isOutgoing
+                                            ? Alignment.centerRight
+                                            : Alignment.centerLeft,
+                                        child: MessageUrlImagePreview(
+                                          imageUrl: imageAttachment,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8),
+                                      child: TranslatedMessageContent(
+                                        displayText: translatedDisplayText,
+                                        originalText: originalDisplayText,
+                                        style: TextStyle(
+                                          color: textColor,
+                                          fontSize: bodyFontSize * textScale,
+                                        ),
+                                        originalStyle: TextStyle(
+                                          fontSize: bodyFontSize * textScale,
+                                          fontStyle: FontStyle.italic,
+                                          color: textColor.withValues(
+                                            alpha: 0.72,
+                                          ),
+                                        ),
+                                        onSecondaryTap: PlatformInfo.isDesktop
+                                            ? () => _showMessageActions(message)
+                                            : null,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+
+                              return buildTextContent();
+                            },
+                          )
                         else
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Flexible(
-                                child: TranslatedMessageContent(
-                                  displayText: translatedDisplayText,
-                                  originalText: originalDisplayText,
-                                  style: TextStyle(
-                                    color: textColor,
-                                    fontSize: bodyFontSize * textScale,
+                              if (MessageUrlImageHelper.hasPotentialImageUrl(
+                                message.text,
+                              ))
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: Text(
+                                    context.l10n.urlImage_possible,
+                                    style: TextStyle(
+                                      color: metaColor,
+                                      fontSize: 11 * textScale,
+                                    ),
                                   ),
-                                  originalStyle: TextStyle(
-                                    fontSize: bodyFontSize * textScale,
-                                    fontStyle: FontStyle.italic,
-                                    color: textColor.withValues(alpha: 0.72),
-                                  ),
-                                  onSecondaryTap: PlatformInfo.isDesktop
-                                      ? () => _showMessageActions(message)
-                                      : null,
                                 ),
-                              ),
+                              buildTextContent(),
                             ],
                           ),
                         if (enableTracing && displayPath.isNotEmpty) ...[
@@ -961,7 +1046,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
       runSpacing: 6,
       children: message.reactions.entries.map((entry) {
         final emoji = entry.key;
-        final count = entry.value;
+        final int count = entry.value.length;
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -970,32 +1055,94 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
             borderRadius: BorderRadius.circular(MeshRadii.pill),
             border: Border.all(color: scheme.outlineVariant, width: 1),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                emoji,
-                style: MeshTheme.emoji(fontSize: 16),
-                textHeightBehavior: const TextHeightBehavior(
-                  applyHeightToFirstAscent: false,
-                  applyHeightToLastDescent: false,
-                ),
-              ),
-              if (count > 1) ...[
-                const SizedBox(width: 4),
+          child: InkWell(
+            onTap: () => _showReactionsReport(message),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 Text(
-                  '$count',
-                  style: MeshTheme.mono(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: scheme.onSurface,
+                  emoji,
+                  style: MeshTheme.emoji(fontSize: 16),
+                  textHeightBehavior: const TextHeightBehavior(
+                    applyHeightToFirstAscent: false,
+                    applyHeightToLastDescent: false,
                   ),
                 ),
+                if (count > 1) ...[
+                  const SizedBox(width: 4),
+                  Text(
+                    '$count',
+                    style: MeshTheme.mono(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurface,
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         );
       }).toList(),
+    );
+  }
+
+  void _showReactionsReport(ChannelMessage message) {
+    final scheme = Theme.of(context).colorScheme;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.reaction_report),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Scrollbar(
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              children: message.reactionList().map((reaction) {
+                return Container(
+                  padding: const EdgeInsetsDirectional.symmetric(vertical: 4),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: scheme.surfaceContainerHigh,
+                      borderRadius: BorderRadius.circular(MeshRadii.pill),
+                      border: Border.all(
+                        color: scheme.outlineVariant,
+                        width: 1,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            reaction.emoji,
+                            style: MeshTheme.emoji(fontSize: 16),
+                            textHeightBehavior: const TextHeightBehavior(
+                              applyHeightToFirstAscent: false,
+                              applyHeightToLastDescent: false,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(child: Text(reaction.senderName ?? '???')),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -1079,10 +1226,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
 
   /// Whether the image codec model is currently downloading.
   ///
-  /// The image button must stay hidden while the model downloads: an encode
-  /// cannot start until the weights are on disk, and the preview sheet would
-  /// have nothing to show but a spinner.
-  bool get _imageCodecDownloading {
+  /// This must be read while [context] is building; popup item builders run
+  /// from an overlay and cannot listen to a provider.
+  bool _isImageCodecDownloading(BuildContext context) {
     try {
       return context.watch<ImageCodecService>().isDownloading;
     } on ProviderNotFoundException {
@@ -1603,58 +1749,90 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     );
   }
 
-  Widget _buildMessageComposer() {
+  Widget _buildInputBar() {
     final connector = context.watch<MeshCoreConnector>();
     final maxBytes = maxChannelMessageBytes(connector.selfName);
     final settings = context.watch<AppSettingsService>().settings;
+    final imageCodecDownloading = _isImageCodecDownloading(context);
+    final showImageAction =
+        settings.imageMessagesEnabled && !imageCodecDownloading;
     final scheme = Theme.of(context).colorScheme;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (_replyingToMessage != null)
-          Builder(
-            builder: (context) {
-              final textScale = context.select<ChatTextScaleService, double>(
-                (service) => service.scale,
-              );
-              return _buildReplyBanner(textScale);
-            },
-          ),
-        if (_imageSendTotal > 0) _buildImageSendProgress(scheme),
-        Container(
-          decoration: BoxDecoration(
-            color: scheme.surface,
-            border: Border(
-              top: BorderSide(color: scheme.outlineVariant, width: 1),
-            ),
-          ),
-          child: SafeArea(
-            child: Padding(
+    return Container(
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        border: Border(top: BorderSide(color: scheme.outlineVariant, width: 1)),
+      ),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_replyingToMessage != null)
+              Builder(
+                builder: (context) {
+                  final textScale = context
+                      .select<ChatTextScaleService, double>(
+                        (service) => service.scale,
+                      );
+                  return _buildReplyBanner(textScale);
+                },
+              ),
+            if (_imageSendTotal > 0) _buildImageSendProgress(scheme),
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.gif_box),
-                    onPressed: () => _showGifPicker(context),
-                    tooltip: context.l10n.chat_sendGif,
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.add_circle_outline),
+                    position: PopupMenuPosition.over,
+                    offset: Offset(0, showImageAction ? -112 : -64),
+                    tooltip: context.l10n.chat_selectSendAction,
+                    onSelected: (action) {
+                      switch (action) {
+                        case 'gif':
+                          _showGifPicker(context);
+                          break;
+                        case 'meshcore-image':
+                          _showImageSendPreview();
+                          break;
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'gif',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.gif_box),
+                            const SizedBox(width: 12),
+                            Text(context.l10n.chat_sendGif),
+                          ],
+                        ),
+                      ),
+                      if (showImageAction)
+                        PopupMenuItem(
+                          value: 'meshcore-image',
+                          // Gated on the codec, not just the setting. The preview
+                          // sheet explains why a send is impossible, but a fully
+                          // live button in a build that cannot encode invites the
+                          // tap that produces that explanation.
+                          enabled:
+                              _imageCodec?.availability ==
+                              ImageCodecAvailability.ready,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.image_outlined),
+                              const SizedBox(width: 12),
+                              Text(context.l10n.chat_sendImageLora),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
                   if (settings.translationEnabled)
                     MessageTranslationButton(
                       enabled: settings.composerTranslationEnabled,
                       languageCode: settings.translationTargetLanguageCode,
                       onPressed: _showTranslationOptions,
-                    ),
-                  if (settings.imageMessagesEnabled && !_imageCodecDownloading)
-                    ImageSendButton(
-                      // Gated on the codec, not just the setting. The preview
-                      // sheet explains why a send is impossible, but a fully
-                      // live button in a build that cannot encode invites the
-                      // tap that produces that explanation.
-                      enabled:
-                          _imageCodec?.availability ==
-                          ImageCodecAvailability.ready,
-                      onPressed: () => _showImageSendPreview(),
                     ),
                   Expanded(
                     child: ValueListenableBuilder<TextEditingValue>(
@@ -1787,9 +1965,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                 ],
               ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -2037,12 +2215,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     final connector = context.read<MeshCoreConnector>();
     final emojiIndex = ReactionHelper.emojiToIndex(emoji);
     if (emojiIndex == null) return; // Unknown emoji, skip
-    final timestampSecs = message.timestamp.millisecondsSinceEpoch ~/ 1000;
-    final hash = ReactionHelper.computeReactionHash(
-      timestampSecs,
-      message.senderName,
-      message.text,
-    );
+    final hash = message.computeReactionHash();
     final reactionText = ReactionHelper.encodeReaction(hash, emojiIndex);
     connector.sendChannelMessage(widget.channel, reactionText);
   }
