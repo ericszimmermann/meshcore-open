@@ -585,6 +585,14 @@ class AppLocalizationsIt extends AppLocalizations {
       'Quando la posizione GPS cambia, invia un annuncio zero-hop (richiede la posizione nell\'annuncio).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Invia auto-annuncio personale come flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Se abilitato, gli auto-annunci automatizzati vengono inviati come flood invece che zero-hop.';
+
+  @override
   String get settings_multiAck => 'ACK multipli';
 
   @override
@@ -4828,6 +4836,14 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Quando l\'elenco dei contatti è pieno, il contatto più vecchio non tra i preferiti verrà sostituito.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Contatti scoperti';

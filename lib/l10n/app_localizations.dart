@@ -1132,6 +1132,18 @@ abstract class AppLocalizations {
   /// **'App setting: when your GPS position changes, automatically advertise your new location to nearby nodes only (requires Advert Location).'**
   String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle;
 
+  /// No description provided for @settings_autoSelfAdvertAsFlood.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Auto Self Advert As Flood'**
+  String get settings_autoSelfAdvertAsFlood;
+
+  /// No description provided for @settings_autoSelfAdvertAsFloodSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When enabled, automated self adverts are sent as flood instead of zero-hop.'**
+  String get settings_autoSelfAdvertAsFloodSubtitle;
+
   /// No description provided for @settings_multiAck.
   ///
   /// In en, this message translates to:
@@ -8247,6 +8259,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'When the contact list is full, the oldest non-favorited contact will be replaced.'**
   String get contactsSettings_overwriteOldestSubtitle;
+
+  /// No description provided for @contactsSettings_evictDiscoveredContactsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Evict discovered contacts'**
+  String get contactsSettings_evictDiscoveredContactsTitle;
+
+  /// No description provided for @contactsSettings_evictDiscoveredContactsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.'**
+  String get contactsSettings_evictDiscoveredContactsSubtitle;
 
   /// No description provided for @discoveredContacts_Title.
   ///

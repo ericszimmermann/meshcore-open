@@ -577,6 +577,14 @@ class AppLocalizationsSl extends AppLocalizations {
       'Ko se GPS lokacija spremeni, pošlji zero-hop oglas (zahteva lokacijo v oglasu).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Pošlji samodejni lastni oglas kot flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Če je omogočeno, se samodejni lastni oglasi pošiljajo kot flood namesto zero-hop.';
+
+  @override
   String get settings_multiAck => 'Več potrdil';
 
   @override
@@ -4805,6 +4813,14 @@ class AppLocalizationsSl extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Ko je seznam stikov poln, bo najstarejši nestarševski stik zamenjan.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Odkriti stiki';

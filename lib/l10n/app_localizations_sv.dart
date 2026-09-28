@@ -572,6 +572,14 @@ class AppLocalizationsSv extends AppLocalizations {
       'När GPS-positionen ändras skickas en nollhoppsannons (kräver plats i annonsen).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Skicka automatisk egenannons som flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'När den är aktiverad skickas automatiska egenannonser som flood istället för zero-hop.';
+
+  @override
   String get settings_multiAck => 'Flera bekräftelser';
 
   @override
@@ -4780,6 +4788,14 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'När kontaktlistan är full ersätts den äldsta icke-favoriterade kontakten.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Upptäckta kontakter';

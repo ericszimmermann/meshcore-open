@@ -578,6 +578,14 @@ class AppLocalizationsHu extends AppLocalizations {
       'Ha a GPS-helyzet megváltozik, küldjön zero-hop hirdetést (a hirdetésben helymegadás szükséges).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Automatikus saját hirdetés küldése floodként';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Ha engedélyezve van, az automatikus saját hirdetések floodként kerülnek küldésre zero-hop helyett.';
+
+  @override
   String get settings_multiAck => 'Multi-ACK';
 
   @override
@@ -4818,6 +4826,14 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Amikor a névjegylista megtelik, a legrégebbi, nem kedvenc névjegy lecserélődik.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Felfedezett kapcsolatok';

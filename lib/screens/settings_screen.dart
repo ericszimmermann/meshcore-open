@@ -1231,6 +1231,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     bool autoAddRoomServer = false;
     bool autoAddSensor = false;
     bool overwriteOldest = false;
+    final appSettingsService = context.read<AppSettingsService>();
+    bool evictDiscoveredContactsEnabled =
+        appSettingsService.settings.evictDiscoveredContactsEnabled;
 
     final connector = context.read<MeshCoreConnector>();
     autoAddChat = connector.autoAddUsers ?? false;
@@ -1292,6 +1295,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     setDialogState(() => overwriteOldest = value);
                   },
                 ),
+                const Divider(height: 4),
+                FeatureToggleRow(
+                  title: l10n.contactsSettings_evictDiscoveredContactsTitle,
+                  subtitle:
+                      l10n.contactsSettings_evictDiscoveredContactsSubtitle,
+                  value: evictDiscoveredContactsEnabled,
+                  onChanged: (value) {
+                    setDialogState(
+                      () => evictDiscoveredContactsEnabled = value,
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -1301,7 +1316,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Text(l10n.common_cancel),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await appSettingsService.setEvictDiscoveredContactsEnabled(
+                  evictDiscoveredContactsEnabled,
+                );
+                if (evictDiscoveredContactsEnabled) {
+                  await connector.trimDiscoveredContactsToLimit();
+                }
                 _sendSettings(
                   connector,
                   autoAddChat,
@@ -1310,6 +1331,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   autoAddSensor,
                   overwriteOldest,
                 );
+                if (!context.mounted) return;
                 Navigator.pop(context);
               },
               child: Text(l10n.common_save),
@@ -1351,6 +1373,9 @@ void _privacySettings(BuildContext context, MeshCoreConnector connector) {
   int multiAcks = connector.multiAcks;
   bool autoZeroHopAdvertOnGpsUpdate =
       settingsService.settings.autoSendZeroHopAdvertOnGpsUpdate;
+  bool autoSelfAdvertAsFlood =
+      settingsService.settings.autoSendSelfAdvertAsFlood;
+  final isClientRepeatMode = connector.clientRepeat == true;
 
   final telemModeBase = [
     DropdownMenuItem(
@@ -1414,6 +1439,20 @@ void _privacySettings(BuildContext context, MeshCoreConnector connector) {
                       }
                     : null,
               ),
+              if (isClientRepeatMode) ...[
+                const SizedBox(height: 8),
+                FeatureToggleRow(
+                  title: l10n.settings_autoSelfAdvertAsFlood,
+                  subtitle: l10n.settings_autoSelfAdvertAsFloodSubtitle,
+                  value: autoSelfAdvertAsFlood,
+                  enabled: advertLocPolicy && autoZeroHopAdvertOnGpsUpdate,
+                  onChanged: advertLocPolicy && autoZeroHopAdvertOnGpsUpdate
+                      ? (value) {
+                          setDialogState(() => autoSelfAdvertAsFlood = value);
+                        }
+                      : null,
+                ),
+              ],
               const SizedBox(height: 8),
               SwitchListTile(
                 title: Text(l10n.settings_multiAck),
@@ -1494,6 +1533,9 @@ void _privacySettings(BuildContext context, MeshCoreConnector connector) {
               );
               await settingsService.setAutoSendZeroHopAdvertOnGpsUpdate(
                 autoZeroHopAdvertOnGpsUpdate,
+              );
+              await settingsService.setAutoSendSelfAdvertAsFlood(
+                autoSelfAdvertAsFlood,
               );
               await connector.refreshDeviceInfo();
               if (!context.mounted) return;

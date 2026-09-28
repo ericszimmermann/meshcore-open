@@ -583,6 +583,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'Когда GPS-местоположение меняется, отправлять анонс без хопов (требуется геопозиция в анонсе).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Отправлять автоматические self-advert как flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Если включено, автоматические self-advert отправляются как flood вместо zero-hop.';
+
+  @override
   String get settings_multiAck => 'Несколько подтверждений';
 
   @override
@@ -4836,6 +4844,14 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Когда список контактов заполнен, будет заменен самый старый контакт, который не находится в избранном.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Обнаруженные контакты';

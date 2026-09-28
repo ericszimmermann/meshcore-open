@@ -583,6 +583,14 @@ class AppLocalizationsBg extends AppLocalizations {
       'Когато GPS местоположението се промени, изпрати zero-hop обява (изисква местоположение в обявата).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Изпращане на автоматична самореклама като flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Когато е активирано, автоматичните самореклами се изпращат като flood вместо zero-hop.';
+
+  @override
   String get settings_multiAck => 'Множество ACK';
 
   @override
@@ -4819,6 +4827,14 @@ class AppLocalizationsBg extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Когато списъкът с контакти е пълен, най-старият неключов контакт ще бъде заменен.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Открити контакти';

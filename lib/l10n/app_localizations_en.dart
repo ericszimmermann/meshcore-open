@@ -572,6 +572,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'App setting: when your GPS position changes, automatically advertise your new location to nearby nodes only (requires Advert Location).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood => 'Send Auto Self Advert As Flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'When enabled, automated self adverts are sent as flood instead of zero-hop.';
+
+  @override
   String get settings_multiAck => 'Multi-ACKs';
 
   @override
@@ -4750,6 +4757,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'When the contact list is full, the oldest non-favorited contact will be replaced.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Discovered Contacts';

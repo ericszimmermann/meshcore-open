@@ -579,6 +579,14 @@ class AppLocalizationsNl extends AppLocalizations {
       'Wanneer de GPS-locatie verandert, een zero-hop-advert verzenden (vereist locatie in advert).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Automatische zelfadvertentie als flood verzenden';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Indien ingeschakeld, worden geautomatiseerde zelfadvertenties als flood verzonden in plaats van zero-hop.';
+
+  @override
   String get settings_multiAck => 'Multi-ACKs';
 
   @override
@@ -4796,6 +4804,14 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Wanneer de contactenlijst vol is, wordt de oudste niet-favoriete contactpersoon vervangen.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Ontdekte contacten';

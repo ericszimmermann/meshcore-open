@@ -576,6 +576,14 @@ class AppLocalizationsUk extends AppLocalizations {
       'Коли GPS-локація змінюється, надсилати оголошення без хопів (потрібна геопозиція в оголошенні).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Надсилати автоматичне self-advert як flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Якщо ввімкнено, автоматичні self-advert надсилаються як flood замість zero-hop.';
+
+  @override
   String get settings_multiAck => 'Багато підтверджень';
 
   @override
@@ -4834,6 +4842,14 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Коли список контактів заповнений, найстарший контакт без позначки улюбленого буде замінений.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Виявлені контакти';

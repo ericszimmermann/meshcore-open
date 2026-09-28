@@ -543,6 +543,13 @@ class AppLocalizationsZh extends AppLocalizations {
       '当 GPS 位置变化时，发送零跳广播（需要在广播中包含位置）。';
 
   @override
+  String get settings_autoSelfAdvertAsFlood => '将自动自我广告作为 flood 发送';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      '启用后，自动自我广告将以 flood 而不是 zero-hop 发送。';
+
+  @override
   String get settings_multiAck => '多重ACK';
 
   @override
@@ -4468,6 +4475,14 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       '当联系人列表已满时，将替换最老的非收藏联系人。';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => '已发现的联系人';

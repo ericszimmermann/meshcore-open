@@ -575,6 +575,14 @@ class AppLocalizationsSk extends AppLocalizations {
       'Keď sa GPS poloha zmení, odoslať zero-hop inzerát (vyžaduje polohu v inzeráte).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Posielať automatické vlastné reklamy ako flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Ak je povolené, automatické vlastné reklamy sa odosielajú ako flood namiesto zero-hop.';
+
+  @override
   String get settings_multiAck => 'Viaceré ACK';
 
   @override
@@ -4805,6 +4813,14 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get contactsSettings_overwriteOldestSubtitle =>
       'Keď je zoznam kontaktov plný, bude nahradený najstarší neoznačený kontakt.';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsTitle =>
+      'Evict discovered contacts';
+
+  @override
+  String get contactsSettings_evictDiscoveredContactsSubtitle =>
+      'When enabled, the app removes the oldest discovered contacts once the discovery list reaches its limit of 500 entries.';
 
   @override
   String get discoveredContacts_Title => 'Objavené kontakty';
