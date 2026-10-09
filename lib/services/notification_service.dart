@@ -25,6 +25,12 @@ class NotificationService {
 
   // Locale for localized notification strings
   Locale _locale = const Locale('en');
+  String _publicIpfsGateway = 'https://ipfs.io/ipfs/';
+
+  void setPublicIpfsGateway(String gateway) {
+    final trimmed = gateway.trim();
+    _publicIpfsGateway = trimmed.isEmpty ? 'https://ipfs.io/ipfs/' : trimmed;
+  }
 
   /// Set the locale for notification strings (call when app locale changes)
   void setLocale(Locale locale) {
@@ -296,7 +302,10 @@ class NotificationService {
   }) async {
     if (!urlImagesEnabled) return null;
 
-    final imageUrl = await MessageUrlImageHelper.parseVerified(text);
+    final imageUrl = await MessageUrlImageHelper.parseVerified(
+      text,
+      publicGateway: _publicIpfsGateway,
+    );
     if (imageUrl == null) return null;
 
     try {

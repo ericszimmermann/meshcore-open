@@ -1002,6 +1002,58 @@ class AppLocalizationsNl extends AppLocalizations {
       'Aantal pogingen om een bericht opnieuw te versturen voordat het als mislukt wordt gemarkeerd';
 
   @override
+  String get appSettings_ipfsImageLinks => 'IPFS URL image links';
+
+  @override
+  String get appSettings_ipfsImageLinksSubtitle =>
+      'Choose where CID images are downloaded from and configure upload links';
+
+  @override
+  String get appSettings_publicIpfsGateway => 'Public gateway';
+
+  @override
+  String get appSettings_publicIpfsGatewayHint => 'https://ipfs.io/ipfs/';
+
+  @override
+  String get appSettings_ipfsGatewayIpfsIo => 'IPFS.io';
+
+  @override
+  String get appSettings_ipfsGatewayPinata => 'Pinata';
+
+  @override
+  String get appSettings_ipfsGatewayFilebase => 'Filebase';
+
+  @override
+  String get appSettings_ipfsGatewayCustom => 'Custom (Kubo)';
+
+  @override
+  String get appSettings_uploadIpfsProvider => 'Upload provider';
+
+  @override
+  String get appSettings_uploadIpfsProviderDeactivated => 'Deactivated';
+
+  @override
+  String get appSettings_uploadIpfsGateway => 'Upload gateway';
+
+  @override
+  String get appSettings_uploadIpfsGatewaySubtitle =>
+      'Personal gateway url recommended. Leave empty to use the public gateway.';
+
+  @override
+  String get appSettings_uploadIpfsEndpoint => 'Upload endpoint';
+
+  @override
+  String get appSettings_uploadIpfsEndpointSubtitle =>
+      'The API endpoint used to upload files';
+
+  @override
+  String get appSettings_uploadIpfsApiKey => 'Upload API key';
+
+  @override
+  String get appSettings_ipfsImageLinksDescription =>
+      'Public gateway downloads ipfs: CID images. Upload gateway is used in shared links and falls back to the public gateway when empty.';
+
+  @override
   String get appSettings_battery => 'Batterij';
 
   @override

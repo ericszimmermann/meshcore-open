@@ -1864,6 +1864,102 @@ abstract class AppLocalizations {
   /// **'Number of retry attempts before marking a message as failed'**
   String get appSettings_maxMessageRetriesSubtitle;
 
+  /// No description provided for @appSettings_ipfsImageLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'IPFS URL image links'**
+  String get appSettings_ipfsImageLinks;
+
+  /// No description provided for @appSettings_ipfsImageLinksSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose where CID images are downloaded from and configure upload links'**
+  String get appSettings_ipfsImageLinksSubtitle;
+
+  /// No description provided for @appSettings_publicIpfsGateway.
+  ///
+  /// In en, this message translates to:
+  /// **'Public gateway'**
+  String get appSettings_publicIpfsGateway;
+
+  /// No description provided for @appSettings_publicIpfsGatewayHint.
+  ///
+  /// In en, this message translates to:
+  /// **'https://ipfs.io/ipfs/'**
+  String get appSettings_publicIpfsGatewayHint;
+
+  /// No description provided for @appSettings_ipfsGatewayIpfsIo.
+  ///
+  /// In en, this message translates to:
+  /// **'IPFS.io'**
+  String get appSettings_ipfsGatewayIpfsIo;
+
+  /// No description provided for @appSettings_ipfsGatewayPinata.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinata'**
+  String get appSettings_ipfsGatewayPinata;
+
+  /// No description provided for @appSettings_ipfsGatewayFilebase.
+  ///
+  /// In en, this message translates to:
+  /// **'Filebase'**
+  String get appSettings_ipfsGatewayFilebase;
+
+  /// No description provided for @appSettings_ipfsGatewayCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom (Kubo)'**
+  String get appSettings_ipfsGatewayCustom;
+
+  /// No description provided for @appSettings_uploadIpfsProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload provider'**
+  String get appSettings_uploadIpfsProvider;
+
+  /// No description provided for @appSettings_uploadIpfsProviderDeactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivated'**
+  String get appSettings_uploadIpfsProviderDeactivated;
+
+  /// No description provided for @appSettings_uploadIpfsGateway.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload gateway'**
+  String get appSettings_uploadIpfsGateway;
+
+  /// No description provided for @appSettings_uploadIpfsGatewaySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal gateway url recommended. Leave empty to use the public gateway.'**
+  String get appSettings_uploadIpfsGatewaySubtitle;
+
+  /// No description provided for @appSettings_uploadIpfsEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload endpoint'**
+  String get appSettings_uploadIpfsEndpoint;
+
+  /// No description provided for @appSettings_uploadIpfsEndpointSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The API endpoint used to upload files'**
+  String get appSettings_uploadIpfsEndpointSubtitle;
+
+  /// No description provided for @appSettings_uploadIpfsApiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload API key'**
+  String get appSettings_uploadIpfsApiKey;
+
+  /// No description provided for @appSettings_ipfsImageLinksDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Public gateway downloads ipfs: CID images. Upload gateway is used in shared links and falls back to the public gateway when empty.'**
+  String get appSettings_ipfsImageLinksDescription;
+
   /// No description provided for @appSettings_battery.
   ///
   /// In en, this message translates to:

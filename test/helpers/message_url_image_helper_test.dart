@@ -71,6 +71,18 @@ void main() {
       );
     });
 
+    test('uses the configured public gateway for direct ipfs cid urls', () async {
+      final attachment = await MessageUrlImageHelper.parse(
+        'ipfs://bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly',
+        publicGateway: 'https://gateway.example.com',
+      );
+
+      expect(
+        attachment,
+        'https://gateway.example.com/ipfs/bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly',
+      );
+    });
+
     test('parses http image urls', () async {
       final attachment = await MessageUrlImageHelper.parse(
         'see this image https://example.com/picture.png?size=large additional text',

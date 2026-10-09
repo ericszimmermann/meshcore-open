@@ -3,6 +3,20 @@ import 'translation_support.dart';
 
 enum UnitSystem { metric, imperial }
 
+String normalizeIpfsGateway(String value) {
+  var gateway = value.trim();
+  if (gateway.isEmpty) return gateway;
+  if (!gateway.startsWith('http://') && !gateway.startsWith('https://')) {
+    gateway = 'https://$gateway';
+  }
+  gateway = gateway.replaceAll('{cid}', '');
+  if (gateway.endsWith('/ipfs')) gateway = '$gateway/';
+  if (!gateway.endsWith('/ipfs/')) {
+    gateway = '${gateway.endsWith('/') ? gateway : '$gateway/'}ipfs/';
+  }
+  return gateway;
+}
+
 extension UnitSystemValue on UnitSystem {
   String get value {
     switch (this) {
@@ -125,6 +139,10 @@ class AppSettings {
   final int tcpServerPort;
   final bool jumpToOldestUnread;
   final bool imageMessagesEnabled;
+  final String publicIpfsGateway;
+  final String uploadIpfsGateway;
+  final String uploadIpfsEndpoint;
+  final String uploadIpfsApiKey;
 
   /// Whether a received image is decoded as soon as it is reassembled.
   ///
@@ -173,6 +191,11 @@ class AppSettings {
       return stadiaDemo;
     }
     return apiKey;
+  }
+
+  String get effectiveUploadIpfsGateway {
+    final uploadGateway = uploadIpfsGateway.trim();
+    return uploadGateway.isEmpty ? publicIpfsGateway : uploadGateway;
   }
 
   bool get usesstadiaDemo => effectiveMapTileApiKey == stadiaDemo;
@@ -232,6 +255,10 @@ class AppSettings {
     this.tcpServerPort = 0,
     this.jumpToOldestUnread = false,
     this.imageMessagesEnabled = false,
+    this.publicIpfsGateway = 'https://ipfs.io/ipfs/',
+    this.uploadIpfsGateway = '',
+    this.uploadIpfsEndpoint = '',
+    this.uploadIpfsApiKey = '',
     this.imageProcessAutomatically = false,
     this.imageCodecEnabled = false,
     this.imageCodecSelectedModelId,
@@ -312,6 +339,10 @@ class AppSettings {
       'tcp_server_port': tcpServerPort,
       'jump_to_oldest_unread': jumpToOldestUnread,
       'image_messages_enabled': imageMessagesEnabled,
+      'public_ipfs_gateway': publicIpfsGateway,
+      'upload_ipfs_gateway': uploadIpfsGateway,
+      'upload_ipfs_endpoint': uploadIpfsEndpoint,
+      'upload_ipfs_api_key': uploadIpfsApiKey,
       'image_process_automatically': imageProcessAutomatically,
       'image_codec_enabled': imageCodecEnabled,
       'image_codec_selected_model_id': imageCodecSelectedModelId,
@@ -416,6 +447,11 @@ class AppSettings {
       tcpServerPort: json['tcp_server_port'] as int? ?? 0,
       jumpToOldestUnread: json['jump_to_oldest_unread'] as bool? ?? false,
       imageMessagesEnabled: json['image_messages_enabled'] as bool? ?? false,
+      publicIpfsGateway:
+          json['public_ipfs_gateway'] as String? ?? 'https://ipfs.io/ipfs/',
+      uploadIpfsGateway: json['upload_ipfs_gateway'] as String? ?? '',
+      uploadIpfsEndpoint: json['upload_ipfs_endpoint'] as String? ?? '',
+      uploadIpfsApiKey: json['upload_ipfs_api_key'] as String? ?? '',
       imageProcessAutomatically:
           json['image_process_automatically'] as bool? ?? false,
       imageCodecEnabled: json['image_codec_enabled'] as bool? ?? false,
@@ -534,6 +570,10 @@ class AppSettings {
     int? tcpServerPort,
     bool? jumpToOldestUnread,
     bool? imageMessagesEnabled,
+    String? publicIpfsGateway,
+    String? uploadIpfsGateway,
+    String? uploadIpfsEndpoint,
+    String? uploadIpfsApiKey,
     bool? imageProcessAutomatically,
     bool? imageCodecEnabled,
     Object? imageCodecSelectedModelId = _unset,
@@ -616,6 +656,10 @@ class AppSettings {
       tcpServerPort: tcpServerPort ?? this.tcpServerPort,
       jumpToOldestUnread: jumpToOldestUnread ?? this.jumpToOldestUnread,
       imageMessagesEnabled: imageMessagesEnabled ?? this.imageMessagesEnabled,
+      publicIpfsGateway: publicIpfsGateway ?? this.publicIpfsGateway,
+      uploadIpfsGateway: uploadIpfsGateway ?? this.uploadIpfsGateway,
+      uploadIpfsEndpoint: uploadIpfsEndpoint ?? this.uploadIpfsEndpoint,
+      uploadIpfsApiKey: uploadIpfsApiKey ?? this.uploadIpfsApiKey,
       imageProcessAutomatically:
           imageProcessAutomatically ?? this.imageProcessAutomatically,
       imageCodecEnabled: imageCodecEnabled ?? this.imageCodecEnabled,

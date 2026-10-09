@@ -599,6 +599,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     bool urlImagesEnabled,
   ) {
     final settingsService = context.watch<AppSettingsService>();
+    final publicIpfsGateway = settingsService.settings.publicIpfsGateway;
     final enableTracing = settingsService.settings.enableMessageTracing;
     final isOutgoing = message.isOutgoing;
     final scheme = Theme.of(context).colorScheme;
@@ -773,6 +774,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                           MessageUrlImageFutureBuilder(
                             messageId: message.messageId,
                             text: message.text,
+                            publicGateway: publicIpfsGateway,
                             builder: (context, snapshot) {
                               final imageAttachment = snapshot.data;
 

@@ -674,6 +674,18 @@ class AppSettingsScreen extends StatelessWidget {
           ),
         ],
         const Divider(height: 1, indent: 16),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 4,
+          ),
+          leading: const Icon(Icons.link_outlined, size: 20),
+          title: Text(context.l10n.appSettings_ipfsImageLinks),
+          subtitle: Text(context.l10n.appSettings_ipfsImageLinksSubtitle),
+          trailing: const Icon(Icons.chevron_right, size: 18),
+          onTap: () => _showIpfsImageLinksDialog(context, settingsService),
+        ),
+        const Divider(height: 1, indent: 16),
         _ScrollIntoViewOnce(
           enabled: focusImageMessages,
           child: SwitchListTile(
@@ -696,7 +708,6 @@ class AppSettingsScreen extends StatelessWidget {
           ),
         ),
         if (settingsService.settings.imageMessagesEnabled) ...[
-          const Divider(height: 1, indent: 16),
           SwitchListTile(
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
@@ -722,6 +733,16 @@ class AppSettingsScreen extends StatelessWidget {
     } on ProviderNotFoundException {
       return null;
     }
+  }
+
+  void _showIpfsImageLinksDialog(
+    BuildContext context,
+    AppSettingsService settingsService,
+  ) {
+    showDialog(
+      context: context,
+      builder: (_) => _IpfsImageLinksDialog(settingsService: settingsService),
+    );
   }
 
   /// Model registry for image messages: the download entry point, the
@@ -2615,6 +2636,302 @@ class AppSettingsScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _IpfsImageLinksDialog extends StatefulWidget {
+  const _IpfsImageLinksDialog({required this.settingsService});
+
+  final AppSettingsService settingsService;
+
+  @override
+  State<_IpfsImageLinksDialog> createState() => _IpfsImageLinksDialogState();
+}
+
+class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
+  late final TextEditingController _publicController;
+  late final TextEditingController _uploadGatewayController;
+  late final TextEditingController _endpointController;
+  late final TextEditingController _apiKeyController;
+  late final String _currentApiKey;
+  late final String _maskedApiKey;
+  late String _selectedGateway;
+  late String _selectedUploadProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    final settings = widget.settingsService.settings;
+    _publicController = TextEditingController(
+      text: normalizeIpfsGateway(settings.publicIpfsGateway),
+    );
+    _uploadGatewayController = TextEditingController(
+      text: normalizeIpfsGateway(settings.uploadIpfsGateway),
+    );
+    _endpointController = TextEditingController(
+      text: settings.uploadIpfsEndpoint,
+    );
+    _currentApiKey = settings.uploadIpfsApiKey.trim();
+    _maskedApiKey = _currentApiKey.isEmpty ? '' : _maskApiKey(_currentApiKey);
+    _apiKeyController = TextEditingController(text: _maskedApiKey);
+    _selectedGateway = _gatewayPreset(_publicController.text);
+    _selectedUploadProvider = _uploadProvider(
+      _uploadGatewayController.text,
+      _endpointController.text,
+      _currentApiKey,
+    );
+  }
+
+  @override
+  void dispose() {
+    _publicController.dispose();
+    _uploadGatewayController.dispose();
+    _endpointController.dispose();
+    _apiKeyController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return AlertDialog(
+      title: Text(l10n.appSettings_ipfsImageLinks),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.appSettings_ipfsImageLinksDescription),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              initialValue: _selectedGateway,
+              isExpanded: true,
+              decoration: InputDecoration(
+                labelText: l10n.appSettings_publicIpfsGateway,
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: 'ipfs',
+                  child: Text(l10n.appSettings_ipfsGatewayIpfsIo),
+                ),
+                DropdownMenuItem(
+                  value: 'pinata',
+                  child: Text(l10n.appSettings_ipfsGatewayPinata),
+                ),
+                DropdownMenuItem(
+                  value: 'filebase',
+                  child: Text(l10n.appSettings_ipfsGatewayFilebase),
+                ),
+                DropdownMenuItem(
+                  value: 'custom',
+                  child: Text(l10n.appSettings_ipfsGatewayCustom),
+                ),
+              ],
+              onChanged: _selectGateway,
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _publicController,
+              decoration: InputDecoration(
+                labelText: l10n.appSettings_publicIpfsGateway,
+                hintText: l10n.appSettings_publicIpfsGatewayHint,
+              ),
+              keyboardType: TextInputType.url,
+              autocorrect: false,
+              onChanged: (_) {
+                if (_selectedGateway != 'custom') {
+                  setState(() => _selectedGateway = 'custom');
+                }
+              },
+            ),
+            const SizedBox(height: 10),
+            DropdownButtonFormField<String>(
+              initialValue: _selectedUploadProvider,
+              isExpanded: true,
+              decoration: InputDecoration(
+                labelText: l10n.appSettings_uploadIpfsProvider,
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: 'pinata',
+                  child: Text(l10n.appSettings_ipfsGatewayPinata),
+                ),
+                DropdownMenuItem(
+                  value: 'filebase',
+                  child: Text(l10n.appSettings_ipfsGatewayFilebase),
+                ),
+                DropdownMenuItem(
+                  value: 'custom',
+                  child: Text(l10n.appSettings_ipfsGatewayCustom),
+                ),
+                DropdownMenuItem(
+                  value: 'deactivated',
+                  child: Text(l10n.appSettings_uploadIpfsProviderDeactivated),
+                ),
+              ],
+              onChanged: _selectUploadProvider,
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _uploadGatewayController,
+              decoration: InputDecoration(
+                labelText: l10n.appSettings_uploadIpfsGateway,
+                helperText: l10n.appSettings_uploadIpfsGatewaySubtitle,
+                helperMaxLines: 3,
+              ),
+              keyboardType: TextInputType.url,
+              autocorrect: false,
+              onChanged: (_) => _markCustomUploadProvider(),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _endpointController,
+              decoration: InputDecoration(
+                labelText: l10n.appSettings_uploadIpfsEndpoint,
+                helperText: l10n.appSettings_uploadIpfsEndpointSubtitle,
+                helperMaxLines: 3,
+              ),
+              keyboardType: TextInputType.url,
+              autocorrect: false,
+              onChanged: (_) => _markCustomUploadProvider(),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _apiKeyController,
+              decoration: InputDecoration(
+                labelText: l10n.appSettings_uploadIpfsApiKey,
+              ),
+              autocorrect: false,
+              enableSuggestions: false,
+              onChanged: (_) => _markCustomUploadProvider(),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.common_cancel),
+        ),
+        TextButton(onPressed: _save, child: Text(l10n.common_save)),
+      ],
+    );
+  }
+
+  void _selectGateway(String? value) {
+    if (value == null) return;
+    setState(() {
+      _selectedGateway = value;
+      final preset = _gatewayValue(value);
+      if (preset != null) _publicController.text = preset;
+    });
+  }
+
+  void _selectUploadProvider(String? value) {
+    if (value == null) return;
+    setState(() {
+      _selectedUploadProvider = value;
+      final preset = _uploadPreset(value);
+      if (preset != null) {
+        _uploadGatewayController.text = preset.gateway;
+        _endpointController.text = preset.endpoint;
+        if (value == 'deactivated') _apiKeyController.clear();
+      }
+    });
+  }
+
+  void _markCustomUploadProvider() {
+    if (_selectedUploadProvider != 'custom') {
+      setState(() => _selectedUploadProvider = 'custom');
+    }
+  }
+
+  Future<void> _save() async {
+    final deactivated = _selectedUploadProvider == 'deactivated';
+    await widget.settingsService.setIpfsImageSettings(
+      publicGateway: _publicController.text,
+      uploadGateway: deactivated ? '' : _uploadGatewayController.text,
+      uploadEndpoint: deactivated ? '' : _endpointController.text,
+      uploadApiKey: deactivated
+          ? ''
+          : _apiKeyController.text == _maskedApiKey
+          ? _currentApiKey
+          : _apiKeyController.text,
+    );
+    if (mounted) Navigator.pop(context);
+  }
+
+  String _gatewayPreset(String value) {
+    if (value == 'https://ipfs.io/ipfs/' || value == 'https://ipfs.io/ipfs') {
+      return 'ipfs';
+    }
+    if (value == 'https://gateway.pinata.cloud/ipfs/' ||
+        value == 'https://gateway.pinata.cloud/ipfs') {
+      return 'pinata';
+    }
+    if (value == 'https://ipfs.filebase.io/ipfs/' ||
+        value == 'https://ipfs.filebase.io/ipfs') {
+      return 'filebase';
+    }
+    return 'custom';
+  }
+
+  String? _gatewayValue(String preset) {
+    switch (preset) {
+      case 'ipfs':
+        return 'https://ipfs.io/ipfs/';
+      case 'pinata':
+        return 'https://gateway.pinata.cloud/ipfs/';
+      case 'filebase':
+        return 'https://ipfs.filebase.io/ipfs/';
+      case 'custom':
+        return 'http://127.0.0.1:8080/ipfs/';
+      default:
+        return null;
+    }
+  }
+
+  String _uploadProvider(String gateway, String endpoint, String apiKey) {
+    if (gateway.isEmpty && endpoint.isEmpty && apiKey.isEmpty) {
+      return 'deactivated';
+    }
+    if (gateway == 'https://gateway.pinata.cloud/ipfs/' &&
+        endpoint == 'https://api.pinata.cloud/pinning/pinFileToIPFS') {
+      return 'pinata';
+    }
+    if (gateway == 'https://ipfs.filebase.io/ipfs/' &&
+        endpoint == 'https://rpc.filebase.io/api/v0/add') {
+      return 'filebase';
+    }
+    return 'custom';
+  }
+
+  ({String gateway, String endpoint})? _uploadPreset(String preset) {
+    switch (preset) {
+      case 'pinata':
+        return (
+          gateway: 'https://gateway.pinata.cloud/ipfs/',
+          endpoint: 'https://api.pinata.cloud/pinning/pinFileToIPFS',
+        );
+      case 'filebase':
+        return (
+          gateway: 'https://ipfs.filebase.io/ipfs/',
+          endpoint: 'https://rpc.filebase.io/api/v0/add',
+        );
+      case 'custom':
+        return (
+          gateway: 'http://127.0.0.1:8080/ipfs/',
+          endpoint: 'http://127.0.0.1:5001/api/v0/add',
+        );
+      case 'deactivated':
+        return (gateway: '', endpoint: '');
+      default:
+        return null;
+    }
+  }
+
+  String _maskApiKey(String value) {
+    if (value.length <= 8) return '********';
+    return '${value.substring(0, 4)}...${value.substring(value.length - 4)}';
   }
 }
 

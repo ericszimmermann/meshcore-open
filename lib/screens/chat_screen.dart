@@ -1370,6 +1370,7 @@ class _MessageBubble extends StatelessWidget {
     final urlImagesEnabled = context.select<MeshCoreConnector, bool>(
       (connector) => connector.isContactUrlImagesEnabled(sourceId),
     );
+    final publicIpfsGateway = settingsService.settings.publicIpfsGateway;
 
     // Bubble colors — outgoing uses MeshPalette.me / meBorder / meInk.
     final bubbleColor = isFailed
@@ -1532,6 +1533,7 @@ class _MessageBubble extends StatelessWidget {
                             MessageUrlImageFutureBuilder(
                               messageId: message.messageId,
                               text: message.text,
+                              publicGateway: publicIpfsGateway,
                               builder: (context, snapshot) {
                                 final imageAttachment = snapshot.data;
 

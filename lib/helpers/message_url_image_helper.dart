@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/app_settings.dart';
+
 /// Finds and renders image URLs embedded in ordinary text messages.
 ///
 /// This is deliberately separate from MeshCore's transmitted channel-image
@@ -57,7 +59,10 @@ class MessageUrlImageHelper {
         _imagePattern.hasMatch(text);
   }
 
-  static Future<String?> parse(String text) async {
+  static Future<String?> parse(
+    String text, {
+    String publicGateway = 'https://ipfs.io/ipfs/',
+  }) async {
     final trimmed = text.trim();
     if (trimmed.isEmpty) return null;
 
@@ -74,7 +79,8 @@ class MessageUrlImageHelper {
     final ipfsCidMatch = _ipfsCidPattern.firstMatch(trimmed);
     if (ipfsCidMatch != null) {
       final cid = _trimBoundary(ipfsCidMatch.group(1)!);
-      return 'https://ipfs.io/ipfs/$cid';
+      final gateway = normalizeIpfsGateway(publicGateway);
+      return '${gateway.isEmpty ? 'https://ipfs.io/ipfs/' : gateway}$cid';
     }
 
     final ibbMatch = _ibbSharePattern.firstMatch(trimmed);
@@ -96,8 +102,11 @@ class MessageUrlImageHelper {
     return null;
   }
 
-  static Future<String?> parseVerified(String text) async {
-    final imageUrl = await parse(text);
+  static Future<String?> parseVerified(
+    String text, {
+    String publicGateway = 'https://ipfs.io/ipfs/',
+  }) async {
+    final imageUrl = await parse(text, publicGateway: publicGateway);
     if (imageUrl == null) return null;
 
     final verified = await _verifyImageUrl(imageUrl);
@@ -110,20 +119,22 @@ class MessageUrlImageHelper {
   /// be retried when a message is shown again.
   static Future<String?> parseVerifiedForMessage(
     String messageId,
-    String text,
-  ) {
-    final cached = _messageImageCache.remove(messageId);
+    String text, {
+    String publicGateway = 'https://ipfs.io/ipfs/',
+  }) {
+    final cacheKey = '$messageId|$publicGateway';
+    final cached = _messageImageCache.remove(cacheKey);
     if (cached != null) {
-      _messageImageCache[messageId] = cached;
+      _messageImageCache[cacheKey] = cached;
       return cached;
     }
 
-    final parsing = parseVerified(text);
-    _messageImageCache[messageId] = parsing;
+    final parsing = parseVerified(text, publicGateway: publicGateway);
+    _messageImageCache[cacheKey] = parsing;
     parsing.then((imageUrl) {
       if (imageUrl == null &&
-          identical(_messageImageCache[messageId], parsing)) {
-        _messageImageCache.remove(messageId);
+          identical(_messageImageCache[cacheKey], parsing)) {
+        _messageImageCache.remove(cacheKey);
       } else if (imageUrl != null) {
         while (_messageImageCache.length > _maxMessageImageCacheEntries) {
           _messageImageCache.remove(_messageImageCache.keys.first);
@@ -207,11 +218,13 @@ class MessageUrlImageFutureBuilder extends StatefulWidget {
     super.key,
     required this.messageId,
     required this.text,
+    required this.publicGateway,
     required this.builder,
   });
 
   final String messageId;
   final String text;
+  final String publicGateway;
   final AsyncWidgetBuilder<String?> builder;
 
   @override
@@ -229,6 +242,7 @@ class _MessageUrlImageFutureBuilderState
     _imageFuture = MessageUrlImageHelper.parseVerifiedForMessage(
       widget.messageId,
       widget.text,
+      publicGateway: widget.publicGateway,
     );
   }
 
@@ -239,6 +253,13 @@ class _MessageUrlImageFutureBuilderState
       _imageFuture = MessageUrlImageHelper.parseVerifiedForMessage(
         widget.messageId,
         widget.text,
+        publicGateway: widget.publicGateway,
+      );
+    } else if (oldWidget.publicGateway != widget.publicGateway) {
+      _imageFuture = MessageUrlImageHelper.parseVerifiedForMessage(
+        widget.messageId,
+        widget.text,
+        publicGateway: widget.publicGateway,
       );
     }
   }
