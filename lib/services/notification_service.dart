@@ -10,6 +10,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import '../helpers/message_url_image_helper.dart';
 import '../helpers/reaction_helper.dart';
 import '../l10n/app_localizations.dart';
+import '../models/app_settings.dart';
 import '../storage/prefs_manager.dart';
 import '../utils/platform_info.dart';
 import 'notification_reply.dart';
@@ -25,11 +26,13 @@ class NotificationService {
 
   // Locale for localized notification strings
   Locale _locale = const Locale('en');
-  String _publicIpfsGateway = 'https://ipfs.io/ipfs/';
+  String _publicIpfsGateway = AppSettings.defaultPublicIpfsGateway;
 
   void setPublicIpfsGateway(String gateway) {
     final trimmed = gateway.trim();
-    _publicIpfsGateway = trimmed.isEmpty ? 'https://ipfs.io/ipfs/' : trimmed;
+    _publicIpfsGateway = trimmed.isEmpty
+        ? AppSettings.defaultPublicIpfsGateway
+        : trimmed;
   }
 
   /// Set the locale for notification strings (call when app locale changes)

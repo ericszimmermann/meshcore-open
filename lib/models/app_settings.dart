@@ -17,6 +17,18 @@ String normalizeIpfsGateway(String value) {
   return gateway;
 }
 
+String migratePublicIpfsGateway(String? value) {
+  final gateway = value?.trim() ?? '';
+  if (gateway.isEmpty ||
+      gateway == 'https://ipfs.io/ipfs/' ||
+      gateway == 'https://ipfs.io/ipfs' ||
+      gateway == 'https://dweb.link/ipfs/' ||
+      gateway == 'https://dweb.link/ipfs') {
+    return AppSettings.defaultPublicIpfsGateway;
+  }
+  return gateway;
+}
+
 extension UnitSystemValue on UnitSystem {
   String get value {
     switch (this) {
@@ -92,6 +104,8 @@ class Cyr2LatProfile {
 class AppSettings {
   static const Object _unset = Object();
   static const String stadiaDemo = '51bd0381-4685-4666-bae8-48940f6d77c0';
+  static const String defaultPublicIpfsGateway =
+      'https://ipfs.filebase.io/ipfs/';
 
   final bool clearPathOnMaxRetry;
   final bool mapShowRepeaters;
@@ -255,7 +269,7 @@ class AppSettings {
     this.tcpServerPort = 0,
     this.jumpToOldestUnread = false,
     this.imageMessagesEnabled = false,
-    this.publicIpfsGateway = 'https://ipfs.io/ipfs/',
+    this.publicIpfsGateway = defaultPublicIpfsGateway,
     this.uploadIpfsGateway = '',
     this.uploadIpfsEndpoint = '',
     this.uploadIpfsApiKey = '',
@@ -447,8 +461,9 @@ class AppSettings {
       tcpServerPort: json['tcp_server_port'] as int? ?? 0,
       jumpToOldestUnread: json['jump_to_oldest_unread'] as bool? ?? false,
       imageMessagesEnabled: json['image_messages_enabled'] as bool? ?? false,
-      publicIpfsGateway:
-          json['public_ipfs_gateway'] as String? ?? 'https://ipfs.io/ipfs/',
+      publicIpfsGateway: migratePublicIpfsGateway(
+        json['public_ipfs_gateway'] as String?,
+      ),
       uploadIpfsGateway: json['upload_ipfs_gateway'] as String? ?? '',
       uploadIpfsEndpoint: json['upload_ipfs_endpoint'] as String? ?? '',
       uploadIpfsApiKey: json['upload_ipfs_api_key'] as String? ?? '',

@@ -966,10 +966,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_publicIpfsGateway => 'Public gateway';
 
   @override
-  String get appSettings_publicIpfsGatewayHint => 'https://ipfs.io/ipfs/';
-
-  @override
-  String get appSettings_ipfsGatewayIpfsIo => 'IPFS.io';
+  String get appSettings_ipfsGatewayDefaultLink => 'Default';
 
   @override
   String get appSettings_ipfsGatewayPinata => 'Pinata';

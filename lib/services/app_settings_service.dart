@@ -318,7 +318,7 @@ class AppSettingsService extends ChangeNotifier {
     await updateSettings(
       _settings.copyWith(
         publicIpfsGateway: normalizedPublicGateway.isEmpty
-            ? 'https://ipfs.io/ipfs/'
+            ? AppSettings.defaultPublicIpfsGateway
             : normalizedPublicGateway,
         uploadIpfsGateway: normalizedUploadGateway,
         uploadIpfsEndpoint: uploadEndpoint.trim(),

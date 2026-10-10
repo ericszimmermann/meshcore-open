@@ -2712,8 +2712,8 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
               ),
               items: [
                 DropdownMenuItem(
-                  value: 'ipfs',
-                  child: Text(l10n.appSettings_ipfsGatewayIpfsIo),
+                  value: 'default',
+                  child: Text(l10n.appSettings_ipfsGatewayDefaultLink),
                 ),
                 DropdownMenuItem(
                   value: 'pinata',
@@ -2735,7 +2735,6 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
               controller: _publicController,
               decoration: InputDecoration(
                 labelText: l10n.appSettings_publicIpfsGateway,
-                hintText: l10n.appSettings_publicIpfsGatewayHint,
               ),
               keyboardType: TextInputType.url,
               autocorrect: false,
@@ -2873,8 +2872,8 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
   }
 
   String _gatewayPreset(String value) {
-    if (value == 'https://ipfs.io/ipfs/' || value == 'https://ipfs.io/ipfs') {
-      return 'ipfs';
+    if (value == AppSettings.defaultPublicIpfsGateway) {
+      return 'default';
     }
     if (value == 'https://gateway.pinata.cloud/ipfs/' ||
         value == 'https://gateway.pinata.cloud/ipfs') {
@@ -2889,8 +2888,8 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
 
   String? _gatewayValue(String preset) {
     switch (preset) {
-      case 'ipfs':
-        return 'https://ipfs.io/ipfs/';
+      case 'default':
+        return AppSettings.defaultPublicIpfsGateway;
       case 'pinata':
         return 'https://gateway.pinata.cloud/ipfs/';
       case 'filebase':

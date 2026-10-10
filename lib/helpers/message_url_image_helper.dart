@@ -96,7 +96,7 @@ class MessageUrlImageHelper {
 
   static Future<String?> parse(
     String text, {
-    String publicGateway = 'https://ipfs.io/ipfs/',
+    String publicGateway = AppSettings.defaultPublicIpfsGateway,
   }) async {
     final trimmed = text.trim();
     if (trimmed.isEmpty) return null;
@@ -115,7 +115,7 @@ class MessageUrlImageHelper {
     if (ipfsCidMatch != null) {
       final cid = _trimBoundary(ipfsCidMatch.group(1)!);
       final gateway = normalizeIpfsGateway(publicGateway);
-      return '${gateway.isEmpty ? 'https://ipfs.io/ipfs/' : gateway}$cid';
+      return '${gateway.isEmpty ? AppSettings.defaultPublicIpfsGateway : gateway}$cid';
     }
 
     final ibbMatch = _ibbSharePattern.firstMatch(trimmed);
@@ -139,7 +139,7 @@ class MessageUrlImageHelper {
 
   static Future<String?> parseVerified(
     String text, {
-    String publicGateway = 'https://ipfs.io/ipfs/',
+    String publicGateway = AppSettings.defaultPublicIpfsGateway,
   }) async {
     final imageUrl = await parse(text, publicGateway: publicGateway);
     if (imageUrl == null) return null;
@@ -155,7 +155,7 @@ class MessageUrlImageHelper {
   static Future<String?> parseVerifiedForMessage(
     String messageId,
     String text, {
-    String publicGateway = 'https://ipfs.io/ipfs/',
+    String publicGateway = AppSettings.defaultPublicIpfsGateway,
   }) {
     final cacheKey = '$messageId|$publicGateway';
     final cached = _messageImageCache.remove(cacheKey);

@@ -1882,17 +1882,11 @@ abstract class AppLocalizations {
   /// **'Public gateway'**
   String get appSettings_publicIpfsGateway;
 
-  /// No description provided for @appSettings_publicIpfsGatewayHint.
+  /// No description provided for @appSettings_ipfsGatewayDefaultLink.
   ///
   /// In en, this message translates to:
-  /// **'https://ipfs.io/ipfs/'**
-  String get appSettings_publicIpfsGatewayHint;
-
-  /// No description provided for @appSettings_ipfsGatewayIpfsIo.
-  ///
-  /// In en, this message translates to:
-  /// **'IPFS.io'**
-  String get appSettings_ipfsGatewayIpfsIo;
+  /// **'Default'**
+  String get appSettings_ipfsGatewayDefaultLink;
 
   /// No description provided for @appSettings_ipfsGatewayPinata.
   ///

@@ -58,7 +58,7 @@ void main() {
       expect(attachment, isNotNull);
       expect(
         attachment,
-        'https://ipfs.io/ipfs/bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly',
+        'https://ipfs.filebase.io/ipfs/bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly',
       );
     });
 
@@ -69,7 +69,7 @@ void main() {
 
       expect(
         attachment,
-        'https://ipfs.io/ipfs/bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly',
+        'https://ipfs.filebase.io/ipfs/bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly',
       );
     });
 
