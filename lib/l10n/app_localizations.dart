@@ -3118,6 +3118,24 @@ abstract class AppLocalizations {
   /// **'Send low-res image over radio'**
   String get chat_sendImageLora;
 
+  /// No description provided for @chat_sendImageIpfs.
+  ///
+  /// In en, this message translates to:
+  /// **'Send image or file via IPFS'**
+  String get chat_sendImageIpfs;
+
+  /// No description provided for @chat_ipfsUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'IPFS upload failed: {error}'**
+  String chat_ipfsUploadFailed(String error);
+
+  /// No description provided for @chat_ipfsUploadNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure an IPFS upload provider in App Settings first.'**
+  String get chat_ipfsUploadNotConfigured;
+
   /// Shown when picking or reading a photo to send fails
   ///
   /// In en, this message translates to:

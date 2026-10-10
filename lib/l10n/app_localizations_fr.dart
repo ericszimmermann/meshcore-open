@@ -1738,6 +1738,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get chat_sendImageLora => 'Envoyer une image via MeshCore';
 
   @override
+  String get chat_sendImageIpfs => 'Send image or file via IPFS';
+
+  @override
+  String chat_ipfsUploadFailed(String error) {
+    return 'IPFS upload failed: $error';
+  }
+
+  @override
+  String get chat_ipfsUploadNotConfigured =>
+      'Configure an IPFS upload provider in App Settings first.';
+
+  @override
   String get chat_imagePickFailed => 'Je n\'ai pas pu ouvrir cette image';
 
   @override

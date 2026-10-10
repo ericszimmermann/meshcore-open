@@ -2657,6 +2657,8 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
   late final String _maskedApiKey;
   late String _selectedGateway;
   late String _selectedUploadProvider;
+  bool _apiKeyEditing = false;
+  bool _apiKeyChanged = false;
 
   @override
   void initState() {
@@ -2802,7 +2804,18 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
               ),
               autocorrect: false,
               enableSuggestions: false,
-              onChanged: (_) => _markCustomUploadProvider(),
+              obscureText: _apiKeyEditing,
+              onTap: () {
+                if (_apiKeyEditing) return;
+                setState(() {
+                  _apiKeyEditing = true;
+                  _apiKeyController.clear();
+                });
+              },
+              onChanged: (_) {
+                _apiKeyChanged = true;
+                _markCustomUploadProvider();
+              },
             ),
           ],
         ),
@@ -2853,9 +2866,9 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
       uploadEndpoint: deactivated ? '' : _endpointController.text,
       uploadApiKey: deactivated
           ? ''
-          : _apiKeyController.text == _maskedApiKey
-          ? _currentApiKey
-          : _apiKeyController.text,
+          : _apiKeyChanged
+          ? _apiKeyController.text
+          : _currentApiKey,
     );
     if (mounted) Navigator.pop(context);
   }

@@ -1659,6 +1659,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get chat_sendImageLora => 'MeshCore를 통해 이미지 보내기';
 
   @override
+  String get chat_sendImageIpfs => 'Send image or file via IPFS';
+
+  @override
+  String chat_ipfsUploadFailed(String error) {
+    return 'IPFS upload failed: $error';
+  }
+
+  @override
+  String get chat_ipfsUploadNotConfigured =>
+      'Configure an IPFS upload provider in App Settings first.';
+
+  @override
   String get chat_imagePickFailed => '그 이미지를 열 수 없었어요.';
 
   @override

@@ -6,6 +6,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,7 @@ import '../helpers/chat_scroll_controller.dart';
 import '../connector/meshcore_protocol.dart';
 import '../helpers/cyr2lat.dart';
 import '../helpers/gif_helper.dart';
+import '../helpers/ipfs_upload_helper.dart';
 import '../helpers/message_url_image_helper.dart';
 import '../helpers/path_helper.dart';
 import '../helpers/reaction_helper.dart';
@@ -1342,6 +1344,87 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     );
   }
 
+  Future<void> _sendImageViaIpfs() async {
+    final l10n = context.l10n;
+    final settings = context.read<AppSettingsService>().settings;
+    if (settings.uploadIpfsEndpoint.trim().isEmpty) {
+      showDismissibleSnackBar(
+        context,
+        content: Text(l10n.chat_ipfsUploadNotConfigured),
+      );
+      return;
+    }
+
+    final file_selector.XFile? file;
+    try {
+      file = await file_selector.openFile();
+    } on Exception catch (error) {
+      if (!mounted) return;
+      showDismissibleSnackBar(
+        context,
+        content: Text(l10n.chat_ipfsUploadFailed('$error')),
+      );
+      return;
+    }
+    if (file == null) return;
+    if (!mounted) return;
+
+    final Uint8List bytes;
+    try {
+      bytes = await file.readAsBytes();
+    } on Exception catch (error) {
+      if (!mounted) return;
+      showDismissibleSnackBar(
+        context,
+        content: Text(l10n.chat_ipfsUploadFailed('$error')),
+      );
+      return;
+    }
+    if (!mounted) return;
+    if (bytes.isEmpty) {
+      showDismissibleSnackBar(
+        context,
+        content: Text(
+          l10n.chat_ipfsUploadFailed('The selected file is empty.'),
+        ),
+      );
+      return;
+    }
+
+    final String messageText;
+    try {
+      messageText = await IpfsUploadHelper.uploadImageWithSettings(
+        settings: settings,
+        bytes: bytes,
+        fileName: file.name,
+        mimeType: IpfsUploadHelper.mimeTypeForFileName(file.name),
+      );
+    } on Exception catch (error) {
+      if (!mounted) return;
+      showDismissibleSnackBar(
+        context,
+        content: Text(l10n.chat_ipfsUploadFailed('$error')),
+      );
+      return;
+    }
+    if (!mounted) return;
+
+    final connector = context.read<MeshCoreConnector>();
+    final outboundText = connector.prepareChannelOutboundText(
+      widget.channel.index,
+      messageText,
+    );
+    final maxBytes = maxChannelMessageBytes(connector.selfName);
+    if (utf8.encode(outboundText).length > maxBytes) {
+      showDismissibleSnackBar(
+        context,
+        content: Text(context.l10n.chat_messageTooLong(maxBytes)),
+      );
+      return;
+    }
+    connector.sendChannelMessage(widget.channel, messageText);
+  }
+
   /// Takes no [BuildContext]: it uses the [State]'s own, so the `mounted`
   /// checks around each `await` are the ones that actually govern it.
   Future<void> _showImageSendPreview() async {
@@ -2056,6 +2139,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                         case 'meshcore-image':
                           _showImageSendPreview();
                           break;
+                        case 'ipfs-image':
+                          _sendImageViaIpfs();
+                          break;
                       }
                     },
                     itemBuilder: (context) => [
@@ -2077,6 +2163,17 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
                               const Icon(Icons.image_outlined),
                               const SizedBox(width: 12),
                               Text(context.l10n.chat_sendImageLora),
+                            ],
+                          ),
+                        ),
+                      if (settings.uploadIpfsEndpoint.trim().isNotEmpty)
+                        PopupMenuItem(
+                          value: 'ipfs-image',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.cloud_upload_outlined),
+                              const SizedBox(width: 12),
+                              Text(context.l10n.chat_sendImageIpfs),
                             ],
                           ),
                         ),
