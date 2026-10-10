@@ -1391,9 +1391,9 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
       return;
     }
 
-    final String messageText;
+    final String messageUrl;
     try {
-      messageText = await IpfsUploadHelper.uploadImageWithSettings(
+      messageUrl = await IpfsUploadHelper.uploadImageWithSettings(
         settings: settings,
         bytes: bytes,
         fileName: file.name,
@@ -1410,11 +1410,33 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     if (!mounted) return;
 
     final connector = context.read<MeshCoreConnector>();
-    final outboundText = connector.prepareChannelOutboundText(
+    final existingText = _textController.text.trim();
+    final combinedText = existingText.isEmpty
+        ? '$messageUrl '
+        : '$messageUrl\n$existingText';
+    final maxBytes = maxChannelMessageBytes(connector.selfName);
+    var messageText = combinedText;
+    var outboundText = connector.prepareChannelOutboundText(
       widget.channel.index,
       messageText,
     );
-    final maxBytes = maxChannelMessageBytes(connector.selfName);
+    if (utf8.encode(outboundText).length > maxBytes &&
+        existingText.isNotEmpty) {
+      final originalCharacters = existingText.characters.toList();
+      for (var count = originalCharacters.length - 1; count >= 0; count--) {
+        final shortened = originalCharacters.take(count).join();
+        final candidate = '$messageUrl\n$shortened';
+        final encoded = connector.prepareChannelOutboundText(
+          widget.channel.index,
+          candidate,
+        );
+        if (utf8.encode(encoded).length <= maxBytes) {
+          messageText = candidate;
+          outboundText = encoded;
+          break;
+        }
+      }
+    }
     if (utf8.encode(outboundText).length > maxBytes) {
       showDismissibleSnackBar(
         context,
@@ -1422,7 +1444,11 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
       );
       return;
     }
-    connector.sendChannelMessage(widget.channel, messageText);
+    _textController.value = TextEditingValue(
+      text: messageText,
+      selection: TextSelection.collapsed(offset: messageText.length),
+    );
+    _textFieldFocusNode.requestFocus();
   }
 
   /// Takes no [BuildContext]: it uses the [State]'s own, so the `mounted`

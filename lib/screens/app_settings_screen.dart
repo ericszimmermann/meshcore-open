@@ -2804,7 +2804,6 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
               ),
               autocorrect: false,
               enableSuggestions: false,
-              obscureText: _apiKeyEditing,
               onTap: () {
                 if (_apiKeyEditing) return;
                 setState(() {
