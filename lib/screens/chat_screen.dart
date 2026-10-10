@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:provider/provider.dart';
 
 import '../utils/app_logger.dart';
@@ -20,6 +21,7 @@ import '../widgets/message_status_icon.dart';
 import '../widgets/empty_state.dart';
 import '../helpers/chat_scroll_controller.dart';
 import '../helpers/gif_helper.dart';
+import '../helpers/ipfs_upload_helper.dart';
 import '../models/channel_message.dart';
 import '../models/contact.dart';
 import '../l10n/contact_localization.dart';
@@ -472,6 +474,79 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildInputBar(MeshCoreConnector connector) {
+    Future<String?> promptForMarkerLabel(
+      BuildContext context, {
+      required double lat,
+      required double lon,
+      required String defaultLabel,
+      required String flags,
+    }) async {
+      final controller = TextEditingController(text: defaultLabel);
+      controller.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: controller.text.length,
+      );
+      final focusNode = FocusNode();
+
+      final latStr = lat.toStringAsFixed(6);
+      final lonStr = lon.toStringAsFixed(6);
+      final prefix = 'm:$latStr,$lonStr|';
+      final suffix = '|$flags';
+      final overheadBytes = utf8.encode(prefix + suffix).length;
+      final maxForContact = maxContactMessageBytes();
+      final maxForChannel = maxChannelMessageBytes(null);
+      final maxPayload = maxForContact < maxForChannel
+          ? maxForContact
+          : maxForChannel;
+      final allowedLabelBytes = (maxPayload - overheadBytes) > 0
+          ? (maxPayload - overheadBytes)
+          : 0;
+
+      try {
+        final result = await showDialog<String>(
+          context: context,
+          builder: (dialogContext) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (dialogContext.mounted) {
+                focusNode.requestFocus();
+                controller.selection = TextSelection(
+                  baseOffset: 0,
+                  extentOffset: controller.text.length,
+                );
+              }
+            });
+            return AlertDialog(
+              title: Text(dialogContext.l10n.map_pinLabel),
+              content: ByteCountedTextField(
+                focusNode: focusNode,
+                maxBytes: allowedLabelBytes,
+                controller: controller,
+                decoration: InputDecoration(
+                  helperText: dialogContext.l10n.map_labelUpdateHint,
+                  helperMaxLines: 3,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext, null),
+                  child: Text(dialogContext.l10n.common_cancel),
+                ),
+                FilledButton(
+                  onPressed: () =>
+                      Navigator.pop(dialogContext, controller.text.trim()),
+                  child: Text(dialogContext.l10n.common_share),
+                ),
+              ],
+            );
+          },
+        );
+        return result;
+      } finally {
+        focusNode.dispose();
+        controller.dispose();
+      }
+    }
+
     final maxBytes = maxContactMessageBytes();
     final scheme = Theme.of(context).colorScheme;
     final settings = context.watch<AppSettingsService>().settings;
@@ -486,10 +561,127 @@ class _ChatScreenState extends State<ChatScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              IconButton(
-                icon: const Icon(Icons.gif_box_outlined),
-                tooltip: context.l10n.chat_sendGif,
-                onPressed: () => _showGifPicker(context),
+              Builder(
+                builder: (menuContext) {
+                  return IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
+                    tooltip: context.l10n.chat_selectSendAction,
+                    onPressed: () async {
+                      final RenderBox button =
+                          menuContext.findRenderObject() as RenderBox;
+                      final RenderBox overlay =
+                          Overlay.of(menuContext).context.findRenderObject()
+                              as RenderBox;
+                      final Offset buttonOffset = button.localToGlobal(
+                        Offset.zero,
+                        ancestor: overlay,
+                      );
+                      final items = <PopupMenuEntry<String>>[
+                        PopupMenuItem(
+                          value: 'gif',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.gif_box),
+                              const SizedBox(width: 12),
+                              Text(context.l10n.chat_sendGif),
+                            ],
+                          ),
+                        ),
+                      ];
+                      if (settings.uploadIpfsEndpoint.trim().isNotEmpty) {
+                        items.add(
+                          PopupMenuItem(
+                            value: 'ipfs-image',
+                            child: Row(
+                              children: [
+                                const Icon(Icons.cloud_upload_outlined),
+                                const SizedBox(width: 12),
+                                Text(context.l10n.chat_sendImageIpfs),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      items.add(
+                        PopupMenuItem(
+                          value: 'send-my-location',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.my_location),
+                              const SizedBox(width: 12),
+                              Text(context.l10n.map_shareMarkerHere),
+                            ],
+                          ),
+                        ),
+                      );
+                      final menuHeight =
+                          items.length * kMinInteractiveDimension + 16;
+                      final menuTop = (buttonOffset.dy - menuHeight).clamp(
+                        8.0,
+                        overlay.size.height,
+                      );
+                      final position = RelativeRect.fromLTRB(
+                        buttonOffset.dx,
+                        menuTop,
+                        overlay.size.width -
+                            buttonOffset.dx -
+                            button.size.width,
+                        overlay.size.height - buttonOffset.dy,
+                      );
+
+                      final selected = await showMenu<String>(
+                        context: menuContext,
+                        position: position,
+                        items: items,
+                      );
+                      if (!mounted || !menuContext.mounted) return;
+                      if (selected == null) return;
+                      switch (selected) {
+                        case 'gif':
+                          _showGifPicker(context);
+                          break;
+                        case 'ipfs-image':
+                          _sendImageViaIpfs();
+                          break;
+                        case 'send-my-location':
+                          final connector = context.read<MeshCoreConnector>();
+                          if (connector.selfLatitude == null ||
+                              connector.selfLongitude == null) {
+                            showDismissibleSnackBar(
+                              context,
+                              content: Text(
+                                context.l10n.map_connectToShareMarkers,
+                              ),
+                            );
+                            break;
+                          }
+                          final lat = connector.selfLatitude!;
+                          final lon = connector.selfLongitude!;
+                          final initialLabel =
+                              connector.selfName?.isNotEmpty == true
+                              ? connector.selfName!
+                              : context.l10n.map_sharedPin;
+                          final label = await promptForMarkerLabel(
+                            context,
+                            lat: lat,
+                            lon: lon,
+                            defaultLabel: initialLabel,
+                            flags: 'poi',
+                          );
+                          if (label == null || label.trim().isEmpty) break;
+                          if (!mounted || !menuContext.mounted) break;
+                          final connector2 = context.read<MeshCoreConnector>();
+                          final markerText =
+                              'm:${lat.toStringAsFixed(6)},${lon.toStringAsFixed(6)}|${label.trim()}|poi';
+                          connector2.sendMessage(
+                            _resolveContact(connector2),
+                            markerText,
+                          );
+                          break;
+                      }
+                    },
+                  );
+                },
               ),
               if (settings.translationEnabled)
                 MessageTranslationButton(
@@ -497,9 +689,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   languageCode: settings.translationTargetLanguageCode,
                   onPressed: _showTranslationOptions,
                 ),
-              // No image button here: the image wire format is GRP_DATA, a
-              // channel primitive with no DM equivalent (see the note at the
-              // top of this file).
+              // No binary image action here: GRP_DATA has no DM equivalent.
+              // IPFS shares a URL as ordinary text instead.
               Expanded(
                 child: ValueListenableBuilder<TextEditingValue>(
                   valueListenable: _textController,
@@ -648,6 +839,112 @@ class _ChatScreenState extends State<ChatScreen> {
         },
       ),
     );
+  }
+
+  Future<void> _sendImageViaIpfs() async {
+    final l10n = context.l10n;
+    final settings = context.read<AppSettingsService>().settings;
+    if (settings.uploadIpfsEndpoint.trim().isEmpty) {
+      showDismissibleSnackBar(
+        context,
+        content: Text(l10n.chat_ipfsUploadNotConfigured),
+      );
+      return;
+    }
+
+    final file_selector.XFile? file;
+    try {
+      file = await file_selector.openFile();
+    } on Exception catch (error) {
+      if (!mounted) return;
+      showDismissibleSnackBar(
+        context,
+        content: Text(l10n.chat_ipfsUploadFailed('$error')),
+      );
+      return;
+    }
+    if (file == null || !mounted) return;
+
+    final Uint8List bytes;
+    try {
+      bytes = await file.readAsBytes();
+    } on Exception catch (error) {
+      if (!mounted) return;
+      showDismissibleSnackBar(
+        context,
+        content: Text(l10n.chat_ipfsUploadFailed('$error')),
+      );
+      return;
+    }
+    if (!mounted) return;
+    if (bytes.isEmpty) {
+      showDismissibleSnackBar(
+        context,
+        content: Text(
+          l10n.chat_ipfsUploadFailed('The selected file is empty.'),
+        ),
+      );
+      return;
+    }
+
+    final String messageUrl;
+    try {
+      messageUrl = await IpfsUploadHelper.uploadImageWithSettings(
+        settings: settings,
+        bytes: bytes,
+        fileName: file.name,
+        mimeType: IpfsUploadHelper.mimeTypeForFileName(file.name),
+      );
+    } on Exception catch (error) {
+      if (!mounted) return;
+      showDismissibleSnackBar(
+        context,
+        content: Text(l10n.chat_ipfsUploadFailed('$error')),
+      );
+      return;
+    }
+    if (!mounted) return;
+
+    final connector = context.read<MeshCoreConnector>();
+    final contact = _resolveContact(connector);
+    final existingText = _textController.text.trim();
+    var messageText = existingText.isEmpty
+        ? '$messageUrl '
+        : '$messageUrl\n$existingText';
+    final maxBytes = maxContactMessageBytes();
+    var encodedText = connector.prepareContactOutboundText(
+      contact,
+      messageText,
+    );
+    if (utf8.encode(encodedText).length > maxBytes && existingText.isNotEmpty) {
+      final originalCharacters = existingText.characters.toList();
+      for (var count = originalCharacters.length - 1; count >= 0; count--) {
+        final shortened = originalCharacters.take(count).join();
+        final candidate = '$messageUrl\n$shortened';
+        final candidateEncoded = connector.prepareContactOutboundText(
+          contact,
+          candidate,
+        );
+        if (utf8.encode(candidateEncoded).length <= maxBytes) {
+          messageText = candidate;
+          encodedText = candidateEncoded;
+          break;
+        }
+      }
+    }
+    if (utf8.encode(encodedText).length > maxBytes) {
+      showDismissibleSnackBar(
+        context,
+        content: Text(l10n.chat_messageTooLong(maxBytes)),
+      );
+      return;
+    }
+
+    _textController.value = TextEditingValue(
+      text: messageText,
+      selection: TextSelection.collapsed(offset: messageText.length),
+    );
+    _textFieldFocusNode.requestFocus();
   }
 
   Future<void> _showTranslationOptions() async {
