@@ -1038,17 +1038,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Number of retry attempts before marking a message as failed';
 
   @override
-  String get appSettings_ipfsImageLinks => 'IPFS URL image links';
+  String get appSettings_ipfsImageLinks => 'IPFS provider configuration';
 
   @override
   String get appSettings_ipfsImageLinksSubtitle =>
-      'Choose where CID images are downloaded from and configure upload links';
+      'Upload for url Images (or Files) via IPFS provider and default gateway to receive';
 
   @override
   String get appSettings_publicIpfsGateway => 'Public gateway';
 
   @override
-  String get appSettings_ipfsGatewayDefaultLink => 'Default';
+  String get appSettings_ipfsGatewayDeactivated => 'Deactivated';
 
   @override
   String get appSettings_ipfsGatewayPinata => 'Pinata';
@@ -1063,14 +1063,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appSettings_uploadIpfsProvider => 'Upload provider';
 
   @override
-  String get appSettings_uploadIpfsProviderDeactivated => 'Deactivated';
-
-  @override
   String get appSettings_uploadIpfsGateway => 'Upload gateway';
 
   @override
   String get appSettings_uploadIpfsGatewaySubtitle =>
-      'Personal gateway url recommended. Leave empty to use the public gateway.';
+      'Gateway to share Image or File as url-link. Leave empty to use ipfs: format, which may not be opened by other clients.';
 
   @override
   String get appSettings_uploadIpfsEndpoint => 'Upload endpoint';
@@ -1084,7 +1081,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appSettings_ipfsImageLinksDescription =>
-      'Public gateway downloads ipfs: CID images. Upload gateway is used in shared links and falls back to the public gateway when empty.';
+      'Public gateway downloads ipfs: format images. Upload gateway is used to generate share links for uploaded url images or files.';
 
   @override
   String get appSettings_battery => 'Battery';

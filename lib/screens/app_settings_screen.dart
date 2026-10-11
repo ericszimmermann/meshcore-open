@@ -2743,8 +2743,8 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
               ),
               items: [
                 DropdownMenuItem(
-                  value: 'default',
-                  child: Text(l10n.appSettings_ipfsGatewayDefaultLink),
+                  value: 'deactivated',
+                  child: Text(l10n.appSettings_ipfsGatewayDeactivated),
                 ),
                 DropdownMenuItem(
                   value: 'pinata',
@@ -2775,7 +2775,7 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
                 }
               },
             ),
-            const SizedBox(height: 10),
+            const Divider(height: 20),
             DropdownButtonFormField<String>(
               initialValue: _selectedUploadProvider,
               isExpanded: true,
@@ -2797,7 +2797,7 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
                 ),
                 DropdownMenuItem(
                   value: 'deactivated',
-                  child: Text(l10n.appSettings_uploadIpfsProviderDeactivated),
+                  child: Text(l10n.appSettings_ipfsGatewayDeactivated),
                 ),
               ],
               onChanged: _selectUploadProvider,
@@ -2903,9 +2903,7 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
   }
 
   String _gatewayPreset(String value) {
-    if (value == AppSettings.defaultPublicIpfsGateway) {
-      return 'default';
-    }
+    if (value.isEmpty) return 'deactivated';
     if (value == 'https://gateway.pinata.cloud/ipfs/' ||
         value == 'https://gateway.pinata.cloud/ipfs') {
       return 'pinata';
@@ -2919,8 +2917,8 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
 
   String? _gatewayValue(String preset) {
     switch (preset) {
-      case 'default':
-        return AppSettings.defaultPublicIpfsGateway;
+      case 'deactivated':
+        return '';
       case 'pinata':
         return 'https://gateway.pinata.cloud/ipfs/';
       case 'filebase':

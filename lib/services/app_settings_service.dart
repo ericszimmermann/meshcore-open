@@ -327,9 +327,7 @@ class AppSettingsService extends ChangeNotifier {
     final normalizedUploadGateway = normalizeIpfsGateway(uploadGateway);
     await updateSettings(
       _settings.copyWith(
-        publicIpfsGateway: normalizedPublicGateway.isEmpty
-            ? AppSettings.defaultPublicIpfsGateway
-            : normalizedPublicGateway,
+        publicIpfsGateway: normalizedPublicGateway,
         uploadIpfsGateway: normalizedUploadGateway,
         uploadIpfsEndpoint: uploadEndpoint.trim(),
         uploadIpfsApiKey: uploadApiKey.trim(),

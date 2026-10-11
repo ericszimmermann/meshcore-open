@@ -117,7 +117,8 @@ class MessageUrlImageHelper {
     if (ipfsCidMatch != null) {
       final cid = _trimBoundary(ipfsCidMatch.group(1)!);
       final gateway = normalizeIpfsGateway(publicGateway);
-      return '${gateway.isEmpty ? AppSettings.defaultPublicIpfsGateway : gateway}$cid';
+      if (gateway.isEmpty) return null;
+      return '$gateway$cid';
     }
 
     final ibbMatch = _ibbSharePattern.firstMatch(trimmed);

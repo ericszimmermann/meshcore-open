@@ -30,10 +30,7 @@ class NotificationService {
   String _publicIpfsGateway = AppSettings.defaultPublicIpfsGateway;
 
   void setPublicIpfsGateway(String gateway) {
-    final trimmed = gateway.trim();
-    _publicIpfsGateway = trimmed.isEmpty
-        ? AppSettings.defaultPublicIpfsGateway
-        : trimmed;
+    _publicIpfsGateway = gateway.trim();
   }
 
   /// Set the locale for notification strings (call when app locale changes)

@@ -50,28 +50,23 @@ void main() {
       );
     });
 
-    test('parses direct ipfs cid urls', () async {
-      final attachment = await MessageUrlImageHelper.parse(
-        'my picture: ipfs://bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly text',
-      );
-
-      expect(attachment, isNotNull);
-      expect(
-        attachment,
-        'https://ipfs.filebase.io/ipfs/bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly',
-      );
-    });
-
-    test('parses direct ipfs cid urls without double slashes', () async {
-      final attachment = await MessageUrlImageHelper.parse(
-        'my picture: ipfs:bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly text',
-      );
-
-      expect(
-        attachment,
-        'https://ipfs.filebase.io/ipfs/bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly',
-      );
-    });
+    test(
+      'does not resolve ipfs cid links with the default gateway deactivated',
+      () async {
+        expect(
+          await MessageUrlImageHelper.parse(
+            'my picture: ipfs://bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly text',
+          ),
+          isNull,
+        );
+        expect(
+          await MessageUrlImageHelper.parse(
+            'my picture: ipfs:bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly text',
+          ),
+          isNull,
+        );
+      },
+    );
 
     test('uses the configured public gateway for direct ipfs cid urls', () async {
       final attachment = await MessageUrlImageHelper.parse(
@@ -83,6 +78,38 @@ void main() {
         attachment,
         'https://gateway.example.com/ipfs/bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly',
       );
+    });
+
+    test(
+      'does not resolve ipfs cid links when the download gateway is empty',
+      () async {
+        final attachment = await MessageUrlImageHelper.parse(
+          'ipfs://bafybeibq75ws6nwk6wi473dch42wwy6woyj4dwdfy7nfz3buqx2caieoly',
+          publicGateway: '',
+        );
+
+        expect(attachment, isNull);
+      },
+    );
+
+    test('does not upload when the upload endpoint is empty', () async {
+      var requestCount = 0;
+      MessageUrlImageHelper.httpClient = MockClient((request) async {
+        requestCount++;
+        return http.Response('{}', 200);
+      });
+
+      await expectLater(
+        MessageUrlImageHelper.uploadImage(
+          bytes: Uint8List.fromList(<int>[1, 2, 3]),
+          fileName: 'image.png',
+          mimeType: 'image/png',
+          uploadEndpoint: '',
+          uploadApiKey: '',
+        ),
+        throwsArgumentError,
+      );
+      expect(requestCount, 0);
     });
 
     test(

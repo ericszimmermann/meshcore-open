@@ -18,8 +18,8 @@ String normalizeIpfsGateway(String value) {
 }
 
 String migratePublicIpfsGateway(String? value) {
-  final gateway = value?.trim() ?? '';
-  if (gateway.isEmpty ||
+  final gateway = value?.trim();
+  if (gateway == null ||
       gateway == 'https://ipfs.io/ipfs/' ||
       gateway == 'https://ipfs.io/ipfs' ||
       gateway == 'https://dweb.link/ipfs/' ||
@@ -104,8 +104,7 @@ class Cyr2LatProfile {
 class AppSettings {
   static const Object _unset = Object();
   static const String stadiaDemo = '51bd0381-4685-4666-bae8-48940f6d77c0';
-  static const String defaultPublicIpfsGateway =
-      'https://ipfs.filebase.io/ipfs/';
+  static const String defaultPublicIpfsGateway = '';
 
   final bool clearPathOnMaxRetry;
   final bool mapShowRepeaters;
@@ -213,8 +212,7 @@ class AppSettings {
   }
 
   String get effectiveUploadIpfsGateway {
-    final uploadGateway = uploadIpfsGateway.trim();
-    return uploadGateway.isEmpty ? publicIpfsGateway : uploadGateway;
+    return uploadIpfsGateway.trim();
   }
 
   bool get usesstadiaDemo => effectiveMapTileApiKey == stadiaDemo;

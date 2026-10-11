@@ -1927,13 +1927,13 @@ abstract class AppLocalizations {
   /// No description provided for @appSettings_ipfsImageLinks.
   ///
   /// In en, this message translates to:
-  /// **'IPFS URL image links'**
+  /// **'IPFS provider configuration'**
   String get appSettings_ipfsImageLinks;
 
   /// No description provided for @appSettings_ipfsImageLinksSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Choose where CID images are downloaded from and configure upload links'**
+  /// **'Upload for url Images (or Files) via IPFS provider and default gateway to receive'**
   String get appSettings_ipfsImageLinksSubtitle;
 
   /// No description provided for @appSettings_publicIpfsGateway.
@@ -1942,11 +1942,11 @@ abstract class AppLocalizations {
   /// **'Public gateway'**
   String get appSettings_publicIpfsGateway;
 
-  /// No description provided for @appSettings_ipfsGatewayDefaultLink.
+  /// No description provided for @appSettings_ipfsGatewayDeactivated.
   ///
   /// In en, this message translates to:
-  /// **'Default'**
-  String get appSettings_ipfsGatewayDefaultLink;
+  /// **'Deactivated'**
+  String get appSettings_ipfsGatewayDeactivated;
 
   /// No description provided for @appSettings_ipfsGatewayPinata.
   ///
@@ -1972,12 +1972,6 @@ abstract class AppLocalizations {
   /// **'Upload provider'**
   String get appSettings_uploadIpfsProvider;
 
-  /// No description provided for @appSettings_uploadIpfsProviderDeactivated.
-  ///
-  /// In en, this message translates to:
-  /// **'Deactivated'**
-  String get appSettings_uploadIpfsProviderDeactivated;
-
   /// No description provided for @appSettings_uploadIpfsGateway.
   ///
   /// In en, this message translates to:
@@ -1987,7 +1981,7 @@ abstract class AppLocalizations {
   /// No description provided for @appSettings_uploadIpfsGatewaySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Personal gateway url recommended. Leave empty to use the public gateway.'**
+  /// **'Gateway to share Image or File as url-link. Leave empty to use ipfs: format, which may not be opened by other clients.'**
   String get appSettings_uploadIpfsGatewaySubtitle;
 
   /// No description provided for @appSettings_uploadIpfsEndpoint.
@@ -2011,7 +2005,7 @@ abstract class AppLocalizations {
   /// No description provided for @appSettings_ipfsImageLinksDescription.
   ///
   /// In en, this message translates to:
-  /// **'Public gateway downloads ipfs: CID images. Upload gateway is used in shared links and falls back to the public gateway when empty.'**
+  /// **'Public gateway downloads ipfs: format images. Upload gateway is used to generate share links for uploaded url images or files.'**
   String get appSettings_ipfsImageLinksDescription;
 
   /// No description provided for @appSettings_battery.
