@@ -6084,6 +6084,22 @@ class AppLocalizationsBg extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => 'Обнови местоположението';
+
+  @override
+  String get map_locationUpdated => 'Местоположението е обновено';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name отговори без местоположение';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return 'Няма отговор от $name';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'Мащаб $zoom';
   }

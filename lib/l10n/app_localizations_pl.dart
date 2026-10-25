@@ -6118,6 +6118,22 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => 'Zaktualizuj lokalizację';
+
+  @override
+  String get map_locationUpdated => 'Lokalizacja zaktualizowana';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name odpowiedział bez lokalizacji';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return 'Brak odpowiedzi od $name';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'Zoom $zoom';
   }

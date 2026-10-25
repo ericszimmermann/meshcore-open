@@ -6034,6 +6034,22 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => 'Uppdatera plats';
+
+  @override
+  String get map_locationUpdated => 'Platsen uppdaterad';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name svarade utan plats';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return 'Inget svar från $name';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'Zoom $zoom';
   }

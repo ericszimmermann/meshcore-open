@@ -6067,6 +6067,22 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => 'Aktualizovať polohu';
+
+  @override
+  String get map_locationUpdated => 'Poloha aktualizovaná';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name odpovedal bez polohy';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return 'Žiadna odpoveď od $name';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'Priblíženie $zoom';
   }

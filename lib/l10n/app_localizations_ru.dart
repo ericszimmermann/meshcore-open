@@ -6105,6 +6105,22 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => 'Обновить местоположение';
+
+  @override
+  String get map_locationUpdated => 'Местоположение обновлено';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name ответил без местоположения';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return 'Нет ответа от $name';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'Масштаб $zoom';
   }

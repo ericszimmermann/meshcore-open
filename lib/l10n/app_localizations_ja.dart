@@ -5800,6 +5800,22 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => '位置情報を更新';
+
+  @override
+  String get map_locationUpdated => '位置情報を更新しました';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name は位置情報なしで応答しました';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return '$name から応答がありません';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'ズーム $zoom';
   }

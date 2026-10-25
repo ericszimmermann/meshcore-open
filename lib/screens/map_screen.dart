@@ -24,6 +24,7 @@ import '../services/app_settings_service.dart';
 import '../services/path_history_service.dart';
 import '../services/map_marker_service.dart';
 import '../services/map_tile_cache_service.dart';
+import '../services/telemetry_location_request.dart';
 import '../services/network_map/network_map_api_client.dart';
 import '../services/ui_view_state_service.dart';
 import '../storage/prefs_manager.dart';
@@ -104,6 +105,7 @@ class _MapScreenState extends State<MapScreen> with DisconnectNavigationMixin {
   bool _showNodeLabels = true;
   double _zoom = 10.0;
   String? _selectedKey;
+  String? _locatingKey;
   LatLng? _selectedGuessPos;
   _Freshness _freshness = _Freshness.all;
   final TextEditingController _searchController = TextEditingController();
@@ -2494,6 +2496,33 @@ class _MapScreenState extends State<MapScreen> with DisconnectNavigationMixin {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   ..._selectedNodeActions(context, contact, connector),
+                  // Repeaters and rooms only send GPS to logged-in admins.
+                  if (contact.isActive &&
+                      (contact.type == advTypeChat ||
+                          contact.type == advTypeSensor))
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: _overlayPrimaryTextColor,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
+                        minimumSize: const Size(0, 44),
+                      ),
+                      onPressed: _locatingKey == null
+                          ? () => _requestNodeLocation(contact, connector)
+                          : null,
+                      icon: _locatingKey == contact.publicKeyHex
+                          ? const SizedBox.square(
+                              dimension: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.my_location, size: 18),
+                      label: Text(
+                        context.l10n.map_requestLocation,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ),
                   TextButton(
                     style: TextButton.styleFrom(
                       foregroundColor: MapPalette.selected,
@@ -2517,6 +2546,36 @@ class _MapScreenState extends State<MapScreen> with DisconnectNavigationMixin {
         ),
       ),
     );
+  }
+
+  /// Asks the node for telemetry; a GPS fix in the reply moves its marker.
+  Future<void> _requestNodeLocation(
+    Contact contact,
+    MeshCoreConnector connector,
+  ) async {
+    setState(() => _locatingKey = contact.publicKeyHex);
+    final result = await requestTelemetryLocation(connector, contact);
+    if (!mounted) return;
+    setState(() => _locatingKey = null);
+    final l10n = context.l10n;
+    final message = switch (result) {
+      TelemetryLocationResult.located => l10n.map_locationUpdated,
+      TelemetryLocationResult.noLocation => l10n.map_locationNotShared(
+        contact.name,
+      ),
+      TelemetryLocationResult.failed => l10n.map_locationRequestFailed(
+        contact.name,
+      ),
+    };
+    showDismissibleSnackBar(context, content: Text(message));
+    final updated = connector.contacts
+        .where((c) => c.publicKeyHex == contact.publicKeyHex)
+        .firstOrNull;
+    if (result == TelemetryLocationResult.located &&
+        updated != null &&
+        updated.hasLocation) {
+      _mapController.move(LatLng(updated.latitude!, updated.longitude!), _zoom);
+    }
   }
 
   Widget _miniMeta(String label, String value) {
@@ -2999,6 +3058,7 @@ class _MapScreenState extends State<MapScreen> with DisconnectNavigationMixin {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        scrollable: true,
         title: Text(
           marker.label.isEmpty ? context.l10n.map_sharedPin : marker.label,
         ),

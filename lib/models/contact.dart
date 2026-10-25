@@ -22,6 +22,12 @@ class Contact {
   final bool isActive;
   final Uint8List? rawPacket;
 
+  /// Set while [latitude]/[longitude]/[lastSeen] come from a telemetry reply
+  /// rather than an advert: the advert timestamp that fix superseded. A
+  /// radio refresh carrying that same advert keeps the fix; a newer advert
+  /// replaces it.
+  final DateTime? telemetryFixAdvertSeen;
+
   Contact({
     required this.publicKey,
     required this.name,
@@ -39,6 +45,7 @@ class Contact {
     DateTime? lastMessageAt,
     this.isActive = true,
     this.rawPacket,
+    this.telemetryFixAdvertSeen,
   }) : lastMessageAt = lastMessageAt ?? lastSeen;
 
   /// Cached: it backs ==, hashCode and the per-frame contact lookups, and
@@ -105,6 +112,8 @@ class Contact {
     DateTime? lastModified,
     bool? isActive,
     Uint8List? rawPacket,
+    DateTime? telemetryFixAdvertSeen,
+    bool clearTelemetryFix = false,
   }) {
     return Contact(
       publicKey: publicKey ?? this.publicKey,
@@ -127,6 +136,9 @@ class Contact {
       lastModified: lastModified ?? this.lastModified,
       isActive: isActive ?? this.isActive,
       rawPacket: rawPacket ?? this.rawPacket,
+      telemetryFixAdvertSeen: clearTelemetryFix
+          ? null
+          : (telemetryFixAdvertSeen ?? this.telemetryFixAdvertSeen),
     );
   }
 

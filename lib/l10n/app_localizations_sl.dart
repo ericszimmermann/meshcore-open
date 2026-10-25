@@ -6070,6 +6070,22 @@ class AppLocalizationsSl extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => 'Posodobi lokacijo';
+
+  @override
+  String get map_locationUpdated => 'Lokacija posodobljena';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name je odgovoril brez lokacije';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return 'Ni odgovora od $name';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'Povečava $zoom';
   }
