@@ -842,7 +842,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_languagePl => 'Poľský';
 
   @override
-  String get appSettings_languageSl => 'Slovenčina';
+  String get appSettings_languageSl => 'Slovinčina';
 
   @override
   String get appSettings_languagePt => 'Portugalčina';
@@ -854,7 +854,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_languageZh => 'Čínština';
 
   @override
-  String get appSettings_languageSv => 'Švédska';
+  String get appSettings_languageSv => 'Švédčina';
 
   @override
   String get appSettings_languageNl => 'Niderlandsky';
@@ -863,13 +863,13 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_languageSk => 'Slovenčina';
 
   @override
-  String get appSettings_languageBg => 'Българština';
+  String get appSettings_languageBg => 'Bulharčina';
 
   @override
   String get appSettings_languageRu => 'Ruština';
 
   @override
-  String get appSettings_languageUk => 'Ukrajinská';
+  String get appSettings_languageUk => 'Ukrajinčina';
 
   @override
   String get repeater_pathHashModeOption0 => '0 - 1 byt';
@@ -935,11 +935,12 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
-  String get appSettings_enableMessageTracing => 'Povoliť sledovanie správ';
+  String get appSettings_enableMessageTracing =>
+      'Zobraziť celú trasu cez opakovače v správach';
 
   @override
   String get appSettings_enableMessageTracingSubtitle =>
-      'Zobraziť podrobné metadáta o smerovaní a časovaní správ';
+      'Zobrazí aj počty opakovaní a časy cesty. Dlho stlačte správu a vyberte Trasa pre všetky podrobnosti.';
 
   @override
   String get appSettings_regionOnHopsLine => 'Región vedľa počtu skokov';
@@ -952,15 +953,15 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_notifications => 'Upozornenia';
 
   @override
-  String get appSettings_enableNotifications => 'Povolte Notifikácie';
+  String get appSettings_enableNotifications => 'Povoliť upozornenia';
 
   @override
   String get appSettings_enableNotificationsSubtitle =>
-      'Zísť o upozornenia na správy a inzeráty';
+      'Dostávať upozornenia na správy a inzeráty';
 
   @override
   String get appSettings_notificationPermissionDenied =>
-      'Odmietená povolenie notifikácií';
+      'Povolenie upozornení bolo odmietnuté';
 
   @override
   String get appSettings_notificationsEnabled => 'Upozornenia povolené';
@@ -969,7 +970,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_notificationsDisabled => 'Upozornenia sú vypnuté';
 
   @override
-  String get appSettings_messageNotifications => 'Správy od upozornení';
+  String get appSettings_messageNotifications => 'Upozornenia na správy';
 
   @override
   String get appSettings_messageNotificationsSubtitle =>
@@ -983,7 +984,8 @@ class AppLocalizationsSk extends AppLocalizations {
       'V nastaveniach batérie nastavte MeshCore Open na „Nie optimalizovať“, aby správy naďalej prichádzali na pozadí';
 
   @override
-  String get appSettings_channelMessageNotifications => 'Notifikácie z kanálov';
+  String get appSettings_channelMessageNotifications =>
+      'Upozornenia na správy z kanálov';
 
   @override
   String get appSettings_channelMessageNotificationsSubtitle =>
@@ -1001,11 +1003,12 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_messaging => 'Správy';
 
   @override
-  String get appSettings_clearPathOnMaxRetry => 'Vyčisti cestu na Max Retry';
+  String get appSettings_clearPathOnMaxRetry =>
+      'Vymazať cestu pri maximálnom počte pokusov';
 
   @override
   String get appSettings_clearPathOnMaxRetrySubtitle =>
-      'Resetovať kontaktný priebeh po 5 neúspešných pokusoch o doručenie';
+      'Resetovať cestu kontaktu po 5 neúspešných pokusoch o odoslanie';
 
   @override
   String get appSettings_pathsWillBeCleared =>
@@ -1016,7 +1019,7 @@ class AppLocalizationsSk extends AppLocalizations {
       'Cesty sa automaticky nevymazávajú.';
 
   @override
-  String get appSettings_autoRouteRotation => 'Automatické prechodové trasy';
+  String get appSettings_autoRouteRotation => 'Automatické striedanie trás';
 
   @override
   String get appSettings_autoRouteRotationSubtitle =>
@@ -1024,18 +1027,18 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get appSettings_autoRouteRotationEnabled =>
-      'Automatické otáčanie trasy povolené';
+      'Automatické striedanie trás je zapnuté';
 
   @override
   String get appSettings_autoRouteRotationDisabled =>
-      'Automatické prekladanie trás pozastavené';
+      'Automatické striedanie trás je vypnuté';
 
   @override
-  String get appSettings_maxRouteWeight => 'Maximálna hmotnosť trasy';
+  String get appSettings_maxRouteWeight => 'Maximálna váha trasy';
 
   @override
   String get appSettings_maxRouteWeightSubtitle =>
-      'Maximálna hmotnosť, ktorú môže trás prenášať vďaka úspešným zásielkam.';
+      'Maximálna váha, ktorú môže cesta nazbierať z úspešných doručení';
 
   @override
   String get appSettings_initialRouteWeight => 'Počiatočná váha trasy';
@@ -1049,23 +1052,23 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get appSettings_routeWeightSuccessIncrementSubtitle =>
-      'Hmotnosť pridaná k trase po úspešnej doručení';
+      'Váha pridaná k ceste po úspešnom doručení';
 
   @override
   String get appSettings_routeWeightFailureDecrement =>
-      'Sníženie váhy, ktorá sa používa na odhad rizika.';
+      'Zníženie váhy pri neúspechu';
 
   @override
   String get appSettings_routeWeightFailureDecrementSubtitle =>
-      'Hmotnosť odstránená z cesty po neúspešnej doručenie';
+      'Váha odobraná z cesty po neúspešnom doručení';
 
   @override
   String get appSettings_maxMessageRetries =>
-      'Maximalný počet pokusov o doručenie správ';
+      'Maximálny počet pokusov o odoslanie správy';
 
   @override
   String get appSettings_maxMessageRetriesSubtitle =>
-      'Počet pokusov o odošleť pred označením správy ako neúspešnej';
+      'Počet opakovaných pokusov pred označením správy ako neúspešnej';
 
   @override
   String get appSettings_ipfsImageLinks => 'Konfigurácia poskytovateľa IPFS';
@@ -1135,7 +1138,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_battery => 'Batéria';
 
   @override
-  String get appSettings_batteryChemistry => 'Chemická zloženie batérie';
+  String get appSettings_batteryChemistry => 'Chemické zloženie batérie';
 
   @override
   String appSettings_batteryChemistryPerDevice(String deviceName) {
@@ -1165,8 +1168,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_showRepeaters => 'Zobraziť opakovače';
 
   @override
-  String get appSettings_showRepeatersSubtitle =>
-      'Zobraziť opakujúce sa uzly na mape';
+  String get appSettings_showRepeatersSubtitle => 'Zobraziť opakovače na mape';
 
   @override
   String get appSettings_showChatNodes => 'Zobraziť uzly chatových správ';
@@ -1183,7 +1185,7 @@ class AppLocalizationsSk extends AppLocalizations {
       'Zobraziť ostatné typy uzlov na mape';
 
   @override
-  String get appSettings_timeFilter => 'Filtrovacie Časové Obdoby';
+  String get appSettings_timeFilter => 'Časový filter';
 
   @override
   String get appSettings_timeFilterShowAll => 'Zobraziť všetky uzly';
@@ -1194,14 +1196,14 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
-  String get appSettings_mapTimeFilter => 'Filtračný čas mapy';
+  String get appSettings_mapTimeFilter => 'Časový filter mapy';
 
   @override
   String get appSettings_showNodesDiscoveredWithin =>
       'Zobraziť uzly objavené v:';
 
   @override
-  String get appSettings_allTime => 'Všetky časy';
+  String get appSettings_allTime => 'Celý čas';
 
   @override
   String get appSettings_lastHour => 'Posledná hodina';
@@ -1213,7 +1215,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_last24Hours => 'Posledných 24 hodín';
 
   @override
-  String get appSettings_lastWeek => 'Minul týždeň';
+  String get appSettings_lastWeek => 'Minulý týždeň';
 
   @override
   String get appSettings_rasterTileSource => 'Zdroj rastrových dlaždíc';
@@ -1238,7 +1240,7 @@ class AppLocalizationsSk extends AppLocalizations {
       'Zadajte svoj kľúč API pre Stadia Maps. Aplikácia ho používa na požiadavky na rastrové dlaždice.';
 
   @override
-  String get appSettings_offlineMapCache => 'Offline Mapa Pamäť';
+  String get appSettings_offlineMapCache => 'Offline vyrovnávacia pamäť máp';
 
   @override
   String get appSettings_unitsTitle => 'Jednotky';
@@ -1250,11 +1252,11 @@ class AppLocalizationsSk extends AppLocalizations {
   String get appSettings_unitsImperial => 'Imperiálne (ft / mi)';
 
   @override
-  String get appSettings_noAreaSelected => 'Neoznačila sa žiadna oblasť';
+  String get appSettings_noAreaSelected => 'Nie je vybraná žiadna oblasť';
 
   @override
   String appSettings_areaSelectedZoom(int minZoom, int maxZoom) {
-    return 'Vyberená oblasť (zoom $minZoom-$maxZoom)';
+    return 'Vybraná oblasť (zoom $minZoom-$maxZoom)';
   }
 
   @override
@@ -1265,15 +1267,15 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get appSettings_appDebugLoggingSubtitle =>
-      'Logovací správy aplikácie pre ladenie';
+      'Zaznamenávať ladiace správy aplikácie na riešenie problémov';
 
   @override
   String get appSettings_appDebugLoggingEnabled =>
-      'Aplikácia povolila ladenie protokolmi';
+      'Záznam ladenia aplikácie je zapnutý';
 
   @override
   String get appSettings_appDebugLoggingDisabled =>
-      'Zabudované ladenie aplikácie je vypnuté.';
+      'Záznam ladenia aplikácie je vypnutý';
 
   @override
   String get contacts_title => 'Kontakty';
@@ -1293,7 +1295,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String contacts_searchContacts(int number, String str) {
-    return 'Vyhľadávajte kontakty...';
+    return 'Hľadať v $number$str kontaktoch...';
   }
 
   @override
@@ -2813,7 +2815,7 @@ class AppLocalizationsSk extends AppLocalizations {
       'Nenašli sa žiadne opakovače ani serverové miestnosti.';
 
   @override
-  String get repeater_management => 'Správa opakérov';
+  String get repeater_management => 'Správa opakovača';
 
   @override
   String get room_management => 'Správa servera miestnosti';
@@ -2841,7 +2843,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_statusSubtitle =>
-      'Zobraziť stav, štatistiky a susedov repeatera';
+      'Zobraziť stav, štatistiky a susedov opakovača';
 
   @override
   String get repeater_telemetry => 'Telemetria';
@@ -2851,16 +2853,17 @@ class AppLocalizationsSk extends AppLocalizations {
       'Zobraziť telemetriu senzorov a systémových štatistík';
 
   @override
-  String get repeater_cli => 'CLI (Command Line Interface)';
+  String get repeater_cli => 'CLI';
 
   @override
   String get repeater_cliSubtitle => 'Pošlite príkazy opakovaču';
 
   @override
-  String get repeater_neighbors => 'Súsezný';
+  String get repeater_neighbors => 'Susedia';
 
   @override
-  String get repeater_neighborsSubtitle => 'Zobraziť susedné body bez skokov.';
+  String get repeater_neighborsSubtitle =>
+      'Zobraziť susedov bez medziskokov (zero-hop).';
 
   @override
   String get repeater_settings => 'Nastavenia';
@@ -2870,14 +2873,14 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_clockSyncAfterLogin =>
-      'Synchronizácia hodiniek po prihlávení';
+      'Synchronizácia hodín po prihlásení';
 
   @override
   String get repeater_clockSyncAfterLoginSubtitle =>
-      'Automaticky posielajte notifikáciu \"synchronizácia času\" po úspešnom prihládení.';
+      'Po úspešnom prihlásení automaticky odoslať „synchronizáciu hodín“';
 
   @override
-  String get repeater_statusTitle => 'Status opakého zboru';
+  String get repeater_statusTitle => 'Stav opakovača';
 
   @override
   String get repeater_routingMode => 'Režim trasy';
@@ -2886,7 +2889,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get repeater_refresh => 'Obnoviť';
 
   @override
-  String get repeater_statusRequestTimeout => 'Požiadavka stavu zlyhala.';
+  String get repeater_statusRequestTimeout => 'Požiadavka na stav vypršala.';
 
   @override
   String repeater_errorLoadingStatus(String error) {
@@ -2900,22 +2903,22 @@ class AppLocalizationsSk extends AppLocalizations {
   String get repeater_battery => 'Batéria';
 
   @override
-  String get repeater_clockAtLogin => 'Čas (při přihlášení)';
+  String get repeater_clockAtLogin => 'Čas (pri prihlásení)';
 
   @override
-  String get repeater_uptime => 'Dostupnosť';
+  String get repeater_uptime => 'Doba prevádzky';
 
   @override
   String get repeater_queueLength => 'Dĺžka fronty';
 
   @override
-  String get repeater_debugFlags => 'Kontrolné značky';
+  String get repeater_debugFlags => 'Ladiace príznaky';
 
   @override
-  String get repeater_radioStatistics => 'Rádio Štatistiky';
+  String get repeater_radioStatistics => 'Štatistiky rádia';
 
   @override
-  String get repeater_lastRssi => 'Posledná RSSI';
+  String get repeater_lastRssi => 'Posledný RSSI';
 
   @override
   String get repeater_lastSnr => 'Posledný SNR';
@@ -2933,13 +2936,13 @@ class AppLocalizationsSk extends AppLocalizations {
   String get repeater_chanUtil => 'Využitie kanálu';
 
   @override
-  String get repeater_packetStatistics => 'Statistiky balíka';
+  String get repeater_packetStatistics => 'Štatistiky paketov';
 
   @override
   String get repeater_sent => 'Odoslané';
 
   @override
-  String get repeater_received => 'Prišlo';
+  String get repeater_received => 'Prijaté';
 
   @override
   String get repeater_duplicates => 'Duplikáty';
@@ -2956,47 +2959,47 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String repeater_packetTxTotal(int total, String flood, String direct) {
-    return 'Celkem: $total, Flood: $flood, Priamy: $direct';
+    return 'Celkom: $total, Flood: $flood, Priame: $direct';
   }
 
   @override
   String repeater_packetRxTotal(int total, String flood, String direct) {
-    return 'Celkem: $total, Flood: $flood, Priamy: $direct';
+    return 'Celkom: $total, Flood: $flood, Priame: $direct';
   }
 
   @override
   String repeater_duplicatesFloodDirect(String flood, String direct) {
-    return 'Flood: $flood, Priamy: $direct';
+    return 'Flood: $flood, Priame: $direct';
   }
 
   @override
   String repeater_duplicatesTotal(int total) {
-    return 'Celkem: $total';
+    return 'Celkom: $total';
   }
 
   @override
-  String get repeater_settingsTitle => 'Nastavenia Opakovača';
+  String get repeater_settingsTitle => 'Nastavenia opakovača';
 
   @override
   String get repeater_basicSettings => 'Základné nastavenia';
 
   @override
-  String get repeater_repeaterName => 'Opakovacia názov';
+  String get repeater_repeaterName => 'Názov opakovača';
 
   @override
-  String get repeater_repeaterNameHelper => 'Zobrazenie názvu tohto opakovača';
+  String get repeater_repeaterNameHelper => 'Zobrazovaný názov tohto opakovača';
 
   @override
   String get repeater_adminPassword => 'Heslo administrátora';
 
   @override
-  String get repeater_adminPasswordHelper => 'Celý prístupový heslo';
+  String get repeater_adminPasswordHelper => 'Heslo s plným prístupom';
 
   @override
   String get repeater_guestPassword => 'Heslo hosťa';
 
   @override
-  String get repeater_guestPasswordHelper => 'Prístupový heslo iba na čítanie';
+  String get repeater_guestPasswordHelper => 'Heslo s prístupom iba na čítanie';
 
   @override
   String get repeater_radioSettings => 'Nastavenia rádia';
@@ -3008,7 +3011,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get repeater_frequencyHelper => '300–2500 MHz';
 
   @override
-  String get repeater_txPower => 'TX Power';
+  String get repeater_txPower => 'Výkon TX';
 
   @override
   String get repeater_txPowerHelper => '1-30 dBm';
@@ -3017,7 +3020,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get repeater_bandwidth => 'Šírka pásma';
 
   @override
-  String get repeater_spreadingFactor => 'Šírenie faktoru';
+  String get repeater_spreadingFactor => 'Rozprestierací faktor';
 
   @override
   String get repeater_codingRate => 'Rýchlosť kódovania';
@@ -3026,26 +3029,26 @@ class AppLocalizationsSk extends AppLocalizations {
   String get repeater_locationSettings => 'Nastavenia polohy';
 
   @override
-  String get repeater_latitude => 'Súradnica';
+  String get repeater_latitude => 'Zemepisná šírka';
 
   @override
-  String get repeater_latitudeHelper => 'Desatinné zložky (napr. 37.7749)';
+  String get repeater_latitudeHelper => 'Desatinné stupne (napr. 37.7749)';
 
   @override
-  String get repeater_longitude => 'Dĺžka';
+  String get repeater_longitude => 'Zemepisná dĺžka';
 
   @override
-  String get repeater_longitudeHelper => 'Desatinné zložky (napr. -122.4194)';
+  String get repeater_longitudeHelper => 'Desatinné stupne (napr. -122.4194)';
 
   @override
   String get repeater_features => 'Funkcie';
 
   @override
-  String get repeater_packetForwarding => 'Riadenie prienikov';
+  String get repeater_packetForwarding => 'Preposielanie paketov';
 
   @override
   String get repeater_packetForwardingSubtitle =>
-      'Povolte opakovač na smerovanie paketov.';
+      'Povoliť opakovaču preposielať pakety';
 
   @override
   String get repeater_guestAccess => 'Prístup pre hostí';
@@ -3064,7 +3067,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get repeater_advertisementSettings => 'Nastavenia inzerátov';
 
   @override
-  String get repeater_localAdvertInterval => 'Lokálna inzertná časová obdoba';
+  String get repeater_localAdvertInterval => 'Interval lokálnych inzerátov';
 
   @override
   String repeater_localAdvertIntervalMinutes(int minutes) {
@@ -3080,42 +3083,45 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
-  String get repeater_encryptedAdvertInterval => 'Šifrovaný inzertný interval';
+  String get repeater_encryptedAdvertInterval =>
+      'Interval šifrovaných inzerátov';
 
   @override
   String get repeater_dangerZone => 'Nebezpečná zóna';
 
   @override
-  String get repeater_rebootRepeater => 'Restart Repetér';
+  String get repeater_rebootRepeater => 'Reštartovať opakovač';
 
   @override
-  String get repeater_rebootRepeaterSubtitle => 'Resetovať vysielací prístroj';
+  String get repeater_rebootRepeaterSubtitle =>
+      'Reštartovať zariadenie opakovača';
 
   @override
   String get repeater_rebootRepeaterConfirm =>
       'Ste si istý, že chcete tento opakovač restartovať?';
 
   @override
-  String get repeater_regenerateIdentityKey => 'Generovať kľúč identity';
+  String get repeater_regenerateIdentityKey =>
+      'Znovu vygenerovať kľúč identity';
 
   @override
   String get repeater_regenerateIdentityKeySubtitle =>
-      'Generovať nový pár verejných/privátnych kľúčov';
+      'Vygenerovať nový pár verejného/súkromného kľúča';
 
   @override
   String get repeater_regenerateIdentityKeyConfirm =>
-      'Toto vytvorí nový identitu pre opakovač. Pokračovať?';
+      'Týmto sa vytvorí nová identita opakovača. Pokračovať?';
 
   @override
-  String get repeater_eraseFileSystem => 'Vymažať Systémový Reťazec';
+  String get repeater_eraseFileSystem => 'Vymazať súborový systém';
 
   @override
   String get repeater_eraseFileSystemSubtitle =>
-      'Formátovať systém opakujúcich sa súborov';
+      'Formátovať súborový systém opakovača';
 
   @override
   String get repeater_eraseFileSystemConfirm =>
-      'VAROVANIE: Toto zmaže všetky dáta na opakovači. To sa nedá zrušiť!';
+      'VAROVANIE: Týmto sa vymažú všetky dáta v opakovači. Túto akciu nie je možné vrátiť späť!';
 
   @override
   String get repeater_eraseSerialOnly =>
@@ -3123,12 +3129,12 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String repeater_commandSent(String command) {
-    return 'Poforovaný príkaz: $command';
+    return 'Príkaz odoslaný: $command';
   }
 
   @override
   String repeater_errorSendingCommand(String error) {
-    return 'Chyba pri odeslaní príkazu: $error';
+    return 'Chyba pri odosielaní príkazu: $error';
   }
 
   @override
@@ -3145,18 +3151,11 @@ class AppLocalizationsSk extends AppLocalizations {
       'Vyššia citlivosť, vyšší príkon (platí len pre modely SX1262/SX1268)';
 
   @override
-  String get repeater_refreshRxGain => 'Obnovte zvýšený zisk z RX';
-
-  @override
-  String get repeater_multiAcks => 'Víťazné potvrdenia (víťazné ACK)';
+  String get repeater_multiAcks => 'Viacnásobné ACK';
 
   @override
   String get repeater_multiAcksSubtitle =>
-      'Potvrďte správy prostredníctvom viacerých trás pre lepšiu doručenie.';
-
-  @override
-  String get repeater_refreshMultiAcks =>
-      'Opätovne potvrďte viacero ACK signálov';
+      'Potvrdzovať správy cez viaceré trasy pre lepšie doručenie';
 
   @override
   String get repeater_networkHealth => 'Zdravie siete';
@@ -3166,26 +3165,26 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_loopDetectHelper =>
-      'Vytvorte balíčky, ktoré vizuálne pripomínajú slučky v síti.';
+      'Zahodiť flood pakety, ktoré vyzerajú ako slučky v smerovaní.';
 
   @override
   String get repeater_loopDetectOff => 'Vypnuté';
 
   @override
-  String get repeater_loopDetectMinimal => 'Minimálny';
+  String get repeater_loopDetectMinimal => 'Minimálna';
 
   @override
-  String get repeater_loopDetectModerate => 'Stredný, mierny';
+  String get repeater_loopDetectModerate => 'Stredná';
 
   @override
-  String get repeater_loopDetectStrict => 'Prísne';
+  String get repeater_loopDetectStrict => 'Prísna';
 
   @override
   String get repeater_dutyCycle => 'Cyklus činnosti';
 
   @override
   String get repeater_dutyCycleHelper =>
-      'Maximálna percentáľ dostupného času vysielania';
+      'Maximálny percentuálny podiel vysielacieho času';
 
   @override
   String repeater_dutyCyclePercent(int percent) {
@@ -3193,140 +3192,135 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
-  String get repeater_ownerInfo => 'Informácie o poskytovateľovi';
+  String get repeater_ownerInfo => 'Informácie o prevádzkovateľovi';
 
   @override
-  String get repeater_ownerInfoHelper =>
-      'Veľké dátové informácie pre tento vysielací zdroj';
-
-  @override
-  String get repeater_refreshOwnerInfo => 'Zísť informácie o operátore';
+  String get repeater_ownerInfoHelper => 'Verejné metadáta tohto opakovača';
 
   @override
   String get repeater_floodMax => 'Maximálny počet skokov flood';
 
   @override
   String get repeater_floodMaxHelper =>
-      'Maximálny počet paketov, ktoré môžu preletieť cez jeden hop (0-64)';
+      'Maximálny počet skokov, ktoré môže prejsť flood paket (0-64)';
 
   @override
   String get repeater_advancedSettings => 'Pokročilé';
 
   @override
   String get repeater_advancedSettingsSubtitle =>
-      'Ovládacie knopy pre skúsených operátorov';
+      'Doladenie pre skúsených prevádzkovateľov';
 
   @override
-  String get repeater_pathHashMode => 'Režim hashovania cesty';
+  String get repeater_pathHashMode => 'Veľkosť ID uzla v cestách';
 
   @override
   String get repeater_pathHashModeHelper =>
-      'Bajty použité na zakódovanie ID tohto opakovača v tagoch flood trasy/detekcie slučky. 0=1 bajt (256 ID, až 64 skokov), 1=2 bajty (65 000 ID, až 32 skokov), 2=3 bajty (16 miliónov ID, až 21 skokov). Firmvér pred v1.14 vždy používal 1-bajtové trasy; v1.14 a novšie možno nakonfigurovať na 2- alebo 3-bajtové trasy.';
+      'Veľkosť ID tohto opakovača v cestách inzerátov, ktoré odosiela: 1 bajt (256 ID, až 64 skokov), 2 bajty (65 tisíc ID, až 32 skokov), 3 bajty (16 miliónov ID, až 21 skokov). Neovplyvňuje preposielanie; opakovače v1.14+ preposielajú všetky veľkosti, staršie firmvéry však zahadzujú pakety s 2- alebo 3-bajtovými ID.';
 
   @override
-  String get repeater_keySettings => 'Zmena identititačných klíčov';
+  String get repeater_keySettings => 'Zmeniť kľúče identity';
 
   @override
   String get repeater_keySettingsSubtitle =>
-      'Zmena prehľadného/osobného klíčového zbraň';
+      'Zmeniť pár verejného/súkromného kľúča';
 
   @override
-  String get repeater_prvKey => 'Prívatná klíč';
+  String get repeater_prvKey => 'Súkromný kľúč';
 
   @override
   String get repeater_prvKeyHelper =>
-      'Nová prívna klíčová číslo pre repeater, 128-znáčlový šestnáctorýč.';
+      'Nový súkromný kľúč opakovača, 128-znakový hexadecimálny reťazec.';
 
   @override
-  String get repeater_generatePrvKey => 'Vytvorenie príma kľúčového paru';
+  String get repeater_generatePrvKey => 'Vygenerovať náhodný pár kľúčov';
 
   @override
-  String get repeater_stopGeneratingPrvKey =>
-      'Prerušenie hľadania klíčového paru';
+  String get repeater_stopGeneratingPrvKey => 'Prerušiť hľadanie páru kľúčov';
 
   @override
-  String get repeater_pubKey => 'Public key';
+  String get repeater_pubKey => 'Verejný kľúč';
 
   @override
   String get repeater_pubKeyHelper =>
-      'Táto je veľká klíč, ktorý sa vztahuje s generovaným manéčným klíčom. Nemožné je to ustanovit priateľne.';
+      'Toto je verejný kľúč patriaci k vygenerovanému súkromnému kľúču. Nie je možné ho nastaviť priamo.';
 
   @override
   String get repeater_pubKeyPrefix => 'Požadovaný prefiks';
 
   @override
   String repeater_pubKeyPrefixHelper(int tries) {
-    return 'Zahľadnite sa veľkú publicenu klíču, ktorá začíná tými šestícih štiastkami. Očekivané potrebné pokusy: $tries.';
+    return 'Nájsť verejný kľúč, ktorý začína týmito hexadecimálnymi číslicami. Očakávaný počet pokusov: $tries.';
   }
 
   @override
-  String get repeater_txDelay => 'Zpoždanie v Flood, TX';
+  String get repeater_txDelay => 'Oneskorenie Flood TX';
 
   @override
   String get repeater_txDelayHelper =>
-      'Nastavenie pre opakované vysielanie pre flood dopravu, ako násobok času, ktorý paket využije (0-2, výchoce hodnota 0,5). Vyššia hodnota znamená menej kolízii, ale pomalšie doručovanie.';
+      'Rozostup opakovaného vysielania pre flood prevádzku ako násobok vysielacieho času paketu (0-2, predvolene 0,5). Vyššia hodnota = menej kolízií, ale pomalšie doručovanie.';
 
   @override
   String get repeater_directTxDelay => 'Priame oneskorenie TX';
 
   @override
   String get repeater_directTxDelayHelper =>
-      'Nastavenie pre retransmisiu pre priame (nie pre plnú sieť), ako násobok času prenosu paketov (0-2, výchoce 0,3).';
+      'Rozostup opakovaného vysielania pre priamu (nie flood) prevádzku ako násobok vysielacieho času paketu (0-2, predvolene 0,3).';
 
   @override
-  String get repeater_intThresh => 'Hranica, pri ktorej dochádza k rušeniu';
+  String get repeater_intThresh => 'Prah rušenia';
 
   @override
   String get repeater_intThreshHelper =>
-      'Hranica je nastavená tak, aby odfiltrovala šum nad touto úrovňou. Hodnota 0 znamená, že sa nebude nič odfiltrovať – nastavte ju len v prípade, že zaznamenáte chyby pri prijímaní signálu v šumnej frekvencii.';
+      'Prah odovzdaný kalibrácii úrovne šumu rádia, aby odmietalo rušenie nad touto úrovňou. 0 vypne – zvýšte len vtedy, ak v zašumenom pásme vidíte chyby RX.';
 
   @override
   String get repeater_agcResetInterval => 'Interval reštartu AGC';
 
   @override
   String get repeater_agcResetIntervalHelper =>
-      'Ako často by ste mali reštartovať automatické ovládanie zosilnenia, aby ste sa vrátili do normálneho stavu, ak je zosilnenie zablokované? Nastavenie „4.0“ vypne pravidelné reštarty.';
+      'Ako často sa má resetovať automatické riadenie zosilnenia rádia, aby sa zotavilo zo zaseknutého stavu zosilnenia. V sekundách, zaokrúhlené nadol na násobok 4. 0 vypne pravidelné resety.';
 
   @override
-  String get repeater_actionsTitle => 'Opatrenia';
+  String get repeater_actionsTitle => 'Akcie';
 
   @override
   String get repeater_sendAdvert => 'Odoslať flood inzerát';
 
   @override
-  String get repeater_sendAdvertSubtitle => 'Zverejnite flood inzerát v sieti.';
+  String get repeater_sendAdvertSubtitle => 'Rozoslať flood inzerát cez sieť.';
 
   @override
-  String get repeater_sendAdvertZeroHop => 'Odoslať inzerát bez prenosu';
+  String get repeater_sendAdvertZeroHop => 'Odoslať zero-hop inzerát';
 
   @override
   String get repeater_sendAdvertZeroHopSubtitle =>
-      'Zverejnite inzerát, ktorý sa prenáša len raz (bez prenosov).';
+      'Rozoslať inzerát s jedným skokom (bez opakovačov)';
 
   @override
-  String get repeater_clockSync => 'Synchronizujte hodiny teraz';
+  String get repeater_clockSync => 'Synchronizovať hodiny teraz';
 
   @override
   String get repeater_clockSyncSubtitle =>
-      'Nastavte čas na vašom telefóne, aby odpovedal na volania z vysielacieho zariadenia.';
+      'Odoslať čas vášho telefónu do opakovača';
 
   @override
   String repeater_actionSucceeded(String action) {
-    return '$action succeeded';
+    return '$action bolo úspešné';
   }
 
   @override
   String repeater_actionFailed(String action, String error) {
-    return '$action failed: $error';
+    return '$action zlyhalo: $error';
   }
 
   @override
   String get repeater_settingsSavedRebootNeeded =>
-      'Nastavenia uložené – reštartujte vysielací prístroj, aby sa nastavenia aplikovali.';
+      'Nastavenia uložené – na uplatnenie reštartujte opakovač';
 
   @override
   String repeater_settingsPartialFailure(String failures) {
-    return 'Niektoré nastavenia neúspešné: $failures';
+    return 'Niektoré nastavenia sa nepodarilo uložiť: $failures';
   }
 
   @override
@@ -3335,22 +3329,10 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings => 'Obnoviť základné nastavenia';
+  String get repeater_refreshRadioSettings => 'Obnoviť nastavenia rádia';
 
   @override
-  String get repeater_refreshRadioSettings => 'Obnoviť Nastavenia Rádií';
-
-  @override
-  String get repeater_refreshTxPower => 'Obnoviť TX napájanie';
-
-  @override
-  String get repeater_refreshPacketForwarding => 'Obnoviť smerovanie paketov';
-
-  @override
-  String get repeater_refreshGuestAccess => 'Obnoviť prístup hosťa';
-
-  @override
-  String get repeater_refreshPrivacyMode => 'Obnoviť Ochranný režim';
+  String get repeater_refreshPrivacyMode => 'Obnoviť režim súkromia';
 
   @override
   String get repeater_refreshAll => 'Obnoviť všetko';
@@ -3374,20 +3356,20 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
-  String get repeater_cliTitle => 'Opakovacia CLI';
+  String get repeater_cliTitle => 'CLI opakovača';
 
   @override
-  String get repeater_debugNextCommand => 'Oprava Nasledujúceho Príkaz';
+  String get repeater_debugNextCommand => 'Ladiť nasledujúci príkaz';
 
   @override
-  String get repeater_commandHelp => 'Pomoc';
+  String get repeater_commandHelp => 'Pomocník k príkazom';
 
   @override
   String get repeater_clearHistory => 'Vymazať históriu';
 
   @override
   String get repeater_noCommandsSent =>
-      'Zatiaľ neboli odeslané žiadne príkazy.';
+      'Zatiaľ neboli odoslané žiadne príkazy.';
 
   @override
   String get repeater_typeCommandOrUseQuick =>
@@ -3406,7 +3388,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get repeater_enterCommandFirst => 'Zadajte najprv príkaz';
 
   @override
-  String get repeater_cliCommandFrameTitle => 'Rámok Príkaz CLI';
+  String get repeater_cliCommandFrameTitle => 'Rámec príkazu CLI';
 
   @override
   String repeater_cliCommandError(String error) {
@@ -3414,28 +3396,28 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
-  String get repeater_cliQuickGetName => 'Zísť meno';
+  String get repeater_cliQuickGetName => 'Získať názov';
 
   @override
-  String get repeater_cliQuickGetRadio => 'Zísť po rádiu';
+  String get repeater_cliQuickGetRadio => 'Získať rádio';
 
   @override
-  String get repeater_cliQuickGetTx => 'Zísť TX';
+  String get repeater_cliQuickGetTx => 'Získať TX';
 
   @override
-  String get repeater_cliQuickNeighbors => 'Súsezný';
+  String get repeater_cliQuickNeighbors => 'Susedia';
 
   @override
   String get repeater_cliQuickVersion => 'Verzia';
 
   @override
-  String get repeater_cliQuickAdvertise => 'Inzerát';
+  String get repeater_cliQuickAdvertise => 'Inzerovať';
 
   @override
   String get repeater_cliQuickClock => 'Hodiny';
 
   @override
-  String get repeater_cliQuickClockSync => 'Synchronizácia hodin';
+  String get repeater_cliQuickClockSync => 'Synchronizácia hodín';
 
   @override
   String get repeater_cliQuickDiscovery => 'Objaviť susedov';
@@ -3445,7 +3427,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpReboot =>
-      'Resetuje zariadenie. (pozor, môže dôjsť k \'Timeoutu\', čo je normálne)';
+      'Reštartuje zariadenie. (pozn.: pravdepodobne dostanete \'Timeout\', čo je normálne)';
 
   @override
   String get repeater_cliHelpClock =>
@@ -3453,7 +3435,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpPassword =>
-      'Nastaví nový administrátorský prístupový údaj pre zariadenie.';
+      'Nastaví nové administrátorské heslo pre zariadenie.';
 
   @override
   String get repeater_cliHelpVersion =>
@@ -3464,15 +3446,16 @@ class AppLocalizationsSk extends AppLocalizations {
       'Resetuje rôzne štatistické počítadlá na nulu.';
 
   @override
-  String get repeater_cliHelpSetAf => 'Nastavuje časový faktor.';
+  String get repeater_cliHelpSetAf =>
+      'Nastaví faktor vysielacieho času (air-time factor).';
 
   @override
   String get repeater_cliHelpSetTx =>
-      'Nastavenie vysielacej sily LoRa v dBm. (potrebuje sa reštart na aplikáciu)';
+      'Nastaví vysielací výkon LoRa v dBm. (na uplatnenie je potrebný reštart)';
 
   @override
   String get repeater_cliHelpSetRepeat =>
-      'Umožňuje alebo vypína zopakovaný príspevok pre tento uzol.';
+      'Zapne alebo vypne rolu opakovača pre tento uzol.';
 
   @override
   String get repeater_cliHelpSetAllowReadOnly =>
@@ -3480,19 +3463,19 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetFloodMax =>
-      'Nastavuje maximálny počet skokov pre vstupný povelový paket (ak je >= max, paket nie je preposlaný)';
+      'Nastaví maximálny počet skokov prichádzajúceho flood paketu (ak je >= max, paket sa nepreposiela)';
 
   @override
   String get repeater_cliHelpSetIntThresh =>
-      'Nastavuje hranicu ruživeho ladenia (v dB). Predvolené je 14. Nastavením na 0 sa vypne detekcia ruživeho ladenia kanálu.';
+      'Nastaví prah rušenia (v dB). Predvolená hodnota je 14. Nastavením na 0 sa vypne detekcia rušenia kanála.';
 
   @override
   String get repeater_cliHelpSetAgcResetInterval =>
-      'Nastavuje interval na reštartovanie Auto Gain Controlleru. Nastavenie na 0 vypne funkciu.';
+      'Nastaví interval resetu automatického riadenia zosilnenia (AGC). Nastavenie na 0 funkciu vypne.';
 
   @override
   String get repeater_cliHelpSetMultiAcks =>
-      'Povolí alebo pozastaví funkciiu \"dvojité potvrdenia\".';
+      'Zapne alebo vypne funkciu „dvojitých ACK“.';
 
   @override
   String get repeater_cliHelpSetAdvertInterval =>
@@ -3504,7 +3487,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetGuestPassword =>
-      'Nastavuje/aktualizuje heslo hosťa. (pre opakované pripojenia môžu hosťovské prihlásenia posielať požadanie \"Get Stats\")';
+      'Nastaví/aktualizuje heslo hosťa. (pri opakovačoch môžu prihlásenia hostí posielať požiadavku \"Get Stats\")';
 
   @override
   String get repeater_cliHelpSetName => 'Nastaví názov inzerátu.';
@@ -3523,66 +3506,66 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetRxDelay =>
-      'Nastavenia (experimentálne) základné (musi byť > 1 pre účel) na aplikáciu mierneho onesenia prijatých paketov, na základe signálu/skóre. Nastavenie na 0 vypne.';
+      'Nastaví (experimentálny) základ (aby mal účinok, musí byť > 1) pre mierne oneskorenie prijatých paketov podľa sily signálu/skóre. Nastavenie na 0 funkciu vypne.';
 
   @override
   String get repeater_cliHelpSetTxDelay =>
-      'Nastavuje faktor násobený časom na vzduchu pre paket v režime flood a s náhodným systémom slotov, aby sa oneskorene jeho prenosovanie (s cieľom znížiť pravdepodobnosť kolízii).';
+      'Nastaví faktor, ktorým sa násobí čas vysielania (time-on-air) paketu v režime flood a náhodný systém slotov, aby sa oneskorilo jeho preposlanie. (na zníženie pravdepodobnosti kolízií)';
 
   @override
   String get repeater_cliHelpSetDirectTxDelay =>
       'Podobne ako txdelay, ale pre aplikáciu náhodného oneskorenia pri preposlaní paketov v režime priameho prenosu.';
 
   @override
-  String get repeater_cliHelpSetBridgeEnabled => 'Aktivovať/Zatvárať most.';
+  String get repeater_cliHelpSetBridgeEnabled => 'Zapnúť/vypnúť most.';
 
   @override
   String get repeater_cliHelpSetBridgeDelay =>
-      'Nastaviť odklad pred retransmisiou paketov.';
+      'Nastaví oneskorenie pred opätovným odoslaním paketov.';
 
   @override
   String get repeater_cliHelpSetBridgeSource =>
-      'Zvolte, či bude most retransmitovať prijaté alebo vysielané balíčky.';
+      'Vyberte, či bude most opakovane vysielať prijaté alebo odoslané pakety.';
 
   @override
   String get repeater_cliHelpSetBridgeBaud =>
-      'Nastavte sériový link baudrate pre rs232 mosty.';
+      'Nastaví prenosovú rýchlosť (baud) sériového spojenia pre mosty rs232.';
 
   @override
   String get repeater_cliHelpSetBridgeSecret =>
-      'Nastaviť tajomstvo mosta pre eshnow mosty.';
+      'Nastaví tajomstvo mosta pre mosty espnow.';
 
   @override
   String get repeater_cliHelpSetAdcMultiplier =>
-      'Nastavuje vlastný faktor na úpravu nahlásenej batériovej napätia (podporované len na vybraných doskách).';
+      'Nastaví vlastný faktor na úpravu hlásenej hodnoty napätia batérie (podporované len na vybraných doskách).';
 
   @override
   String get repeater_cliHelpTempRadio =>
-      'Nastaví dočasné rádiové parametre pre zadaný počet minút, po skončení sa vráti k pôvodným rádiovým parametrom. (nepočuva sa do preferencií).';
+      'Nastaví dočasné rádiové parametre na zadaný počet minút, potom sa vráti k pôvodným rádiovým parametrom. (NEUKLADÁ do preferencií).';
 
   @override
   String get repeater_cliHelpSetPerm =>
-      'Zmení ACL. Odstráni zodpovedný záznam (podľa prefixa pubkey), ak je \"permissions\" rovné 0. Pridá nový záznam, ak je pubkey-hex plnej dĺžky a momentálne sa nenachádza v ACL. Aktualizuje záznam podľa zodpovedajúceho prefixa pubkey. Bitové oprávnenia sa líšia podľa funkčnej roly, ale nízke 2 bity sú: 0 (Hostiteľ), 1 (Čítanie len), 2 (Čítanie a zápis), 3 (Správca).';
+      'Upraví ACL. Odstráni zodpovedajúci záznam (podľa prefixu pubkey), ak je \"permissions\" rovné 0. Pridá nový záznam, ak je pubkey-hex plnej dĺžky a momentálne nie je v ACL. Aktualizuje záznam podľa zodpovedajúceho prefixu pubkey. Bity oprávnení sa líšia podľa roly firmvéru, ale nižšie 2 bity sú: 0 (hosť), 1 (iba čítanie), 2 (čítanie a zápis), 3 (administrátor)';
 
   @override
   String get repeater_cliHelpGetBridgeType =>
-      'Zísť typ mosta: žiadny, rs232, espnow';
+      'Zobrazí typ mosta: none, rs232, espnow';
 
   @override
   String get repeater_cliHelpLogStart =>
-      'Začína protokolovanie balíkov do systému súborov.';
+      'Spustí zaznamenávanie paketov do súborového systému.';
 
   @override
   String get repeater_cliHelpLogStop =>
-      'Zastaví protokolovanie paketov do systémového súboru.';
+      'Zastaví zaznamenávanie paketov do súborového systému.';
 
   @override
   String get repeater_cliHelpLogErase =>
-      'Odstráni záznamy z balíkov z systému súborov.';
+      'Odstráni záznamy paketov zo súborového systému.';
 
   @override
   String get repeater_cliHelpNeighbors =>
-      'Zobrazuje zoznam iných repeaterových uzlov zasielaných cez zero-hop inzeráty. Každý riadok je id-prefix-hex:timestamp:snr-times-4';
+      'Zobrazí zoznam ostatných opakovačov zachytených cez zero-hop inzeráty. Každý riadok je id-prefix-hex:timestamp:snr-times-4';
 
   @override
   String get repeater_cliHelpNeighborRemove =>
@@ -3590,15 +3573,15 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpRegion =>
-      '(len sériál) Zobrazuje všetky definované regióny a aktuálne povolenia pre flood.';
+      '(iba sériovo) Zobrazí všetky definované regióny a aktuálne povolenia pre flood.';
 
   @override
   String get repeater_cliHelpRegionLoad =>
-      'Poznámka: toto je špeciálna multi-príkázová inštancia. Každé nasledujúce príkaza je názov oblasti (zapustený s medzerami na indikáciu hierarchického pomeru, s minimálne jednou medzerou). Ukončené odeslaním prázdnej platnej linky/príkazu.';
+      'POZNÁMKA: toto je špeciálne volanie s viacerými príkazmi. Každý ďalší príkaz je názov regiónu (odsadený medzerami na vyznačenie nadradenej hierarchie, minimálne jednou medzerou). Ukončí sa odoslaním prázdneho riadka/príkazu.';
 
   @override
   String get repeater_cliHelpRegionGet =>
-      'Hľadá región s daným príponou názvu (alebo \"\\\" pre globálny rozsah). Odpovedá \"-> región-název (rodič-název) \'F\'\"';
+      'Vyhľadá región podľa zadanej predpony názvu (alebo \"*\" pre globálny rozsah). Odpovie \"-> region-name (parent-name) \'F\'\"';
 
   @override
   String get repeater_cliHelpRegionPut =>
@@ -3610,15 +3593,15 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpRegionAllowf =>
-      'Nastavuje povolenie \'P\'lávu pre zadanú oblasť. (\'\' pre globálny/dedičský rozsah)';
+      'Nastaví povolenie \'F\'lood pre zadaný región. (\'*\' pre globálny/starý rozsah)';
 
   @override
   String get repeater_cliHelpRegionDenyf =>
-      'Odstráni povolenie \'F\'lood\' pre zadanú oblasť. (UPOZORNENIE: v tejto fáze nie je odporúčané ho používať na globálnom/dedskom rozsahu!!).';
+      'Odstráni povolenie \'F\'lood pre zadaný región. (POZNÁMKA: v tejto fáze sa NEODPORÚČA používať ho na globálnom/starom rozsahu!!)';
 
   @override
   String get repeater_cliHelpRegionHome =>
-      'Odpovedá s aktuálnou \'domovskou\' oblasťou. (Poznámka aplikovaná zatiaľ nikde, vyhradené na budúce)';
+      'Odpovie aktuálnym \'domovským\' regiónom. (Poznámka: zatiaľ sa nikde nepoužíva, vyhradené pre budúcnosť)';
 
   @override
   String get repeater_cliHelpRegionHomeSet => 'Nastaví \'domovskú\' oblasť.';
@@ -3632,7 +3615,7 @@ class AppLocalizationsSk extends AppLocalizations {
       'Zobrazuje stav GPS. Ak je GPS vypnutý, odpovedá len \"off\", ak je zapnutý, odpovedá s \"on\", stavom, fixom a počtom satelitov.';
 
   @override
-  String get repeater_cliHelpGpsOnOff => 'Prepínač stavu GPS napájania.';
+  String get repeater_cliHelpGpsOnOff => 'Prepne stav napájania GPS.';
 
   @override
   String get repeater_cliHelpGpsSync =>
@@ -3644,11 +3627,11 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGpsAdvert =>
-      'Poskytuje konfiguráciu inzerátu pre uzol:\n- žiadna: nezahrňte polohu do inzerátov\n- zdieľať: zdieľajte GPS polohu (z SensorManager)\n- nastavenia: zobrazujte polohu uloženú v nastaveniach';
+      'Zobrazí konfiguráciu inzerovania polohy uzla:\n- none: nezahrnúť polohu do inzerátov\n- share: zdieľať polohu GPS (zo SensorManager)\n- prefs: inzerovať polohu uloženú v nastaveniach';
 
   @override
   String get repeater_cliHelpGpsAdvertSet =>
-      'Nastavuje konfiguráciu inzerátu na zadané miesto.';
+      'Nastaví konfiguráciu inzerovania polohy.';
 
   @override
   String get repeater_commandsListTitle => 'Zoznam príkazov';
@@ -3727,7 +3710,7 @@ class AppLocalizationsSk extends AppLocalizations {
       'Dostupné len vo firmvéri zostavenom s mostom (RS232 alebo ESP-NOW).';
 
   @override
-  String get repeater_general => 'Obecné';
+  String get repeater_general => 'Všeobecné';
 
   @override
   String get repeater_settingsCategory => 'Nastavenia';
@@ -3736,10 +3719,10 @@ class AppLocalizationsSk extends AppLocalizations {
   String get repeater_bridge => 'Most';
 
   @override
-  String get repeater_logging => 'Záznamy';
+  String get repeater_logging => 'Zaznamenávanie';
 
   @override
-  String get repeater_neighborsRepeaterOnly => 'Súseznýci (iba opakovač)';
+  String get repeater_neighborsRepeaterOnly => 'Susedia (iba opakovač)';
 
   @override
   String get repeater_regionManagementRepeaterOnly =>
@@ -3747,17 +3730,17 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_regionNote =>
-      'Regionové príkazy boli zavádzané na správu regionálnych definícií a oprávnení.';
+      'Príkazy pre regióny boli zavedené na správu definícií regiónov a povolení.';
 
   @override
   String get repeater_gpsManagement => 'Správa GPS';
 
   @override
   String get repeater_gpsNote =>
-      'GPS príkaz bol zavádzaný na riadenie lokalitných tém.';
+      'Príkaz gps bol zavedený na správu tém súvisiacich s polohou.';
 
   @override
-  String get repeater_getCategory => 'Zísť hodnoty';
+  String get repeater_getCategory => 'Získať hodnoty';
 
   @override
   String get repeater_powerMgmt => 'Správa energie';
@@ -3775,19 +3758,19 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpAdvertZeroHop =>
-      'Rozosiela inzerát, ktorý sa prenáša len medzi susednými zariadeniami (bez prenosu cez iné siete).';
+      'Odošle zero-hop inzerát (iba bezprostrední susedia).';
 
   @override
   String get repeater_cliHelpStartOta =>
-      'Spustí aktualizáciu firmvéru prostredníctvom diaľkového prenosu na podporovaných doskách.';
+      'Spustí aktualizáciu firmvéru cez vzduch (OTA) na podporovaných doskách.';
 
   @override
   String get repeater_cliHelpTime =>
-      'Nastavuje časovník zariadenia na zadané sekundy od Unix epochy. Časovník sa nedá otáčať dozadu.';
+      'Nastaví hodiny zariadenia na zadaný počet sekúnd od Unix epochy. Hodiny sa nemôžu posunúť späť.';
 
   @override
   String get repeater_cliHelpBoard =>
-      'Zobrazuje informácie o výrobcom dosky / identifikátor hardvéru.';
+      'Zobrazí výrobcu dosky / identifikátor hardvéru.';
 
   @override
   String get repeater_cliHelpDiscoverNeighbors =>
@@ -3807,23 +3790,23 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetDutyCycle =>
-      'Nastavuje maximálnu povolenú frekvenciu prenosu ako percento (1-100). Internálne upravuje faktor času prenosu.';
+      'Nastaví maximálny povolený pracovný cyklus vysielania v percentách (1-100). Interne upraví faktor vysielacieho času.';
 
   @override
   String get repeater_cliHelpSetPrvKey =>
-      '(Používa sa len v sériovej verzii) Nahradí privátny kľúč, ktorý identifikuje zariadenie. Po aplikácii je potrebné zariadenie reštartovať. Generuje nový verejný kľúč.';
+      'Nahradí súkromný kľúč identity zariadenia. Na uplatnenie je potrebný reštart. Vygeneruje nový verejný kľúč.';
 
   @override
   String get repeater_cliHelpSetRadioRxGain =>
-      '(iba pre SX126x) Zapína zvýšený zisk prijímania pre zlepšenie citlivosti pri vyššom príkonu.';
+      '(Iba SX126x) Zapína/vypína zosilnený príjem RX pre lepšiu citlivosť pri vyššom odbere prúdu.';
 
   @override
   String get repeater_cliHelpSetOwnerInfo =>
-      'Definuje reťazec s informáciami o kontaktnom osobě, ktorý je zahrnutý v inzerátoch. Používajte \'|\' pre nové riadky.';
+      'Nastaví reťazec s kontaktnými údajmi vlastníka zahrnutý v inzerátoch. Pre nové riadky použite \'|\'.';
 
   @override
   String get repeater_cliHelpSetPathHashMode =>
-      'Nastavuje režim hashovania cesty. 0 = starý režim, 1 = štandardný režim, 2 = striktný režim. Ovplyvňuje, ako sa prekladajú trasy.';
+      'Nastaví veľkosť ID uzla použitého v inzerátoch tohto opakovača: 0 = 1 bajt (až 64 skokov), 1 = 2 bajty (až 32 skokov), 2 = 3 bajty (až 21 skokov).';
 
   @override
   String get repeater_cliHelpSetLoopDetect =>
@@ -3831,18 +3814,18 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetFreq =>
-      '(Používa sa len v sériovej verzii) Rýchlo nastavuje len frekvenciu. Je potrebné reštartovať. Pre úplné nastavenie rádia preferujte funkciu \"nastavenie rádia\".';
+      '(Iba sériovo) Rýchlo nastaví len frekvenciu. Vyžaduje reštart. Pre všetky rádiové parametre uprednostnite \"set radio\".';
 
   @override
   String get repeater_cliHelpSetBridgeChannel =>
-      '(Používa sa len pre ESPNow most) Nastavuje WiFi kanál (1-14), ktorý používa most.';
+      '(Iba most ESPNow) Nastaví kanál WiFi (1-14), ktorý most používa.';
 
   @override
-  String get repeater_cliHelpGetName => 'Zobrazuje zadané meno uzla.';
+  String get repeater_cliHelpGetName => 'Zobrazí nastavený názov uzla.';
 
   @override
   String get repeater_cliHelpGetRole =>
-      'Ukazuje funkciu firmvéru (opakovač, server pre miestnosť atď.).';
+      'Zobrazí rolu firmvéru (opakovač, server miestnosti atď.).';
 
   @override
   String get repeater_cliHelpGetPublicKey =>
@@ -3850,11 +3833,11 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetPrvKey =>
-      '(Používa sa len v sériových aplikáciách) Zobrazuje súkromný kľúč zariadenia. Zotriďte ho ako tajný údaj.';
+      '(Iba sériovo) Zobrazí súkromný kľúč zariadenia. Považujte ho za tajný.';
 
   @override
   String get repeater_cliHelpGetRepeat =>
-      'Ukazuje, či je funkcia preposielania paketov (funkcia opakéra) zapnutá alebo vypnutá.';
+      'Zobrazí, či je preposielanie paketov (rola opakovača) zapnuté alebo vypnuté.';
 
   @override
   String get repeater_cliHelpGetTx =>
@@ -3866,23 +3849,23 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetRadio =>
-      'Zobrazuje všetky parametre rádiového signálu: frekvencia, šírka pásma, faktor rozširovania, rýchlosť kódovania.';
+      'Zobrazí všetky rádiové parametre: frekvencia, šírka pásma, spreading factor, coding rate.';
 
   @override
   String get repeater_cliHelpGetRadioRxGain =>
-      '(iba pre SX126x) Zobrazuje stav zosilnenia prijímača RX.';
+      '(Iba SX126x) Zobrazí stav zosilneného príjmu RX.';
 
   @override
   String get repeater_cliHelpGetAf =>
-      'Zobrazuje aktuálny koeficient času vysielania.';
+      'Zobrazí aktuálny faktor vysielacieho času.';
 
   @override
   String get repeater_cliHelpGetDutyCycle =>
-      'Zobrazuje aktuálnu povolenú frekvenciu ako percentáž.';
+      'Zobrazí aktuálne povolený pracovný cyklus v percentách.';
 
   @override
   String get repeater_cliHelpGetIntThresh =>
-      'Zobrazuje hranicu pre prechodové signály v dB.';
+      'Zobrazí prah rušenia kanála v dB.';
 
   @override
   String get repeater_cliHelpGetAgcResetInterval =>
@@ -3890,15 +3873,15 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetMultiAcks =>
-      'Ukazuje, či je režim dvojité potvrdenie zapnutý (1) alebo vypnutý (0).';
+      'Zobrazí, či je režim dvojitých ACK zapnutý (1) alebo vypnutý (0).';
 
   @override
   String get repeater_cliHelpGetAllowReadOnly =>
-      'Ukazuje, či je povolená len čítacia funkcia pre hostí.';
+      'Zobrazí, či je povolený prístup hostí iba na čítanie.';
 
   @override
   String get repeater_cliHelpGetAdvertInterval =>
-      'Zobrazuje interval miestneho inzerátu v minútach.';
+      'Zobrazí interval lokálnych inzerátov v minútach.';
 
   @override
   String get repeater_cliHelpGetFloodAdvertInterval =>
@@ -3920,11 +3903,11 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetTxDelay =>
-      'Ukazuje faktor zpoždenia pre režim flood.';
+      'Zobrazí faktor txdelay pre režim flood.';
 
   @override
   String get repeater_cliHelpGetDirectTxDelay =>
-      'Zobrazuje faktor zloženia pri priamej modulácii.';
+      'Zobrazí faktor txdelay pre priamy režim.';
 
   @override
   String get repeater_cliHelpGetFloodMax =>
@@ -3932,11 +3915,11 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetOwnerInfo =>
-      'Zobrazuje reťazec s kontaktnými údajmi vlastníka.';
+      'Zobrazí reťazec s kontaktnými údajmi vlastníka.';
 
   @override
   String get repeater_cliHelpGetPathHashMode =>
-      'Zobrazuje režim hashovania cesty (0/1/2).';
+      'Zobrazí veľkosť ID uzla použitého v inzerátoch (0 = 1 bajt, 1 = 2 bajty, 2 = 3 bajty).';
 
   @override
   String get repeater_cliHelpGetLoopDetect =>
@@ -3944,7 +3927,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetAcl =>
-      '(Používa sa len v sériovej konfigurácii) Zobrazuje prístupové pravidlá na opakovači.';
+      '(Iba sériovo) Zobrazí záznamy riadenia prístupu na opakovači.';
 
   @override
   String get repeater_cliHelpGetBridgeEnabled =>
@@ -3952,27 +3935,27 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetBridgeDelay =>
-      'Zobrazuje čas strávený prechodom mosta v milisekundách.';
+      'Zobrazí oneskorenie mosta v ms.';
 
   @override
   String get repeater_cliHelpGetBridgeSource =>
-      'Ukazuje, či most prijíma alebo vysiela RX alebo TX balíky.';
+      'Zobrazí, či most zaznamenáva pakety RX alebo TX.';
 
   @override
   String get repeater_cliHelpGetBridgeBaud =>
-      '(iba pre rozhranie RS232) Zobrazuje rýchlosť prenosu dát na rozhraní RS232.';
+      '(Iba most RS232) Zobrazí prenosovú rýchlosť (baud) mosta.';
 
   @override
   String get repeater_cliHelpGetBridgeChannel =>
-      '(Používa sa len pre ESPNow) Zobrazuje WiFi kanál mosta.';
+      '(Iba most ESPNow) Zobrazí kanál WiFi mosta.';
 
   @override
   String get repeater_cliHelpGetBridgeSecret =>
-      '(Používa sa len pre ESPNow most) Zobrazuje spoločný tajný kľúč mosta.';
+      '(Iba most ESPNow) Zobrazí zdieľané tajomstvo mosta.';
 
   @override
   String get repeater_cliHelpGetBootloaderVer =>
-      '(iba pre NRF52) Zobrazuje verziu bootloaderu.';
+      '(Iba NRF52) Zobrazí verziu bootloaderu.';
 
   @override
   String get repeater_cliHelpGetAdcMultiplier =>
@@ -3980,7 +3963,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetPwrMgtSupport =>
-      'Označuje, či riadiace orgány majú podporu pre správu energie.';
+      'Oznámi, či doska podporuje správu napájania.';
 
   @override
   String get repeater_cliHelpGetPwrMgtSource =>
@@ -3988,7 +3971,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetPwrMgtBootReason =>
-      'Zobrazuje najaktuálnejšie dôvody pre reštart a vypnutie.';
+      'Zobrazí najnovšie dôvody reštartu a vypnutia.';
 
   @override
   String get repeater_cliHelpGetPwrMgtBootMv =>
@@ -3996,43 +3979,42 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSensorGet =>
-      'Číta hodnotu nastavenia pre špecifický senzor pomocou klávesového vstupu.';
+      'Prečíta vlastné nastavenie senzora podľa kľúča.';
 
   @override
-  String get repeater_cliHelpSensorSet =>
-      'Vytvára vlastné nastavenie pre senzor.';
+  String get repeater_cliHelpSensorSet => 'Zapíše vlastné nastavenie senzora.';
 
   @override
   String get repeater_cliHelpSensorList =>
-      'Zobrazuje všetky nastavenia pre špecifické senzory, zoradené podľa voliteľného indexu začiatku.';
+      'Zobrazí všetky vlastné nastavenia senzorov, stránkované od voliteľného počiatočného indexu.';
 
   @override
   String get repeater_cliHelpRegionDefault =>
-      'Zobrazuje aktuálnu rozsiahku, ktorá je nastavená ako výchozí.';
+      'Zobrazí aktuálny predvolený rozsah regiónu.';
 
   @override
   String get repeater_cliHelpRegionDefaultSet =>
-      'Nastavuje výchoce rozsiahku regiónu. Použite \"<null>\", aby ju vymazal.';
+      'Nastaví predvolený rozsah regiónu. Na vymazanie použite \"<null>\".';
 
   @override
   String get repeater_cliHelpRegionListAllowed =>
-      'Zoznam oblastí, ktoré umožňujú premávku flood.';
+      'Zobrazí regióny, ktoré povoľujú flood prevádzku.';
 
   @override
   String get repeater_cliHelpRegionListDenied =>
-      'Zoznam oblastí, ktoré zakazujú premávku flood.';
+      'Zobrazí regióny, ktoré zakazujú flood prevádzku.';
 
   @override
   String get repeater_cliHelpStatsPackets =>
-      '(Len pre sériové záznamy) Zobrazuje štatistiky na úrovni paketov.';
+      '(Iba sériovo) Zobrazí štatistiky na úrovni paketov.';
 
   @override
   String get repeater_cliHelpStatsRadio =>
-      '(Len pre sériu) Zobrazuje údaje o rádiových staniciach.';
+      '(Iba sériovo) Zobrazí štatistiky rádia.';
 
   @override
   String get repeater_cliHelpStatsCore =>
-      '(Len pre sériové modely) Zobrazuje základné štatistiky firmvéru.';
+      '(Iba sériovo) Zobrazí základné štatistiky firmvéru.';
 
   @override
   String get telemetry_receivedData => 'Obdolené Telemetrické dáta';
@@ -5213,11 +5195,20 @@ class AppLocalizationsSk extends AppLocalizations {
   String get chat_sendCooldown => 'Prosím, počkajte chvíľu, než zašlete znova.';
 
   @override
-  String get appSettings_jumpToOldestUnread => 'Presk oceň';
+  String get appSettings_jumpToOldestUnread =>
+      'Prejsť na najstaršiu neprečítanú';
 
   @override
   String get appSettings_jumpToOldestUnreadSubtitle =>
-      'Pri otvorení chatu s neprečítanými správami, prejdite do prvého neprečítaného, namiesto poslednej.';
+      'Pri otvorení chatu s neprečítanými správami prejsť na prvú neprečítanú namiesto poslednej.';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettings =>
+      'Automaticky načítať nastavenia opakovača';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      'Pri otvorení nastavení opakovača vyžiadať každé nastavenie. Každé je samostatná požiadavka cez LoRa, takže je to pomalé a spotrebúva vysielací čas. Keď je vypnuté, klepnite na Obnoviť všetko alebo obnovte jednotlivé sekcie.';
 
   @override
   String get appSettings_languageHu => 'Maďarský';
@@ -5911,6 +5902,61 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert =>
+      'Maximálny počet skokov flood pre advert';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      'Maximálny počet skokov, ktoré môže prejsť rozosielaný advert (0-64, predvolene 8)';
+
+  @override
+  String get repeater_floodMaxUnscoped =>
+      'Maximálny počet skokov flood bez regiónu';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      'Maximálny počet skokov pre flood bez regiónu (0-64, predvolene 64). Nízka hodnota, napríklad 3, udrží premávku bez regiónu lokálnu.';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset => 'Rovnaké ako flood max';
+
+  @override
+  String get repeater_rxDelay => 'Oneskorenie príjmu';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      'Pozdrží flood pakety zachytené so slabým signálom pred preposlaním, aby cesty so silným signálom išli prvé a odosielalo sa menej duplikátov (0-20, 0 to vypne).';
+
+  @override
+  String get repeater_cad => 'Detekcia aktivity kanála';
+
+  @override
+  String get repeater_cadHelper =>
+      'Pred vysielaním počúva, či na kanáli nie je aktivita, a počká, kým je kanál obsadený. Funguje spolu s hranicou rušenia.';
+
+  @override
+  String get repeater_adcMultiplier => 'Kalibrácia napätia batérie';
+
+  @override
+  String get repeater_adcMultiplierHelper =>
+      'Násobiteľ pre meranie napätia batérie (0-10). 0 použije predvolenú hodnotu dosky.';
+
+  @override
+  String get repeater_boardSupportNote =>
+      'Nie každá doska to podporuje. Nepodporované dosky zmenu odmietnu.';
+
+  @override
+  String get repeater_extraSf => 'Ďalšie spreading faktory';
+
+  @override
+  String get repeater_extraSfHelper =>
+      'Až 3 ďalšie spreading faktory, na ktorých sa súčasne počúva, oddelené čiarkami (napríklad 9,10). Ak chcete vypnúť, nechajte prázdne.';
+
+  @override
+  String get repeater_lr2021Only =>
+      'Len pre opakovače s rádiom LR2021. Ostatné opakovače toto nastavenie nemajú a odmietnu ho.';
+
+  @override
   String get losMapDetailTooltip => 'Detail mapy';
 
   @override
@@ -6362,11 +6408,6 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting: hodnota $value nie je platná';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'Výkon TX $value je mimo rozsah ($min až $max dBm)';
   }
 
   @override

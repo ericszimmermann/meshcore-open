@@ -146,6 +146,7 @@ class AppSettings {
   final String tcpServerAddress;
   final int tcpServerPort;
   final bool jumpToOldestUnread;
+  final bool autoFetchRepeaterSettings;
   final bool imageMessagesEnabled;
 
   /// Master switch for fetching images behind links in messages.
@@ -275,6 +276,7 @@ class AppSettings {
     this.tcpServerAddress = '',
     this.tcpServerPort = 0,
     this.jumpToOldestUnread = false,
+    this.autoFetchRepeaterSettings = false,
     this.networkMapUploadEnabled = false,
     this.networkMapPromptShown = false,
     this.loadLinkImages = true,
@@ -372,6 +374,7 @@ class AppSettings {
       'tcp_server_address': tcpServerAddress,
       'tcp_server_port': tcpServerPort,
       'jump_to_oldest_unread': jumpToOldestUnread,
+      'auto_fetch_repeater_settings': autoFetchRepeaterSettings,
       'network_map_upload_enabled': networkMapUploadEnabled,
       'network_map_prompt_shown': networkMapPromptShown,
       'load_link_images': loadLinkImages,
@@ -512,6 +515,8 @@ class AppSettings {
       tcpServerAddress: json['tcp_server_address'] as String? ?? '',
       tcpServerPort: json['tcp_server_port'] as int? ?? 0,
       jumpToOldestUnread: json['jump_to_oldest_unread'] as bool? ?? false,
+      autoFetchRepeaterSettings:
+          json['auto_fetch_repeater_settings'] as bool? ?? false,
       networkMapUploadEnabled:
           json['network_map_upload_enabled'] as bool? ?? false,
       networkMapPromptShown: json['network_map_prompt_shown'] as bool? ?? false,
@@ -643,6 +648,7 @@ class AppSettings {
     String? tcpServerAddress,
     int? tcpServerPort,
     bool? jumpToOldestUnread,
+    bool? autoFetchRepeaterSettings,
     bool? networkMapUploadEnabled,
     bool? networkMapPromptShown,
     bool? loadLinkImages,
@@ -737,6 +743,8 @@ class AppSettings {
       tcpServerAddress: tcpServerAddress ?? this.tcpServerAddress,
       tcpServerPort: tcpServerPort ?? this.tcpServerPort,
       jumpToOldestUnread: jumpToOldestUnread ?? this.jumpToOldestUnread,
+      autoFetchRepeaterSettings:
+          autoFetchRepeaterSettings ?? this.autoFetchRepeaterSettings,
       networkMapUploadEnabled:
           networkMapUploadEnabled ?? this.networkMapUploadEnabled,
       networkMapPromptShown:

@@ -410,6 +410,20 @@ class AppSettingsScreen extends StatelessWidget {
             horizontal: 16,
             vertical: 4,
           ),
+          secondary: const Icon(Icons.settings_remote_outlined, size: 24),
+          title: Text(context.l10n.appSettings_autoFetchRepeaterSettings),
+          subtitle: Text(
+            context.l10n.appSettings_autoFetchRepeaterSettingsSubtitle,
+          ),
+          value: settingsService.settings.autoFetchRepeaterSettings,
+          onChanged: settingsService.setAutoFetchRepeaterSettings,
+        ),
+        const Divider(height: 1, indent: 16),
+        SwitchListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 4,
+          ),
           secondary: const Icon(Icons.location_searching, size: 24),
           title: Text(context.l10n.appSettings_enableMessageTracing),
           subtitle: Text(context.l10n.appSettings_enableMessageTracingSubtitle),

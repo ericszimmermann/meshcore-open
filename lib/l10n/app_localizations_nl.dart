@@ -3141,17 +3141,11 @@ class AppLocalizationsNl extends AppLocalizations {
       'Hogere gevoeligheid, meer stroomverbruik (alleen SX1262/SX1268)';
 
   @override
-  String get repeater_refreshRxGain => 'Verhoogde RX-versterking vernieuwen';
-
-  @override
   String get repeater_multiAcks => 'Multi-ACKs';
 
   @override
   String get repeater_multiAcksSubtitle =>
       'Bevestig berichten via meerdere paden voor betere aflevering';
-
-  @override
-  String get repeater_refreshMultiAcks => 'Multi-ACKs vernieuwen';
 
   @override
   String get repeater_networkHealth => 'Netwerkgezondheid';
@@ -3191,9 +3185,6 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get repeater_ownerInfoHelper => 'Openbare metadata voor deze repeater';
-
-  @override
-  String get repeater_refreshOwnerInfo => 'Operatorinformatie vernieuwen';
 
   @override
   String get repeater_floodMax => 'Max. flood-hops';
@@ -3329,20 +3320,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings => 'Basisinstellingen vernieuwen';
-
-  @override
   String get repeater_refreshRadioSettings => 'Radio-instellingen vernieuwen';
-
-  @override
-  String get repeater_refreshTxPower => 'TX-vermogen vernieuwen';
-
-  @override
-  String get repeater_refreshPacketForwarding =>
-      'Pakketten doorsturen vernieuwen';
-
-  @override
-  String get repeater_refreshGuestAccess => 'Gasttoegang vernieuwen';
 
   @override
   String get repeater_refreshPrivacyMode => 'Privacymodus vernieuwen';
@@ -5208,6 +5186,14 @@ class AppLocalizationsNl extends AppLocalizations {
       'Bij het openen van een chat met ongelezen berichten, scroll dan naar het eerste ongelezen bericht, in plaats van naar het meest recente.';
 
   @override
+  String get appSettings_autoFetchRepeaterSettings =>
+      'Repeaterinstellingen automatisch ophalen';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      'Vraag alle instellingen op wanneer je de instellingen van een repeater opent. Elke instelling is een apart verzoek via LoRa, dus dit is traag en gebruikt zendtijd. Als dit uit staat, tik je op Alles vernieuwen of vernieuw je afzonderlijke secties.';
+
+  @override
   String get appSettings_languageHu => 'Hongaars';
 
   @override
@@ -5898,6 +5884,59 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert => 'Max. flood-hops voor adverts';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      'Maximaal aantal hops dat een geflooded advert mag afleggen (0-64, standaard 8)';
+
+  @override
+  String get repeater_floodMaxUnscoped => 'Max. flood-hops zonder scope';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      'Maximaal aantal hops voor floods zonder regioscope (0-64, standaard 64). Een lage waarde zoals 3 houdt verkeer zonder scope lokaal.';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset => 'Gelijk aan flood-max';
+
+  @override
+  String get repeater_rxDelay => 'Ontvangstvertraging';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      'Houdt flood-pakketten die met een zwak signaal zijn ontvangen even vast voordat ze worden doorgestuurd, zodat paden met een sterk signaal voorgaan en er minder duplicaten worden verzonden (0-20, 0 schakelt het uit).';
+
+  @override
+  String get repeater_cad => 'Kanaalactiviteitsdetectie';
+
+  @override
+  String get repeater_cadHelper =>
+      'Luister naar activiteit voordat er wordt gezonden en wacht zolang het kanaal bezet is. Werkt samen met de grenswaarde voor interferentie.';
+
+  @override
+  String get repeater_adcMultiplier => 'Kalibratie batterijspanning';
+
+  @override
+  String get repeater_adcMultiplierHelper =>
+      'Vermenigvuldigingsfactor voor de uitgelezen batterijspanning (0-10). 0 gebruikt de standaardwaarde van het bord.';
+
+  @override
+  String get repeater_boardSupportNote =>
+      'Niet elk bord ondersteunt dit. Niet-ondersteunde borden weigeren de wijziging.';
+
+  @override
+  String get repeater_extraSf => 'Extra spreadingfactors';
+
+  @override
+  String get repeater_extraSfHelper =>
+      'Tot 3 extra spreadingfactors om tegelijk op te luisteren, gescheiden door komma\'s (bijvoorbeeld 9,10). Laat leeg om uit te schakelen.';
+
+  @override
+  String get repeater_lr2021Only =>
+      'Alleen voor repeaters met een LR2021-radio. Andere repeaters hebben deze instelling niet en weigeren haar.';
+
+  @override
   String get losMapDetailTooltip => 'Kaartdetail';
 
   @override
@@ -6350,11 +6389,6 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting: $value is niet geldig';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'TX-vermogen $value valt buiten het bereik ($min tot $max dBm)';
   }
 
   @override

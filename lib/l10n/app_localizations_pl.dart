@@ -3179,18 +3179,11 @@ class AppLocalizationsPl extends AppLocalizations {
       'Większa czułość, większe pobieranie prądu (dotyczy tylko SX1262/SX1268)';
 
   @override
-  String get repeater_refreshRxGain => 'Zaktualizuj zwiększone zyski RX';
-
-  @override
   String get repeater_multiAcks => 'Wielokrotne potwierdzenia odbioru';
 
   @override
   String get repeater_multiAcksSubtitle =>
       'Potwierdź odbiór wiadomości za pomocą różnych ścieżek, aby zapewnić lepszą dostawę.';
-
-  @override
-  String get repeater_refreshMultiAcks =>
-      'Odświeżanie wielokrotnych potwierdzeń';
 
   @override
   String get repeater_networkHealth => 'Stan sieci';
@@ -3232,10 +3225,6 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get repeater_ownerInfoHelper =>
       'Publiczne metadane dla tego urządzenia powielającego';
-
-  @override
-  String get repeater_refreshOwnerInfo =>
-      'Aktualizacja danych dotyczących operatora';
 
   @override
   String get repeater_floodMax => 'Maksymalna liczba skoków flood';
@@ -3371,19 +3360,7 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings => 'Odśwież Podstawowe Ustawienia';
-
-  @override
   String get repeater_refreshRadioSettings => 'Odśwież ustawienia radia';
-
-  @override
-  String get repeater_refreshTxPower => 'Odśwież moc TX';
-
-  @override
-  String get repeater_refreshPacketForwarding => 'Odśwież trasowanie pakietów';
-
-  @override
-  String get repeater_refreshGuestAccess => 'Odśwież dostęp gościa';
 
   @override
   String get repeater_refreshPrivacyMode => 'Odśwież Tryb Prywatności';
@@ -5269,6 +5246,14 @@ class AppLocalizationsPl extends AppLocalizations {
       'Przy otwieraniu czatu z nieodczytanymi wiadomościami, przewijaj, aby przejść do pierwszej nieodczytanej wiadomości, zamiast do najnowszej.';
 
   @override
+  String get appSettings_autoFetchRepeaterSettings =>
+      'Automatycznie pobieraj ustawienia przekaźnika';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      'Żądaj wszystkich ustawień po otwarciu ustawień przekaźnika. Każde z nich to osobne żądanie przez LoRa, więc jest to wolne i zużywa czas antenowy. Gdy wyłączone, dotknij Odśwież wszystko lub odśwież poszczególne sekcje.';
+
+  @override
   String get appSettings_languageHu => 'Węgierski';
 
   @override
@@ -5963,6 +5948,61 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert =>
+      'Maks. liczba skoków flood dla advertów';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      'Maksymalna liczba skoków, które może pokonać rozgłaszany (flood) advert (0-64, domyślnie 8)';
+
+  @override
+  String get repeater_floodMaxUnscoped =>
+      'Maks. liczba skoków flood bez zakresu';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      'Maksymalna liczba skoków dla floodów bez zakresu regionu (0-64, domyślnie 64). Niska wartość, np. 3, utrzymuje ruch bez zakresu lokalnie.';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset => 'Jak maks. flood';
+
+  @override
+  String get repeater_rxDelay => 'Opóźnienie odbioru';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      'Wstrzymuje pakiety flood odebrane ze słabym sygnałem przed przekazaniem dalej, dzięki czemu ścieżki z silnym sygnałem są pierwsze i wysyłanych jest mniej duplikatów (0-20, 0 wyłącza).';
+
+  @override
+  String get repeater_cad => 'Wykrywanie aktywności kanału';
+
+  @override
+  String get repeater_cadHelper =>
+      'Nasłuchuje aktywności przed nadawaniem i czeka, dopóki kanał jest zajęty. Działa razem z progiem zakłóceń.';
+
+  @override
+  String get repeater_adcMultiplier => 'Kalibracja napięcia baterii';
+
+  @override
+  String get repeater_adcMultiplierHelper =>
+      'Mnożnik odczytu napięcia baterii (0-10). 0 używa wartości domyślnej płytki.';
+
+  @override
+  String get repeater_boardSupportNote =>
+      'Nie każda płytka to obsługuje. Nieobsługiwane płytki odrzucają zmianę.';
+
+  @override
+  String get repeater_extraSf => 'Dodatkowe współczynniki rozpraszania';
+
+  @override
+  String get repeater_extraSfHelper =>
+      'Do 3 dodatkowych współczynników rozpraszania, na których nasłuchiwać jednocześnie, oddzielonych przecinkami (na przykład 9,10). Pozostaw puste, aby wyłączyć.';
+
+  @override
+  String get repeater_lr2021Only =>
+      'Tylko dla przekaźników z radiem LR2021. Inne przekaźniki nie mają tego ustawienia i je odrzucają.';
+
+  @override
   String get losMapDetailTooltip => 'Szczegóły mapy';
 
   @override
@@ -6414,11 +6454,6 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting: $value jest nieprawidłowe';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'Moc TX $value jest poza zakresem (od $min do $max dBm)';
   }
 
   @override

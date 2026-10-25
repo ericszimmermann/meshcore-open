@@ -839,16 +839,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_languageUk => '우크라이나어';
 
   @override
-  String get repeater_pathHashModeOption0 => '0 - 1 바이트';
+  String get repeater_pathHashModeOption0 => '1 바이트';
 
   @override
-  String get repeater_pathHashModeOption1 => '1~2 바이트';
+  String get repeater_pathHashModeOption1 => '2 바이트';
 
   @override
-  String get repeater_pathHashModeOption2 => '2 - 3 바이트';
+  String get repeater_pathHashModeOption2 => '3 바이트';
 
   @override
-  String get repeater_pathHashModeOption3 => '3 - 4 바이트';
+  String get repeater_pathHashModeOption3 => '4 바이트';
 
   @override
   String get settings_pathHashModeHelper =>
@@ -897,11 +897,11 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get appSettings_enableMessageTracing => '메시지 추적 기능 활성화';
+  String get appSettings_enableMessageTracing => '메시지에 전체 리피터 경로 표시';
 
   @override
   String get appSettings_enableMessageTracingSubtitle =>
-      '메시지에 대한 상세한 경로 및 시간 정보를 표시';
+      '반복 횟수와 전달 시간도 표시합니다. 메시지를 길게 누르고 경로를 선택하면 전체 정보를 볼 수 있습니다.';
 
   @override
   String get appSettings_regionOnHopsLine => '홉 수 옆에 지역 표시';
@@ -1191,7 +1191,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_unitsMetric => '미터법 (m / km)';
 
   @override
-  String get appSettings_unitsImperial => '영국식 (ft / mi)';
+  String get appSettings_unitsImperial => '야드파운드법 (ft / mi)';
 
   @override
   String get appSettings_noAreaSelected => '선택된 영역 없음';
@@ -1239,7 +1239,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String contacts_searchFavorites(int number, String str) {
-    return '$number $str 검색 결과 보기...';
+    return '$number $str 즐겨찾기 검색...';
   }
 
   @override
@@ -1249,7 +1249,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String contacts_searchRepeaters(int number, String str) {
-    return '$number $str 검색 결과 반복기 검색';
+    return '$number $str 리피터 검색...';
   }
 
   @override
@@ -1315,10 +1315,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get contacts_roomLogin => '방 서버 로그인';
 
   @override
-  String get contacts_openChat => '자유로운 대화';
+  String get contacts_openChat => '채팅 열기';
 
   @override
-  String get contacts_editGroup => '편집 그룹';
+  String get contacts_editGroup => '그룹 편집';
 
   @override
   String get contacts_deleteGroup => '그룹 삭제';
@@ -1347,7 +1347,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get contacts_groupNameRequired => '그룹 이름이 필요합니다';
 
   @override
-  String get contacts_groupNameReserved => '이 그룹 이름은 이미 사용 중입니다.';
+  String get contacts_groupNameReserved => '이 그룹 이름은 예약되어 있습니다.';
 
   @override
   String contacts_groupAlreadyExists(String name) {
@@ -2714,7 +2714,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get room_management => '방 서버 관리';
 
   @override
-  String get repeater_guest => '반복 장비 정보';
+  String get repeater_guest => '리피터 정보';
 
   @override
   String get room_guest => '서버 정보';
@@ -2723,7 +2723,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_managementTools => '관리 도구';
 
   @override
-  String get repeater_guestTools => '손님용 도구';
+  String get repeater_guestTools => '게스트 도구';
 
   @override
   String get repeater_roleAdmin => '관리자';
@@ -2735,13 +2735,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_status => '상태';
 
   @override
-  String get repeater_statusSubtitle => '반복 장비의 상태, 통계, 및 이웃 장비 목록 보기';
+  String get repeater_statusSubtitle => '리피터의 상태, 통계, 이웃 목록 보기';
 
   @override
   String get repeater_telemetry => '텔레메트리';
 
   @override
-  String get repeater_telemetrySubtitle => '센서 및 시스템 상태에 대한 통신 데이터를 확인';
+  String get repeater_telemetrySubtitle => '센서 및 시스템 통계의 텔레메트리 보기';
 
   @override
   String get repeater_cli => '명령줄 인터페이스 (CLI)';
@@ -2769,13 +2769,13 @@ class AppLocalizationsKo extends AppLocalizations {
       '성공적인 로그인 후, 자동으로 \"시간 동기화\"를 전송합니다.';
 
   @override
-  String get repeater_statusTitle => '반복 장치 상태';
+  String get repeater_statusTitle => '리피터 상태';
 
   @override
   String get repeater_routingMode => '라우팅 방식';
 
   @override
-  String get repeater_refresh => '새롭게';
+  String get repeater_refresh => '새로고침';
 
   @override
   String get repeater_statusRequestTimeout => '상태 확인 요청이 시간 초과되었습니다.';
@@ -2792,7 +2792,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_battery => '배터리';
 
   @override
-  String get repeater_clockAtLogin => '로그인 시 시간 표시';
+  String get repeater_clockAtLogin => '시계 (로그인 시)';
 
   @override
   String get repeater_uptime => '가동 시간';
@@ -2873,10 +2873,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_basicSettings => '기본 설정';
 
   @override
-  String get repeater_repeaterName => '반복 장비 이름';
+  String get repeater_repeaterName => '리피터 이름';
 
   @override
-  String get repeater_repeaterNameHelper => '이 반복기용 표시 이름';
+  String get repeater_repeaterNameHelper => '이 리피터의 표시 이름';
 
   @override
   String get repeater_adminPassword => '관리자 비밀번호';
@@ -2909,7 +2909,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_bandwidth => '대역폭';
 
   @override
-  String get repeater_spreadingFactor => '분산 계수';
+  String get repeater_spreadingFactor => '확산 계수';
 
   @override
   String get repeater_codingRate => '코딩 속도';
@@ -2927,7 +2927,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_longitude => '경도';
 
   @override
-  String get repeater_longitudeHelper => '십진법 위도 (예: -122.4194)';
+  String get repeater_longitudeHelper => '십진법 경도 (예: -122.4194)';
 
   @override
   String get repeater_features => '특징';
@@ -2976,13 +2976,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_dangerZone => '위험 구역';
 
   @override
-  String get repeater_rebootRepeater => '리부트 반복';
+  String get repeater_rebootRepeater => '리피터 재부팅';
 
   @override
   String get repeater_rebootRepeaterSubtitle => '리피터 장치를 재시작하세요.';
 
   @override
-  String get repeater_rebootRepeaterConfirm => '반복기를 재부팅하시려는 것이 맞으신가요?';
+  String get repeater_rebootRepeaterConfirm => '이 리피터를 재부팅하시겠습니까?';
 
   @override
   String get repeater_regenerateIdentityKey => '아이디 키 재 생성';
@@ -3025,14 +3025,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_settingsSaved => '설정이 성공적으로 저장되었습니다.';
 
   @override
-  String get repeater_rxGain => '향상된 RX 성능';
+  String get repeater_rxGain => 'RX 게인 부스트';
 
   @override
   String get repeater_rxGainHelper =>
       '더 높은 감도, 더 많은 전류 소모 (SX1262/SX1268에만 해당)';
-
-  @override
-  String get repeater_refreshRxGain => 'RX 성능 향상 효과 재확인';
 
   @override
   String get repeater_multiAcks => '다중 ACK';
@@ -3041,19 +3038,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_multiAcksSubtitle => '다양한 경로를 통해 메시지를 확인하여 전달 효율성을 높입니다.';
 
   @override
-  String get repeater_refreshMultiAcks => '다중 ACK 재확인';
-
-  @override
   String get repeater_networkHealth => '네트워크 상태';
 
   @override
   String get repeater_loopDetect => '루프 감지';
 
   @override
-  String get repeater_loopDetectHelper => '라우팅 루프처럼 보이는 과도한 데이터 패킷을 전송';
+  String get repeater_loopDetectHelper => '라우팅 루프처럼 보이는 플러딩 패킷을 버립니다';
 
   @override
-  String get repeater_loopDetectOff => '거기';
+  String get repeater_loopDetectOff => '끔';
 
   @override
   String get repeater_loopDetectMinimal => '최소';
@@ -3082,26 +3076,23 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_ownerInfoHelper => '이 리피터에 대한 공개 메타데이터';
 
   @override
-  String get repeater_refreshOwnerInfo => '운영자 정보 업데이트';
+  String get repeater_floodMax => '플러딩 최대 홉 수';
 
   @override
-  String get repeater_floodMax => '최대 홉 수';
-
-  @override
-  String get repeater_floodMaxHelper => '최대 패킷이 이동할 수 있는 홉 수 (0-64)';
+  String get repeater_floodMaxHelper => '플러딩 패킷이 이동할 수 있는 최대 홉 수 (0-64)';
 
   @override
   String get repeater_advancedSettings => '고급';
 
   @override
-  String get repeater_advancedSettingsSubtitle => '숙련된 운영자를 위한 조절 노브';
+  String get repeater_advancedSettingsSubtitle => '숙련된 운영자를 위한 세부 조정';
 
   @override
-  String get repeater_pathHashMode => '패스 해시 모드';
+  String get repeater_pathHashMode => '경로 내 노드 ID 크기';
 
   @override
   String get repeater_pathHashModeHelper =>
-      '이 리피터의 ID를 플러딩 경로/루프 감지 태그에 인코딩하는 데 사용되는 바이트 수입니다. 0=1바이트(256개 ID, 최대 64홉), 1=2바이트(65,000개 ID, 최대 32홉), 2=3바이트(1,600만 개 ID, 최대 21홉). v1.14 이전 펌웨어는 항상 1바이트 경로를 사용했으며, v1.14 이상은 2바이트 또는 3바이트 경로로 설정할 수 있습니다.';
+      '이 리피터가 보내는 어드버트의 경로에 들어가는 이 리피터의 ID 크기: 1바이트(ID 256개, 최대 64홉), 2바이트(ID 65K개, 최대 32홉), 3바이트(ID 16M개, 최대 21홉). 전달에는 영향을 주지 않습니다. v1.14 이상 리피터는 모든 크기를 전달하지만, 이전 펌웨어는 2바이트 또는 3바이트 ID 패킷을 버립니다.';
 
   @override
   String get repeater_keySettings => '신원 키 변경';
@@ -3141,31 +3132,31 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_txDelayHelper =>
-      '플러딩 시 교통량에 맞춰 재전송 간격을 설정합니다. 이는 패킷의 전송 시간을 곱한 값 (0-2, 기본값 0.5)으로 설정합니다. 값이 클수록 충돌이 줄어들지만 전송 속도가 느려집니다.';
+      '플러딩 트래픽의 재전송 간격으로, 패킷 에어타임의 배수입니다 (0-2, 기본값 0.5). 값이 클수록 충돌이 줄어들지만 전달이 느려집니다.';
 
   @override
-  String get repeater_directTxDelay => '직접적인 TX 지연';
+  String get repeater_directTxDelay => '직접 TX 지연';
 
   @override
   String get repeater_directTxDelayHelper =>
-      '직접 (대량 전송이 아닌) 트래픽에 대한 재전송 간격을, 패킷의 전송 시간을 곱하여 설정 (0-2, 기본값 0.3).';
+      '직접(플러딩이 아닌) 트래픽의 재전송 간격으로, 패킷 에어타임의 배수입니다 (0-2, 기본값 0.3).';
 
   @override
   String get repeater_intThresh => '간섭 허용치';
 
   @override
   String get repeater_intThreshHelper =>
-      '신호의 잡음 수준을 기준으로 작동하며, 이 수준 이상의 간섭은 차단합니다. 0은 비활성화 상태를 의미하며, 잡음이 심한 대역에서 RX 오류가 발생할 경우에만 활성화해야 합니다.';
+      '라디오의 잡음 수준 보정에 전달되는 임계값으로, 이 수준을 넘는 간섭을 차단합니다. 0이면 비활성화됩니다. 잡음이 심한 대역에서 RX 오류가 보일 때만 높이세요.';
 
   @override
   String get repeater_agcResetInterval => 'AGC 재설정 간격';
 
   @override
   String get repeater_agcResetIntervalHelper =>
-      '자동 게인 제어를 재설정하여 신호가 불안정해졌을 때 원래 상태로 복구하는 빈도를 설정하는 방법은 다음과 같습니다. 4의 배수 단위로 설정하면 주기적인 재설정이 수행됩니다. 0을 설정하면 주기적인 재설정이 수행되지 않습니다.';
+      '라디오의 자동 게인 제어(AGC)가 멈춘 상태에서 복구하도록 재설정하는 빈도입니다. 초 단위이며 4의 배수로 내림됩니다. 0이면 주기적 재설정을 끕니다.';
 
   @override
-  String get repeater_actionsTitle => '행동';
+  String get repeater_actionsTitle => '작업';
 
   @override
   String get repeater_sendAdvert => '플러딩 관련 어드버트 전송';
@@ -3210,22 +3201,10 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings => '기본 설정 초기화';
+  String get repeater_refreshRadioSettings => '라디오 설정 새로고침';
 
   @override
-  String get repeater_refreshRadioSettings => '라디오 설정 초기화';
-
-  @override
-  String get repeater_refreshTxPower => 'TX 전원 재설정';
-
-  @override
-  String get repeater_refreshPacketForwarding => '패킷 전송 재시작';
-
-  @override
-  String get repeater_refreshGuestAccess => '게스트 접근 권한 갱신';
-
-  @override
-  String get repeater_refreshPrivacyMode => '개인 정보 보호 모드 재설정';
+  String get repeater_refreshPrivacyMode => '개인 정보 보호 모드 새로고침';
 
   @override
   String get repeater_refreshAll => '모두 새로고침';
@@ -3257,7 +3236,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_commandHelp => '명령 도움';
 
   @override
-  String get repeater_clearHistory => '명확한 역사';
+  String get repeater_clearHistory => '기록 지우기';
 
   @override
   String get repeater_noCommandsSent => '아직 명령이 전송되지 않았습니다.';
@@ -3286,13 +3265,13 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get repeater_cliQuickGetName => '이름을 알려주세요';
+  String get repeater_cliQuickGetName => '이름 가져오기';
 
   @override
-  String get repeater_cliQuickGetRadio => '라디오 듣기';
+  String get repeater_cliQuickGetRadio => '라디오 가져오기';
 
   @override
-  String get repeater_cliQuickGetTx => 'TX 획득';
+  String get repeater_cliQuickGetTx => 'TX 가져오기';
 
   @override
   String get repeater_cliQuickNeighbors => '이웃';
@@ -3367,11 +3346,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetFloodAdvertInterval =>
-      '시간 단위로 어드버트 패킷을 전송하는 간격을 설정합니다. 0으로 설정하면 비활성화됩니다.';
+      '플러딩 어드버트 패킷을 전송하는 타이머 간격(시간 단위)을 설정합니다. 0으로 설정하면 비활성화됩니다.';
 
   @override
   String get repeater_cliHelpSetGuestPassword =>
-      '게스트 비밀번호를 설정하거나 업데이트합니다. (반복 사용자, 게스트 로그인 시 \"통계 가져오기\" 요청을 보낼 수 있음)';
+      '게스트 비밀번호를 설정하거나 업데이트합니다. (리피터의 경우, 게스트 로그인으로 \"통계 가져오기\" 요청을 보낼 수 있음)';
 
   @override
   String get repeater_cliHelpSetName => '어드버트 이름을 설정합니다.';
@@ -3380,7 +3359,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_cliHelpSetLat => '어드버트 지도의 위도를 설정합니다. (십진법 단위)';
 
   @override
-  String get repeater_cliHelpSetLon => '어드버트 지도의 경도를 설정합니다. (십진도)';
+  String get repeater_cliHelpSetLon => '어드버트 지도의 경도를 설정합니다. (십진법 단위)';
 
   @override
   String get repeater_cliHelpSetRadio =>
@@ -3388,11 +3367,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetRxDelay =>
-      '(실험용) 기본 설정 (최소 1이어야 함)으로, 수신된 패킷에 약간의 지연을 적용하며, 신호 강도/점수를 기준으로 설정합니다. 0으로 설정하면 비활성화됩니다.';
+      '(실험용) 수신 패킷에 신호 강도/점수에 따라 약간의 지연을 적용하기 위한 기준값을 설정합니다 (효과가 있으려면 1보다 커야 함). 0으로 설정하면 비활성화됩니다.';
 
   @override
   String get repeater_cliHelpSetTxDelay =>
-      '공통 패킷의 전송 지연 시간을 설정하며, 시간-공기 시간과 무작위 슬롯 시스템을 곱하여 충돌 가능성을 줄입니다.';
+      '플러딩 모드 패킷의 에어타임에 곱하는 계수와 무작위 슬롯 시스템을 설정하여 전달을 지연시킵니다. (충돌 가능성을 줄이기 위해)';
 
   @override
   String get repeater_cliHelpSetDirectTxDelay =>
@@ -3428,7 +3407,8 @@ class AppLocalizationsKo extends AppLocalizations {
       'ACL을 수정합니다. \"permissions\" 값이 0인 경우, 일치하는 항목(pubkey 접두사)을 제거합니다. pubkey-hex 길이가 완전하고 현재 ACL에 없는 경우 새로운 항목을 추가합니다. pubkey 접두사를 기준으로 항목을 업데이트합니다. 권한 비트는 펌웨어 역할에 따라 다르지만, 하위 2비트는 다음과 같습니다: 0 (게스트), 1 (읽기 전용), 2 (읽기/쓰기), 3 (관리자)';
 
   @override
-  String get repeater_cliHelpGetBridgeType => '브리지형, RS232, ESPNOW 지원';
+  String get repeater_cliHelpGetBridgeType =>
+      '브리지 유형(none, rs232, espnow)을 가져옵니다.';
 
   @override
   String get repeater_cliHelpLogStart => '패킷 로깅을 파일 시스템으로 시작합니다.';
@@ -3441,7 +3421,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_cliHelpNeighbors =>
-      '제로 홉 어드버트를 통해 수신된 다른 리피터 노드 목록을 보여줍니다. 각 줄은 ID-프리픽스-16진수:타임스탬프:SNR-횟수-4 형식입니다.';
+      '제로 홉 어드버트를 통해 수신된 다른 리피터 노드 목록을 보여줍니다. 각 줄은 id-prefix-hex:timestamp:snr-times-4 형식입니다.';
 
   @override
   String get repeater_cliHelpNeighborRemove =>
@@ -3449,15 +3429,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_cliHelpRegion =>
-      '(단일 시리즈) 정의된 모든 지역과 현재 플러딩 허가 정보를 나열합니다.';
+      '(시리얼 전용) 정의된 모든 지역과 현재 플러딩 허가 정보를 나열합니다.';
 
   @override
   String get repeater_cliHelpRegionLoad =>
-      '참고: 이는 여러 명령을 한 번에 실행하는 특별한 방식입니다. 각 후속 명령은 영역 이름이며 (부모 계층 구조를 나타내기 위해 공백으로 들여쓰기하며, 최소 1개의 공백을 사용) 공백으로 끝나는 줄 또는 명령을 보내어 종료합니다.';
+      '참고: 이는 여러 명령을 한 번에 실행하는 특별한 방식입니다. 각 후속 명령은 지역 이름이며 (부모 계층 구조를 나타내기 위해 공백으로 들여쓰기하며, 최소 1개의 공백을 사용) 빈 줄/명령을 보내 종료합니다.';
 
   @override
   String get repeater_cliHelpRegionGet =>
-      '주어진 이름 접두사(또는 전역 검색을 위한 \"\\*\" 사용)를 사용하여 특정 지역을 검색합니다. 결과를 \"-> 지역 이름 (상위 지역 이름) \'F\'\" 형태로 반환합니다.';
+      '주어진 이름 접두사(또는 전역 범위를 위한 \"*\")로 지역을 검색합니다. \"-> 지역 이름 (상위 지역 이름) \'F\'\" 형태로 응답합니다.';
 
   @override
   String get repeater_cliHelpRegionPut => '주어진 이름으로 지역 정의를 추가하거나 업데이트합니다.';
@@ -3468,11 +3448,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_cliHelpRegionAllowf =>
-      '지정된 영역에 대한 \'물\' 접근 권한을 설정합니다. (\'*\'는 전역/기존 범위에 해당)';
+      '지정된 지역에 대한 \'F\'(플러딩) 권한을 설정합니다. (\'*\'는 전역/기존 범위에 해당)';
 
   @override
   String get repeater_cliHelpRegionDenyf =>
-      '지정된 영역에 대해 \'Flood\' 권한을 제거합니다. (참고: 현재 단계에서는 전역/기존 범위에서 이 기능을 사용하지 않는 것이 좋습니다!!)';
+      '지정된 지역에서 \'F\'(플러딩) 권한을 제거합니다. (참고: 현재 단계에서는 전역/기존 범위에서 이 기능을 사용하지 않는 것이 좋습니다!!)';
 
   @override
   String get repeater_cliHelpRegionHome =>
@@ -3489,7 +3469,7 @@ class AppLocalizationsKo extends AppLocalizations {
       'GPS 상태를 표시합니다. GPS가 꺼져 있으면 \"꺼짐\"이라고 표시하고, 켜져 있으면 \"켜짐\", 상태, 위치 정보, 위성 수 등을 표시합니다.';
 
   @override
-  String get repeater_cliHelpGpsOnOff => 'GPS 전원 상태를 켜고 끄는 기능.';
+  String get repeater_cliHelpGpsOnOff => 'GPS 전원 상태를 전환합니다.';
 
   @override
   String get repeater_cliHelpGpsSync => '노드 시간을 GPS 시계와 동기화합니다.';
@@ -3585,16 +3565,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_settingsCategory => '설정';
 
   @override
-  String get repeater_bridge => '다리';
+  String get repeater_bridge => '브리지';
 
   @override
   String get repeater_logging => '로깅';
 
   @override
-  String get repeater_neighborsRepeaterOnly => '이웃 (단방향 통신만 지원)';
+  String get repeater_neighborsRepeaterOnly => '이웃 (리피터 전용)';
 
   @override
-  String get repeater_regionManagementRepeaterOnly => '지역 관리 (단, 중계 기능만 사용)';
+  String get repeater_regionManagementRepeaterOnly => '지역 관리 (리피터 전용)';
 
   @override
   String get repeater_regionNote =>
@@ -3607,7 +3587,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_gpsNote => 'GPS 명령이 위치 관련 주제를 관리하기 위해 도입되었습니다.';
 
   @override
-  String get repeater_getCategory => '가치 얻기';
+  String get repeater_getCategory => '값 가져오기';
 
   @override
   String get repeater_powerMgmt => '전력 관리';
@@ -3622,7 +3602,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_cliHelpClkReboot => '시계를 알려진 시점으로 재설정하고 장치를 재부팅합니다.';
 
   @override
-  String get repeater_cliHelpAdvertZeroHop => '직접적인 연결 없이 이웃에게만 어드버트를 전송합니다.';
+  String get repeater_cliHelpAdvertZeroHop =>
+      '제로 홉 어드버트를 전송합니다 (바로 인접한 이웃에게만).';
 
   @override
   String get repeater_cliHelpStartOta => '지원되는 보드에서 무선으로 펌웨어 업데이트를 시작합니다.';
@@ -3647,7 +3628,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_cliHelpErase =>
-      '(단일 사용) 장치 파일 시스템을 포맷합니다. 모든 설정 및 연락처를 삭제합니다.';
+      '(시리얼 전용) 장치 파일 시스템을 포맷합니다. 모든 설정 및 연락처를 삭제합니다.';
 
   @override
   String get repeater_cliHelpSetDutyCycle =>
@@ -3655,11 +3636,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetPrvKey =>
-      '(시리얼 키만 해당) 장치 식별용 개인 키를 대체합니다. 적용하려면 재부팅이 필요합니다. 새로운 공개 키를 생성합니다.';
+      '장치 식별용 개인 키를 대체합니다. 적용하려면 재부팅이 필요합니다. 새로운 공개 키를 생성합니다.';
 
   @override
   String get repeater_cliHelpSetRadioRxGain =>
-      '(SX126x 전용) 더 높은 전류를 사용할 때 더 나은 감도를 위해 증폭된 RX 감쇠 기능을 전환합니다.';
+      '(SX126x 전용) 더 높은 전류 소모를 감수하고 감도를 높이기 위해 RX 게인 부스트를 전환합니다.';
 
   @override
   String get repeater_cliHelpSetOwnerInfo =>
@@ -3667,7 +3648,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetPathHashMode =>
-      '경로 해시 모드를 설정합니다. 0 = 고전 방식, 1 = 표준 방식, 2 = 엄격한 방식. 경로 매칭 방식에 영향을 미칩니다.';
+      '이 리피터의 어드버트에 사용되는 노드 ID 크기를 설정합니다: 0 = 1바이트 (최대 64홉), 1 = 2바이트 (최대 32홉), 2 = 3바이트 (최대 21홉). 3은 예약되어 있습니다. 어떤 크기를 전달할지에는 영향을 주지 않습니다. 펌웨어 v1.14 이상이 필요합니다.';
 
   @override
   String get repeater_cliHelpSetLoopDetect =>
@@ -3675,7 +3656,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetFreq =>
-      '(단일 기능) 특정 주파수만 빠르게 설정합니다. 재부팅이 필요합니다. 전체 라디오 파라미터 설정에는 \"라디오 설정\" 기능을 사용하는 것이 좋습니다.';
+      '(시리얼 전용) 주파수만 빠르게 설정합니다. 재부팅이 필요합니다. 전체 라디오 파라미터 설정에는 \"set radio\"를 사용하는 것이 좋습니다.';
 
   @override
   String get repeater_cliHelpSetBridgeChannel =>
@@ -3691,7 +3672,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_cliHelpGetPublicKey => '장치의 공개 키를 표시합니다.';
 
   @override
-  String get repeater_cliHelpGetPrvKey => '(전용) 장치의 개인 키를 표시합니다. 비밀 정보로 취급합니다.';
+  String get repeater_cliHelpGetPrvKey =>
+      '(시리얼 전용) 장치의 개인 키를 표시합니다. 비밀 정보로 취급합니다.';
 
   @override
   String get repeater_cliHelpGetRepeat => '패킷 전달(리피터 기능)이 활성화되어 있는지 여부를 표시합니다.';
@@ -3704,14 +3686,14 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetRadio =>
-      '전체 무선 파라미터 표시: 주파수, 대역폭, 스프레딩 계수, 인코딩 속도';
+      '전체 라디오 파라미터 표시: 주파수, 대역폭, 확산 계수, 코딩 속도';
 
   @override
   String get repeater_cliHelpGetRadioRxGain =>
       '(SX126x 전용) RX의 증폭 이득 상태를 표시합니다.';
 
   @override
-  String get repeater_cliHelpGetAf => '현재 공기 시간 요소를 보여줍니다.';
+  String get repeater_cliHelpGetAf => '현재 에어타임 계수를 보여줍니다.';
 
   @override
   String get repeater_cliHelpGetDutyCycle => '현재 허용되는 작업 주기를 백분율로 표시합니다.';
@@ -3753,7 +3735,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_cliHelpGetTxDelay => '플러딩 모드에서의 전송 지연 계수를 보여줍니다.';
 
   @override
-  String get repeater_cliHelpGetDirectTxDelay => '직렬 모드에서의 딜레이 계수를 보여줍니다.';
+  String get repeater_cliHelpGetDirectTxDelay => '직접 모드에서의 전송 지연 계수를 보여줍니다.';
 
   @override
   String get repeater_cliHelpGetFloodMax => '최대 플러딩 홉 수를 보여줍니다.';
@@ -3762,20 +3744,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_cliHelpGetOwnerInfo => '소유주 연락처 정보를 표시합니다.';
 
   @override
-  String get repeater_cliHelpGetPathHashMode => '경로 해시 모드 (0/1/2)를 표시합니다.';
+  String get repeater_cliHelpGetPathHashMode =>
+      '어드버트에 사용되는 노드 ID 크기 모드를 표시합니다 (0 = 1바이트, 1 = 2바이트, 2 = 3바이트).';
 
   @override
   String get repeater_cliHelpGetLoopDetect => '루프 탐지 감도를 보여줍니다.';
 
   @override
-  String get repeater_cliHelpGetAcl =>
-      '(단순히 목록만 표시) 리피터에 설정된 접근 제어 항목 목록을 보여줍니다.';
+  String get repeater_cliHelpGetAcl => '(시리얼 전용) 리피터에 설정된 접근 제어 항목 목록을 보여줍니다.';
 
   @override
-  String get repeater_cliHelpGetBridgeEnabled => '다리 기능이 활성화되어 있는지 여부를 표시합니다.';
+  String get repeater_cliHelpGetBridgeEnabled => '브리지 기능이 활성화되어 있는지 여부를 표시합니다.';
 
   @override
-  String get repeater_cliHelpGetBridgeDelay => '다리 통과 시간(밀리초)을 표시합니다.';
+  String get repeater_cliHelpGetBridgeDelay => '브리지 지연 시간(밀리초)을 표시합니다.';
 
   @override
   String get repeater_cliHelpGetBridgeSource =>
@@ -3783,7 +3765,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetBridgeBaud =>
-      '(RS232 브리지 기능만) 브리지의 보드 속도를 표시합니다.';
+      '(RS232 브리지 전용) 브리지의 보 레이트를 표시합니다.';
 
   @override
   String get repeater_cliHelpGetBridgeChannel =>
@@ -3838,13 +3820,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_cliHelpRegionListDenied => '플러딩 트래픽이 금지되는 지역 목록';
 
   @override
-  String get repeater_cliHelpStatsPackets => '(전송 속도만 표시) 패킷 수준의 통계 정보를 보여줍니다.';
+  String get repeater_cliHelpStatsPackets => '(시리얼 전용) 패킷 수준의 통계 정보를 보여줍니다.';
 
   @override
-  String get repeater_cliHelpStatsRadio => '(특정 시리즈만 해당) 라디오 통계 정보를 표시합니다.';
+  String get repeater_cliHelpStatsRadio => '(시리얼 전용) 라디오 통계 정보를 표시합니다.';
 
   @override
-  String get repeater_cliHelpStatsCore => '(시리얼 번호만 표시) 핵심 펌웨어 통계 정보를 보여줍니다.';
+  String get repeater_cliHelpStatsCore => '(시리얼 전용) 핵심 펌웨어 통계 정보를 보여줍니다.';
 
   @override
   String get telemetry_receivedData => '수신된 통신 데이터';
@@ -4556,16 +4538,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get contacts_ping => '핑';
 
   @override
-  String get contacts_repeaterPathTrace => '리피터로 가는 경로';
+  String get contacts_repeaterPathTrace => '리피터까지 경로 추적';
 
   @override
-  String get contacts_repeaterPing => '핑 반복';
+  String get contacts_repeaterPing => '리피터 핑';
 
   @override
   String get contacts_roomPathTrace => '방 서버로의 경로 추적';
 
   @override
-  String get contacts_roomPing => '피нг 룸 서버';
+  String get contacts_roomPing => '방 서버 핑';
 
   @override
   String get contacts_chatTraceRoute => '경로 추적 경로';
@@ -4582,7 +4564,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get contacts_invalidAdvertFormat => '유효하지 않은 연락 정보';
 
   @override
-  String get contacts_contactImported => '연락이 수신되었습니다.';
+  String get contacts_contactImported => '연락처를 가져왔습니다.';
 
   @override
   String get contacts_contactImportFailed => '연락처를 가져오지 못했습니다.';
@@ -4644,7 +4626,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get contacts_copyAdvertToClipboard => '어드버트 텍스트를 클립보드에 복사';
 
   @override
-  String get contacts_addContactFromClipboard => '복사본에서 연락처 추가';
+  String get contacts_addContactFromClipboard => '클립보드에서 연락처 추가';
 
   @override
   String get contacts_scanQrCode => 'QR 코드 스캔';
@@ -4662,13 +4644,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get contacts_qrGalleryFailed => '갤러리를 열 수 없습니다.';
 
   @override
-  String get contacts_ShareContact => '연락처를 복사';
+  String get contacts_ShareContact => '연락처를 클립보드에 복사';
 
   @override
   String get contacts_ShareContactZeroHop => '어드버트를 통해 연락처 공유';
 
   @override
-  String get contacts_zeroHopContactAdvertSent => '어드버트를 통해 연락처를 받았습니다.';
+  String get contacts_zeroHopContactAdvertSent => '어드버트를 통해 연락처를 전송했습니다.';
 
   @override
   String get contacts_zeroHopContactAdvertFailed => '연락처 전송에 실패했습니다.';
@@ -4985,7 +4967,14 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get appSettings_jumpToOldestUnreadSubtitle =>
-      '새로운 메시지가 없는 채팅을 열 때, 최신 메시지가 아닌 첫 번째 읽지 않은 메시지로 스크롤하세요.';
+      '읽지 않은 메시지가 있는 채팅을 열 때, 최신 메시지 대신 첫 번째 읽지 않은 메시지로 스크롤합니다.';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettings => '리피터 설정 자동 가져오기';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      '리피터 설정을 열 때 모든 설정을 요청합니다. 각 설정은 LoRa를 통한 별도의 요청이므로 느리고 전송 시간(airtime)을 사용합니다. 꺼져 있으면 \'모두 새로고침\'을 누르거나 개별 섹션을 새로고침하세요.';
 
   @override
   String get appSettings_languageHu => '헝가리';
@@ -5656,6 +5645,59 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert => '광고 플러드 최대 홉 수';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      '플러드되는 광고(advert)가 거칠 수 있는 최대 홉 수 (0-64, 기본값 8)';
+
+  @override
+  String get repeater_floodMaxUnscoped => '범위 미지정 플러드 최대 홉 수';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      '지역 범위가 없는 플러드의 최대 홉 수 (0-64, 기본값 64). 3과 같은 낮은 값을 지정하면 범위 미지정 트래픽을 로컬에 머물게 합니다.';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset => '플러드 최대와 동일';
+
+  @override
+  String get repeater_rxDelay => '수신 지연';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      '약한 신호로 수신한 플러드 패킷을 전달하기 전에 잠시 보류하여, 강한 신호 경로가 먼저 전달되고 중복 전송이 줄어듭니다 (0-20, 0이면 꺼짐).';
+
+  @override
+  String get repeater_cad => '채널 활동 감지';
+
+  @override
+  String get repeater_cadHelper =>
+      '전송 전에 활동을 확인하고 채널이 사용 중이면 대기합니다. 간섭 허용치와 함께 동작합니다.';
+
+  @override
+  String get repeater_adcMultiplier => '배터리 전압 보정';
+
+  @override
+  String get repeater_adcMultiplierHelper =>
+      '배터리 전압 측정값에 곱하는 배수 (0-10). 0이면 보드의 기본값을 사용합니다.';
+
+  @override
+  String get repeater_boardSupportNote =>
+      '모든 보드가 이 기능을 지원하는 것은 아닙니다. 지원하지 않는 보드는 변경을 거부합니다.';
+
+  @override
+  String get repeater_extraSf => '추가 확산 계수';
+
+  @override
+  String get repeater_extraSfHelper =>
+      '동시에 수신 대기할 확산 계수를 최대 3개까지 쉼표로 구분하여 추가합니다 (예: 9,10). 비워 두면 꺼집니다.';
+
+  @override
+  String get repeater_lr2021Only =>
+      'LR2021 무전기를 탑재한 리피터 전용입니다. 다른 리피터에는 이 설정이 없으며 변경을 거부합니다.';
+
+  @override
   String get losMapDetailTooltip => '지도 상세';
 
   @override
@@ -6083,7 +6125,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get repeater_unsavedChangesMessage => '리피터에 저장되지 않은 변경 사항이 있습니다.';
 
   @override
-  String get repeater_discardChanges => '취소';
+  String get repeater_discardChanges => '버리기';
 
   @override
   String repeater_actionSentNoReply(String action) {
@@ -6093,11 +6135,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting: $value은(는) 올바르지 않습니다';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'TX 출력 $value이(가) 범위를 벗어났습니다($min~$max dBm)';
   }
 
   @override

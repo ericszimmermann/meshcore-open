@@ -1211,7 +1211,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String contacts_searchContacts(int number, String str) {
-    return '搜索联系人...';
+    return '搜索 $number$str 个联系人...';
   }
 
   @override
@@ -2984,16 +2984,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get repeater_rxGainHelper => '更高的灵敏度，更大的电流消耗（仅适用于 SX1262/SX1268）';
 
   @override
-  String get repeater_refreshRxGain => '重新启动增强型 RX 功能';
-
-  @override
   String get repeater_multiAcks => '多重确认';
 
   @override
   String get repeater_multiAcksSubtitle => '通过多个路径确认消息，以提高传递效率。';
-
-  @override
-  String get repeater_refreshMultiAcks => '刷新多个确认';
 
   @override
   String get repeater_networkHealth => '网络健康';
@@ -3032,9 +3026,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get repeater_ownerInfoHelper => '此复播器的公共元数据';
-
-  @override
-  String get repeater_refreshOwnerInfo => '刷新操作员信息';
 
   @override
   String get repeater_floodMax => '最大跳数';
@@ -3160,19 +3151,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings => '刷新基本设置';
-
-  @override
   String get repeater_refreshRadioSettings => '刷新无线电设置';
-
-  @override
-  String get repeater_refreshTxPower => '刷新 TX 功率';
-
-  @override
-  String get repeater_refreshPacketForwarding => '刷新包转发';
-
-  @override
-  String get repeater_refreshGuestAccess => '刷新访客权限';
 
   @override
   String get repeater_refreshPrivacyMode => '刷新隐私模式';
@@ -4850,6 +4829,13 @@ class AppLocalizationsZh extends AppLocalizations {
       '在打开包含未读消息的聊天时，请滚动到第一个未读消息，而不是最新的消息。';
 
   @override
+  String get appSettings_autoFetchRepeaterSettings => '自动获取转发节点设置';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      '打开转发节点设置时请求所有设置。每项设置都是一次通过 LoRa 发送的独立请求，因此速度较慢并会占用空中时间。关闭后，请点按“全部刷新”或刷新单独的部分。';
+
+  @override
   String get appSettings_languageHu => '匈牙利';
 
   @override
@@ -5509,6 +5495,56 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert => '广播泛洪最大跳数';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      '广播（advert）泛洪可传输的最大跳数 (0-64，默认 8)';
+
+  @override
+  String get repeater_floodMaxUnscoped => '无区域泛洪最大跳数';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      '未指定区域的泛洪最大跳数 (0-64，默认 64)。较低的值（如 3）可将无区域流量限制在本地。';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset => '与泛洪最大跳数相同';
+
+  @override
+  String get repeater_rxDelay => '接收延迟';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      '转发前先暂缓处理以弱信号收到的泛洪包，让强信号路径优先，从而减少重复发送 (0-20，0 为关闭)。';
+
+  @override
+  String get repeater_cad => '信道活动检测';
+
+  @override
+  String get repeater_cadHelper => '发射前先监听是否有活动，信道繁忙时等待。与干扰阈值配合使用。';
+
+  @override
+  String get repeater_adcMultiplier => '电池电压校准';
+
+  @override
+  String get repeater_adcMultiplierHelper => '电池电压读数的倍数 (0-10)。0 表示使用开发板默认值。';
+
+  @override
+  String get repeater_boardSupportNote => '并非所有开发板都支持此功能。不支持的开发板会拒绝该更改。';
+
+  @override
+  String get repeater_extraSf => '额外扩频因子';
+
+  @override
+  String get repeater_extraSfHelper =>
+      '同时监听最多 3 个额外的扩频因子（SF），用逗号分隔（例如 9,10）。留空则关闭。';
+
+  @override
+  String get repeater_lr2021Only =>
+      '仅适用于配备 LR2021 无线电的转发节点。其他转发节点没有此设置，会拒绝该更改。';
+
+  @override
   String get losMapDetailTooltip => '地图细节';
 
   @override
@@ -5942,11 +5978,6 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting:$value 无效';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'TX 功率 $value 超出范围($min 至 $max dBm)';
   }
 
   @override
