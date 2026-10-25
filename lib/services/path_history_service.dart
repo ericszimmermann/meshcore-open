@@ -357,8 +357,9 @@ class PathHistoryService extends ChangeNotifier {
 
     updatedPaths.removeWhere((p) => _pathsEqual(p.pathBytes, pathBytes));
 
+    // Make room by dropping the weakest path so new discoveries still land.
     if (existing == null && updatedPaths.length >= _maxHistoryEntries) {
-      return;
+      updatedPaths.remove(_lowestScoredPath(updatedPaths));
     }
 
     updatedPaths.insert(0, newRecord);
@@ -538,6 +539,17 @@ class PathHistoryService extends ChangeNotifier {
     });
 
     return ranked;
+  }
+
+  PathRecord _lowestScoredPath(List<PathRecord> paths) {
+    final fastestTripMs = _getFastestKnownTripMs(paths);
+    final highestRouteWeight = _getHighestKnownRouteWeight(paths);
+    double score(PathRecord p) => _scorePathRecord(
+      p,
+      fastestTripMs: fastestTripMs,
+      highestRouteWeight: highestRouteWeight,
+    );
+    return paths.reduce((a, b) => score(b) < score(a) ? b : a);
   }
 
   int? _getFastestKnownTripMs(List<PathRecord> paths) {
