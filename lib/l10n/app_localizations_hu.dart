@@ -818,7 +818,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get appSettings_themeSystem => 'Rendszer alapértelmezett';
 
   @override
-  String get appSettings_themeLight => 'Fény';
+  String get appSettings_themeLight => 'Világos';
 
   @override
   String get appSettings_themeDark => 'Sötét';
@@ -875,16 +875,16 @@ class AppLocalizationsHu extends AppLocalizations {
   String get appSettings_languageUk => 'Українська';
 
   @override
-  String get repeater_pathHashModeOption0 => '0 - 1 byte';
+  String get repeater_pathHashModeOption0 => '1 bájt';
 
   @override
-  String get repeater_pathHashModeOption1 => '1 - 2 szavak';
+  String get repeater_pathHashModeOption1 => '2 bájt';
 
   @override
-  String get repeater_pathHashModeOption2 => '2 - 3 bajt';
+  String get repeater_pathHashModeOption2 => '3 bájt';
 
   @override
-  String get repeater_pathHashModeOption3 => '3 - 4 bajt';
+  String get repeater_pathHashModeOption3 => '4 bájt';
 
   @override
   String get settings_pathHashModeHelper =>
@@ -897,11 +897,11 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get appSettings_channelMinHops =>
-      'A csatornaüzenetek újraküldése, amíg elég messzék el';
+      'A csatornaüzenetek újraküldése, amíg elég messzire nem jutnak';
 
   @override
   String get appSettings_channelMinHopsSubtitle =>
-      'Ha az üzenet nem érkezik vissza elég átjátszón keresztül, küldje el újra. Több műsoridőt igényel.';
+      'Ha az üzenet nem érkezik vissza elég átjátszón keresztül, küldje el újra. Több adásidőt igényel.';
 
   @override
   String appSettings_channelMinHopsCount(int count) {
@@ -935,18 +935,19 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get appSettings_enableMessageTracing => 'Üzenetkövetés engedélyezése';
+  String get appSettings_enableMessageTracing =>
+      'Teljes átjátszó útvonal megjelenítése az üzenetekben';
 
   @override
   String get appSettings_enableMessageTracingSubtitle =>
-      'Az üzenetek részletes útválasztási és időzítési metaadatainak megjelenítése';
+      'Az ismétlések számát és az átviteli időket is megjeleníti. Hosszan nyomja meg az üzenetet, majd válassza az Útvonal lehetőséget a teljes részletekért.';
 
   @override
-  String get appSettings_regionOnHopsLine => 'Táj a ugrásszám mellett';
+  String get appSettings_regionOnHopsLine => 'Régió az ugrásszám mellett';
 
   @override
   String get appSettings_regionOnHopsLineSubtitle =>
-      'A csatornaüzenet tája az ugrásszámmal azonos sorban jelenik meg, nem alatta.';
+      'A csatornaüzenet régiója az ugrásszámmal azonos sorban jelenik meg, nem alatta.';
 
   @override
   String get appSettings_notifications => 'Értesítések';
@@ -1017,7 +1018,7 @@ class AppLocalizationsHu extends AppLocalizations {
       'Az útvonalak nem törlődnek automatikusan';
 
   @override
-  String get appSettings_autoRouteRotation => 'Auto Route Rotation';
+  String get appSettings_autoRouteRotation => 'Automatikus útvonalváltás';
 
   @override
   String get appSettings_autoRouteRotationSubtitle =>
@@ -1156,13 +1157,13 @@ class AppLocalizationsHu extends AppLocalizations {
   String get appSettings_batteryLipo => 'LiPo (3,0-4,2 V)';
 
   @override
-  String get appSettings_batteryLipoHv => 'LiPo HV (3.0-4.35V)';
+  String get appSettings_batteryLipoHv => 'LiPo HV (3,0-4,35 V)';
 
   @override
   String get appSettings_mapDisplay => 'Térkép megjelenítése';
 
   @override
-  String get appSettings_showRepeaters => 'Ismétlők megjelenítése';
+  String get appSettings_showRepeaters => 'Átjátszók megjelenítése';
 
   @override
   String get appSettings_showRepeatersSubtitle =>
@@ -1199,10 +1200,10 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get appSettings_showNodesDiscoveredWithin =>
-      'Itt talált csomópontok megjelenítése:';
+      'Ezen az időn belül felfedezett csomópontok megjelenítése:';
 
   @override
-  String get appSettings_allTime => 'Minden alkalommal';
+  String get appSettings_allTime => 'Mindig';
 
   @override
   String get appSettings_lastHour => 'Utolsó óra';
@@ -1214,7 +1215,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get appSettings_last24Hours => 'Az elmúlt 24 óra';
 
   @override
-  String get appSettings_lastWeek => 'Múlt héten';
+  String get appSettings_lastWeek => 'Elmúlt hét';
 
   @override
   String get appSettings_rasterTileSource => 'Raszteres csempeforrás';
@@ -1248,7 +1249,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get appSettings_unitsMetric => 'Metrikus (m/km)';
 
   @override
-  String get appSettings_unitsImperial => 'birodalmi (ft/mi)';
+  String get appSettings_unitsImperial => 'Angolszász (ft/mi)';
 
   @override
   String get appSettings_noAreaSelected => 'Nincs kiválasztott terület';
@@ -2167,7 +2168,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get pathEditor_noHops =>
-      'Még nincs ugrás. Koppintson az alábbi ismétlőkre, ha sorrendben szeretné felvenni őket, vagy mentse ugrás nélkül a közvetlen küldéshez.';
+      'Még nincs ugrás. Koppintson az alábbi átjátszókra, ha sorrendben szeretné felvenni őket, vagy mentse ugrás nélkül a közvetlen küldéshez.';
 
   @override
   String get pathEditor_addHops => 'Sorrendben adjuk hozzá az ugrásokat';
@@ -2756,7 +2757,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get login_repeaterDescription =>
-      'Adja meg az ismétlő jelszavát a vendég vagy adminisztrátori hozzáféréshez.';
+      'Az adminisztrátori jelszó feloldja a beállításokat és a CLI-t. A vendégjelszó (vagy üresen hagyva) csak az állapotot mutatja.';
 
   @override
   String get login_roomDescription =>
@@ -2815,13 +2816,13 @@ class AppLocalizationsHu extends AppLocalizations {
       'Nem található átjátszó vagy szobaszerver.';
 
   @override
-  String get repeater_management => 'Repeater Management';
+  String get repeater_management => 'Átjátszó kezelése';
 
   @override
   String get room_management => 'Szobaszerver-kezelés';
 
   @override
-  String get repeater_guest => 'Ismétlő információ';
+  String get repeater_guest => 'Átjátszó információ';
 
   @override
   String get room_guest => 'Szobaszerver információ';
@@ -2863,13 +2864,13 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_neighborsSubtitle =>
-      'Tekintse meg a zero hop szomszédokat.';
+      'Tekintse meg a nulla ugrású szomszédokat.';
 
   @override
-  String get repeater_settings => 'Beállítások elemre';
+  String get repeater_settings => 'Beállítások';
 
   @override
-  String get repeater_settingsSubtitle => 'Állítsa be az ismétlő paramétereit';
+  String get repeater_settingsSubtitle => 'Állítsa be az átjátszó paramétereit';
 
   @override
   String get repeater_clockSyncAfterLogin =>
@@ -2880,7 +2881,7 @@ class AppLocalizationsHu extends AppLocalizations {
       '„Óraszinkronizálás” automatikus küldése sikeres bejelentkezés után';
 
   @override
-  String get repeater_statusTitle => 'Repeater állapota';
+  String get repeater_statusTitle => 'Átjátszó állapota';
 
   @override
   String get repeater_routingMode => 'Útválasztási mód';
@@ -2890,7 +2891,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_statusRequestTimeout =>
-      'Az állapotkérelem időtúllépése lejárt.';
+      'Az állapotkérés túllépte az időkorlátot.';
 
   @override
   String repeater_errorLoadingStatus(String error) {
@@ -2913,7 +2914,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get repeater_queueLength => 'Sor hossza';
 
   @override
-  String get repeater_debugFlags => 'Debug Flags';
+  String get repeater_debugFlags => 'Hibakeresési jelzők';
 
   @override
   String get repeater_radioStatistics => 'Rádióstatisztika';
@@ -2928,10 +2929,10 @@ class AppLocalizationsHu extends AppLocalizations {
   String get repeater_noiseFloor => 'Zajpadló';
 
   @override
-  String get repeater_txAirtime => 'TX műsoridő';
+  String get repeater_txAirtime => 'TX adásidő';
 
   @override
-  String get repeater_rxAirtime => 'RX műsoridő';
+  String get repeater_rxAirtime => 'RX adásidő';
 
   @override
   String get repeater_chanUtil => 'Csatornahasználat';
@@ -2979,13 +2980,13 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get repeater_settingsTitle => 'Repeater beállítások';
+  String get repeater_settingsTitle => 'Átjátszó beállításai';
 
   @override
   String get repeater_basicSettings => 'Alapbeállítások';
 
   @override
-  String get repeater_repeaterName => 'Ismétlő neve';
+  String get repeater_repeaterName => 'Átjátszó neve';
 
   @override
   String get repeater_repeaterNameHelper => 'Az átjátszó megjelenítési neve';
@@ -3025,22 +3026,22 @@ class AppLocalizationsHu extends AppLocalizations {
   String get repeater_spreadingFactor => 'Spreading Factor';
 
   @override
-  String get repeater_codingRate => 'Kódolási sebesség';
+  String get repeater_codingRate => 'Kódolási arány';
 
   @override
   String get repeater_locationSettings => 'Helybeállítások';
 
   @override
-  String get repeater_latitude => 'Szélesség';
+  String get repeater_latitude => 'Földrajzi szélesség';
 
   @override
-  String get repeater_latitudeHelper => 'Tizedes fokozatok (pl. 37,7749)';
+  String get repeater_latitudeHelper => 'Tizedfokok (pl. 37,7749)';
 
   @override
-  String get repeater_longitude => 'Hosszúság';
+  String get repeater_longitude => 'Földrajzi hosszúság';
 
   @override
-  String get repeater_longitudeHelper => 'Tizedes fokok (pl. -122,4194)';
+  String get repeater_longitudeHelper => 'Tizedfokok (pl. -122,4194)';
 
   @override
   String get repeater_features => 'Jellemzők';
@@ -3050,7 +3051,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_packetForwardingSubtitle =>
-      'Ismétlő engedélyezése a csomagok továbbításához';
+      'Az átjátszó engedélyezése a csomagok továbbításához';
 
   @override
   String get repeater_guestAccess => 'Vendég hozzáférés';
@@ -3093,7 +3094,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get repeater_dangerZone => 'Veszélyzóna';
 
   @override
-  String get repeater_rebootRepeater => 'Reboot Repeater';
+  String get repeater_rebootRepeater => 'Átjátszó újraindítása';
 
   @override
   String get repeater_rebootRepeaterSubtitle =>
@@ -3146,14 +3147,11 @@ class AppLocalizationsHu extends AppLocalizations {
   String get repeater_settingsSaved => 'A beállítások sikeresen elmentve';
 
   @override
-  String get repeater_rxGain => 'Megnövelt RX nyereség';
+  String get repeater_rxGain => 'Megnövelt RX erősítés';
 
   @override
   String get repeater_rxGainHelper =>
       'Nagyobb érzékenység, nagyobb áramfelvétel (csak SX1262/SX1268)';
-
-  @override
-  String get repeater_refreshRxGain => 'Frissítse a megnövelt RX-erősítést';
 
   @override
   String get repeater_multiAcks => 'Multi-ACK';
@@ -3161,9 +3159,6 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get repeater_multiAcksSubtitle =>
       'Nyugtázza az üzeneteket több úton a jobb kézbesítés érdekében';
-
-  @override
-  String get repeater_refreshMultiAcks => 'Többszörös ACK-ek frissítése';
 
   @override
   String get repeater_networkHealth => 'Hálózat állapota';
@@ -3176,7 +3171,7 @@ class AppLocalizationsHu extends AppLocalizations {
       'Dobd el az útválasztó huroknak tűnő elárasztási csomagokat';
 
   @override
-  String get repeater_loopDetectOff => 'Le';
+  String get repeater_loopDetectOff => 'Ki';
 
   @override
   String get repeater_loopDetectMinimal => 'Minimális';
@@ -3191,7 +3186,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get repeater_dutyCycle => 'Üzemi ciklus';
 
   @override
-  String get repeater_dutyCycleHelper => 'A műsoridő maximális százaléka';
+  String get repeater_dutyCycleHelper => 'Az adásidő maximális százaléka';
 
   @override
   String repeater_dutyCyclePercent(int percent) {
@@ -3206,9 +3201,6 @@ class AppLocalizationsHu extends AppLocalizations {
       'Nyilvános metaadatok ehhez az átjátszóhoz';
 
   @override
-  String get repeater_refreshOwnerInfo => 'Frissítse az operátor adatait';
-
-  @override
   String get repeater_floodMax => 'Elárasztás max ugrás';
 
   @override
@@ -3216,75 +3208,76 @@ class AppLocalizationsHu extends AppLocalizations {
       'Maximum ugrások, amelyeket egy elárasztási csomag utazhat (0-64)';
 
   @override
-  String get repeater_advancedSettings => 'Fejlett';
+  String get repeater_advancedSettings => 'Speciális';
 
   @override
   String get repeater_advancedSettingsSubtitle =>
-      'Hangológombok tapasztalt kezelőknek';
+      'Finomhangolási beállítások tapasztalt üzemeltetőknek';
 
   @override
-  String get repeater_pathHashMode => 'Útvonal hash mód';
+  String get repeater_pathHashMode =>
+      'Csomópont-azonosító mérete az útvonalakban';
 
   @override
   String get repeater_pathHashModeHelper =>
-      'Az átjátszó azonosítójának elárasztási útvonal/hurokészlelési címkékbe való kódolására használt bájtok. 0 = 1 bájt (256 azonosító, legfeljebb 64 ugrás), 1 = 2 bájt (65 000 azonosító, legfeljebb 32 ugrás), 2 = 3 bájt (16 millió azonosító, legfeljebb 21 ugrás). A v1.13 és régebbi firmware eldobja a többbájtos elérési utat – csak akkor emelje meg, ha a hálózat a v1.14+ verziót használja.';
+      'Ennek az átjátszónak az azonosítója az általa küldött hirdetések útvonalában: 1 bájt (256 azonosító, legfeljebb 64 ugrás), 2 bájt (65 ezer azonosító, legfeljebb 32 ugrás), 3 bájt (16 millió azonosító, legfeljebb 21 ugrás). A továbbítást nem befolyásolja; a v1.14+ átjátszók minden méretet továbbítanak, de a régebbi firmware eldobja a 2 vagy 3 bájtos azonosítójú csomagokat.';
 
   @override
-  String get repeater_keySettings => 'Képzőítsekei jelölt';
+  String get repeater_keySettings => 'Azonosítókulcsok módosítása';
 
   @override
   String get repeater_keySettingsSubtitle =>
-      'Közelítse a közlekedési/private képlékt';
+      'A nyilvános/privát kulcspár módosítása';
 
   @override
-  String get repeater_prvKey => 'Kis házas';
+  String get repeater_prvKey => 'Privát kulcs';
 
   @override
   String get repeater_prvKeyHelper =>
-      'Kínai nyelvben:\n\nA repeteróhoz új képes kód, 128 karakteri hex-kód.';
+      'Új privát kulcs az átjátszóhoz, 128 karakteres hexadecimális karakterlánc.';
 
   @override
-  String get repeater_generatePrvKey => 'Egy random képléktár generáld meg';
+  String get repeater_generatePrvKey => 'Véletlenszerű kulcspár generálása';
 
   @override
   String get repeater_stopGeneratingPrvKey =>
-      'Kéypair szavakat kérdéset kaphatás';
+      'Kulcspár keresésének megszakítása';
 
   @override
-  String get repeater_pubKey => 'Kiváló kiegészítő';
+  String get repeater_pubKey => 'Nyilvános kulcs';
 
   @override
   String get repeater_pubKeyHelper =>
-      'Ez a kiváló kód, amely tükrözi a gyártott kiegészítő kódot. Ezet nem lehet megjelenítani direktusan.';
+      'Ez a létrehozott privát kulcshoz tartozó nyilvános kulcs. Közvetlenül nem állítható be.';
 
   @override
-  String get repeater_pubKeyPrefix => 'Kiváló prefix';
+  String get repeater_pubKeyPrefix => 'Kívánt előtag';
 
   @override
   String repeater_pubKeyPrefixHelper(int tries) {
-    return 'Kiválasztsa meg a közös kódot, amely az alábbi hex-kifüggőnek előre van. Várható kiválasztások száma: $tries.';
+    return 'Olyan nyilvános kulcsot keres, amely ezekkel a hexadecimális számjegyekkel kezdődik. Várható próbálkozások száma: $tries.';
   }
 
   @override
-  String get repeater_txDelay => 'Áradási TX késleltetés';
+  String get repeater_txDelay => 'Elárasztási TX késleltetés';
 
   @override
   String get repeater_txDelayHelper =>
-      'Újraküldési térköz az elárasztási forgalomhoz, a csomag sugárzási idejének szorzójaként (0-2, alapértelmezett 0,5). Magasabb = kevesebb ütközés, de lassabb szállítás.';
+      'Újraküldési térköz az elárasztási forgalomhoz, a csomag adásidejének szorzójaként (0-2, alapértelmezett 0,5). Magasabb = kevesebb ütközés, de lassabb szállítás.';
 
   @override
   String get repeater_directTxDelay => 'Közvetlen TX késleltetés';
 
   @override
   String get repeater_directTxDelayHelper =>
-      'A közvetlen (nem elárasztásos) forgalom újraküldési távolsága a csomag sugárzási idejének szorzójaként (0-2, alapértelmezett 0,3).';
+      'A közvetlen (nem elárasztásos) forgalom újraküldési térköze a csomag adásidejének szorzójaként (0-2, alapértelmezett 0,3).';
 
   @override
   String get repeater_intThresh => 'Interferencia küszöb';
 
   @override
   String get repeater_intThreshHelper =>
-      'A küszöbérték átkerült a rádió zajszint-kalibrációjához, így az e szint feletti interferenciát elutasítja. 0 letilt – csak akkor emel, ha zajos sávban RX hibákat lát.';
+      'A rádió zajszint-kalibrációjának átadott küszöbérték, amely felett a rádió elutasítja az interferenciát. A 0 letiltja – csak akkor emelje, ha zajos sávban RX hibákat lát.';
 
   @override
   String get repeater_agcResetInterval => 'AGC reset intervallum';
@@ -3294,7 +3287,7 @@ class AppLocalizationsHu extends AppLocalizations {
       'Milyen gyakran kell visszaállítani a rádió automatikus erősítésszabályozását, hogy helyreálljon a beragadt erősítési állapotból. A másodpercek, 4 többszörösére csökkentve. 0 letiltja az időszakos visszaállításokat.';
 
   @override
-  String get repeater_actionsTitle => 'Akciók';
+  String get repeater_actionsTitle => 'Műveletek';
 
   @override
   String get repeater_sendAdvert => 'Elárasztási hirdetés küldése';
@@ -3315,7 +3308,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_clockSyncSubtitle =>
-      'Tolja a telefon idejét az átjátszóhoz';
+      'A telefon idejének átküldése az átjátszóra';
 
   @override
   String repeater_actionSucceeded(String action) {
@@ -3329,7 +3322,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_settingsSavedRebootNeeded =>
-      'A beállítások mentve – az átjátszó újraindítása az alkalmazáshoz';
+      'A beállítások mentve – az érvénybe lépéshez indítsa újra az átjátszót';
 
   @override
   String repeater_settingsPartialFailure(String failures) {
@@ -3342,20 +3335,7 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings =>
-      'Frissítse az alapvető beállításokat';
-
-  @override
   String get repeater_refreshRadioSettings => 'Frissítse a rádióbeállításokat';
-
-  @override
-  String get repeater_refreshTxPower => 'TX teljesítmény frissítése';
-
-  @override
-  String get repeater_refreshPacketForwarding => 'Csomagtovábbítás frissítése';
-
-  @override
-  String get repeater_refreshGuestAccess => 'Vendég hozzáférés frissítése';
 
   @override
   String get repeater_refreshPrivacyMode => 'Frissítse az adatvédelmi módot';
@@ -3382,13 +3362,13 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get repeater_cliTitle => 'Repeater CLI';
+  String get repeater_cliTitle => 'Átjátszó CLI';
 
   @override
-  String get repeater_debugNextCommand => 'Debug Next Command';
+  String get repeater_debugNextCommand => 'Következő parancs hibakeresése';
 
   @override
-  String get repeater_commandHelp => 'Command Help';
+  String get repeater_commandHelp => 'Parancssúgó';
 
   @override
   String get repeater_clearHistory => 'Törölje az előzményeket';
@@ -3421,22 +3401,22 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get repeater_cliQuickGetName => 'Get Name';
+  String get repeater_cliQuickGetName => 'Név lekérése';
 
   @override
-  String get repeater_cliQuickGetRadio => 'Szerezz rádiót';
+  String get repeater_cliQuickGetRadio => 'Rádió lekérése';
 
   @override
-  String get repeater_cliQuickGetTx => 'Szerezd meg a TX-et';
+  String get repeater_cliQuickGetTx => 'TX lekérése';
 
   @override
   String get repeater_cliQuickNeighbors => 'Szomszédok';
 
   @override
-  String get repeater_cliQuickVersion => 'Változat';
+  String get repeater_cliQuickVersion => 'Verzió';
 
   @override
-  String get repeater_cliQuickAdvertise => 'Hirdet';
+  String get repeater_cliQuickAdvertise => 'Hirdetés';
 
   @override
   String get repeater_cliQuickClock => 'Óra';
@@ -3471,7 +3451,7 @@ class AppLocalizationsHu extends AppLocalizations {
       'Nullára állítja a különböző statisztikai számlálókat.';
 
   @override
-  String get repeater_cliHelpSetAf => 'Beállítja a műsoridő-tényezőt.';
+  String get repeater_cliHelpSetAf => 'Beállítja az adásidő-tényezőt.';
 
   @override
   String get repeater_cliHelpSetTx =>
@@ -3479,7 +3459,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetRepeat =>
-      'Engedélyezi vagy letiltja a csomópont ismétlő szerepét.';
+      'Engedélyezi vagy letiltja a csomópont átjátszó szerepét.';
 
   @override
   String get repeater_cliHelpSetAllowReadOnly =>
@@ -3511,7 +3491,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetGuestPassword =>
-      'Beállítja/frissíti a vendég jelszavát. (Repeaterek esetén a vendégbejelentkezés elküldheti a \"Statisztikák lekérése\" kérést)';
+      'Beállítja/frissíti a vendég jelszavát. (Átjátszók esetén a vendégbejelentkezés elküldheti a \"Statisztikák lekérése\" kérést)';
 
   @override
   String get repeater_cliHelpSetName => 'Beállítja a hirdetés nevét.';
@@ -3541,8 +3521,7 @@ class AppLocalizationsHu extends AppLocalizations {
       'Ugyanaz, mint a txdelay, de véletlenszerű késleltetés alkalmazására a közvetlen módú csomagok továbbítására.';
 
   @override
-  String get repeater_cliHelpSetBridgeEnabled =>
-      'Bridge engedélyezése/letiltása.';
+  String get repeater_cliHelpSetBridgeEnabled => 'Híd engedélyezése/letiltása.';
 
   @override
   String get repeater_cliHelpSetBridgeDelay =>
@@ -3550,7 +3529,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetBridgeSource =>
-      'Válassza ki, hogy a híd újraküldje-e a fogadott vagy továbbított csomagokat.';
+      'Válassza ki, hogy a híd a fogadott vagy az elküldött csomagokat küldje-e újra.';
 
   @override
   String get repeater_cliHelpSetBridgeBaud =>
@@ -3562,7 +3541,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetAdcMultiplier =>
-      'Egyéni tényezőt állít be a jelentett akkumulátorfeszültség beállításához (csak bizonyos kártyákon támogatott).';
+      'Egyéni tényezőt állít be a jelentett akkumulátorfeszültség beállításához (csak bizonyos paneleken támogatott).';
 
   @override
   String get repeater_cliHelpTempRadio =>
@@ -3574,7 +3553,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetBridgeType =>
-      'Hidatípust nem kap, rs232, espnow';
+      'Megjeleníti a híd típusát: none, rs232, espnow';
 
   @override
   String get repeater_cliHelpLogStart =>
@@ -3602,7 +3581,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpRegionLoad =>
-      'MEGJEGYZÉS: ez egy speciális többparancsos hívás. Minden következő parancs egy régiónév (szóközökkel behúzva a szülőhierarchiát jelölve, legalább egy szóközzel). Üres sor/parancs küldésével megszűnik.';
+      'MEGJEGYZÉS: ez egy speciális többparancsos hívás. Minden következő parancs egy régiónév (szóközökkel behúzva a szülőhierarchiát jelölve, legalább egy szóközzel). Üres sor/parancs küldésével zárható le.';
 
   @override
   String get repeater_cliHelpRegionGet =>
@@ -3626,7 +3605,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpRegionHome =>
-      'Az aktuális „otthoni” régióval válaszol. (A megjegyzés még bárhol érvényes, jövőre fenntartva)';
+      'Az aktuális „otthoni” régióval válaszol. (Egyelőre sehol nincs alkalmazva, a jövőre fenntartva)';
 
   @override
   String get repeater_cliHelpRegionHomeSet => 'Beállítja az „otthoni” régiót.';
@@ -3637,11 +3616,10 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGps =>
-      'Megadja a gps állapotát. Ha a gps ki van kapcsolva, akkor csak kikapcsolva válaszol, ha be van kapcsolva, akkor válaszol: be, állapot, javítás, sat count';
+      'Megadja a gps állapotát. Ha a gps ki van kapcsolva, csak azt válaszolja, hogy ki; ha be van kapcsolva, akkor ezt válaszolja: be, állapot, fix, műholdak száma';
 
   @override
-  String get repeater_cliHelpGpsOnOff =>
-      'Bekapcsolja a gps tápellátási állapotát.';
+  String get repeater_cliHelpGpsOnOff => 'Ki-/bekapcsolja a gps tápellátását.';
 
   @override
   String get repeater_cliHelpGpsSync =>
@@ -3739,20 +3717,20 @@ class AppLocalizationsHu extends AppLocalizations {
   String get repeater_general => 'Általános';
 
   @override
-  String get repeater_settingsCategory => 'Beállítások elemre';
+  String get repeater_settingsCategory => 'Beállítások';
 
   @override
   String get repeater_bridge => 'Híd';
 
   @override
-  String get repeater_logging => 'Fakitermelés';
+  String get repeater_logging => 'Naplózás';
 
   @override
   String get repeater_neighborsRepeaterOnly => 'Szomszédok (csak átjátszó)';
 
   @override
   String get repeater_regionManagementRepeaterOnly =>
-      'Régiókezelés (csak ismétlő)';
+      'Régiókezelés (csak átjátszó)';
 
   @override
   String get repeater_regionNote =>
@@ -3766,7 +3744,7 @@ class AppLocalizationsHu extends AppLocalizations {
       'A gps parancs bevezetésre került a helyhez kapcsolódó témák kezeléséhez.';
 
   @override
-  String get repeater_getCategory => 'Szerezzen értékeket';
+  String get repeater_getCategory => 'Értékek lekérése';
 
   @override
   String get repeater_powerMgmt => 'Energiagazdálkodás';
@@ -3780,7 +3758,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpClkReboot =>
-      'Visszaállítja az órát egy ismert korszakra, és újraindítja az eszközt.';
+      'Visszaállítja az órát egy ismert kezdőidőpontra, és újraindítja az eszközt.';
 
   @override
   String get repeater_cliHelpAdvertZeroHop =>
@@ -3788,19 +3766,19 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpStartOta =>
-      'Elindít egy vezeték nélküli firmware-frissítést a támogatott kártyákon.';
+      'Elindít egy vezeték nélküli firmware-frissítést a támogatott paneleken.';
 
   @override
   String get repeater_cliHelpTime =>
-      'Beállítja az eszköz óráját a megadott Unix korszak másodpercekre. Az óra nem tud visszafelé mozogni.';
+      'Beállítja az eszköz óráját a megadott Unix-időbélyegre (másodpercben). Az óra nem állítható visszafelé.';
 
   @override
   String get repeater_cliHelpBoard =>
-      'Megmutatja a kártya gyártóját/hardver azonosítóját.';
+      'Megmutatja a panel gyártóját/hardverazonosítóját.';
 
   @override
   String get repeater_cliHelpDiscoverNeighbors =>
-      'Csomópont-felderítési kérelmet küld a közeli szomszédoknak. (Csak ismétlő)';
+      'Csomópont-felderítési kérelmet küld a közeli szomszédoknak. (Csak átjátszó)';
 
   @override
   String get repeater_cliHelpPowersaving =>
@@ -3816,11 +3794,11 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetDutyCycle =>
-      'Beállítja a maximális megengedett átviteli munkaciklust százalékban (1-100). Belsőleg állítja be a műsoridőtényezőt.';
+      'Beállítja a maximális megengedett adási munkaciklust százalékban (1-100). Belsőleg állítja be az adásidő-tényezőt.';
 
   @override
   String get repeater_cliHelpSetPrvKey =>
-      '(Csak soros) Lecseréli az eszközazonosító privát kulcsot. Újraindítás szükséges az alkalmazáshoz. Új nyilvános kulcsot generál.';
+      'Lecseréli az eszközazonosító privát kulcsot. Az érvénybe lépéshez újraindítás szükséges. Új nyilvános kulcsot generál.';
 
   @override
   String get repeater_cliHelpSetRadioRxGain =>
@@ -3828,11 +3806,11 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetOwnerInfo =>
-      'Beállítja a hirdetésekben szereplő tulajdonos elérhetőségi adatait. A \'|\' használata újsorokhoz.';
+      'Beállítja a hirdetésekben szereplő tulajdonos elérhetőségi adatait. Új sorokhoz használja a „|” jelet.';
 
   @override
   String get repeater_cliHelpSetPathHashMode =>
-      'Beállítja az útvonal-kivonat módot. 0 = örökölt, 1 = szabványos, 2 = szigorú. Befolyásolja az útválasztási útvonalak egyeztetését.';
+      'Beállítja az átjátszó hirdetéseiben használt csomópont-azonosító méretét: 0 = 1 bájt (legfeljebb 64 ugrás), 1 = 2 bájt (legfeljebb 32 ugrás), 2 = 3 bájt (legfeljebb 21 ugrás). A 3 fenntartott. Nem befolyásolja, hogy mely méreteket továbbítja. v1.14+ firmware szükséges.';
 
   @override
   String get repeater_cliHelpSetLoopDetect =>
@@ -3840,7 +3818,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetFreq =>
-      '(Csak soros) Gyorsan beállítja csak a frekvenciát. Újraindítás szükséges. A „rádió beállítása” előnyben részesítse a teljes rádióparamétereket.';
+      '(Csak soros) Gyorsan beállítja csak a frekvenciát. Újraindítás szükséges. A teljes rádióparaméterekhez inkább a „set radio” parancsot használja.';
 
   @override
   String get repeater_cliHelpSetBridgeChannel =>
@@ -3864,7 +3842,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetRepeat =>
-      'Megmutatja, hogy a csomagtovábbítás (ismétlő szerepkör) be vagy ki van-e kapcsolva.';
+      'Megmutatja, hogy a csomagtovábbítás (átjátszó szerepkör) be vagy ki van-e kapcsolva.';
 
   @override
   String get repeater_cliHelpGetTx =>
@@ -3876,14 +3854,15 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetRadio =>
-      'A teljes rádióparamétereket mutatja: frekvencia, sávszélesség, szórási tényező, kódolási sebesség.';
+      'A teljes rádióparamétereket mutatja: frekvencia, sávszélesség, szórási tényező, kódolási arány.';
 
   @override
   String get repeater_cliHelpGetRadioRxGain =>
       '(csak SX126x) Megjeleníti az RX megnövelt erősítési állapotát.';
 
   @override
-  String get repeater_cliHelpGetAf => 'Megmutatja az aktuális műsoridőt.';
+  String get repeater_cliHelpGetAf =>
+      'Megmutatja az aktuális adásidő-tényezőt.';
 
   @override
   String get repeater_cliHelpGetDutyCycle =>
@@ -3903,7 +3882,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetAllowReadOnly =>
-      'Megmutatja, hogy a vendég csak olvasási hozzáférés engedélyezett-e.';
+      'Megmutatja, hogy a vendégek csak olvasási hozzáférése engedélyezett-e.';
 
   @override
   String get repeater_cliHelpGetAdvertInterval =>
@@ -3945,7 +3924,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetPathHashMode =>
-      'Az elérési út-kivonat módot mutatja (0/1/2).';
+      'Megjeleníti a hirdetésekben használt csomópont-azonosító méretét (0 = 1 bájt, 1 = 2 bájt, 2 = 3 bájt).';
 
   @override
   String get repeater_cliHelpGetLoopDetect =>
@@ -3989,7 +3968,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetPwrMgtSupport =>
-      'Beszámol arról, hogy a testület rendelkezik-e hatalomkezelési támogatással.';
+      'Jelzi, hogy a panel támogatja-e az energiagazdálkodást.';
 
   @override
   String get repeater_cliHelpGetPwrMgtSource =>
@@ -5078,11 +5057,11 @@ class AppLocalizationsHu extends AppLocalizations {
       'Azok az átjátszók, amelyeket a rádió közvetlenül hallott, a legutóbb hallottak elöl.';
 
   @override
-  String get snrIndicator_unknownRepeater => 'Ismeretlen ismétlő';
+  String get snrIndicator_unknownRepeater => 'Ismeretlen átjátszó';
 
   @override
   String get snrIndicator_unknownRepeaterHint =>
-      'Ez az ismétlő még nincs a névjegyeid között. A neve, helye és beállításai akkor jelennek meg, amikor a rádiód megkapja a hirdetését.';
+      'Ez az átjátszó még nincs a névjegyeid között. A neve, helye és beállításai akkor jelennek meg, amikor a rádiód megkapja a hirdetését.';
 
   @override
   String get contactsSettings_title => 'Névjegyek beállításai';
@@ -5108,7 +5087,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get contactsSettings_autoAddRepeatersSubtitle =>
-      'Engedélyezze a társnak, hogy automatikusan hozzáadja a felfedezett ismétlőket.';
+      'Engedélyezze a társnak, hogy automatikusan hozzáadja a felfedezett átjátszókat.';
 
   @override
   String get contactsSettings_autoAddRoomServersTitle =>
@@ -5231,6 +5210,14 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get appSettings_jumpToOldestUnreadSubtitle =>
       'Ha olvasatlan üzeneteket tartalmazó csevegést nyit meg, görgessen az első olvasatlanra a legutóbbi helyett.';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettings =>
+      'Átjátszó beállításainak automatikus lekérése';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      'Az átjátszó beállításainak megnyitásakor minden beállítást lekér. Mindegyik külön kérés LoRa-n keresztül, ezért lassú és adásidőt használ. Kikapcsolt állapotban koppintson az Összes frissítése gombra, vagy frissítse külön az egyes szakaszokat.';
 
   @override
   String get appSettings_languageHu => 'magyar';
@@ -5920,6 +5907,60 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert => 'Advert elárasztás max ugrás';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      'Az elárasztott advert által megtehető legtöbb ugrás (0-64, alapértelmezett 8)';
+
+  @override
+  String get repeater_floodMaxUnscoped => 'Régió nélküli elárasztás max ugrás';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      'A régióhatókör nélküli elárasztások legtöbb ugrása (0-64, alapértelmezett 64). Egy alacsony érték, például 3, helyben tartja a régió nélküli forgalmat.';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset =>
+      'Megegyezik az elárasztás max értékével';
+
+  @override
+  String get repeater_rxDelay => 'Vételi késleltetés';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      'Visszatartja a gyenge jellel hallott elárasztási csomagokat a továbbítás előtt, így az erős jelű útvonalak mennek előre, és kevesebb duplikátum kerül elküldésre (0-20, a 0 kikapcsolja).';
+
+  @override
+  String get repeater_cad => 'Csatornaaktivitás-érzékelés';
+
+  @override
+  String get repeater_cadHelper =>
+      'Adás előtt figyeli a tevékenységet, és vár, amíg a csatorna foglalt. Az interferencia küszöbbel együtt működik.';
+
+  @override
+  String get repeater_adcMultiplier => 'Akkumulátorfeszültség kalibrálása';
+
+  @override
+  String get repeater_adcMultiplierHelper =>
+      'Az akkumulátorfeszültség-olvasás szorzója (0-10). A 0 a panel alapértelmezett értékét használja.';
+
+  @override
+  String get repeater_boardSupportNote =>
+      'Nem minden panel támogatja ezt. A nem támogató panelek elutasítják a módosítást.';
+
+  @override
+  String get repeater_extraSf => 'További Spreading Factorok (SF)';
+
+  @override
+  String get repeater_extraSfHelper =>
+      'Legfeljebb 3 további Spreading Factor (SF), amelyeken egyszerre figyel, vesszővel elválasztva (például 9,10). Hagyja üresen a kikapcsoláshoz.';
+
+  @override
+  String get repeater_lr2021Only =>
+      'Csak LR2021 rádiós átjátszókhoz. A többi átjátszó nem rendelkezik ezzel a beállítással, és elutasítja azt.';
+
+  @override
   String get losMapDetailTooltip => 'Térkép részletessége';
 
   @override
@@ -6371,11 +6412,6 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting: $value érvénytelen';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'A(z) $value TX teljesítmény tartományon kívül van ($min – $max dBm)';
   }
 
   @override

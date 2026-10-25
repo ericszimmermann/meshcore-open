@@ -5564,12 +5564,6 @@ abstract class AppLocalizations {
   /// **'Higher sensitivity, more current draw (SX1262/SX1268 only)'**
   String get repeater_rxGainHelper;
 
-  /// No description provided for @repeater_refreshRxGain.
-  ///
-  /// In en, this message translates to:
-  /// **'Refresh boosted RX gain'**
-  String get repeater_refreshRxGain;
-
   /// No description provided for @repeater_multiAcks.
   ///
   /// In en, this message translates to:
@@ -5581,12 +5575,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Acknowledge messages over multiple paths for better delivery'**
   String get repeater_multiAcksSubtitle;
-
-  /// No description provided for @repeater_refreshMultiAcks.
-  ///
-  /// In en, this message translates to:
-  /// **'Refresh multi-ACKs'**
-  String get repeater_refreshMultiAcks;
 
   /// No description provided for @repeater_networkHealth.
   ///
@@ -5659,12 +5647,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Public metadata for this repeater'**
   String get repeater_ownerInfoHelper;
-
-  /// No description provided for @repeater_refreshOwnerInfo.
-  ///
-  /// In en, this message translates to:
-  /// **'Refresh operator info'**
-  String get repeater_refreshOwnerInfo;
 
   /// No description provided for @repeater_floodMax.
   ///
@@ -5882,35 +5864,11 @@ abstract class AppLocalizations {
   /// **'Error saving settings: {error}'**
   String repeater_errorSavingSettings(String error);
 
-  /// No description provided for @repeater_refreshBasicSettings.
-  ///
-  /// In en, this message translates to:
-  /// **'Refresh Basic Settings'**
-  String get repeater_refreshBasicSettings;
-
   /// No description provided for @repeater_refreshRadioSettings.
   ///
   /// In en, this message translates to:
   /// **'Refresh Radio Settings'**
   String get repeater_refreshRadioSettings;
-
-  /// No description provided for @repeater_refreshTxPower.
-  ///
-  /// In en, this message translates to:
-  /// **'Refresh TX power'**
-  String get repeater_refreshTxPower;
-
-  /// No description provided for @repeater_refreshPacketForwarding.
-  ///
-  /// In en, this message translates to:
-  /// **'Refresh Packet Forwarding'**
-  String get repeater_refreshPacketForwarding;
-
-  /// No description provided for @repeater_refreshGuestAccess.
-  ///
-  /// In en, this message translates to:
-  /// **'Refresh Guest Access'**
-  String get repeater_refreshGuestAccess;
 
   /// No description provided for @repeater_refreshPrivacyMode.
   ///
@@ -8894,6 +8852,18 @@ abstract class AppLocalizations {
   /// **'When opening a chat with unread messages, scroll to the first unread instead of the latest.'**
   String get appSettings_jumpToOldestUnreadSubtitle;
 
+  /// No description provided for @appSettings_autoFetchRepeaterSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-fetch repeater settings'**
+  String get appSettings_autoFetchRepeaterSettings;
+
+  /// No description provided for @appSettings_autoFetchRepeaterSettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request every setting when opening a repeater\'s settings. Each one is a separate request over LoRa, so this is slow and uses airtime. When off, tap Refresh All or refresh individual sections.'**
+  String get appSettings_autoFetchRepeaterSettingsSubtitle;
+
   /// No description provided for @appSettings_languageHu.
   ///
   /// In en, this message translates to:
@@ -9986,6 +9956,96 @@ abstract class AppLocalizations {
   /// **'{field}: enter a value'**
   String repeater_valueRequired(String field);
 
+  /// No description provided for @repeater_floodMaxAdvert.
+  ///
+  /// In en, this message translates to:
+  /// **'Advert flood max hops'**
+  String get repeater_floodMaxAdvert;
+
+  /// No description provided for @repeater_floodMaxAdvertHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum hops a flooded advert may travel (0-64, default 8)'**
+  String get repeater_floodMaxAdvertHelper;
+
+  /// No description provided for @repeater_floodMaxUnscoped.
+  ///
+  /// In en, this message translates to:
+  /// **'Unscoped flood max hops'**
+  String get repeater_floodMaxUnscoped;
+
+  /// No description provided for @repeater_floodMaxUnscopedHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum hops for floods without a region scope (0-64, default 64). A low value such as 3 keeps unscoped traffic local.'**
+  String get repeater_floodMaxUnscopedHelper;
+
+  /// No description provided for @repeater_floodMaxUnscopedUnset.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as flood max'**
+  String get repeater_floodMaxUnscopedUnset;
+
+  /// No description provided for @repeater_rxDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive delay'**
+  String get repeater_rxDelay;
+
+  /// No description provided for @repeater_rxDelayHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Holds flood packets heard with a weak signal before forwarding, so strong-signal paths go first and fewer duplicates are sent (0-20, 0 turns it off).'**
+  String get repeater_rxDelayHelper;
+
+  /// No description provided for @repeater_cad.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel activity detection'**
+  String get repeater_cad;
+
+  /// No description provided for @repeater_cadHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen for activity before transmitting and wait while the channel is busy. Works alongside the interference threshold.'**
+  String get repeater_cadHelper;
+
+  /// No description provided for @repeater_adcMultiplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery voltage calibration'**
+  String get repeater_adcMultiplier;
+
+  /// No description provided for @repeater_adcMultiplierHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiplier for the battery voltage reading (0-10). 0 uses the board\'s default.'**
+  String get repeater_adcMultiplierHelper;
+
+  /// No description provided for @repeater_boardSupportNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Not every board supports this. Unsupported boards reject the change.'**
+  String get repeater_boardSupportNote;
+
+  /// No description provided for @repeater_extraSf.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra spreading factors'**
+  String get repeater_extraSf;
+
+  /// No description provided for @repeater_extraSfHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 3 more spreading factors to listen on at the same time, separated by commas (for example 9,10). Leave empty to turn off.'**
+  String get repeater_extraSfHelper;
+
+  /// No description provided for @repeater_lr2021Only.
+  ///
+  /// In en, this message translates to:
+  /// **'Only for repeaters with an LR2021 radio. Other repeaters don\'t have this setting and reject it.'**
+  String get repeater_lr2021Only;
+
   /// No description provided for @losMapDetailTooltip.
   ///
   /// In en, this message translates to:
@@ -10686,12 +10746,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{setting}: {value} is not valid'**
   String repeater_invalidSettingValue(String setting, String value);
-
-  /// No description provided for @repeater_txPowerOutOfRange.
-  ///
-  /// In en, this message translates to:
-  /// **'TX power {value} is out of range ({min} to {max} dBm)'**
-  String repeater_txPowerOutOfRange(String value, int min, int max);
 
   /// No description provided for @repeater_prvKeyLengthError.
   ///

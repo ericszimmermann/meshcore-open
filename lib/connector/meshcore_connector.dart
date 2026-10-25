@@ -5351,7 +5351,9 @@ class MeshCoreConnector extends ChangeNotifier {
         lat: contact.latitude,
         lon: contact.longitude,
         lastAdvert: contact.lastSeen,
-        lastModified: contact.lastSeen,
+        // No lastModified: the radio then stamps its own clock. Sending the
+        // (often old) advert time made the new contact the "oldest" one, so
+        // with overwrite-oldest on a full table the next add evicted it.
       ),
       waitForGenericAck: true,
     );

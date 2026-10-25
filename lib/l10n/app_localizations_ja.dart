@@ -3027,16 +3027,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get repeater_rxGainHelper => 'より高い感度、より大きな電流（SX1262/SX1268のみ）';
 
   @override
-  String get repeater_refreshRxGain => '強化されたRX効果を再確認';
-
-  @override
   String get repeater_multiAcks => '複数のACK（応答）';
 
   @override
   String get repeater_multiAcksSubtitle => '複数の経路でメッセージを送信することで、より確実な配信を実現する。';
-
-  @override
-  String get repeater_refreshMultiAcks => '複数のACKをリフレッシュする';
 
   @override
   String get repeater_networkHealth => 'ネットワークの状態';
@@ -3075,9 +3069,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get repeater_ownerInfoHelper => 'このリピータに関する公開メタデータ';
-
-  @override
-  String get repeater_refreshOwnerInfo => 'オペレーター情報の更新';
 
   @override
   String get repeater_floodMax => '最大ホップ数';
@@ -3204,19 +3195,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings => '基本設定をリセットする';
-
-  @override
   String get repeater_refreshRadioSettings => 'ラジオ設定をリセットする';
-
-  @override
-  String get repeater_refreshTxPower => 'TX の電力レベルをリセットする';
-
-  @override
-  String get repeater_refreshPacketForwarding => 'パケット転送の刷新';
-
-  @override
-  String get repeater_refreshGuestAccess => 'ゲストへのアクセスをリフレッシュする';
 
   @override
   String get repeater_refreshPrivacyMode => 'プライバシーモードをリセットする';
@@ -4981,6 +4960,13 @@ class AppLocalizationsJa extends AppLocalizations {
       '未読メッセージがあるチャットを開く際、「最新のメッセージ」ではなく、最初に未読のメッセージまでスクロールしてください。';
 
   @override
+  String get appSettings_autoFetchRepeaterSettings => 'リピータの設定を自動取得';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      'リピータの設定を開いたときに、すべての設定を要求します。各設定はLoRa経由の個別のリクエストになるため、時間がかかり、通信時間(エアタイム)を消費します。オフの場合は、「すべて更新」をタップするか、各セクションを個別に更新してください。';
+
+  @override
   String get appSettings_languageHu => 'ハンガリー語';
 
   @override
@@ -5649,6 +5635,59 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert => 'アドバートのフラッド最大ホップ数';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      'フラッドされるアドバートが通過できる最大ホップ数（0-64、デフォルト 8）';
+
+  @override
+  String get repeater_floodMaxUnscoped => 'スコープなしのフラッド最大ホップ数';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      'リージョンスコープのないフラッドの最大ホップ数（0-64、デフォルト 64）。3 などの低い値にすると、スコープなしのトラフィックをローカルに留められます。';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset => 'フラッド最大と同じ';
+
+  @override
+  String get repeater_rxDelay => '受信遅延';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      '弱い信号で受信したフラッドパケットを転送前に保留し、強い信号の経路を優先させて重複送信を減らします（0-20、0 で無効）。';
+
+  @override
+  String get repeater_cad => 'チャンネルアクティビティ検出';
+
+  @override
+  String get repeater_cadHelper =>
+      '送信前に通信の有無を確認し、チャンネルがビジー状態の間は待機します。干渉閾値と併せて機能します。';
+
+  @override
+  String get repeater_adcMultiplier => 'バッテリー電圧の補正';
+
+  @override
+  String get repeater_adcMultiplierHelper =>
+      'バッテリー電圧の読み取り値に掛ける係数（0-10）。0 の場合はボードのデフォルト値を使用します。';
+
+  @override
+  String get repeater_boardSupportNote =>
+      'すべてのボードが対応しているわけではありません。非対応のボードは変更を拒否します。';
+
+  @override
+  String get repeater_extraSf => '追加の伝播係数';
+
+  @override
+  String get repeater_extraSfHelper =>
+      '同時に受信待ちする追加の伝播係数を最大 3 つまで、カンマ区切りで指定します（例: 9,10）。空欄にすると無効になります。';
+
+  @override
+  String get repeater_lr2021Only =>
+      'LR2021 無線を搭載したリピータ専用です。他のリピータにはこの設定がなく、変更は拒否されます。';
+
+  @override
   String get losMapDetailTooltip => '地図の詳細';
 
   @override
@@ -6086,11 +6125,6 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting: $valueは無効です';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'TX出力 $value は範囲外です($min~$max dBm)';
   }
 
   @override

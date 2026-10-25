@@ -1302,7 +1302,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String contacts_searchContacts(int number, String str) {
-    return 'Pesquisar contatos...';
+    return 'Pesquisar $number$str contatos...';
   }
 
   @override
@@ -3159,17 +3159,11 @@ class AppLocalizationsPt extends AppLocalizations {
       'Maior sensibilidade, maior consumo de corrente (apenas para SX1262/SX1268)';
 
   @override
-  String get repeater_refreshRxGain => 'Reforçar o ganho do RX';
-
-  @override
   String get repeater_multiAcks => 'Múltiplas respostas de confirmação';
 
   @override
   String get repeater_multiAcksSubtitle =>
       'Reconheça mensagens através de múltiplos caminhos para uma melhor entrega.';
-
-  @override
-  String get repeater_refreshMultiAcks => 'Reiniciar múltiplas confirmações';
 
   @override
   String get repeater_networkHealth => 'Saúde da rede';
@@ -3211,9 +3205,6 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get repeater_ownerInfoHelper =>
       'Metadados públicos para este repetidor';
-
-  @override
-  String get repeater_refreshOwnerInfo => 'Atualizar informações do operador';
 
   @override
   String get repeater_floodMax =>
@@ -3350,21 +3341,8 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings => 'Atualizar Configurações Básicas';
-
-  @override
   String get repeater_refreshRadioSettings =>
       'Atualizar Configurações de Rádio';
-
-  @override
-  String get repeater_refreshTxPower => 'Atualizar TX de energia';
-
-  @override
-  String get repeater_refreshPacketForwarding =>
-      'Atualizar Roteamento de Pacotes';
-
-  @override
-  String get repeater_refreshGuestAccess => 'Atualizar Acesso de Convidados';
 
   @override
   String get repeater_refreshPrivacyMode => 'Atualizar Modo Privacidade';
@@ -5238,6 +5216,14 @@ class AppLocalizationsPt extends AppLocalizations {
       'Ao abrir uma conversa com mensagens não lidas, role para a primeira mensagem não lida, em vez da mais recente.';
 
   @override
+  String get appSettings_autoFetchRepeaterSettings =>
+      'Buscar automaticamente as configurações do repetidor';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      'Solicita todas as configurações ao abrir as configurações de um repetidor. Cada uma é uma solicitação separada via LoRa, então é lento e consome tempo de transmissão. Quando desativado, toque em Atualizar tudo ou atualize seções individuais.';
+
+  @override
   String get appSettings_languageHu => 'Húngaro';
 
   @override
@@ -5927,6 +5913,61 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert =>
+      'Máximo de saltos de inundação de anúncios';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      'Número máximo de saltos que um anúncio inundado pode percorrer (0-64, padrão 8)';
+
+  @override
+  String get repeater_floodMaxUnscoped =>
+      'Máximo de saltos de inundação sem escopo';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      'Número máximo de saltos para inundações sem escopo de região (0-64, padrão 64). Um valor baixo, como 3, mantém o tráfego sem escopo local.';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset => 'Igual ao máximo de inundação';
+
+  @override
+  String get repeater_rxDelay => 'Atraso de recepção';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      'Retém pacotes de inundação ouvidos com sinal fraco antes de encaminhá-los, para que os caminhos com sinal forte tenham prioridade e menos duplicatas sejam enviadas (0-20, 0 desativa).';
+
+  @override
+  String get repeater_cad => 'Detecção de atividade do canal';
+
+  @override
+  String get repeater_cadHelper =>
+      'Escuta a atividade antes de transmitir e aguarda enquanto o canal estiver ocupado. Funciona em conjunto com o limite de interferência.';
+
+  @override
+  String get repeater_adcMultiplier => 'Calibração da tensão da bateria';
+
+  @override
+  String get repeater_adcMultiplierHelper =>
+      'Multiplicador da leitura da tensão da bateria (0-10). 0 usa o padrão da placa.';
+
+  @override
+  String get repeater_boardSupportNote =>
+      'Nem toda placa oferece suporte a isso. Placas sem suporte rejeitam a alteração.';
+
+  @override
+  String get repeater_extraSf => 'Fatores de dispersão extras';
+
+  @override
+  String get repeater_extraSfHelper =>
+      'Até 3 fatores de dispersão adicionais para escutar ao mesmo tempo, separados por vírgulas (por exemplo, 9,10). Deixe vazio para desativar.';
+
+  @override
+  String get repeater_lr2021Only =>
+      'Somente para repetidores com rádio LR2021. Os demais repetidores não têm esta configuração e a rejeitam.';
+
+  @override
   String get losMapDetailTooltip => 'Detalhe do mapa';
 
   @override
@@ -6379,11 +6420,6 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting: $value não é válido';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'Potência de TX $value fora do intervalo ($min a $max dBm)';
   }
 
   @override

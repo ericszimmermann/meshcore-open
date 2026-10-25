@@ -3114,17 +3114,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Higher sensitivity, more current draw (SX1262/SX1268 only)';
 
   @override
-  String get repeater_refreshRxGain => 'Refresh boosted RX gain';
-
-  @override
   String get repeater_multiAcks => 'Multi-ACKs';
 
   @override
   String get repeater_multiAcksSubtitle =>
       'Acknowledge messages over multiple paths for better delivery';
-
-  @override
-  String get repeater_refreshMultiAcks => 'Refresh multi-ACKs';
 
   @override
   String get repeater_networkHealth => 'Network health';
@@ -3164,9 +3158,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get repeater_ownerInfoHelper => 'Public metadata for this repeater';
-
-  @override
-  String get repeater_refreshOwnerInfo => 'Refresh operator info';
 
   @override
   String get repeater_floodMax => 'Flood max hops';
@@ -3301,19 +3292,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings => 'Refresh Basic Settings';
-
-  @override
   String get repeater_refreshRadioSettings => 'Refresh Radio Settings';
-
-  @override
-  String get repeater_refreshTxPower => 'Refresh TX power';
-
-  @override
-  String get repeater_refreshPacketForwarding => 'Refresh Packet Forwarding';
-
-  @override
-  String get repeater_refreshGuestAccess => 'Refresh Guest Access';
 
   @override
   String get repeater_refreshPrivacyMode => 'Refresh Privacy Mode';
@@ -5160,6 +5139,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'When opening a chat with unread messages, scroll to the first unread instead of the latest.';
 
   @override
+  String get appSettings_autoFetchRepeaterSettings =>
+      'Auto-fetch repeater settings';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      'Request every setting when opening a repeater\'s settings. Each one is a separate request over LoRa, so this is slow and uses airtime. When off, tap Refresh All or refresh individual sections.';
+
+  @override
   String get appSettings_languageHu => 'Hungarian';
 
   @override
@@ -5846,6 +5833,59 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert => 'Advert flood max hops';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      'Maximum hops a flooded advert may travel (0-64, default 8)';
+
+  @override
+  String get repeater_floodMaxUnscoped => 'Unscoped flood max hops';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      'Maximum hops for floods without a region scope (0-64, default 64). A low value such as 3 keeps unscoped traffic local.';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset => 'Same as flood max';
+
+  @override
+  String get repeater_rxDelay => 'Receive delay';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      'Holds flood packets heard with a weak signal before forwarding, so strong-signal paths go first and fewer duplicates are sent (0-20, 0 turns it off).';
+
+  @override
+  String get repeater_cad => 'Channel activity detection';
+
+  @override
+  String get repeater_cadHelper =>
+      'Listen for activity before transmitting and wait while the channel is busy. Works alongside the interference threshold.';
+
+  @override
+  String get repeater_adcMultiplier => 'Battery voltage calibration';
+
+  @override
+  String get repeater_adcMultiplierHelper =>
+      'Multiplier for the battery voltage reading (0-10). 0 uses the board\'s default.';
+
+  @override
+  String get repeater_boardSupportNote =>
+      'Not every board supports this. Unsupported boards reject the change.';
+
+  @override
+  String get repeater_extraSf => 'Extra spreading factors';
+
+  @override
+  String get repeater_extraSfHelper =>
+      'Up to 3 more spreading factors to listen on at the same time, separated by commas (for example 9,10). Leave empty to turn off.';
+
+  @override
+  String get repeater_lr2021Only =>
+      'Only for repeaters with an LR2021 radio. Other repeaters don\'t have this setting and reject it.';
+
+  @override
   String get losMapDetailTooltip => 'Map detail';
 
   @override
@@ -6293,11 +6333,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting: $value is not valid';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'TX power $value is out of range ($min to $max dBm)';
   }
 
   @override

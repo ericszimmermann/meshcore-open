@@ -838,13 +838,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get appSettings_languageEs => 'Іспанська';
 
   @override
-  String get appSettings_languageDe => 'Німецькою';
+  String get appSettings_languageDe => 'Німецька';
 
   @override
   String get appSettings_languagePl => 'Польська';
 
   @override
-  String get appSettings_languageSl => 'Словенська мова';
+  String get appSettings_languageSl => 'Словенська';
 
   @override
   String get appSettings_languagePt => 'Португальська';
@@ -862,7 +862,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get appSettings_languageNl => 'Нідерландська';
 
   @override
-  String get appSettings_languageSk => 'Словенська';
+  String get appSettings_languageSk => 'Словацька';
 
   @override
   String get appSettings_languageBg => 'Болгарська';
@@ -874,16 +874,16 @@ class AppLocalizationsUk extends AppLocalizations {
   String get appSettings_languageUk => 'Українська';
 
   @override
-  String get repeater_pathHashModeOption0 => '0 - 1 байт';
+  String get repeater_pathHashModeOption0 => '1 байт';
 
   @override
-  String get repeater_pathHashModeOption1 => '1 - 2 байти';
+  String get repeater_pathHashModeOption1 => '2 байти';
 
   @override
-  String get repeater_pathHashModeOption2 => '2 - 3 байти';
+  String get repeater_pathHashModeOption2 => '3 байти';
 
   @override
-  String get repeater_pathHashModeOption3 => '3 - 4 байта';
+  String get repeater_pathHashModeOption3 => '4 байти';
 
   @override
   String get settings_pathHashModeHelper =>
@@ -937,11 +937,11 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get appSettings_enableMessageTracing =>
-      'Увімкнути відстеження повідомлень';
+      'Показувати повний шлях ретрансляторів у повідомленнях';
 
   @override
   String get appSettings_enableMessageTracingSubtitle =>
-      'Показувати детальні метадані про маршрутизацію та час для повідомлень';
+      'Також показувати кількість повторів і час проходження. Утримуйте повідомлення й виберіть «Шлях», щоб побачити всі подробиці.';
 
   @override
   String get appSettings_regionOnHopsLine => 'Регіон поруч із кількістю хопів';
@@ -1161,7 +1161,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get appSettings_batteryLipo => 'LiPo (3.0-4.2В)';
 
   @override
-  String get appSettings_batteryLipoHv => 'ЛиPo HV (3,0-4,35 В)';
+  String get appSettings_batteryLipoHv => 'LiPo HV (3.0-4.35В)';
 
   @override
   String get appSettings_mapDisplay => 'Відображення карти';
@@ -1299,7 +1299,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String contacts_searchContacts(int number, String str) {
-    return 'Пошук контактів...';
+    return 'Пошук $number$str контактів...';
   }
 
   @override
@@ -2991,7 +2991,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_repeaterNameHelper =>
-      'Показати ім\'я цього ретранслятора';
+      'Відображуване ім\'я цього ретранслятора';
 
   @override
   String get repeater_adminPassword => 'Пароль адміністратора';
@@ -3104,7 +3104,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_rebootRepeaterSubtitle =>
-      'Скинути пристрій ретранслятора';
+      'Перезапустити пристрій ретранслятора';
 
   @override
   String get repeater_rebootRepeaterConfirm =>
@@ -3154,24 +3154,18 @@ class AppLocalizationsUk extends AppLocalizations {
   String get repeater_settingsSaved => 'Налаштування успішно збережено.';
 
   @override
-  String get repeater_rxGain => 'Підвищена ефективність RX';
+  String get repeater_rxGain => 'Підсилений прийом RX';
 
   @override
   String get repeater_rxGainHelper =>
-      'Вища чутливість, більший струм споживання (тільки для SX1262/SX1268)';
-
-  @override
-  String get repeater_refreshRxGain => 'Оновіть підвищений прибуток від RX';
+      'Вища чутливість, більше споживання струму (тільки для SX1262/SX1268)';
 
   @override
   String get repeater_multiAcks => 'Багато підтверджень';
 
   @override
   String get repeater_multiAcksSubtitle =>
-      'Розпізнавайте повідомлення через різні канали для кращої доставки.';
-
-  @override
-  String get repeater_refreshMultiAcks => 'Оновити кілька підтверджень';
+      'Підтверджувати повідомлення кількома шляхами для кращої доставки';
 
   @override
   String get repeater_networkHealth => 'Стан мережі';
@@ -3181,10 +3175,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_loopDetectHelper =>
-      'Створіть пакети, які імітують цикли маршрутизації.';
+      'Відкидати flood-пакети, схожі на петлі маршрутизації';
 
   @override
-  String get repeater_loopDetectOff => 'Відключення';
+  String get repeater_loopDetectOff => 'Вимкнено';
 
   @override
   String get repeater_loopDetectMinimal => 'Мінімальний';
@@ -3215,29 +3209,26 @@ class AppLocalizationsUk extends AppLocalizations {
       'Публічні метадані для цього ретранслятора';
 
   @override
-  String get repeater_refreshOwnerInfo => 'Оновити інформацію про оператора';
-
-  @override
   String get repeater_floodMax =>
       'Максимальна кількість переходів під час поширення через всю мережу (flood)';
 
   @override
   String get repeater_floodMaxHelper =>
-      'Максимальна кількість хмелю, яку може містити один пакет (0-64)';
+      'Максимальна кількість переходів, яку може пройти flood-пакет (0-64)';
 
   @override
-  String get repeater_advancedSettings => 'Просунутий';
+  String get repeater_advancedSettings => 'Додатково';
 
   @override
   String get repeater_advancedSettingsSubtitle =>
-      'Регулювальні ручки для досвідчених операторів';
+      'Тонке налаштування для досвідчених операторів';
 
   @override
-  String get repeater_pathHashMode => 'Режим хешування шляху';
+  String get repeater_pathHashMode => 'Розмір ID вузла в шляхах';
 
   @override
   String get repeater_pathHashModeHelper =>
-      'Байти, що використовуються для кодування ідентифікатора цього ретранслятора в тегах flood-шляху/виявлення петель. 0=1 байт (256 ідентифікаторів, до 64 переходів), 1=2 байти (65 000 ідентифікаторів, до 32 переходів), 2=3 байти (16 мільйонів ідентифікаторів, до 21 переходу). Прошивки до v1.14 завжди використовували 1-байтові шляхи; v1.14 і новіші можна налаштувати на 2- або 3-байтові шляхи.';
+      'Розмір ID цього ретранслятора в шляхах оголошень, які він надсилає: 1 байт (256 ID, до 64 переходів), 2 байти (65 тис. ID, до 32 переходів), 3 байти (16 млн ID, до 21 переходу). Не впливає на пересилання; ретранслятори v1.14+ пересилають усі розміри, але старіша прошивка відкидає пакети з 2- або 3-байтовими ID.';
 
   @override
   String get repeater_keySettings => 'Зміна ключів ідентифікації';
@@ -3251,42 +3242,42 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_prvKeyHelper =>
-      'Нова приватна ключ для репітера, 128-символова штучна штука в шестнадцатеричному форматі.';
+      'Новий приватний ключ ретранслятора — 128-символьний шістнадцятковий рядок.';
 
   @override
-  String get repeater_generatePrvKey => 'Синхронізujте ключовий пару';
+  String get repeater_generatePrvKey => 'Згенерувати випадкову пару ключів';
 
   @override
-  String get repeater_stopGeneratingPrvKey => 'Прервити шук ключового пару';
+  String get repeater_stopGeneratingPrvKey => 'Перервати пошук пари ключів';
 
   @override
-  String get repeater_pubKey => 'Публічна ключ';
+  String get repeater_pubKey => 'Публічний ключ';
 
   @override
   String get repeater_pubKeyHelper =>
-      'Це публична ключ, який пов\'язано з створеною приватною ключом. Ви не можете встановлювати його напрямую.';
+      'Це публічний ключ, що відповідає згенерованому приватному ключу. Встановити його напряму не можна.';
 
   @override
-  String get repeater_pubKeyPrefix => 'Високорейтингове прикінання';
+  String get repeater_pubKeyPrefix => 'Бажаний префікс';
 
   @override
   String repeater_pubKeyPrefixHelper(int tries) {
-    return 'Найдіть відповідний открытий ключ, який починається ціми шестнадцатыми цифрами. Ожидається кількість потрібних попыток: $tries.';
+    return 'Знайти публічний ключ, що починається з цих шістнадцяткових цифр. Очікувана кількість потрібних спроб: $tries.';
   }
 
   @override
-  String get repeater_txDelay => 'Затримка у Flood, штат Техас';
+  String get repeater_txDelay => 'Затримка TX для flood';
 
   @override
   String get repeater_txDelayHelper =>
       'Затримка повторного надсилання для трафіку через всю мережу (flood), як множник від часу передачі пакета (0-2, за замовчуванням 0,5). Чим вище значення, тим менше конфліктів, але повільніше передавання.';
 
   @override
-  String get repeater_directTxDelay => 'Пряме затримка TX';
+  String get repeater_directTxDelay => 'Затримка прямої передачі TX';
 
   @override
   String get repeater_directTxDelayHelper =>
-      'Відновлення інтервалів для прямого (немасового) трафіку, як множник часу передачі пакета (від 0 до 2, за замовчуванням 0,3).';
+      'Інтервал між повторними передачами для прямого (не flood) трафіку, як множник часу передачі пакета в ефірі (0-2, за замовчуванням 0,3).';
 
   @override
   String get repeater_intThresh => 'Порогове значення перешкод';
@@ -3300,7 +3291,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_agcResetIntervalHelper =>
-      'Як часто потрібно скидати автоматичне регулювання гучності радіо, щоб відновити нормальну роботу після ситуації, коли гучність була заблокована. Кожні кілька секунд, зменшуючи значення до кратного 4. Вимкнення періодичного скидання.';
+      'Як часто скидати автоматичне регулювання підсилення (AGC) радіо, щоб вийти із завислого стану підсилення. У секундах, округлюється вниз до кратного 4. 0 вимикає періодичне скидання.';
 
   @override
   String get repeater_actionsTitle => 'Дії';
@@ -3330,12 +3321,12 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String repeater_actionSucceeded(String action) {
-    return '$action succeeded';
+    return '$action: успішно';
   }
 
   @override
   String repeater_actionFailed(String action, String error) {
-    return '$action failed: $error';
+    return '$action: помилка: $error';
   }
 
   @override
@@ -3353,19 +3344,7 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings => 'Оновити основні налаштування';
-
-  @override
   String get repeater_refreshRadioSettings => 'Оновити налаштування радіо';
-
-  @override
-  String get repeater_refreshTxPower => 'Оновити потужність TX';
-
-  @override
-  String get repeater_refreshPacketForwarding => 'Оновити пересилання пакетів';
-
-  @override
-  String get repeater_refreshGuestAccess => 'Оновити гостьовий доступ';
 
   @override
   String get repeater_refreshPrivacyMode => 'Оновити режим приватності';
@@ -3615,7 +3594,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpRegionGet =>
-      'Шукає регіон із заданим префіксом назви (або «» для глобальної області). Відповідає: «-> ім\'я-регіону (ім\'я-батька) \'F\'»';
+      'Шукає регіон із заданим префіксом назви (або «*» для глобальної області). Відповідає: «-> ім\'я-регіону (ім\'я-батька) \'F\'»';
 
   @override
   String get repeater_cliHelpRegionPut =>
@@ -3623,11 +3602,11 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpRegionRemove =>
-      'Видаляє визначення регіону з заданою назвою.';
+      'Видаляє визначення регіону із заданою назвою. (має збігатися точно та не мати дочірніх регіонів)';
 
   @override
   String get repeater_cliHelpRegionAllowf =>
-      'Встановлює дозвіл «Flood» для заданого регіону. (\'\' для глобальної/успадкованої області)';
+      'Встановлює дозвіл «Flood» для заданого регіону. (\'*\' для глобальної/успадкованої області)';
 
   @override
   String get repeater_cliHelpRegionDenyf =>
@@ -3646,7 +3625,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGps =>
-      'Показує статус GPS. Коли GPS вимкнено, відповідає лише «вимкнено», якщо увімкнено — відповідає «увімкнено», статус, корекція, кількість супутників.';
+      'Показує статус GPS. Коли GPS вимкнено, відповідає лише «вимкнено», якщо увімкнено — відповідає «увімкнено», статус, фікс, кількість супутників.';
 
   @override
   String get repeater_cliHelpGpsOnOff => 'Увімкнути/вимкнути GPS.';
@@ -3774,7 +3753,7 @@ class AppLocalizationsUk extends AppLocalizations {
       'Команда GPS була введена для керування питаннями, пов\'язаними з локацією.';
 
   @override
-  String get repeater_getCategory => 'Отримати цінності';
+  String get repeater_getCategory => 'Отримати значення';
 
   @override
   String get repeater_powerMgmt => 'Управління енергоспоживанням';
@@ -3784,7 +3763,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpPowerOff =>
-      'Вмикає живлення пристрою. (очікується відсутність відповіді)';
+      'Вимикає живлення пристрою. (відповідь не очікується)';
 
   @override
   String get repeater_cliHelpClkReboot =>
@@ -3792,7 +3771,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpAdvertZeroHop =>
-      'Надсилає оголошення, яке не проходить через інші мережі (лише до безпосередніх сусідів).';
+      'Надсилає оголошення без ретрансляції (лише безпосереднім сусідам).';
 
   @override
   String get repeater_cliHelpStartOta =>
@@ -3800,7 +3779,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpTime =>
-      'Встановлює час пристрою відповідно до заданих секунд від початку епохи Unix. Час не може відкачуватися назад.';
+      'Встановлює час пристрою відповідно до заданих секунд від початку епохи Unix. Час не може бути переведений назад.';
 
   @override
   String get repeater_cliHelpBoard =>
@@ -3808,7 +3787,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpDiscoverNeighbors =>
-      'Відправляє запит на виявлення сусідніх вузлів. (Тільки для повторювачів)';
+      'Відправляє запит на виявлення сусідніх вузлів. (Тільки для ретрансляторів)';
 
   @override
   String get repeater_cliHelpPowersaving =>
@@ -3828,7 +3807,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetPrvKey =>
-      '(Тільки для серійного використання) Замінює приватний ключ ідентифікації пристрою. Необхідне перезавантаження для застосування. Генерує новий публічний ключ.';
+      'Замінює приватний ключ ідентифікації пристрою. Необхідне перезавантаження для застосування. Генерує новий публічний ключ.';
 
   @override
   String get repeater_cliHelpSetRadioRxGain =>
@@ -3840,7 +3819,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSetPathHashMode =>
-      'Встановлює режим хешування шляху. 0 = для старих систем, 1 = для стандартних, 2 = для суворих. Впливає на те, як маршрути порівнюються.';
+      'Встановлює розмір ID вузла в оголошеннях цього ретранслятора: 0 = 1 байт (до 64 переходів), 1 = 2 байти (до 32 переходів), 2 = 3 байти (до 21 переходу). 3 зарезервовано. Не впливає на те, які розміри пересилаються. Потрібна прошивка v1.14+.';
 
   @override
   String get repeater_cliHelpSetLoopDetect =>
@@ -3856,7 +3835,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetName =>
-      'Показує назву узла, яка була налаштована.';
+      'Показує назву вузла, яка була налаштована.';
 
   @override
   String get repeater_cliHelpGetRole =>
@@ -3872,11 +3851,11 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetRepeat =>
-      'Показує, чи активна функція перенаправлення пакетів (роль повторювача).';
+      'Показує, чи активне пересилання пакетів (роль ретранслятора).';
 
   @override
   String get repeater_cliHelpGetTx =>
-      'Показує потожну потужність передавача в децибелах (dBm).';
+      'Показує поточну потужність передавача в dBm.';
 
   @override
   String get repeater_cliHelpGetFreq =>
@@ -3884,7 +3863,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetRadio =>
-      'Показує повні параметри радіосигналу: частоту, смугу пропускання, коефіцієнт модуляції, швидкість кодування.';
+      'Показує повні параметри радіо: частоту, смугу пропускання, коефіцієнт розширення, швидкість кодування.';
 
   @override
   String get repeater_cliHelpGetRadioRxGain =>
@@ -3954,7 +3933,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetPathHashMode =>
-      'Відображає режим хешування шляху (0/1/2).';
+      'Показує режим розміру ID вузла в оголошеннях (0 = 1 байт, 1 = 2 байти, 2 = 3 байти).';
 
   @override
   String get repeater_cliHelpGetLoopDetect =>
@@ -3962,7 +3941,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetAcl =>
-      '(Тільки для серій) Перераховує записи контролю доступу на репітері.';
+      '(Тільки для серійного використання) Перелічує записи контролю доступу на ретрансляторі.';
 
   @override
   String get repeater_cliHelpGetBridgeEnabled =>
@@ -3974,7 +3953,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetBridgeSource =>
-      'Показує, чи маршрутизує міст пакети RX або TX.';
+      'Показує, чи міст журналює пакети RX або TX.';
 
   @override
   String get repeater_cliHelpGetBridgeBaud =>
@@ -3998,7 +3977,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpGetPwrMgtSupport =>
-      'Показує, чи має рада директорів підтримку в управлінні енергоспоживанням.';
+      'Показує, чи має плата підтримку керування енергоспоживанням.';
 
   @override
   String get repeater_cliHelpGetPwrMgtSource =>
@@ -4018,7 +3997,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpSensorSet =>
-      'Створює налаштування для спеціального датчика.';
+      'Записує налаштування користувацького датчика.';
 
   @override
   String get repeater_cliHelpSensorList =>
@@ -4026,7 +4005,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get repeater_cliHelpRegionDefault =>
-      'Показує поточний область дії за замовчуванням.';
+      'Показує поточну область дії регіону за замовчуванням.';
 
   @override
   String get repeater_cliHelpRegionDefaultSet =>
@@ -5254,6 +5233,14 @@ class AppLocalizationsUk extends AppLocalizations {
       'При відкритті чату з непрочитаними повідомленнями, прокрутіть до першого непрочитаного повідомлення, а не до останнього.';
 
   @override
+  String get appSettings_autoFetchRepeaterSettings =>
+      'Автоматично отримувати налаштування ретранслятора';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      'Запитувати всі налаштування під час відкриття налаштувань ретранслятора. Кожне налаштування — окремий запит через LoRa, тому це повільно та використовує ефірний час. Коли вимкнено, натисніть «Оновити все» або оновіть окремі розділи.';
+
+  @override
   String get appSettings_languageHu => 'Угорська';
 
   @override
@@ -5952,6 +5939,61 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert =>
+      'Макс. кількість переходів для advert (flood)';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      'Максимальна кількість переходів, які може пройти розісланий advert (0-64, за замовчуванням 8)';
+
+  @override
+  String get repeater_floodMaxUnscoped =>
+      'Макс. кількість переходів flood без регіону';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      'Максимальна кількість переходів для flood без області регіону (0-64, за замовчуванням 64). Низьке значення, наприклад 3, залишає трафік без регіону локальним.';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset => 'Те саме, що flood max';
+
+  @override
+  String get repeater_rxDelay => 'Затримка приймання';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      'Утримує flood-пакети, почуті зі слабким сигналом, перед пересиланням, щоб шляхи з сильним сигналом ішли першими і надсилалося менше дублікатів (0-20, 0 вимикає).';
+
+  @override
+  String get repeater_cad => 'Виявлення активності каналу';
+
+  @override
+  String get repeater_cadHelper =>
+      'Прослуховує активність перед передачею і чекає, поки канал зайнятий. Працює разом з пороговим значенням перешкод.';
+
+  @override
+  String get repeater_adcMultiplier => 'Калібрування напруги батареї';
+
+  @override
+  String get repeater_adcMultiplierHelper =>
+      'Множник для вимірювання напруги батареї (0-10). 0 використовує значення плати за замовчуванням.';
+
+  @override
+  String get repeater_boardSupportNote =>
+      'Не кожна плата це підтримує. Непідтримувані плати відхиляють зміну.';
+
+  @override
+  String get repeater_extraSf => 'Додаткові коефіцієнти розширення';
+
+  @override
+  String get repeater_extraSfHelper =>
+      'До 3 додаткових коефіцієнтів розширення (SF) для одночасного прослуховування, через кому (наприклад 9,10). Залиште порожнім, щоб вимкнути.';
+
+  @override
+  String get repeater_lr2021Only =>
+      'Лише для ретрансляторів з радіо LR2021. Інші ретранслятори не мають цього налаштування і відхиляють його.';
+
+  @override
   String get losMapDetailTooltip => 'Деталізація карти';
 
   @override
@@ -6403,11 +6445,6 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting: значення $value недопустиме';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'Потужність TX $value поза діапазоном (від $min до $max дБм)';
   }
 
   @override

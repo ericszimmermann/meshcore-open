@@ -3132,17 +3132,11 @@ class AppLocalizationsSv extends AppLocalizations {
       'Ökad känslighet, högre strömförbrukning (endast för SX1262/SX1268)';
 
   @override
-  String get repeater_refreshRxGain => 'Uppdatera förstärkt RX-gain';
-
-  @override
   String get repeater_multiAcks => 'Flera bekräftelser';
 
   @override
   String get repeater_multiAcksSubtitle =>
       'Kvittera meddelanden via flera rutter för säkrare leverans';
-
-  @override
-  String get repeater_refreshMultiAcks => 'Uppdatera multi-ACK';
 
   @override
   String get repeater_networkHealth => 'Nätverkets hälsa';
@@ -3183,9 +3177,6 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get repeater_ownerInfoHelper =>
       'Publik metadata för den här repeatern';
-
-  @override
-  String get repeater_refreshOwnerInfo => 'Uppdatera operatörsinformation';
 
   @override
   String get repeater_floodMax => 'Max antal flood-hopp';
@@ -3320,20 +3311,7 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings => 'Uppdatera grundinställningar';
-
-  @override
   String get repeater_refreshRadioSettings => 'Uppdatera radioinställningar';
-
-  @override
-  String get repeater_refreshTxPower => 'Uppdatera TX-effekt';
-
-  @override
-  String get repeater_refreshPacketForwarding =>
-      'Uppdatera paketvidarebefordran';
-
-  @override
-  String get repeater_refreshGuestAccess => 'Uppdatera gäståtkomst';
 
   @override
   String get repeater_refreshPrivacyMode => 'Uppdatera privatläge';
@@ -5191,6 +5169,14 @@ class AppLocalizationsSv extends AppLocalizations {
       'När du öppnar en chatt med oinlästa meddelanden, scrolla till det första oinlästa meddelandet istället för det senaste.';
 
   @override
+  String get appSettings_autoFetchRepeaterSettings =>
+      'Hämta repeaterinställningar automatiskt';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      'Begär alla inställningar när en repeaters inställningar öppnas. Varje inställning är en separat begäran över LoRa, så det är långsamt och använder sändningstid. När det är av, tryck på Uppdatera alla eller uppdatera enskilda sektioner.';
+
+  @override
   String get appSettings_languageHu => 'Ungerska';
 
   @override
@@ -5880,6 +5866,59 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert => 'Max antal flood-hopp för advert';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      'Maximalt antal hopp som en flood-advert får färdas (0–64, standard 8)';
+
+  @override
+  String get repeater_floodMaxUnscoped => 'Max antal flood-hopp utan region';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      'Maximalt antal hopp för flood utan regionomfång (0–64, standard 64). Ett lågt värde som 3 håller trafik utan region lokal.';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset => 'Samma som flood max';
+
+  @override
+  String get repeater_rxDelay => 'Mottagningsfördröjning';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      'Håller tillbaka flood-paket som hörs med svag signal innan de vidarebefordras, så att vägar med stark signal går först och färre dubbletter skickas (0–20, 0 stänger av det).';
+
+  @override
+  String get repeater_cad => 'Kanalaktivitetsdetektering';
+
+  @override
+  String get repeater_cadHelper =>
+      'Lyssnar efter aktivitet före sändning och väntar medan kanalen är upptagen. Fungerar tillsammans med störningströskeln.';
+
+  @override
+  String get repeater_adcMultiplier => 'Kalibrering av batterispänning';
+
+  @override
+  String get repeater_adcMultiplierHelper =>
+      'Multiplikator för avläsningen av batterispänningen (0–10). 0 använder kortets standardvärde.';
+
+  @override
+  String get repeater_boardSupportNote =>
+      'Alla kort stöder inte detta. Kort som inte stöder det avvisar ändringen.';
+
+  @override
+  String get repeater_extraSf => 'Extra spridningsfaktorer';
+
+  @override
+  String get repeater_extraSfHelper =>
+      'Upp till 3 extra spridningsfaktorer att lyssna på samtidigt, separerade med kommatecken (till exempel 9,10). Lämna tomt för att stänga av.';
+
+  @override
+  String get repeater_lr2021Only =>
+      'Endast för repeatrar med LR2021-radio. Andra repeatrar har inte den här inställningen och avvisar den.';
+
+  @override
   String get losMapDetailTooltip => 'Kartdetaljer';
 
   @override
@@ -6329,11 +6368,6 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting: $value är inte giltigt';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'TX-effekt $value ligger utanför intervallet ($min till $max dBm)';
   }
 
   @override

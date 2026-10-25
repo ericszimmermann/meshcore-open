@@ -1307,7 +1307,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String contacts_searchContacts(int number, String str) {
-    return 'Поиск контактов...';
+    return 'Поиск по $number$str контактам...';
   }
 
   @override
@@ -3166,17 +3166,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Более высокая чувствительность, больший ток потребления (только для SX1262/SX1268)';
 
   @override
-  String get repeater_refreshRxGain => 'Обновите усиление RX';
-
-  @override
   String get repeater_multiAcks => 'Несколько подтверждений';
 
   @override
   String get repeater_multiAcksSubtitle =>
       'Обеспечьте доставку сообщений по нескольким каналам для повышения эффективности.';
-
-  @override
-  String get repeater_refreshMultiAcks => 'Обновление нескольких подтверждений';
 
   @override
   String get repeater_networkHealth => 'Состояние сети';
@@ -3218,9 +3212,6 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get repeater_ownerInfoHelper =>
       'Общая метаинформация для этого ретранслятора';
-
-  @override
-  String get repeater_refreshOwnerInfo => 'Обновить информацию о операторе';
 
   @override
   String get repeater_floodMax => 'Максимальное количество хопов при рассылке';
@@ -3356,19 +3347,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get repeater_refreshBasicSettings => 'Обновить основные настройки';
-
-  @override
   String get repeater_refreshRadioSettings => 'Обновить настройки радио';
-
-  @override
-  String get repeater_refreshTxPower => 'Обновить мощность передачи';
-
-  @override
-  String get repeater_refreshPacketForwarding => 'Обновить пересылку пакетов';
-
-  @override
-  String get repeater_refreshGuestAccess => 'Обновить гостевой доступ';
 
   @override
   String get repeater_refreshPrivacyMode => 'Обновить режим конфиденциальности';
@@ -5254,6 +5233,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'При открытии чата с непрочитанными сообщениями, прокрутите страницу, чтобы увидеть первое непрочитанное сообщение, а не последнее.';
 
   @override
+  String get appSettings_autoFetchRepeaterSettings =>
+      'Автозагрузка настроек репитера';
+
+  @override
+  String get appSettings_autoFetchRepeaterSettingsSubtitle =>
+      'Запрашивать все настройки при открытии настроек репитера. Каждая настройка — это отдельный запрос по LoRa, поэтому это медленно и занимает эфирное время. Если выключено, нажмите «Обновить все» или обновите отдельные разделы.';
+
+  @override
   String get appSettings_languageHu => 'Венгерский';
 
   @override
@@ -5949,6 +5936,59 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get repeater_floodMaxAdvert => 'Макс. число хопов для адвертов';
+
+  @override
+  String get repeater_floodMaxAdvertHelper =>
+      'Максимальное число хопов, которое может пройти рассылаемый адверт (0-64, по умолчанию 8)';
+
+  @override
+  String get repeater_floodMaxUnscoped => 'Макс. число хопов без области';
+
+  @override
+  String get repeater_floodMaxUnscopedHelper =>
+      'Максимальное число хопов для рассылки без региональной области (0-64, по умолчанию 64). Низкое значение, например 3, оставляет трафик без области локальным.';
+
+  @override
+  String get repeater_floodMaxUnscopedUnset => 'Как макс. хопов';
+
+  @override
+  String get repeater_rxDelay => 'Задержка приёма';
+
+  @override
+  String get repeater_rxDelayHelper =>
+      'Удерживает пакеты рассылки, принятые со слабым сигналом, перед пересылкой, чтобы пути с сильным сигналом шли первыми и отправлялось меньше дубликатов (0-20, 0 отключает).';
+
+  @override
+  String get repeater_cad => 'Обнаружение активности канала';
+
+  @override
+  String get repeater_cadHelper =>
+      'Слушает эфир перед передачей и ждёт, пока канал занят. Работает вместе с пороговым значением помех.';
+
+  @override
+  String get repeater_adcMultiplier => 'Калибровка напряжения батареи';
+
+  @override
+  String get repeater_adcMultiplierHelper =>
+      'Множитель для показаний напряжения батареи (0-10). 0 использует значение платы по умолчанию.';
+
+  @override
+  String get repeater_boardSupportNote =>
+      'Не каждая плата это поддерживает. Неподдерживаемые платы отклоняют изменение.';
+
+  @override
+  String get repeater_extraSf => 'Дополнительные коэффициенты расширения';
+
+  @override
+  String get repeater_extraSfHelper =>
+      'До 3 дополнительных коэффициентов расширения для одновременного прослушивания, через запятую (например, 9,10). Оставьте пустым, чтобы отключить.';
+
+  @override
+  String get repeater_lr2021Only =>
+      'Только для репитеров с радио LR2021. У других репитеров этой настройки нет, и они её отклоняют.';
+
+  @override
   String get losMapDetailTooltip => 'Детализация карты';
 
   @override
@@ -6400,11 +6440,6 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String repeater_invalidSettingValue(String setting, String value) {
     return '$setting: значение $value недопустимо';
-  }
-
-  @override
-  String repeater_txPowerOutOfRange(String value, int min, int max) {
-    return 'Мощность TX $value вне диапазона (от $min до $max дБм)';
   }
 
   @override

@@ -320,6 +320,10 @@ class AppSettingsService extends ChangeNotifier {
     await updateSettings(_settings.copyWith(jumpToOldestUnread: value));
   }
 
+  Future<void> setAutoFetchRepeaterSettings(bool value) async {
+    await updateSettings(_settings.copyWith(autoFetchRepeaterSettings: value));
+  }
+
   Future<void> setNetworkMapUploadEnabled(bool value) async {
     await updateSettings(_settings.copyWith(networkMapUploadEnabled: value));
   }
