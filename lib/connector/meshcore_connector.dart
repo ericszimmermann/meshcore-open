@@ -810,6 +810,82 @@ class MeshCoreConnector extends ChangeNotifier {
     }
   }
 
+  /// Applies a GPS fix from a telemetry reply to the contact so the map and
+  /// lists show where the node is now, not where its last advert put it.
+  /// [lastSeen] is left alone: it is the node's advert timestamp, which path
+  /// and flag writes send back to the radio.
+  void updateContactLocationFromTelemetry(
+    String contactKeyHex,
+    double latitude,
+    double longitude,
+  ) {
+    final index = _contacts.indexWhere((c) => c.publicKeyHex == contactKeyHex);
+    if (index < 0) return;
+    final updated = _contacts[index].copyWith(
+      latitude: latitude,
+      longitude: longitude,
+      telemetryFixAt: DateTime.now(),
+    );
+    if (!updated.hasLocation) return;
+    _contacts[index] = updated;
+    notifyListeners();
+    unawaited(_persistContacts());
+  }
+
+  /// Carries [previous]'s telemetry fix onto [incoming], a record the radio
+  /// just returned, while it still holds the advert that fix superseded. A
+  /// newer advert (by the node's own clock) wins.
+  Contact? _withTelemetryFix(Contact previous, Contact incoming) {
+    final fixAt = previous.telemetryFixAt;
+    if (fixAt == null || incoming.lastSeen.isAfter(previous.lastSeen)) {
+      return null;
+    }
+    return incoming.copyWith(
+      latitude: previous.latitude,
+      longitude: previous.longitude,
+      telemetryFixAt: fixAt,
+    );
+  }
+
+  /// Merges a contact record from the radio (contact list or advert) into the
+  /// one we already hold, keeping the user's path choice and any telemetry
+  /// fix still newer than the radio's advert.
+  Contact _mergeRefreshedContact(
+    Contact existing,
+    Contact incoming, {
+    bool keepLocationWhenMissing = false,
+  }) {
+    final mergedLastMessageAt =
+        existing.lastMessageAt.isAfter(incoming.lastMessageAt)
+        ? existing.lastMessageAt
+        : incoming.lastMessageAt;
+    final base = incoming.copyWith(
+      lastMessageAt: mergedLastMessageAt,
+      pathOverride: existing.pathOverride, // Preserve user's path choice
+      pathOverrideBytes: existing.pathOverrideBytes,
+      latitude: keepLocationWhenMissing
+          ? incoming.latitude ?? existing.latitude
+          : incoming.latitude,
+      longitude: keepLocationWhenMissing
+          ? incoming.longitude ?? existing.longitude
+          : incoming.longitude,
+      clearTelemetryFix: true,
+    );
+    return _withTelemetryFix(existing, base) ?? base;
+  }
+
+  /// Telemetry fixes held across a full contact sync, which clears the list
+  /// before the radio resends it.
+  final Map<String, Contact> _telemetryFixesDuringSync = {};
+
+  void _stashTelemetryFixes() {
+    for (final c in _contacts) {
+      if (c.telemetryFixAt != null) {
+        _telemetryFixesDuringSync[c.publicKeyHex] = c;
+      }
+    }
+  }
+
   String _batteryChemistryForDevice() {
     final deviceId = batteryDeviceKey;
     if (deviceId == null || _appSettingsService == null) return 'nmc';
@@ -4226,6 +4302,7 @@ class MeshCoreConnector extends ChangeNotifier {
     _contactSyncUsesSinceFilter = since != null;
     if (!preserveExisting) {
       _hasLoadedContacts = false;
+      _stashTelemetryFixes();
       _contacts.clear();
     }
     _armContactSyncWatchdog();
@@ -6021,6 +6098,7 @@ class MeshCoreConnector extends ChangeNotifier {
       case respCodeContactsStart:
         debugPrint('Got CONTACTS_START');
         if (!_preserveContactsOnRefresh) {
+          _stashTelemetryFixes();
           _contacts.clear();
         }
         _isLoadingContacts = true;
@@ -6096,6 +6174,7 @@ class MeshCoreConnector extends ChangeNotifier {
         }
         _hasLoadedContacts = true;
         _preserveContactsOnRefresh = false;
+        _telemetryFixesDuringSync.clear();
         _contactSyncUsesSinceFilter = false;
         unawaited(updateKnownDiscovered());
         notifyListeners();
@@ -6861,10 +6940,6 @@ class MeshCoreConnector extends ChangeNotifier {
 
       if (existingIndex >= 0) {
         final existing = _contacts[existingIndex];
-        final mergedLastMessageAt =
-            existing.lastMessageAt.isAfter(contact.lastMessageAt)
-            ? existing.lastMessageAt
-            : contact.lastMessageAt;
 
         appLogger.info(
           'Refreshing contact ${contact.name}: devicePath=${contact.pathLength}, existingOverride=${existing.pathOverride}',
@@ -6873,12 +6948,10 @@ class MeshCoreConnector extends ChangeNotifier {
 
         // Preserve user-selected path settings and previously known GPS when
         // refreshed frames omit coordinates (lat/lon encoded as 0,0).
-        _contacts[existingIndex] = contact.copyWith(
-          lastMessageAt: mergedLastMessageAt,
-          pathOverride: existing.pathOverride, // Preserve user's path choice
-          pathOverrideBytes: existing.pathOverrideBytes,
-          latitude: contact.latitude ?? existing.latitude,
-          longitude: contact.longitude ?? existing.longitude,
+        _contacts[existingIndex] = _mergeRefreshedContact(
+          existing,
+          contact,
+          keepLocationWhenMissing: true,
         );
 
         appLogger.info(
@@ -6886,7 +6959,12 @@ class MeshCoreConnector extends ChangeNotifier {
           tag: 'Connector',
         );
       } else {
-        _contacts.add(contact);
+        // A full sync cleared the list; restore a telemetry fix it held.
+        final stashed = _telemetryFixesDuringSync.remove(contact.publicKeyHex);
+        _contacts.add(
+          (stashed == null ? null : _withTelemetryFix(stashed, contact)) ??
+              contact,
+        );
         appLogger.info(
           'Added new contact ${contact.name}: pathLen=${contact.pathLength}',
           tag: 'Connector',
@@ -6945,10 +7023,6 @@ class MeshCoreConnector extends ChangeNotifier {
 
     if (existingIndex >= 0) {
       final existing = _contacts[existingIndex];
-      final mergedLastMessageAt =
-          existing.lastMessageAt.isAfter(contact.lastMessageAt)
-          ? existing.lastMessageAt
-          : contact.lastMessageAt;
 
       appLogger.info(
         'Refreshing contact ${contact.name}: devicePath=${contact.pathLength}, existingOverride=${existing.pathOverride}',
@@ -6956,11 +7030,7 @@ class MeshCoreConnector extends ChangeNotifier {
       );
 
       // CRITICAL: Preserve user's path override when contact is refreshed from device
-      _contacts[existingIndex] = contact.copyWith(
-        lastMessageAt: mergedLastMessageAt,
-        pathOverride: existing.pathOverride, // Preserve user's path choice
-        pathOverrideBytes: existing.pathOverrideBytes,
-      );
+      _contacts[existingIndex] = _mergeRefreshedContact(existing, contact);
 
       appLogger.info(
         'After merge: pathOverride=${_contacts[existingIndex].pathOverride}, devicePath=${_contacts[existingIndex].pathLength}',

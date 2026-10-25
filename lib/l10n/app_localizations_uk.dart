@@ -6108,6 +6108,22 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => 'Оновити геопозицію';
+
+  @override
+  String get map_locationUpdated => 'Геопозицію оновлено';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name відповів без геопозиції';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return 'Немає відповіді від $name';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'Масштаб $zoom';
   }

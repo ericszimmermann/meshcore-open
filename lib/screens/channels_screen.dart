@@ -631,56 +631,58 @@ class _ChannelsScreenState extends State<ChannelsScreen>
     showMeshSheet(
       parentContext,
       builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.edit_outlined),
-              title: Text(sheetContext.l10n.channels_editChannel),
-              onTap: () async {
-                Navigator.pop(sheetContext);
-                await Future.delayed(const Duration(milliseconds: 100));
-                if (parentContext.mounted) {
-                  _showEditChannelDialog(parentContext, connector, channel);
-                }
-              },
-            ),
-            // Notification mode selection
-            ListTile(
-              leading: const Icon(Icons.notifications_outlined),
-              title: Text(sheetContext.l10n.channels_notificationSettings),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () async {
-                Navigator.pop(sheetContext);
-                await Future.delayed(const Duration(milliseconds: 100));
-                if (parentContext.mounted) {
-                  showChannelNotificationModeSheet(
-                    parentContext,
-                    channel.muteKey,
-                  );
-                }
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.delete_outline,
-                color: Theme.of(sheetContext).colorScheme.error,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit_outlined),
+                title: Text(sheetContext.l10n.channels_editChannel),
+                onTap: () async {
+                  Navigator.pop(sheetContext);
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (parentContext.mounted) {
+                    _showEditChannelDialog(parentContext, connector, channel);
+                  }
+                },
               ),
-              title: Text(
-                sheetContext.l10n.channels_deleteChannel,
-                style: TextStyle(
+              // Notification mode selection
+              ListTile(
+                leading: const Icon(Icons.notifications_outlined),
+                title: Text(sheetContext.l10n.channels_notificationSettings),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  Navigator.pop(sheetContext);
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (parentContext.mounted) {
+                    showChannelNotificationModeSheet(
+                      parentContext,
+                      channel.muteKey,
+                    );
+                  }
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.delete_outline,
                   color: Theme.of(sheetContext).colorScheme.error,
                 ),
+                title: Text(
+                  sheetContext.l10n.channels_deleteChannel,
+                  style: TextStyle(
+                    color: Theme.of(sheetContext).colorScheme.error,
+                  ),
+                ),
+                onTap: () async {
+                  Navigator.pop(sheetContext);
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (parentContext.mounted) {
+                    _confirmDeleteChannel(parentContext, connector, channel);
+                  }
+                },
               ),
-              onTap: () async {
-                Navigator.pop(sheetContext);
-                await Future.delayed(const Duration(milliseconds: 100));
-                if (parentContext.mounted) {
-                  _confirmDeleteChannel(parentContext, connector, channel);
-                }
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -1191,12 +1193,16 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                               vertical: 8,
                             ),
                             child: DropdownButtonFormField<Community>(
+                              isExpanded: true,
                               initialValue: selectedCommunity,
                               items: _communities
                                   .map(
                                     (c) => DropdownMenuItem(
                                       value: c,
-                                      child: Text(c.name),
+                                      child: Text(
+                                        c.name,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                   )
                                   .toList(),
@@ -1751,6 +1757,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
                             child: DropdownButtonFormField<String>(
+                              isExpanded: true,
                               initialValue: selectedCyr2LatProfileId,
                               decoration: InputDecoration(
                                 labelText: sheetContext
@@ -1762,7 +1769,10 @@ class _ChannelsScreenState extends State<ChannelsScreen>
                                   .map((profile) {
                                     return DropdownMenuItem(
                                       value: profile.id,
-                                      child: Text(profile.name),
+                                      child: Text(
+                                        profile.name,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     );
                                   })
                                   .toList(),

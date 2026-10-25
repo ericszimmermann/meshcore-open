@@ -10238,6 +10238,30 @@ abstract class AppLocalizations {
   /// **'{name}, {type}, {status}'**
   String map_nodeMarkerSemantics(String name, String type, String status);
 
+  /// No description provided for @map_requestLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Update location'**
+  String get map_requestLocation;
+
+  /// No description provided for @map_locationUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Location updated'**
+  String get map_locationUpdated;
+
+  /// No description provided for @map_locationNotShared.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} replied without a location'**
+  String map_locationNotShared(String name);
+
+  /// No description provided for @map_locationRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'No reply from {name}'**
+  String map_locationRequestFailed(String name);
+
   /// No description provided for @mapCache_zoomLevel.
   ///
   /// In en, this message translates to:

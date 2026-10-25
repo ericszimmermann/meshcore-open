@@ -6088,6 +6088,22 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => 'Actualizar ubicación';
+
+  @override
+  String get map_locationUpdated => 'Ubicación actualizada';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name respondió sin ubicación';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return 'Sin respuesta de $name';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'Zoom $zoom';
   }

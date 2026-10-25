@@ -645,6 +645,7 @@ class _RadioSettingsDialogState extends State<RadioSettingsDialog> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<LoRaBandwidth>(
+              isExpanded: true,
               initialValue: _bandwidth,
               decoration: InputDecoration(
                 labelText: l10n.settings_bandwidth,
@@ -652,7 +653,10 @@ class _RadioSettingsDialogState extends State<RadioSettingsDialog> {
               ),
               items: LoRaBandwidth.values
                   .map(
-                    (bw) => DropdownMenuItem(value: bw, child: Text(bw.label)),
+                    (bw) => DropdownMenuItem(
+                      value: bw,
+                      child: Text(bw.label, overflow: TextOverflow.ellipsis),
+                    ),
                   )
                   .toList(),
               onChanged: (value) {
@@ -667,6 +671,7 @@ class _RadioSettingsDialogState extends State<RadioSettingsDialog> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<LoRaSpreadingFactor>(
+              isExpanded: true,
               initialValue: _spreadingFactor,
               decoration: InputDecoration(
                 labelText: l10n.settings_spreadingFactor,
@@ -674,7 +679,10 @@ class _RadioSettingsDialogState extends State<RadioSettingsDialog> {
               ),
               items: LoRaSpreadingFactor.values
                   .map(
-                    (sf) => DropdownMenuItem(value: sf, child: Text(sf.label)),
+                    (sf) => DropdownMenuItem(
+                      value: sf,
+                      child: Text(sf.label, overflow: TextOverflow.ellipsis),
+                    ),
                   )
                   .toList(),
               onChanged: (value) {
@@ -691,6 +699,7 @@ class _RadioSettingsDialogState extends State<RadioSettingsDialog> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<LoRaCodingRate>(
+              isExpanded: true,
               initialValue: _codingRate,
               decoration: InputDecoration(
                 labelText: l10n.settings_codingRate,
@@ -698,7 +707,10 @@ class _RadioSettingsDialogState extends State<RadioSettingsDialog> {
               ),
               items: LoRaCodingRate.values
                   .map(
-                    (cr) => DropdownMenuItem(value: cr, child: Text(cr.label)),
+                    (cr) => DropdownMenuItem(
+                      value: cr,
+                      child: Text(cr.label, overflow: TextOverflow.ellipsis),
+                    ),
                   )
                   .toList(),
               onChanged: (value) {
@@ -716,6 +728,7 @@ class _RadioSettingsDialogState extends State<RadioSettingsDialog> {
               // Values are path hash modes (0-2, byte width - 1), matching
               // the selectors in settings_screen and repeater_settings_screen.
               DropdownButtonFormField<int>(
+                isExpanded: true,
                 initialValue: (_pathHashByteWidth - 1).clamp(0, 2).toInt(),
                 decoration: InputDecoration(
                   labelText: l10n.repeater_pathHashMode,
@@ -726,15 +739,24 @@ class _RadioSettingsDialogState extends State<RadioSettingsDialog> {
                 items: [
                   DropdownMenuItem(
                     value: 0,
-                    child: Text(l10n.repeater_pathHashModeOption0),
+                    child: Text(
+                      l10n.repeater_pathHashModeOption0,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   DropdownMenuItem(
                     value: 1,
-                    child: Text(l10n.repeater_pathHashModeOption1),
+                    child: Text(
+                      l10n.repeater_pathHashModeOption1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   DropdownMenuItem(
                     value: 2,
-                    child: Text(l10n.repeater_pathHashModeOption2),
+                    child: Text(
+                      l10n.repeater_pathHashModeOption2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
                 onChanged: (value) {

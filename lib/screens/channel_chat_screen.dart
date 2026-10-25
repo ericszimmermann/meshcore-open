@@ -1775,57 +1775,59 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     showMeshSheet(
       context,
       builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            BottomSheetHeader(
-              title: l10n.receivedImage_awaiting(
-                entry.bitstreamByteCount,
-                entry.totalChunks,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              BottomSheetHeader(
+                title: l10n.receivedImage_awaiting(
+                  entry.bitstreamByteCount,
+                  entry.totalChunks,
+                ),
+                subtitle: _imageSenderLabel(entry),
               ),
-              subtitle: _imageSenderLabel(entry),
-            ),
-            if (canSave)
+              if (canSave)
+                ListTile(
+                  leading: const Icon(Icons.save_alt),
+                  title: Text(l10n.receivedImage_save),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _saveImage(entry);
+                  },
+                ),
               ListTile(
-                leading: const Icon(Icons.save_alt),
-                title: Text(l10n.receivedImage_save),
+                leading: const Icon(Icons.info_outline),
+                title: Text(l10n.receivedImage_packetInfo),
                 onTap: () {
                   Navigator.pop(sheetContext);
-                  _saveImage(entry);
+                  _showImagePacketInfo(entry);
                 },
               ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: Text(l10n.receivedImage_packetInfo),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                _showImagePacketInfo(entry);
-              },
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: Icon(
-                Icons.delete_outline,
-                color: Theme.of(context).colorScheme.error,
+              const Divider(height: 1),
+              ListTile(
+                leading: Icon(
+                  Icons.delete_outline,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                title: Text(
+                  l10n.common_delete,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+                onTap: () async {
+                  Navigator.pop(sheetContext);
+                  await context.read<ReceivedImageStore>().deleteImage(
+                    entry.streamId,
+                  );
+                  if (!mounted) return;
+                  showDismissibleSnackBar(
+                    context,
+                    content: Text(l10n.chat_messageDeleted),
+                  );
+                },
               ),
-              title: Text(
-                l10n.common_delete,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-              onTap: () async {
-                Navigator.pop(sheetContext);
-                await context.read<ReceivedImageStore>().deleteImage(
-                  entry.streamId,
-                );
-                if (!mounted) return;
-                showDismissibleSnackBar(
-                  context,
-                  content: Text(l10n.chat_messageDeleted),
-                );
-              },
-            ),
-            const SizedBox(height: 8),
-          ],
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
       ),
     );
@@ -1860,6 +1862,7 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        scrollable: true,
         title: Text(l10n.receivedImage_packetInfo),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -2234,109 +2237,111 @@ class _ChannelChatScreenState extends State<ChannelChatScreen> {
     showMeshSheet(
       context,
       builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            BottomSheetHeader(
-              title: message.text.characters.length > 40
-                  ? '${message.text.characters.take(40)}…'
-                  : message.text,
-              subtitle: message.senderName.isNotEmpty
-                  ? message.senderName
-                  : null,
-            ),
-            ListTile(
-              leading: const Icon(Icons.reply),
-              title: Text(context.l10n.chat_reply),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                _setReplyingTo(message);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.route),
-              title: Text(context.l10n.chat_path),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                _showMessagePathInfo(message);
-              },
-            ),
-            if (message.pathBytes.isNotEmpty)
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              BottomSheetHeader(
+                title: message.text.characters.length > 40
+                    ? '${message.text.characters.take(40)}…'
+                    : message.text,
+                subtitle: message.senderName.isNotEmpty
+                    ? message.senderName
+                    : null,
+              ),
               ListTile(
-                leading: const Icon(Icons.map_outlined),
-                title: Text(context.l10n.chat_viewPathOnMap),
+                leading: const Icon(Icons.reply),
+                title: Text(context.l10n.chat_reply),
                 onTap: () {
                   Navigator.pop(sheetContext);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChannelMessagePathMapScreen(
-                        message: message,
-                        channelMessage: true,
+                  _setReplyingTo(message);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.route),
+                title: Text(context.l10n.chat_path),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _showMessagePathInfo(message);
+                },
+              ),
+              if (message.pathBytes.isNotEmpty)
+                ListTile(
+                  leading: const Icon(Icons.map_outlined),
+                  title: Text(context.l10n.chat_viewPathOnMap),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChannelMessagePathMapScreen(
+                          message: message,
+                          channelMessage: true,
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-            // Can't react to your own messages
-            if (!message.isOutgoing)
+                    );
+                  },
+                ),
+              // Can't react to your own messages
+              if (!message.isOutgoing)
+                ListTile(
+                  leading: const Icon(Icons.add_reaction_outlined),
+                  title: Text(context.l10n.chat_addReaction),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _showEmojiPicker(message);
+                  },
+                ),
               ListTile(
-                leading: const Icon(Icons.add_reaction_outlined),
-                title: Text(context.l10n.chat_addReaction),
+                leading: const Icon(Icons.copy),
+                title: Text(context.l10n.common_copy),
                 onTap: () {
                   Navigator.pop(sheetContext);
-                  _showEmojiPicker(message);
+                  copyChatMessageText(context, message.text);
                 },
               ),
-            ListTile(
-              leading: const Icon(Icons.copy),
-              title: Text(context.l10n.common_copy),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                copyChatMessageText(context, message.text);
-              },
-            ),
-            if (canTranslateMessage)
+              if (canTranslateMessage)
+                ListTile(
+                  leading: const Icon(Icons.translate),
+                  title: Text(context.l10n.translation_translateMessage),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    unawaited(
+                      context.read<MeshCoreConnector>().translateChannelMessage(
+                        widget.channel.index,
+                        message,
+                        manualTranslation: true,
+                      ),
+                    );
+                  },
+                ),
+              if (!message.isOutgoing)
+                ListTile(
+                  leading: const Icon(Icons.mark_chat_unread_outlined),
+                  title: Text(context.l10n.chat_markAsUnread),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _markAsUnread(message);
+                  },
+                ),
+              const Divider(height: 1),
               ListTile(
-                leading: const Icon(Icons.translate),
-                title: Text(context.l10n.translation_translateMessage),
-                onTap: () {
+                leading: Icon(
+                  Icons.delete_outline,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                title: Text(
+                  context.l10n.common_delete,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+                onTap: () async {
                   Navigator.pop(sheetContext);
-                  unawaited(
-                    context.read<MeshCoreConnector>().translateChannelMessage(
-                      widget.channel.index,
-                      message,
-                      manualTranslation: true,
-                    ),
-                  );
+                  await _deleteMessage(message);
                 },
               ),
-            if (!message.isOutgoing)
-              ListTile(
-                leading: const Icon(Icons.mark_chat_unread_outlined),
-                title: Text(context.l10n.chat_markAsUnread),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  _markAsUnread(message);
-                },
-              ),
-            const Divider(height: 1),
-            ListTile(
-              leading: Icon(
-                Icons.delete_outline,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              title: Text(
-                context.l10n.common_delete,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-              onTap: () async {
-                Navigator.pop(sheetContext);
-                await _deleteMessage(message);
-              },
-            ),
-            const SizedBox(height: 8),
-          ],
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
       ),
     );

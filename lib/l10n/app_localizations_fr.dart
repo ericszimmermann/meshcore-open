@@ -6111,6 +6111,22 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => 'Actualiser la position';
+
+  @override
+  String get map_locationUpdated => 'Position actualisée';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name a répondu sans position';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return 'Aucune réponse de $name';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'Zoom $zoom';
   }

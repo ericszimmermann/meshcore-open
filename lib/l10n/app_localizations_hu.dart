@@ -6076,6 +6076,22 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => 'Hely frissítése';
+
+  @override
+  String get map_locationUpdated => 'Hely frissítve';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name helyadat nélkül válaszolt';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return 'Nincs válasz tőle: $name';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'Nagyítás: $zoom';
   }

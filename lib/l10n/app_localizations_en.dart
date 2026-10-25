@@ -5999,6 +5999,22 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get map_requestLocation => 'Update location';
+
+  @override
+  String get map_locationUpdated => 'Location updated';
+
+  @override
+  String map_locationNotShared(String name) {
+    return '$name replied without a location';
+  }
+
+  @override
+  String map_locationRequestFailed(String name) {
+    return 'No reply from $name';
+  }
+
+  @override
   String mapCache_zoomLevel(int zoom) {
     return 'Zoom $zoom';
   }
