@@ -114,6 +114,7 @@ typedef _Rig = ({
 _Rig _build({
   int burstCap = 3,
   int maxImages = 200,
+  int maxEntries = 400,
   int maxBytes = 64 * 1024 * 1024,
   Duration maxAge = const Duration(days: 30),
   _FakeDecoder? decoder,
@@ -130,6 +131,7 @@ _Rig _build({
     processAutomatically: processAutomatically,
     burstCap: burstCap,
     maxImages: maxImages,
+    maxEntries: maxEntries,
     maxBytes: maxBytes,
     maxAge: maxAge,
     clock: () => now,
@@ -206,6 +208,54 @@ void main() {
       expect(decoded.decodeMs, 11);
       expect(await h.store.ensurePng(entry.streamId), isNotNull);
       expect(h.decoder.calls, 1);
+    });
+
+    test('a stream started before its slot had an ID picks one up', () async {
+      final h = _build();
+      final set = buildImageChunks(
+        payload: _payload(kImageChunkFirstCapacity + kImageChunkCapacity + 1),
+        metadata: const ImageStreamMetadata(rate: ImageCodecRatePoint.standard),
+        senderPrefix: kSender,
+        imgId: 5,
+      );
+      expect(set.dataChunkCount, 3);
+
+      final first = await h.store.handleOutcome(
+        h.reassembler.addChunk(set.blobs[0], channelIndex: 3),
+        channelIndex: 3,
+      );
+      expect(first!.channelId, isNull);
+      // A second data chunk of three neither completes nor recovers it.
+      final second = await h.store.handleOutcome(
+        h.reassembler.addChunk(set.blobs[1], channelIndex: 3),
+        channelIndex: 3,
+        channelId: 'chan-id',
+      );
+      expect(second!.state, ReceivedImageState.receiving);
+      expect(second.streamId, first.streamId);
+      expect(second.channelId, 'chan-id');
+    });
+
+    test('a stream completed after its slot got an ID keeps it', () async {
+      final h = _build();
+      final set = buildImageChunks(
+        payload: _payload(kImageChunkFirstCapacity + 1),
+        metadata: const ImageStreamMetadata(rate: ImageCodecRatePoint.standard),
+        senderPrefix: kSender,
+        imgId: 6,
+      );
+      final first = await h.store.handleOutcome(
+        h.reassembler.addChunk(set.blobs[0], channelIndex: 3),
+        channelIndex: 3,
+      );
+      expect(first!.channelId, isNull);
+      final done = await h.store.handleOutcome(
+        h.reassembler.addChunk(set.blobs[1], channelIndex: 3),
+        channelIndex: 3,
+        channelId: 'chan-id',
+      );
+      expect(done!.streamId, first.streamId);
+      expect(done.channelId, 'chan-id');
     });
 
     test('two-chunk image reports 1 of 2 while incomplete', () async {
@@ -775,6 +825,35 @@ void main() {
       expect(await h.store.ensurePng(entry.streamId), isNotNull);
       expect(h.decoder.calls, 0);
     });
+
+    test('spent outgoing entries count toward maxEntries', () async {
+      final h = _build(maxEntries: 2, maxAge: const Duration(minutes: 10));
+      final ids = <String>[];
+      for (var i = 0; i < 4; i++) {
+        final entry = await h.store.registerOutgoing(
+          channelIndex: 1,
+          senderPrefix: kSelf,
+          imgId: 60 + i,
+          previewPng: Uint8List.fromList(List<int>.filled(64, i)),
+          rate: AeicRatePoint.ft32,
+          chunkCount: 2,
+        );
+        ids.add(entry.streamId);
+        h.advance(const Duration(seconds: 2));
+      }
+      // Fresh outgoing images keep their data and are never capped.
+      await h.store.evictToBudget();
+      expect(h.store.entries.length, 4);
+
+      // Past maxAge they are evicted (nothing left on disk), and the cap may
+      // then drop the oldest so sidecars cannot grow without bound.
+      h.advance(const Duration(minutes: 11));
+      await h.store.evictToBudget();
+      expect(h.store.entries.length, 2);
+      expect(h.store.entryFor(ids[0]), isNull);
+      expect(h.store.entryFor(ids[1]), isNull);
+      expect(h.store.entryFor(ids[3]), isNotNull);
+    });
   });
 
   group('processAutomatically (tap to process)', () {
@@ -931,7 +1010,7 @@ void main() {
 
   group('deletion hooks', () {
     test(
-      'deleteImagesForChannel reclaims every image of one conversation',
+      'deleteImagesForChannelId reclaims every image of one conversation',
       () async {
         final h = _build();
         final a = await _completeOne(h, imgId: 130);
@@ -941,6 +1020,7 @@ void main() {
         // A third image on another channel must survive.
         final other = await h.store.registerOutgoing(
           channelIndex: 9,
+          channelId: 'fedcba9876543210',
           senderPrefix: kSelf,
           imgId: 5,
           previewPng: Uint8List.fromList(List<int>.filled(32, 2)),
@@ -948,7 +1028,7 @@ void main() {
           chunkCount: 1,
         );
 
-        final removed = await h.store.deleteImagesForChannel(3);
+        final removed = await h.store.deleteImagesForChannelId(_channel3Id);
         expect(removed, containsAll(<String>[a.streamId, b.streamId]));
         expect(h.store.entryFor(a.streamId), isNull);
         expect(h.store.entryFor(b.streamId), isNull);
@@ -989,6 +1069,16 @@ void main() {
 
     FileReceivedImageBlobStore newStore() =>
         FileReceivedImageBlobStore(baseDirectory: () async => tempDir);
+
+    test('concurrent sidecar writes for one id land the last one', () async {
+      final blobs = newStore();
+      await Future.wait<void>([
+        for (var i = 0; i < 20; i++)
+          blobs.writeSidecar('1a2b0700693f21', '{"n":$i}'),
+      ]);
+      final sidecars = await blobs.readSidecars();
+      expect(sidecars['1a2b0700693f21'], '{"n":19}');
+    });
 
     test('round-trips bytes and sidecars through real files', () async {
       final blobs = newStore();
@@ -1170,6 +1260,257 @@ void main() {
       expect(listenable.value!.state, ReceivedImageState.decoded);
     },
   );
+
+  group('review fixes 2026-09-24', () {
+    Future<ReceivedImageEntry> startTwoChunk(_Rig h, int imgId) async {
+      final set = buildImageChunks(
+        payload: _payload(kImageChunkFirstCapacity + 20, imgId),
+        metadata: const ImageStreamMetadata(rate: ImageCodecRatePoint.standard),
+        senderPrefix: kSender,
+        imgId: imgId,
+      );
+      final entry = await h.store.handleOutcome(
+        h.reassembler.addChunk(set.blobs[0], channelIndex: 3, now: h.clock()),
+        channelIndex: 3,
+        at: h.clock(),
+      );
+      return entry!;
+    }
+
+    Future<void> failIt(_Rig h, ReceivedImageEntry entry) async {
+      await h.store.handleFailure(
+        ImageReassemblyFailure(
+          key: entry.key,
+          total: 2,
+          receivedDataChunks: 1,
+          hadParity: false,
+          firstSeen: entry.firstSeen,
+          expiredAt: h.clock(),
+        ),
+      );
+    }
+
+    test('a reused img_id does not overwrite a decoded image', () async {
+      final h = _build();
+      final first = await _completeOne(h, imgId: 11, seed: 1);
+      await h.store.settle();
+      expect(
+        h.store.entryFor(first.streamId)!.state,
+        ReceivedImageState.decoded,
+      );
+
+      h.advance(const Duration(minutes: 1));
+      final second = await startTwoChunk(h, 11);
+      expect(second.streamId, isNot(first.streamId));
+      expect(second.state, ReceivedImageState.receiving);
+      expect(
+        h.store.entryFor(first.streamId)!.state,
+        ReceivedImageState.decoded,
+      );
+
+      h.advance(const Duration(minutes: 10));
+      h.reassembler.clear();
+      final third = await _completeOne(h, imgId: 11, seed: 9);
+      expect(third.streamId, isNot(first.streamId));
+      expect(
+        h.store.entryFor(first.streamId)!.state,
+        ReceivedImageState.decoded,
+      );
+    });
+
+    test('failed entries are capped by count, oldest first', () async {
+      final h = _build(maxImages: 2);
+      final ids = <String>[];
+      for (var i = 0; i < 4; i++) {
+        final entry = await startTwoChunk(h, 70 + i);
+        await failIt(h, entry);
+        ids.add(entry.streamId);
+        h.advance(const Duration(seconds: 5));
+      }
+      expect(h.store.entries.length, 2);
+      expect(h.store.entryFor(ids[0]), isNull);
+      expect(h.blobs.hasSidecar(ids[0]), isFalse);
+      expect(
+        h.store.entryFor(ids[3])!.state,
+        ReceivedImageState.failedIncomplete,
+      );
+    });
+
+    test('failed entries past maxAge are deleted outright', () async {
+      final h = _build(maxAge: const Duration(days: 1));
+      final entry = await startTwoChunk(h, 80);
+      await failIt(h, entry);
+      h.advance(const Duration(days: 2));
+      await h.store.evictToBudget();
+      expect(h.store.entryFor(entry.streamId), isNull);
+      expect(h.blobs.hasSidecar(entry.streamId), isFalse);
+    });
+
+    test('foreground memory pressure mid-decode parks, not corrupt', () async {
+      final decoder = _FakeDecoder(mode: 'fail')
+        ..delay = const Duration(milliseconds: 50);
+      final h = _build(decoder: decoder);
+      final entry = await _completeOne(h);
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      expect(
+        h.store.entryFor(entry.streamId)!.state,
+        ReceivedImageState.decoding,
+      );
+      await h.store.handleMemoryPressure();
+      await h.store.settle();
+      final after = h.store.entryFor(entry.streamId)!;
+      expect(after.state, ReceivedImageState.reassembled);
+      expect(after.needsManualDecode, isTrue);
+    });
+  });
+
+  group('review fixes 2026-10-11', () {
+    Future<void> waitForState(
+      _Rig h,
+      String id,
+      ReceivedImageState state,
+    ) async {
+      for (var i = 0; i < 200; i++) {
+        if (h.store.entryFor(id)?.state == state) return;
+        await Future<void>.delayed(const Duration(milliseconds: 1));
+      }
+      fail('never reached $state');
+    }
+
+    test('deleting an image mid-decode does not bring it back', () async {
+      final decoder = _FakeDecoder()..delay = const Duration(milliseconds: 30);
+      final h = _build(decoder: decoder);
+      final entry = await _completeOne(h);
+      await waitForState(h, entry.streamId, ReceivedImageState.decoding);
+
+      await h.store.deleteImage(entry.streamId);
+      await h.store.settle();
+      await Future<void>.delayed(const Duration(milliseconds: 60));
+
+      expect(h.store.entryFor(entry.streamId), isNull);
+      expect(h.blobs.hasPng(entry.streamId), isFalse);
+      expect(h.blobs.hasSidecar(entry.streamId), isFalse);
+    });
+
+    test('backgrounding mid-decode re-queues instead of failing', () async {
+      final decoder = _FakeDecoder(mode: 'fail')
+        ..delay = const Duration(milliseconds: 30);
+      final h = _build(decoder: decoder);
+      final entry = await _completeOne(h);
+      await waitForState(h, entry.streamId, ReceivedImageState.decoding);
+
+      h.store.setForeground(false);
+      expect(decoder.cancels, 1);
+      await Future<void>.delayed(const Duration(milliseconds: 60));
+      await h.store.settle();
+
+      final parked = h.store.entryFor(entry.streamId)!;
+      expect(parked.state, ReceivedImageState.reassembled);
+      expect(parked.needsManualDecode, isFalse);
+      expect(h.store.decodeQueue, contains(entry.streamId));
+
+      decoder.mode = 'ok';
+      h.store.setForeground(true);
+      await h.store.settle();
+      expect(
+        h.store.entryFor(entry.streamId)!.state,
+        ReceivedImageState.decoded,
+      );
+    });
+
+    test('backgrounding with no decode running cancels nothing', () async {
+      final h = _build();
+      h.store.setForeground(false);
+      expect(h.decoder.cancels, 0);
+    });
+
+    test('undecoded entries are capped by maxEntries, oldest first', () async {
+      final h = _build(processAutomatically: false, maxEntries: 3);
+      final ids = <String>[];
+      for (var i = 0; i < 5; i++) {
+        ids.add((await _completeOne(h, imgId: 40 + i, seed: i)).streamId);
+        h.advance(const Duration(seconds: 2));
+      }
+      expect(h.store.entries.length, 3);
+      expect(h.store.entryFor(ids[0]), isNull);
+      expect(h.store.entryFor(ids[1]), isNull);
+      expect(h.store.entryFor(ids[4]), isNotNull);
+      expect(h.blobs.hasBitstream(ids[0]), isFalse);
+    });
+
+    test(
+      'deleting an old image keeps a newer stream on the same key',
+      () async {
+        final h = _build();
+        final old = await _completeOne(h, imgId: 5);
+        await h.store.settle();
+        h.advance(const Duration(seconds: 5));
+
+        // A newer two-chunk image reusing the same 8-bit id starts arriving.
+        final set = buildImageChunks(
+          payload: _payload(kImageChunkFirstCapacity + 1, 9),
+          metadata: const ImageStreamMetadata(
+            rate: ImageCodecRatePoint.standard,
+          ),
+          senderPrefix: kSender,
+          imgId: 5,
+        );
+        final newer = await h.store.handleOutcome(
+          h.reassembler.addChunk(set.blobs[0], channelIndex: 3, now: h.clock()),
+          channelIndex: 3,
+          at: h.clock(),
+        );
+        expect(newer!.state, ReceivedImageState.receiving);
+        final key = newer.key;
+        expect(h.store.entryForKey(key)!.streamId, newer.streamId);
+
+        await h.store.deleteImage(old.streamId);
+        expect(h.store.entryForKey(key)!.streamId, newer.streamId);
+
+        final done = await h.store.handleOutcome(
+          h.reassembler.addChunk(set.blobs[1], channelIndex: 3, now: h.clock()),
+          channelIndex: 3,
+          at: h.clock(),
+        );
+        expect(done!.streamId, newer.streamId);
+      },
+    );
+
+    test('a reserved high-rate stream is unsupported, not retryable', () async {
+      final h = _build();
+      final set = buildImageChunks(
+        payload: _payload(140),
+        metadata: const ImageStreamMetadata(rate: ImageCodecRatePoint.high),
+        senderPrefix: kSender,
+        imgId: 12,
+      );
+      final entry = await h.store.handleOutcome(
+        h.reassembler.addChunk(set.blobs[0], channelIndex: 3, now: h.clock()),
+        channelIndex: 3,
+        at: h.clock(),
+      );
+      expect(entry!.state, ReceivedImageState.failedCorrupt);
+      expect(entry.canRetryDecode, isFalse);
+      expect(h.blobs.hasBitstream(entry.streamId), isFalse);
+      await h.store.settle();
+      expect(h.decoder.calls, 0);
+    });
+
+    test('outgoing entries keep their aspect code', () async {
+      final h = _build();
+      final entry = await h.store.registerOutgoing(
+        channelIndex: 1,
+        senderPrefix: kSelf,
+        imgId: 3,
+        previewPng: Uint8List.fromList(List<int>.filled(10, 1)),
+        rate: AeicRatePoint.ft32,
+        chunkCount: 1,
+        aspectCode: 2,
+      );
+      expect(entry.aspectCode, 2);
+      expect(entry.displayAspectRatio, closeTo(4 / 3, 0.001));
+    });
+  });
 }
 
 /// Delivers a whole single-chunk image and returns its entry (state
@@ -1188,7 +1529,10 @@ Future<ReceivedImageEntry> _completeOne(
   final entry = await h.store.handleOutcome(
     h.reassembler.addChunk(set.blobs[0], channelIndex: 3, now: h.clock()),
     channelIndex: 3,
+    channelId: _channel3Id,
     at: h.clock(),
   );
   return entry!;
 }
+
+const _channel3Id = '0123456789abcdef';

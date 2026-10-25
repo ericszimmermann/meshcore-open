@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meshcore_open/connector/meshcore_protocol.dart';
 import 'package:meshcore_open/models/channel_message.dart';
@@ -146,6 +147,25 @@ void main() {
       final message = ChannelMessage.fromFrame(frame);
       expect(message, isNull);
     });
+  });
+
+  test('flood transport code uses the scope key HMAC', () {
+    final scopeKey = floodScopeKeyForRegion('Europe');
+    final payload = Uint8List.fromList([0xA1, 0xB2, 0xC3]);
+
+    expect(
+      floodTransportCode(
+        scopeKey: scopeKey,
+        payloadType: 0x05,
+        payload: payload,
+      ),
+      orderedEquals(
+        crypto.Hmac(
+          crypto.sha256,
+          scopeKey,
+        ).convert([0x05, ...payload]).bytes.sublist(0, 2),
+      ),
+    );
   });
 
   group('Contact.fromFrame — pathLen mapping', () {
@@ -385,6 +405,7 @@ void main() {
       expect(settings.routeWeightSuccessIncrement, equals(0.5));
       expect(settings.routeWeightFailureDecrement, equals(0.2));
       expect(settings.maxMessageRetries, equals(5));
+      expect(settings.evictDiscoveredContactsEnabled, isTrue);
     });
 
     test('toJson includes all new fields', () {
@@ -395,11 +416,13 @@ void main() {
       expect(json.containsKey('route_weight_success_increment'), isTrue);
       expect(json.containsKey('route_weight_failure_decrement'), isTrue);
       expect(json.containsKey('max_message_retries'), isTrue);
+      expect(json.containsKey('evict_discovered_contacts_enabled'), isTrue);
       expect(json['max_route_weight'], equals(5.0));
       expect(json['initial_route_weight'], equals(3.0));
       expect(json['route_weight_success_increment'], equals(0.5));
       expect(json['route_weight_failure_decrement'], equals(0.2));
       expect(json['max_message_retries'], equals(5));
+      expect(json['evict_discovered_contacts_enabled'], isTrue);
     });
 
     test('fromJson reads all new fields', () {
@@ -409,6 +432,7 @@ void main() {
         'route_weight_success_increment': 1.0,
         'route_weight_failure_decrement': 1.5,
         'max_message_retries': 8,
+        'evict_discovered_contacts_enabled': false,
       };
       final settings = AppSettings.fromJson(json);
       expect(settings.maxRouteWeight, equals(10.0));
@@ -416,6 +440,54 @@ void main() {
       expect(settings.routeWeightSuccessIncrement, equals(1.0));
       expect(settings.routeWeightFailureDecrement, equals(1.5));
       expect(settings.maxMessageRetries, equals(8));
+      expect(settings.evictDiscoveredContactsEnabled, isFalse);
+    });
+
+    test('load link images defaults on and round-trips through JSON', () {
+      expect(AppSettings().loadLinkImages, isTrue);
+      expect(AppSettings.fromJson({}).loadLinkImages, isTrue);
+      final saved = AppSettings(loadLinkImages: false).toJson();
+      expect(AppSettings.fromJson(saved).loadLinkImages, isFalse);
+    });
+
+    test('show link images by default is off and round-trips', () {
+      expect(AppSettings().showLinkImagesByDefault, isFalse);
+      expect(AppSettings.fromJson({}).showLinkImagesByDefault, isFalse);
+      final saved = AppSettings(showLinkImagesByDefault: true).toJson();
+      expect(AppSettings.fromJson(saved).showLinkImagesByDefault, isTrue);
+    });
+
+    test('public IPFS gateway defaults to ipfs.io when never set', () {
+      expect(
+        AppSettings.fromJson({}).publicIpfsGateway,
+        'https://ipfs.io/ipfs/',
+      );
+      expect(AppSettings().publicIpfsGateway, 'https://ipfs.io/ipfs/');
+    });
+
+    test('public IPFS gateway keeps a saved empty value as deactivated', () {
+      final saved = AppSettings(publicIpfsGateway: '').toJson();
+      expect(AppSettings.fromJson(saved).publicIpfsGateway, isEmpty);
+    });
+
+    test('public IPFS gateway keeps saved ipfs.io and dweb.link values', () {
+      for (final gateway in [
+        'https://ipfs.io/ipfs/',
+        'https://dweb.link/ipfs/',
+        'https://gateway.example.com/ipfs/',
+      ]) {
+        final saved = AppSettings(publicIpfsGateway: gateway).toJson();
+        expect(AppSettings.fromJson(saved).publicIpfsGateway, gateway);
+      }
+    });
+
+    test('empty upload gateway does not fall back to the download gateway', () {
+      final settings = AppSettings(
+        publicIpfsGateway: 'https://gateway.example.com/ipfs/',
+        uploadIpfsGateway: '',
+      );
+
+      expect(settings.effectiveUploadIpfsGateway, isEmpty);
     });
 
     test(
@@ -579,6 +651,7 @@ void main() {
       () async {
         final store = ChannelMessageStore()..publicKeyHex = '1234567890';
         final channelIndex = 1;
+        const channelId = '0123456789abcdef';
 
         final rawPath = Uint8List(64)
           ..[0] = 0xBB
@@ -598,11 +671,11 @@ void main() {
 
         final prefs = PrefsManager.instance;
         await prefs.setString(
-          '${store.keyFor}$channelIndex',
+          '${store.keyFor}_$channelId',
           jsonEncode(messageJson),
         );
 
-        final messages = await store.loadChannelMessages(channelIndex);
+        final messages = await store.loadChannelMessages(channelId);
         expect(messages, hasLength(1));
         expect(messages.first.pathLength, equals(1));
         expect(
@@ -616,7 +689,8 @@ void main() {
     test(
       'ContactDiscoveryStore decodes and migrates legacy mode-encoded paths',
       () async {
-        final store = ContactDiscoveryStore();
+        final store = ContactDiscoveryStore()
+          ..setPublicKeyHex = 'AABBCCDDEEFF00112233';
 
         final rawPath = Uint8List(64)
           ..[0] = 0x11
@@ -641,6 +715,8 @@ void main() {
         expect(contacts, hasLength(1));
         expect(contacts.first.pathLength, equals(1));
         expect(contacts.first.path, equals(Uint8List.fromList([0x11, 0x22])));
+        expect(prefs.getString('discovered_contacts'), isNull);
+        expect(prefs.getString(store.keyFor), isNotNull);
       },
     );
   });

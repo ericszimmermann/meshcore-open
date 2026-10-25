@@ -1,12 +1,23 @@
+import 'dart:async';
 import 'dart:io' show Platform, File;
+import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
+import '../helpers/gif_helper.dart';
+import '../helpers/marker_message.dart';
+import '../helpers/message_url_image_helper.dart';
 import '../helpers/reaction_helper.dart';
 import '../l10n/app_localizations.dart';
+import '../models/app_settings.dart';
+import '../storage/prefs_manager.dart';
 import '../utils/platform_info.dart';
+import 'notification_reply.dart';
+import 'received_image_store.dart' show ReceivedImageRef;
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -19,13 +30,56 @@ class NotificationService {
 
   // Locale for localized notification strings
   Locale _locale = const Locale('en');
+  String _publicIpfsGateway = AppSettings.defaultPublicIpfsGateway;
+
+  void setPublicIpfsGateway(String gateway) {
+    _publicIpfsGateway = gateway.trim();
+  }
 
   /// Set the locale for notification strings (call when app locale changes)
   void setLocale(Locale locale) {
     _locale = locale;
+    // The background action isolate reads this to localize its notices.
+    try {
+      PrefsManager.instance.setString(
+        notificationLanguagePrefsKey,
+        locale.languageCode,
+      );
+    } catch (_) {}
   }
 
   AppLocalizations get _l10n => lookupAppLocalizations(_locale);
+
+  String? _selfName;
+
+  /// Name of the connected radio, shown as the sender of your own replies.
+  void setSelfName(String? name) {
+    _selfName = name;
+  }
+
+  // Recent messages per conversation notification id, so each notification
+  // shows the conversation (Android MessagingStyle, used by Android Auto).
+  static const _maxConversationMessages = 6;
+  final Map<int, _Conversation> _conversations = {};
+
+  // Single-subscription so actions that arrive before the connector listens
+  // (e.g. during startup) are buffered instead of dropped.
+  final StreamController<NotificationReply> _replies =
+      StreamController<NotificationReply>();
+  ReceivePort? _replyPort;
+
+  /// Reply, mark-as-read and mute actions taken on message notifications.
+  /// Has a single listener (the connector).
+  Stream<NotificationReply> get replies => _replies.stream;
+
+  /// Stops receiving notification actions. The background handler then tells
+  /// the user the app isn't running instead of forwarding to nobody.
+  void releaseReplyPort() {
+    if (_replyPort == null) return;
+    IsolateNameServer.removePortNameMapping(notificationReplyPortName);
+    _replyPort!.close();
+    _replyPort = null;
+  }
 
   String _logSafe(String value) {
     final sanitized = value.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), ' ');
@@ -96,11 +150,46 @@ class NotificationService {
       await _notifications.initialize(
         settings: initSettings,
         onDidReceiveNotificationResponse: _onNotificationTapped,
+        onDidReceiveBackgroundNotificationResponse:
+            notificationActionBackgroundHandler,
       );
+      _registerReplyPort();
       _isInitialized = true;
     } catch (e) {
       debugPrint('Error initializing notifications: $e');
     }
+  }
+
+  void _registerReplyPort() {
+    if (kIsWeb || _replyPort != null) return;
+    final port = ReceivePort();
+    IsolateNameServer.removePortNameMapping(notificationReplyPortName);
+    IsolateNameServer.registerPortWithName(
+      port.sendPort,
+      notificationReplyPortName,
+    );
+    port.listen((dynamic message) {
+      if (message is! Map) return;
+      _dispatchAction(
+        actionId: message['actionId'] as String?,
+        payload: message['payload'] as String?,
+        input: message['input'] as String?,
+      );
+    });
+    _replyPort = port;
+  }
+
+  void _dispatchAction({
+    required String? actionId,
+    required String? payload,
+    String? input,
+  }) {
+    final reply = NotificationReply.parse(
+      actionId: actionId,
+      payload: payload,
+      input: input,
+    );
+    if (reply != null) _replies.add(reply);
   }
 
   static bool _isDbusSessionAvailable() {
@@ -121,9 +210,11 @@ class NotificationService {
 
   // Cached "are we allowed to post notifications" result. Null = not yet
   // determined. Avoids calling _notifications.show() when it would only throw
-  // "You must request notifications permissions first" (every web build, and
-  // Android 13+ before the user grants the permission).
+  // "You must request notifications permissions first" (every web build).
+  // Android denials are never cached so a later grant in system settings is
+  // picked up without restarting the app.
   bool? _canNotify;
+  static const _permissionRequestedKey = 'notification_permission_requested';
 
   Future<bool> _ensureCanNotify() async {
     if (!await _ensureInitialized()) return false;
@@ -141,8 +232,9 @@ class NotificationService {
           AndroidFlutterLocalNotificationsPlugin
         >();
     if (androidPlugin != null) {
-      final enabled = await androidPlugin.areNotificationsEnabled();
-      return _canNotify = enabled ?? false;
+      final enabled = await androidPlugin.areNotificationsEnabled() ?? false;
+      if (enabled) _canNotify = true;
+      return enabled;
     }
 
     // iOS/macOS request permission during initialize(); desktop has no gate.
@@ -161,8 +253,8 @@ class NotificationService {
         >();
     if (androidPlugin != null) {
       final granted = await androidPlugin.requestNotificationsPermission();
-      _canNotify = granted ?? false;
-      return _canNotify!;
+      if (granted == true) _canNotify = true;
+      return granted ?? false;
     }
 
     // iOS permissions are requested during initialization
@@ -176,74 +268,307 @@ class NotificationService {
         badge: true,
         sound: true,
       );
-      _canNotify = granted ?? false;
-      return _canNotify!;
+      if (granted == true) _canNotify = true;
+      return granted ?? false;
     }
 
     return true;
   }
 
-  /// Format special message types for human-readable notifications.
-  static String formatNotificationText(String text) {
+  /// Asks for the Android 13+ notification permission the first time it is
+  /// needed. Never re-prompts after the user has answered once; iOS/macOS
+  /// already prompt during [initialize].
+  Future<void> requestPermissionsOnce() async {
+    if (!PlatformInfo.isAndroid || !await _ensureInitialized()) return;
+    final prefs = PrefsManager.instance;
+    if (prefs.getBool(_permissionRequestedKey) ?? false) return;
+    if (await _ensureCanNotify()) return;
+    await prefs.setBool(_permissionRequestedKey, true);
+    await requestPermissions();
+  }
+
+  /// Summarizes structured payloads (reactions, images, GIFs, shared
+  /// locations) with the same parsers the chat bubbles use; other text is
+  /// returned unchanged.
+  static String formatNotificationText(String text, AppLocalizations l10n) {
     final trimmed = text.trim();
     final reaction = ReactionHelper.parseReaction(trimmed);
     if (reaction != null) {
-      return 'Reacted ${reaction.emoji}';
+      return l10n.notification_reacted(reaction.emoji);
     }
-    if (RegExp(r'^g:[A-Za-z0-9_-]+$').hasMatch(trimmed)) {
-      return 'Sent a GIF';
+    if (ReceivedImageRef.parse(trimmed) != null) {
+      return l10n.notification_sentImage;
+    }
+    if (GifHelper.parseGif(trimmed) != null) {
+      return l10n.notification_sentGif;
+    }
+    final marker = parseMarkerText(trimmed);
+    if (marker != null) {
+      return marker.label.isEmpty
+          ? l10n.notification_sharedLocation
+          : l10n.notification_sharedLocationNamed(marker.label);
     }
     return text;
   }
 
-  Future<void> _showMessageNotificationImpl({
-    required String contactName,
-    required String message,
-    String? contactId,
-    int? badgeCount,
+  Future<String?> _resolveNotificationImagePath(
+    String text, {
+    required bool urlImagesEnabled,
   }) async {
-    if (!await _ensureCanNotify()) return;
+    if (!urlImagesEnabled) return null;
 
-    final androidDetails = AndroidNotificationDetails(
-      'messages',
-      'Messages',
-      channelDescription: 'New message notifications',
+    final imageUrl = await MessageUrlImageHelper.parseVerified(
+      text,
+      publicGateway: _publicIpfsGateway,
+    );
+    if (imageUrl == null) return null;
+
+    try {
+      // Cache the image so notification platforms can read it from disk.
+      final imageFile = await DefaultCacheManager().getSingleFile(imageUrl);
+      if (!imageFile.existsSync()) return null;
+      return imageFile.path;
+    } catch (e) {
+      debugPrint('Failed to resolve notification image: $e');
+      return null;
+    }
+  }
+
+  List<AndroidNotificationAction> _conversationActions(bool isChannel) => [
+    AndroidNotificationAction(
+      notificationReplyActionId,
+      _l10n.notification_actionReply,
+      inputs: [
+        AndroidNotificationActionInput(label: _l10n.notification_replyHint),
+      ],
+      semanticAction: SemanticAction.reply,
+      allowGeneratedReplies: true,
+      cancelNotification: false,
+    ),
+    AndroidNotificationAction(
+      notificationMarkReadActionId,
+      _l10n.notification_actionMarkRead,
+      semanticAction: SemanticAction.markAsRead,
+      invisible: true,
+    ),
+    if (isChannel)
+      AndroidNotificationAction(
+        notificationMuteActionId,
+        _l10n.notification_actionMuteChannel,
+        semanticAction: SemanticAction.mute,
+      ),
+  ];
+
+  // Always MessagingStyle: Android Auto only handles messaging notifications
+  // in that style, so an image preview is shown as the large icon instead.
+  AndroidNotificationDetails _androidConversationDetails(
+    _Conversation conversation, {
+    int? badgeCount,
+    bool silent = false,
+  }) {
+    final imagePath = conversation.imagePath;
+    return AndroidNotificationDetails(
+      conversation.isChannel ? 'channel_messages' : 'messages',
+      conversation.isChannel ? 'Channel Messages' : 'Messages',
+      channelDescription: conversation.isChannel
+          ? 'New channel message notifications'
+          : 'New message notifications',
       importance: Importance.high,
       priority: Priority.high,
       icon: '@mipmap/ic_launcher',
       number: badgeCount,
+      silent: silent,
+      category: AndroidNotificationCategory.message,
+      largeIcon: imagePath != null ? FilePathAndroidBitmap(imagePath) : null,
+      styleInformation: MessagingStyleInformation(
+        Person(key: 'self', name: _selfName ?? _l10n.notification_you),
+        conversationTitle: conversation.isChannel ? conversation.title : null,
+        groupConversation: conversation.isChannel,
+        messages: List<Message>.of(conversation.messages),
+      ),
+      actions: _conversationActions(conversation.isChannel),
     );
+  }
 
-    final iosDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      badgeNumber: badgeCount,
+  DarwinNotificationDetails _darwinDetails(String? imagePath, int? badge) =>
+      DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+        badgeNumber: badge,
+        attachments: imagePath != null
+            ? <DarwinNotificationAttachment>[
+                DarwinNotificationAttachment(imagePath),
+              ]
+            : null,
+      );
+
+  Future<void> _showConversationNotificationImpl({
+    required int id,
+    required String payload,
+    required String title,
+    required bool isChannel,
+    required String message,
+    required bool urlImagesEnabled,
+    String? senderName,
+    int? badgeCount,
+    bool silent = false,
+  }) async {
+    if (!await _ensureCanNotify()) return;
+
+    final imagePath = await _resolveNotificationImagePath(
+      message,
+      urlImagesEnabled: urlImagesEnabled,
     );
+    final preview = formatNotificationText(message.trim(), _l10n);
+    final body = preview.isEmpty
+        ? _l10n.notification_receivedNewMessage
+        : preview;
 
-    final macDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      badgeNumber: badgeCount,
+    final conversation =
+        _conversations.putIfAbsent(
+            id,
+            () => _Conversation(
+              title: title,
+              payload: payload,
+              isChannel: isChannel,
+            ),
+          )
+          ..title = title
+          ..badgeCount = badgeCount
+          ..imagePath = imagePath;
+    final sender = isChannel ? (senderName ?? title) : title;
+    conversation.add(
+      Message(
+        body,
+        DateTime.now(),
+        Person(key: isChannel ? 'sender:$sender' : payload, name: sender),
+      ),
+      _maxConversationMessages,
     );
 
     final notificationDetails = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-      macOS: macDetails,
+      android: _androidConversationDetails(
+        conversation,
+        badgeCount: badgeCount,
+        silent: silent,
+      ),
+      iOS: _darwinDetails(imagePath, badgeCount),
+      macOS: _darwinDetails(imagePath, badgeCount),
     );
 
     try {
       await _notifications.show(
-        id: contactId?.hashCode ?? 0,
-        title: contactName,
-        body: formatNotificationText(message),
+        id: id,
+        title: title,
+        body: _collapsedBody(conversation),
         notificationDetails: notificationDetails,
-        payload: 'message:$contactId',
+        payload: payload,
       );
     } catch (e) {
       debugPrint('Failed to show message notification: $e');
+    }
+  }
+
+  /// Text shown when the notification is collapsed. Channel messages keep
+  /// the sender prefix, including after your own reply.
+  String _collapsedBody(_Conversation conversation) {
+    final last = conversation.messages.last;
+    if (!conversation.isChannel) return last.text;
+    final sender = last.person?.name ?? _selfName ?? _l10n.notification_you;
+    return '$sender: ${last.text}';
+  }
+
+  int _conversationId(NotificationReply reply) => reply.isChannel
+      ? reply.channelIndex!.hashCode
+      : reply.contactKeyHex!.hashCode;
+
+  /// Adds the user's reply to the conversation notification. Android keeps
+  /// showing a progress spinner on a replied notification until it is updated.
+  /// Pass the current [badgeCount]: an update replaces the whole notification,
+  /// and the Android launcher badge comes from the notification number.
+  Future<void> showOwnReply(
+    NotificationReply reply,
+    String text, {
+    int? badgeCount,
+  }) async {
+    if (!await _ensureInitialized()) return;
+    final id = _conversationId(reply);
+    final conversation = _conversations[id];
+    if (conversation == null) {
+      await _notifications.cancel(id: id);
+      return;
+    }
+    conversation.badgeCount = badgeCount ?? conversation.badgeCount;
+    conversation.add(
+      Message(text, DateTime.now(), null),
+      _maxConversationMessages,
+    );
+    await _repostConversation(id, conversation);
+  }
+
+  /// Tells the user a notification reply could not be sent.
+  Future<void> showReplyFailed(
+    NotificationReply reply,
+    NotificationReplyFailure failure, {
+    int? badgeCount,
+  }) async {
+    if (!await _ensureInitialized()) return;
+    final reason = switch (failure) {
+      NotificationReplyFailure.notConnected =>
+        _l10n.notification_replyNotConnected,
+      NotificationReplyFailure.unavailable =>
+        _l10n.notification_replyUnavailable,
+      NotificationReplyFailure.tooLong => _l10n.notification_replyTooLong,
+      NotificationReplyFailure.sendFailed => _l10n.notification_replySendFailed,
+    };
+    final id = _conversationId(reply);
+    final conversation = _conversations[id];
+    if (conversation != null) {
+      conversation.badgeCount = badgeCount ?? conversation.badgeCount;
+      await _repostConversation(id, conversation);
+    } else {
+      await _notifications.cancel(id: id);
+    }
+    try {
+      await _notifications.show(
+        id: 'reply_failed:$id'.hashCode,
+        title: _l10n.notification_replyFailedTitle,
+        body: reason,
+        notificationDetails: const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'messages',
+            'Messages',
+            channelDescription: 'New message notifications',
+            importance: Importance.high,
+            priority: Priority.high,
+            icon: '@mipmap/ic_launcher',
+          ),
+        ),
+        payload: conversation?.payload,
+      );
+    } catch (e) {
+      debugPrint('Failed to show reply failure notification: $e');
+    }
+  }
+
+  Future<void> _repostConversation(int id, _Conversation conversation) async {
+    try {
+      await _notifications.show(
+        id: id,
+        title: conversation.title,
+        body: _collapsedBody(conversation),
+        notificationDetails: NotificationDetails(
+          android: _androidConversationDetails(
+            conversation,
+            badgeCount: conversation.badgeCount,
+            silent: true,
+          ),
+        ),
+        payload: conversation.payload,
+      );
+    } catch (e) {
+      debugPrint('Failed to update message notification: $e');
     }
   }
 
@@ -296,61 +621,51 @@ class NotificationService {
     }
   }
 
-  Future<void> _showChannelMessageNotificationImpl({
-    required String channelName,
-    required String message,
-    int? channelIndex,
-    int? badgeCount,
+  /// Posts a low-battery alert for the connected device.
+  ///
+  /// Uses a per-device, per-threshold notification id so each alert level
+  /// updates its own notification instead of stacking, and alerts for
+  /// different radios don't overwrite each other. Bypasses the rate-limit
+  /// queue, which only handles message and advert notifications.
+  Future<void> showLowBatteryNotification({
+    required String deviceKey,
+    required String deviceName,
+    required int batteryPercent,
+    required int threshold,
   }) async {
     if (!await _ensureCanNotify()) return;
 
-    final androidDetails = AndroidNotificationDetails(
-      'channel_messages',
-      'Channel Messages',
-      channelDescription: 'New channel message notifications',
+    const androidDetails = AndroidNotificationDetails(
+      'low_battery',
+      'Low Battery',
+      channelDescription: 'Low battery alerts for the connected device',
       importance: Importance.high,
       priority: Priority.high,
       icon: '@mipmap/ic_launcher',
-      number: badgeCount,
     );
 
-    final iosDetails = DarwinNotificationDetails(
+    const darwinDetails = DarwinNotificationDetails(
       presentAlert: true,
-      presentBadge: true,
+      presentBadge: false,
       presentSound: true,
-      badgeNumber: badgeCount,
     );
 
-    final macDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      badgeNumber: badgeCount,
-    );
-
-    final notificationDetails = NotificationDetails(
+    const notificationDetails = NotificationDetails(
       android: androidDetails,
-      iOS: iosDetails,
-      macOS: macDetails,
+      iOS: darwinDetails,
+      macOS: darwinDetails,
     );
-
-    final preview = formatNotificationText(message.trim());
-    final body = preview.isEmpty
-        ? _l10n.notification_receivedNewMessage
-        : preview;
 
     try {
       await _notifications.show(
-        id:
-            channelIndex?.hashCode ??
-            DateTime.now().millisecondsSinceEpoch & 0x7FFFFFFF,
-        title: channelName,
-        body: body,
+        id: _lowBatteryNotificationId(deviceKey, threshold),
+        title: _l10n.notification_lowBatteryTitle,
+        body: _l10n.notification_lowBatteryBody(deviceName, batteryPercent),
         notificationDetails: notificationDetails,
-        payload: 'channel:$channelIndex',
+        payload: 'low_battery',
       );
     } catch (e) {
-      debugPrint('Failed to show channel notification: $e');
+      debugPrint('Failed to show low battery notification: $e');
     }
   }
 
@@ -379,7 +694,9 @@ class NotificationService {
   }
 
   Future<void> cancelAll() async {
+    _conversations.clear();
     await _notifications.cancelAll();
+    await _updateBadge(0);
   }
 
   Future<void> cancel(int id) async {
@@ -392,6 +709,7 @@ class NotificationService {
     int totalUnreadCount,
   ) async {
     if (!await _ensureInitialized()) return;
+    _conversations.remove(contactId.hashCode);
     await _notifications.cancel(id: contactId.hashCode);
     await _updateBadge(totalUnreadCount);
   }
@@ -402,8 +720,29 @@ class NotificationService {
     int totalUnreadCount,
   ) async {
     if (!await _ensureInitialized()) return;
+    _conversations.remove(channelIndex.hashCode);
     await _notifications.cancel(id: channelIndex.hashCode);
     await _updateBadge(totalUnreadCount);
+  }
+
+  static int _lowBatteryNotificationId(String deviceKey, int threshold) =>
+      'low_battery:$deviceKey:$threshold'.hashCode;
+
+  /// Cancel a device's low-battery notifications for the given thresholds.
+  Future<void> clearLowBatteryNotifications(
+    String deviceKey,
+    Iterable<int> thresholds,
+  ) async {
+    if (!await _ensureInitialized()) return;
+    for (final threshold in thresholds) {
+      try {
+        await _notifications.cancel(
+          id: _lowBatteryNotificationId(deviceKey, threshold),
+        );
+      } catch (e) {
+        debugPrint('Failed to clear low battery notification: $e');
+      }
+    }
   }
 
   /// Cancel advert notifications for the given contact public key hexes.
@@ -414,28 +753,22 @@ class NotificationService {
     }
   }
 
+  static const MethodChannel _badgeChannel = MethodChannel(
+    'meshcore_open/app_badge',
+  );
+
+  /// Sets the app icon badge to the current unread total.
+  Future<void> setAppBadge(int count) => _updateBadge(count);
+
   Future<void> _updateBadge(int count) async {
     if (PlatformInfo.isIOS || PlatformInfo.isMacOS) {
-      // On Apple platforms, set the badge number directly via a silent update.
-      final darwinDetails = DarwinNotificationDetails(
-        presentAlert: false,
-        presentSound: false,
-        presentBadge: true,
-        badgeNumber: count,
-      );
-      final details = NotificationDetails(
-        iOS: darwinDetails,
-        macOS: darwinDetails,
-      );
-      // Use a fixed ID so each update replaces the previous one.
-      await _notifications.show(
-        id: 'badge_update'.hashCode,
-        title: null,
-        body: null,
-        notificationDetails: details,
-      );
-      // Immediately cancel the silent notification so it doesn't appear in tray.
-      await _notifications.cancel(id: 'badge_update'.hashCode);
+      // Set natively: a silent notification cancelled right after show() is
+      // removed before iOS delivers it, so its badge number never applied.
+      try {
+        await _badgeChannel.invokeMethod<void>('setBadgeCount', count);
+      } catch (e) {
+        debugPrint('Failed to update app badge: $e');
+      }
     }
     // On Android, badge count is derived from active notifications,
     // so cancelling the specific notification above is sufficient.
@@ -448,6 +781,7 @@ class NotificationService {
   Future<void> showMessageNotification({
     required String contactName,
     required String message,
+    required bool urlImagesEnabled,
     String? contactId,
     int? badgeCount,
   }) async {
@@ -458,6 +792,7 @@ class NotificationService {
         type: _NotificationType.message,
         title: contactName,
         body: message,
+        urlImagesEnabled: urlImagesEnabled,
         id: contactId,
         badgeCount: badgeCount,
       ),
@@ -485,6 +820,7 @@ class NotificationService {
     required String channelName,
     required String senderName,
     required String message,
+    required bool urlImagesEnabled,
     int? channelIndex,
     int? badgeCount,
   }) async {
@@ -494,7 +830,9 @@ class NotificationService {
       _PendingNotification(
         type: _NotificationType.channelMessage,
         title: channelName,
-        body: '$senderName: $message',
+        body: message,
+        senderName: senderName,
+        urlImagesEnabled: urlImagesEnabled,
         id: channelIndex?.toString(),
         badgeCount: badgeCount,
       ),
@@ -503,10 +841,20 @@ class NotificationService {
 
   void _queueNotification(_PendingNotification notification) {
     final now = DateTime.now();
+    final throttled =
+        _lastNotificationTime != null &&
+        now.difference(_lastNotificationTime!) < _minNotificationInterval;
+
+    // Messages always update their conversation notification so the reply
+    // action stays available; during a burst they update silently.
+    if (notification.type != _NotificationType.advert) {
+      _showNotificationImmediately(notification, silent: throttled);
+      if (!throttled) _lastNotificationTime = now;
+      return;
+    }
 
     // If we recently showed a notification, start batching
-    if (_lastNotificationTime != null &&
-        now.difference(_lastNotificationTime!) < _minNotificationInterval) {
+    if (throttled) {
       _pendingNotifications.add(notification);
       debugPrint(
         '[Notification] queued: ${notification.type.name} (${_getNotificationIdentifier(notification)})',
@@ -548,16 +896,21 @@ class NotificationService {
   }
 
   Future<void> _showNotificationImmediately(
-    _PendingNotification notification,
-  ) async {
+    _PendingNotification notification, {
+    bool silent = false,
+  }) async {
     try {
       switch (notification.type) {
         case _NotificationType.message:
-          await _showMessageNotificationImpl(
-            contactName: notification.title,
+          await _showConversationNotificationImpl(
+            id: notification.id?.hashCode ?? 0,
+            payload: 'message:${notification.id}',
+            title: notification.title,
+            isChannel: false,
             message: notification.body,
-            contactId: notification.id,
+            urlImagesEnabled: notification.urlImagesEnabled,
             badgeCount: notification.badgeCount,
+            silent: silent,
           );
           break;
         case _NotificationType.advert:
@@ -568,11 +921,19 @@ class NotificationService {
           );
           break;
         case _NotificationType.channelMessage:
-          await _showChannelMessageNotificationImpl(
-            channelName: notification.title,
+          final channelIndex = int.tryParse(notification.id ?? '');
+          await _showConversationNotificationImpl(
+            id:
+                channelIndex?.hashCode ??
+                DateTime.now().millisecondsSinceEpoch & 0x7FFFFFFF,
+            payload: 'channel:$channelIndex',
+            title: notification.title,
+            isChannel: true,
             message: notification.body,
-            channelIndex: int.tryParse(notification.id ?? ''),
+            senderName: notification.senderName,
+            urlImagesEnabled: notification.urlImagesEnabled,
             badgeCount: notification.badgeCount,
+            silent: silent,
           );
           break;
       }
@@ -581,39 +942,15 @@ class NotificationService {
     }
   }
 
-  Future<void> _showBatchSummary(List<_PendingNotification> batch) async {
-    if (!await _ensureCanNotify()) return;
+  /// Only adverts are batched; messages always update their conversation
+  /// notification instead.
+  Future<void> _showBatchSummary(List<_PendingNotification> adverts) async {
+    if (adverts.isEmpty || !await _ensureCanNotify()) return;
 
-    // Group by type
-    final messages = batch
-        .where((n) => n.type == _NotificationType.message)
-        .toList();
-    final adverts = batch
-        .where((n) => n.type == _NotificationType.advert)
-        .toList();
-    final channelMsgs = batch
-        .where((n) => n.type == _NotificationType.channelMessage)
-        .toList();
-
-    // Build summary text using localized plurals
-    final parts = <String>[];
-    if (messages.isNotEmpty) {
-      parts.add(_l10n.notification_messagesCount(messages.length));
-    }
-    if (channelMsgs.isNotEmpty) {
-      parts.add(_l10n.notification_channelMessagesCount(channelMsgs.length));
-    }
-    if (adverts.isNotEmpty) {
-      parts.add(_l10n.notification_newNodesCount(adverts.length));
-    }
-
-    if (parts.isEmpty) return;
-
-    // Show first few device names in batch summary for debugging (only if adverts exist)
-    final deviceInfo = adverts.isNotEmpty
-        ? ' (${adverts.take(5).map((n) => _logSafe(n.body)).join(', ')}${adverts.length > 5 ? ', ...' : ''})'
-        : '';
-    debugPrint('[Notification] batch summary: ${parts.join(", ")}$deviceInfo');
+    final summary = _l10n.notification_newNodesCount(adverts.length);
+    final deviceInfo =
+        ' (${adverts.take(5).map((n) => _logSafe(n.body)).join(', ')}${adverts.length > 5 ? ', ...' : ''})';
+    debugPrint('[Notification] batch summary: $summary$deviceInfo');
 
     const androidDetails = AndroidNotificationDetails(
       'batch_summary',
@@ -630,7 +967,7 @@ class NotificationService {
       await _notifications.show(
         id: 'batch_summary'.hashCode,
         title: _l10n.notification_activityTitle,
-        body: parts.join(', '),
+        body: summary,
         notificationDetails: notificationDetails,
         payload: 'batch',
       );
@@ -647,6 +984,8 @@ class _PendingNotification {
   final _NotificationType type;
   final String title;
   final String body;
+  final String? senderName;
+  final bool urlImagesEnabled;
   final String? id;
   final int? badgeCount;
 
@@ -654,7 +993,29 @@ class _PendingNotification {
     required this.type,
     required this.title,
     required this.body,
+    this.senderName,
+    this.urlImagesEnabled = false,
     this.id,
     this.badgeCount,
   });
+}
+
+class _Conversation {
+  String title;
+  int? badgeCount;
+  String? imagePath;
+  final String payload;
+  final bool isChannel;
+  final List<Message> messages = [];
+
+  _Conversation({
+    required this.title,
+    required this.payload,
+    required this.isChannel,
+  });
+
+  void add(Message message, int max) {
+    messages.add(message);
+    if (messages.length > max) messages.removeRange(0, messages.length - max);
+  }
 }

@@ -3,6 +3,22 @@ import 'translation_support.dart';
 
 enum UnitSystem { metric, imperial }
 
+String normalizeIpfsGateway(String value) {
+  var gateway = value.trim();
+  if (gateway.isEmpty) return gateway;
+  if (!gateway.startsWith('http://') && !gateway.startsWith('https://')) {
+    gateway = 'https://$gateway';
+  }
+  gateway = gateway.replaceAll('{cid}', '');
+  if (gateway.endsWith('/ipfs')) gateway = '$gateway/';
+  if (!gateway.endsWith('/ipfs/')) {
+    gateway = '${gateway.endsWith('/') ? gateway : '$gateway/'}ipfs/';
+  }
+  return gateway;
+}
+
+enum ChannelNotificationMode { all, mentionsOnly, muted }
+
 extension UnitSystemValue on UnitSystem {
   String get value {
     switch (this) {
@@ -78,6 +94,7 @@ class Cyr2LatProfile {
 class AppSettings {
   static const Object _unset = Object();
   static const String stadiaDemo = '51bd0381-4685-4666-bae8-48940f6d77c0';
+  static const String defaultPublicIpfsGateway = 'https://ipfs.io/ipfs/';
 
   final bool clearPathOnMaxRetry;
   final bool mapShowRepeaters;
@@ -89,7 +106,9 @@ class AppSettings {
   final String mapKeyPrefix;
   final bool mapShowMarkers;
   final bool mapShowGuessedLocations;
+  final bool mapClusterNodes;
   final bool enableMessageTracing;
+  final bool regionOnHopsLine;
   final Map<String, double>? mapCacheBounds;
   final int mapCacheMinZoom;
   final int mapCacheMaxZoom;
@@ -108,18 +127,42 @@ class AppSettings {
   final double routeWeightSuccessIncrement;
   final double routeWeightFailureDecrement;
   final int maxMessageRetries;
+  final bool channelMinHopsEnabled;
+  final int channelMinHops;
+  final int channelMinHopsRetries;
+
+  /// When on, hearing the message repeated by at least [channelMinHops]
+  /// different first-hop repeaters also satisfies the channel resend.
+  final bool channelMinHopsCountRepeaters;
   final String themeMode;
   final String? languageOverride; // null = system default
   final bool appDebugLogEnabled;
   final Map<String, String> batteryChemistryByDeviceId;
   final Map<String, String> batteryChemistryByRepeaterId;
   final UnitSystem unitSystem;
-  final Set<String> mutedChannels;
+  final Map<String, ChannelNotificationMode> channelNotificationModes;
   final bool mapShowDiscoveryContacts;
+  final bool evictDiscoveredContactsEnabled;
   final String tcpServerAddress;
   final int tcpServerPort;
   final bool jumpToOldestUnread;
   final bool imageMessagesEnabled;
+
+  /// Master switch for fetching images behind links in messages.
+  final bool loadLinkImages;
+
+  /// Chats with no saved link-image choice load link images when true.
+  final bool showLinkImagesByDefault;
+  final String publicIpfsGateway;
+  final String uploadIpfsGateway;
+  final String uploadIpfsEndpoint;
+  final String uploadIpfsApiKey;
+
+  /// Opt-in upload of header-only packet records to the network map.
+  final bool networkMapUploadEnabled;
+
+  /// Whether the one-time network map opt-in dialog has been shown.
+  final bool networkMapPromptShown;
 
   /// Whether a received image is decoded as soon as it is reassembled.
   ///
@@ -170,6 +213,10 @@ class AppSettings {
     return apiKey;
   }
 
+  String get effectiveUploadIpfsGateway {
+    return uploadIpfsGateway.trim();
+  }
+
   bool get usesstadiaDemo => effectiveMapTileApiKey == stadiaDemo;
 
   Map<String, String> get cyr2latCharMap {
@@ -186,12 +233,14 @@ class AppSettings {
     this.mapShowChatNodes = true,
     this.mapShowOtherNodes = true,
     this.mapShowOverlaps = false,
-    this.mapTimeFilterHours = 0, // Default to all time
+    this.mapTimeFilterHours = 168,
     this.mapKeyPrefixEnabled = false,
     this.mapKeyPrefix = '',
     this.mapShowMarkers = true,
     this.mapShowGuessedLocations = true,
-    this.enableMessageTracing = true,
+    this.mapClusterNodes = true,
+    this.enableMessageTracing = false,
+    this.regionOnHopsLine = false,
     this.mapCacheBounds,
     this.mapCacheMinZoom = 10,
     this.mapCacheMaxZoom = 15,
@@ -210,17 +259,30 @@ class AppSettings {
     this.routeWeightSuccessIncrement = 0.5,
     this.routeWeightFailureDecrement = 0.2,
     this.maxMessageRetries = 5,
+    this.channelMinHopsEnabled = false,
+    this.channelMinHops = 2,
+    this.channelMinHopsRetries = 1,
+    this.channelMinHopsCountRepeaters = false,
     this.themeMode = 'system',
     this.languageOverride,
     this.appDebugLogEnabled = false,
     Map<String, String>? batteryChemistryByDeviceId,
     Map<String, String>? batteryChemistryByRepeaterId,
     this.unitSystem = UnitSystem.metric,
-    Set<String>? mutedChannels,
+    Map<String, ChannelNotificationMode>? channelNotificationModes,
     this.mapShowDiscoveryContacts = true,
+    this.evictDiscoveredContactsEnabled = true,
     this.tcpServerAddress = '',
     this.tcpServerPort = 0,
     this.jumpToOldestUnread = false,
+    this.networkMapUploadEnabled = false,
+    this.networkMapPromptShown = false,
+    this.loadLinkImages = true,
+    this.showLinkImagesByDefault = false,
+    this.publicIpfsGateway = defaultPublicIpfsGateway,
+    this.uploadIpfsGateway = '',
+    this.uploadIpfsEndpoint = '',
+    this.uploadIpfsApiKey = '',
     this.imageMessagesEnabled = false,
     this.imageProcessAutomatically = false,
     this.imageCodecEnabled = false,
@@ -239,7 +301,7 @@ class AppSettings {
     String? selectedCyr2latProfileId,
   }) : batteryChemistryByDeviceId = batteryChemistryByDeviceId ?? {},
        batteryChemistryByRepeaterId = batteryChemistryByRepeaterId ?? {},
-       mutedChannels = mutedChannels ?? {},
+       channelNotificationModes = channelNotificationModes ?? {},
        imageCodecDownloadedModels = imageCodecDownloadedModels ?? const [],
        translationDownloadedModels = translationDownloadedModels ?? const [],
        cyr2latProfiles =
@@ -265,7 +327,9 @@ class AppSettings {
       'map_key_prefix': mapKeyPrefix,
       'map_show_markers': mapShowMarkers,
       'map_show_guessed_locations': mapShowGuessedLocations,
+      'map_cluster_nodes': mapClusterNodes,
       'enable_message_tracing': enableMessageTracing,
+      'region_on_hops_line': regionOnHopsLine,
       'map_cache_bounds': mapCacheBounds,
       'map_cache_min_zoom': mapCacheMinZoom,
       'map_cache_max_zoom': mapCacheMaxZoom,
@@ -285,17 +349,37 @@ class AppSettings {
       'route_weight_success_increment': routeWeightSuccessIncrement,
       'route_weight_failure_decrement': routeWeightFailureDecrement,
       'max_message_retries': maxMessageRetries,
+      'channel_min_hops_enabled': channelMinHopsEnabled,
+      'channel_min_hops': channelMinHops,
+      'channel_min_hops_retries': channelMinHopsRetries,
+      'channel_min_hops_count_repeaters': channelMinHopsCountRepeaters,
       'theme_mode': themeMode,
       'language_override': languageOverride,
       'app_debug_log_enabled': appDebugLogEnabled,
       'battery_chemistry_by_device_id': batteryChemistryByDeviceId,
       'battery_chemistry_by_repeater_id': batteryChemistryByRepeaterId,
       'unit_system': unitSystem.value,
-      'muted_channels': mutedChannels.toList(),
+      // Written for older builds that only read the muted set.
+      'muted_channels': [
+        for (final entry in channelNotificationModes.entries)
+          if (entry.value == ChannelNotificationMode.muted) entry.key,
+      ],
+      'channel_notification_modes': channelNotificationModes.map(
+        (key, value) => MapEntry(key, value.name),
+      ),
       'map_show_discovery_contacts': mapShowDiscoveryContacts,
+      'evict_discovered_contacts_enabled': evictDiscoveredContactsEnabled,
       'tcp_server_address': tcpServerAddress,
       'tcp_server_port': tcpServerPort,
       'jump_to_oldest_unread': jumpToOldestUnread,
+      'network_map_upload_enabled': networkMapUploadEnabled,
+      'network_map_prompt_shown': networkMapPromptShown,
+      'load_link_images': loadLinkImages,
+      'show_link_images_by_default': showLinkImagesByDefault,
+      'public_ipfs_gateway': publicIpfsGateway,
+      'upload_ipfs_gateway': uploadIpfsGateway,
+      'upload_ipfs_endpoint': uploadIpfsEndpoint,
+      'upload_ipfs_api_key': uploadIpfsApiKey,
       'image_messages_enabled': imageMessagesEnabled,
       'image_process_automatically': imageProcessAutomatically,
       'image_codec_enabled': imageCodecEnabled,
@@ -329,6 +413,35 @@ class AppSettings {
       return UnitSystem.metric;
     }
 
+    Map<String, ChannelNotificationMode> parseChannelNotificationModes(
+      Map<String, dynamic> json,
+    ) {
+      // Migration from old muted_channels (Set<String>) to new system
+      final mutedList = json['muted_channels'] as List?;
+      final newModes = json['channel_notification_modes'] as Map?;
+
+      final result = <String, ChannelNotificationMode>{};
+
+      // Migrate old muted channels
+      if (mutedList != null) {
+        for (final channelName in mutedList) {
+          result[channelName.toString()] = ChannelNotificationMode.muted;
+        }
+      }
+
+      // Load new modes (overrides old muted channels if present)
+      if (newModes != null) {
+        for (final entry in newModes.entries) {
+          final value = entry.value;
+          if (value is! String) continue;
+          final mode = ChannelNotificationMode.values.asNameMap()[value];
+          if (mode != null) result[entry.key.toString()] = mode;
+        }
+      }
+
+      return result;
+    }
+
     return AppSettings(
       clearPathOnMaxRetry: json['clear_path_on_max_retry'] as bool? ?? false,
       mapShowRepeaters: json['map_show_repeaters'] as bool? ?? true,
@@ -336,13 +449,15 @@ class AppSettings {
       mapShowOtherNodes: json['map_show_other_nodes'] as bool? ?? true,
       mapShowOverlaps: json['map_show_overlaps'] as bool? ?? false,
       mapTimeFilterHours:
-          (json['map_time_filter_hours'] as num?)?.toDouble() ?? 0,
+          (json['map_time_filter_hours'] as num?)?.toDouble() ?? 168,
       mapKeyPrefixEnabled: json['map_key_prefix_enabled'] as bool? ?? false,
       mapKeyPrefix: json['map_key_prefix'] as String? ?? '',
       mapShowMarkers: json['map_show_markers'] as bool? ?? true,
       mapShowGuessedLocations:
           json['map_show_guessed_locations'] as bool? ?? true,
-      enableMessageTracing: json['enable_message_tracing'] as bool? ?? true,
+      mapClusterNodes: json['map_cluster_nodes'] as bool? ?? true,
+      enableMessageTracing: json['enable_message_tracing'] as bool? ?? false,
+      regionOnHopsLine: json['region_on_hops_line'] as bool? ?? false,
       mapCacheBounds: (json['map_cache_bounds'] as Map?)?.map(
         (key, value) => MapEntry(key.toString(), (value as num).toDouble()),
       ),
@@ -370,6 +485,11 @@ class AppSettings {
       routeWeightFailureDecrement:
           (json['route_weight_failure_decrement'] as num?)?.toDouble() ?? 0.2,
       maxMessageRetries: json['max_message_retries'] as int? ?? 5,
+      channelMinHopsEnabled: json['channel_min_hops_enabled'] as bool? ?? false,
+      channelMinHops: json['channel_min_hops'] as int? ?? 2,
+      channelMinHopsRetries: json['channel_min_hops_retries'] as int? ?? 1,
+      channelMinHopsCountRepeaters:
+          json['channel_min_hops_count_repeaters'] as bool? ?? false,
       themeMode: json['theme_mode'] as String? ?? 'system',
       languageOverride: json['language_override'] as String?,
       appDebugLogEnabled: json['app_debug_log_enabled'] as bool? ?? false,
@@ -384,16 +504,25 @@ class AppSettings {
           ) ??
           {},
       unitSystem: parseUnitSystem(json['unit_system']),
-      mutedChannels:
-          ((json['muted_channels'] as List?)
-              ?.map((e) => e.toString())
-              .toSet()) ??
-          {},
+      channelNotificationModes: parseChannelNotificationModes(json),
       mapShowDiscoveryContacts:
           json['map_show_discovery_contacts'] as bool? ?? true,
+      evictDiscoveredContactsEnabled:
+          json['evict_discovered_contacts_enabled'] as bool? ?? true,
       tcpServerAddress: json['tcp_server_address'] as String? ?? '',
       tcpServerPort: json['tcp_server_port'] as int? ?? 0,
       jumpToOldestUnread: json['jump_to_oldest_unread'] as bool? ?? false,
+      networkMapUploadEnabled:
+          json['network_map_upload_enabled'] as bool? ?? false,
+      networkMapPromptShown: json['network_map_prompt_shown'] as bool? ?? false,
+      loadLinkImages: json['load_link_images'] as bool? ?? true,
+      showLinkImagesByDefault:
+          json['show_link_images_by_default'] as bool? ?? false,
+      publicIpfsGateway:
+          json['public_ipfs_gateway'] as String? ?? defaultPublicIpfsGateway,
+      uploadIpfsGateway: json['upload_ipfs_gateway'] as String? ?? '',
+      uploadIpfsEndpoint: json['upload_ipfs_endpoint'] as String? ?? '',
+      uploadIpfsApiKey: json['upload_ipfs_api_key'] as String? ?? '',
       imageMessagesEnabled: json['image_messages_enabled'] as bool? ?? false,
       imageProcessAutomatically:
           json['image_process_automatically'] as bool? ?? false,
@@ -477,7 +606,9 @@ class AppSettings {
     String? mapKeyPrefix,
     bool? mapShowMarkers,
     bool? mapShowGuessedLocations,
+    bool? mapClusterNodes,
     bool? enableMessageTracing,
+    bool? regionOnHopsLine,
     Object? mapCacheBounds = _unset,
     int? mapCacheMinZoom,
     int? mapCacheMaxZoom,
@@ -496,17 +627,30 @@ class AppSettings {
     double? routeWeightSuccessIncrement,
     double? routeWeightFailureDecrement,
     int? maxMessageRetries,
+    bool? channelMinHopsEnabled,
+    int? channelMinHops,
+    int? channelMinHopsRetries,
+    bool? channelMinHopsCountRepeaters,
     String? themeMode,
     Object? languageOverride = _unset,
     bool? appDebugLogEnabled,
     Map<String, String>? batteryChemistryByDeviceId,
     Map<String, String>? batteryChemistryByRepeaterId,
     UnitSystem? unitSystem,
-    Set<String>? mutedChannels,
+    Map<String, ChannelNotificationMode>? channelNotificationModes,
     bool? mapShowDiscoveryContacts,
+    bool? evictDiscoveredContactsEnabled,
     String? tcpServerAddress,
     int? tcpServerPort,
     bool? jumpToOldestUnread,
+    bool? networkMapUploadEnabled,
+    bool? networkMapPromptShown,
+    bool? loadLinkImages,
+    bool? showLinkImagesByDefault,
+    String? publicIpfsGateway,
+    String? uploadIpfsGateway,
+    String? uploadIpfsEndpoint,
+    String? uploadIpfsApiKey,
     bool? imageMessagesEnabled,
     bool? imageProcessAutomatically,
     bool? imageCodecEnabled,
@@ -536,7 +680,9 @@ class AppSettings {
       mapShowMarkers: mapShowMarkers ?? this.mapShowMarkers,
       mapShowGuessedLocations:
           mapShowGuessedLocations ?? this.mapShowGuessedLocations,
+      mapClusterNodes: mapClusterNodes ?? this.mapClusterNodes,
       enableMessageTracing: enableMessageTracing ?? this.enableMessageTracing,
+      regionOnHopsLine: regionOnHopsLine ?? this.regionOnHopsLine,
       mapCacheBounds: mapCacheBounds == _unset
           ? this.mapCacheBounds
           : mapCacheBounds as Map<String, double>?,
@@ -565,6 +711,13 @@ class AppSettings {
       routeWeightFailureDecrement:
           routeWeightFailureDecrement ?? this.routeWeightFailureDecrement,
       maxMessageRetries: maxMessageRetries ?? this.maxMessageRetries,
+      channelMinHopsEnabled:
+          channelMinHopsEnabled ?? this.channelMinHopsEnabled,
+      channelMinHops: channelMinHops ?? this.channelMinHops,
+      channelMinHopsRetries:
+          channelMinHopsRetries ?? this.channelMinHopsRetries,
+      channelMinHopsCountRepeaters:
+          channelMinHopsCountRepeaters ?? this.channelMinHopsCountRepeaters,
       themeMode: themeMode ?? this.themeMode,
       languageOverride: languageOverride == _unset
           ? this.languageOverride
@@ -575,12 +728,26 @@ class AppSettings {
       batteryChemistryByRepeaterId:
           batteryChemistryByRepeaterId ?? this.batteryChemistryByRepeaterId,
       unitSystem: unitSystem ?? this.unitSystem,
-      mutedChannels: mutedChannels ?? this.mutedChannels,
+      channelNotificationModes:
+          channelNotificationModes ?? this.channelNotificationModes,
       mapShowDiscoveryContacts:
           mapShowDiscoveryContacts ?? this.mapShowDiscoveryContacts,
+      evictDiscoveredContactsEnabled:
+          evictDiscoveredContactsEnabled ?? this.evictDiscoveredContactsEnabled,
       tcpServerAddress: tcpServerAddress ?? this.tcpServerAddress,
       tcpServerPort: tcpServerPort ?? this.tcpServerPort,
       jumpToOldestUnread: jumpToOldestUnread ?? this.jumpToOldestUnread,
+      networkMapUploadEnabled:
+          networkMapUploadEnabled ?? this.networkMapUploadEnabled,
+      networkMapPromptShown:
+          networkMapPromptShown ?? this.networkMapPromptShown,
+      loadLinkImages: loadLinkImages ?? this.loadLinkImages,
+      showLinkImagesByDefault:
+          showLinkImagesByDefault ?? this.showLinkImagesByDefault,
+      publicIpfsGateway: publicIpfsGateway ?? this.publicIpfsGateway,
+      uploadIpfsGateway: uploadIpfsGateway ?? this.uploadIpfsGateway,
+      uploadIpfsEndpoint: uploadIpfsEndpoint ?? this.uploadIpfsEndpoint,
+      uploadIpfsApiKey: uploadIpfsApiKey ?? this.uploadIpfsApiKey,
       imageMessagesEnabled: imageMessagesEnabled ?? this.imageMessagesEnabled,
       imageProcessAutomatically:
           imageProcessAutomatically ?? this.imageProcessAutomatically,

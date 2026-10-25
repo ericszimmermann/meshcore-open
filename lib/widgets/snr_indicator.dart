@@ -9,6 +9,7 @@ import '../l10n/l10n.dart';
 import '../models/contact.dart';
 import '../theme/mesh_theme.dart';
 import 'mesh_ui.dart';
+import 'node_info_sheet.dart';
 import 'signal_ui.dart';
 
 Contact? _getRepeaterPrefixMatchNearLocation(
@@ -226,79 +227,134 @@ class _SNRIndicatorState extends State<SNRIndicator> {
         title: Text(l10n.snrIndicator_nearByRepeaters),
         content: SizedBox(
           width: double.maxFinite,
-          child: Scrollbar(
-            child: ListView.separated(
-              shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              itemCount: directBestRepeaters.length,
-              separatorBuilder: (_, _) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final repeater = directBestRepeaters[index];
-                final allContacts = widget.connector.allContacts;
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.snrIndicator_nearByRepeatersDescription,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Flexible(
+                child: Scrollbar(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    itemCount: directBestRepeaters.length,
+                    separatorBuilder: (_, _) => const Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final repeater = directBestRepeaters[index];
+                      final allContacts = widget.connector.allContacts;
 
-                final selfLat = widget.connector.selfLatitude;
-                final selfLon = widget.connector.selfLongitude;
+                      final selfLat = widget.connector.selfLatitude;
+                      final selfLon = widget.connector.selfLongitude;
 
-                LatLng? selfPoint;
-                if (selfLat != null &&
-                    selfLon != null &&
-                    _isValidSelfLocation(selfLat, selfLon)) {
-                  selfPoint = LatLng(selfLat, selfLon);
-                }
+                      LatLng? selfPoint;
+                      if (selfLat != null &&
+                          selfLon != null &&
+                          _isValidSelfLocation(selfLat, selfLon)) {
+                        selfPoint = LatLng(selfLat, selfLon);
+                      }
 
-                final contact = _getRepeaterPrefixMatchNearLocation(
-                  allContacts,
-                  repeater.pubkeyPrefix,
-                  contactKeyHex: repeater.contactKeyHex,
-                  searchPoint: selfPoint,
-                  preferFavorites: true,
-                );
+                      final contact = _getRepeaterPrefixMatchNearLocation(
+                        allContacts,
+                        repeater.pubkeyPrefix,
+                        contactKeyHex: repeater.contactKeyHex,
+                        searchPoint: selfPoint,
+                        preferFavorites: true,
+                      );
 
-                final name = contact?.name;
-                final prefixLabel = PathHelper.formatHopHex(
-                  repeater.pubkeyPrefix,
-                );
-                final snrColor = MeshTheme.snrColor(
-                  repeater.snr,
-                  blocked: false,
-                );
+                      final name = contact?.name;
+                      final prefixLabel = PathHelper.formatHopHex(
+                        repeater.pubkeyPrefix,
+                      );
+                      final snrColor = MeshTheme.snrColor(
+                        repeater.snr,
+                        blocked: false,
+                      );
+                      final colorScheme = Theme.of(context).colorScheme;
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  child: Row(
-                    children: [
-                      AvatarCircle(
-                        name: name ?? prefixLabel,
-                        size: 36,
-                        color: snrColor,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              name ?? prefixLabel,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            Text(
-                              '${repeater.snr.toStringAsFixed(1)} dB • ${_formatLastUpdated(repeater.lastUpdated)}',
-                              style: MeshTheme.mono(
-                                fontSize: 11,
-                                color: snrColor,
+                      return Semantics(
+                        button: true,
+                        hint: l10n.map_details,
+                        child: InkWell(
+                          onTap: () => contact != null
+                              ? showNodeInfoSheet(context, contact)
+                              : _showUnknownRepeaterSheet(
+                                  context,
+                                  repeater,
+                                  prefixLabel,
+                                ),
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(minHeight: 56),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                              child: Row(
+                                children: [
+                                  AvatarCircle(
+                                    name: name ?? prefixLabel,
+                                    size: 36,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          name ?? prefixLabel,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: colorScheme.onSurface,
+                                              ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.circle,
+                                              size: 8,
+                                              color: snrColor,
+                                            ),
+                                            const SizedBox(width: 6),
+                                            Text(
+                                              '${repeater.snr.toStringAsFixed(1)} dB • ${_formatLastUpdated(repeater.lastUpdated)}',
+                                              style: MeshTheme.mono(
+                                                fontSize: 12,
+                                                color: colorScheme
+                                                    .onSurfaceVariant,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 24,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                );
-              },
-            ),
+                ),
+              ),
+            ],
           ),
         ),
         actions: [
@@ -308,6 +364,67 @@ class _SNRIndicatorState extends State<SNRIndicator> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showUnknownRepeaterSheet(
+    BuildContext context,
+    DirectRepeater repeater,
+    String prefixLabel,
+  ) {
+    showMeshSheet<void>(
+      context,
+      builder: (sheetContext) {
+        final l10n = sheetContext.l10n;
+        final scheme = Theme.of(sheetContext).colorScheme;
+        return SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                BottomSheetHeader(
+                  title: prefixLabel,
+                  subtitle: l10n.snrIndicator_unknownRepeater,
+                  trailing: Icon(
+                    mapNodeTypeIcon(advTypeRepeater),
+                    color: mapNodeTypeColor(advTypeRepeater),
+                    size: 20,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      NodeInfoRow(
+                        label: l10n.map_publicKeyPrefix,
+                        value: repeater.pubkeyPrefixHex,
+                      ),
+                      NodeInfoRow(
+                        label: l10n.repeater_lastSnr,
+                        value: '${repeater.snr.toStringAsFixed(1)} dB',
+                      ),
+                      NodeInfoRow(
+                        label: l10n.map_lastSeen,
+                        value: formatNodeLastSeen(l10n, repeater.lastUpdated),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        l10n.snrIndicator_unknownRepeaterHint,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

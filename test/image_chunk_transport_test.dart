@@ -330,6 +330,40 @@ void main() {
       );
       expect(r.pendingCount, 2);
     });
+
+    test('clearChannel stops a reused slot finishing with old bytes', () {
+      final oldSet = buildImageChunks(
+        payload: payloadOf(300, seed: 1),
+        metadata: stdMeta,
+        senderPrefix: senderA,
+        imgId: 9,
+      );
+      final newPayload = payloadOf(300, seed: 2);
+      final newSet = buildImageChunks(
+        payload: newPayload,
+        metadata: stdMeta,
+        senderPrefix: senderA,
+        imgId: 9,
+      );
+      expect(newSet.dataChunkCount, greaterThanOrEqualTo(2));
+      final failures = <ImageReassemblyFailure>[];
+      final r = ImageReassembler(onFailed: failures.add);
+      r.addChunk(oldSet.blobs[0], channelIndex: 3);
+      r.addChunk(oldSet.blobs[0], channelIndex: 4);
+
+      r.clearChannel(3);
+      expect(failures.single.key.channelIndex, 3);
+      expect(
+        failures.single.reason,
+        ImageReassemblyFailureReason.channelChanged,
+      );
+      expect(r.pendingKeys.single.channelIndex, 4);
+
+      // Without the clear, these would complete with the old chunk 0.
+      final dataBlobs = newSet.blobs.sublist(0, newSet.dataChunkCount);
+      expect(feed(r, dataBlobs.sublist(1), channelIndex: 3), isNull);
+      expect(feed(r, [dataBlobs[0]], channelIndex: 3)!.data, newPayload);
+    });
   });
 
   group('parity recovery', () {
@@ -953,6 +987,55 @@ void main() {
       expect(delivered, hasLength(1));
       expect(delivered.single.data, equals(payload));
       expect(delivered.single.recoveredWithParity, isTrue);
+    });
+  });
+
+  group('oversized data body', () {
+    test('a 159-byte data body is rejected and parity cannot overrun', () {
+      final failed = <ImageReassemblyFailure>[];
+      final r = ImageReassembler(onFailed: failed.add);
+      // Header: sender 0x1234, img 5, idx 0 of 2; body one byte past the cap.
+      final oversized = Uint8List.fromList(<int>[
+        0x12,
+        0x34,
+        5,
+        (0 << 4) | 2,
+        ...List<int>.filled(kImageChunkBodyBytes + 1, 0xAA),
+      ]);
+      expect(oversized.length, kImageChunkBlobBytes);
+      expect(r.addChunk(oversized).status, ImageChunkStatus.malformed);
+      expect(r.pendingCount, 0);
+
+      // A parity chunk for the same stream must not throw.
+      final parity = Uint8List.fromList(<int>[
+        0x12,
+        0x34,
+        5,
+        (2 << 4) | 2,
+        ...List<int>.filled(kImageChunkBodyBytes + 1, 0x55),
+      ]);
+      expect(() => r.addChunk(parity), returnsNormally);
+    });
+  });
+
+  group('clear()', () {
+    test('reports in-progress streams as failed (disconnected)', () {
+      final failed = <ImageReassemblyFailure>[];
+      final r = ImageReassembler(onFailed: failed.add);
+      final set = buildImageChunks(
+        payload: payloadOf(400, seed: 3),
+        metadata: stdMeta,
+        senderPrefix: senderA,
+        imgId: 8,
+      );
+      r.addChunk(set.blobs[0]);
+      expect(r.pendingCount, 1);
+      r.clear();
+      expect(r.pendingCount, 0);
+      expect(failed, hasLength(1));
+      expect(failed.single.reason, ImageReassemblyFailureReason.disconnected);
+      expect(failed.single.isCorrupt, isFalse);
+      expect(r.evictExpired(now: DateTime(2100)), isEmpty);
     });
   });
 

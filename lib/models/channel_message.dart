@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import '../connector/meshcore_protocol.dart';
 import '../helpers/reaction_helper.dart';
 import '../helpers/smaz.dart';
+import 'message.dart' show futureTimestampTolerance;
 import 'translation_support.dart';
 import '../utils/app_logger.dart';
 
@@ -36,6 +37,11 @@ class ChannelMessage {
   final MessageTranslationStatus translationStatus;
   final String? translationModelId;
   final DateTime timestamp;
+
+  /// Local clock time when this message was added (received or sent). Feeds
+  /// are ordered by it so a sender clock running ahead cannot pin a message
+  /// to the bottom; [timestamp] stays the sender's identity time.
+  final DateTime receivedAt;
   final bool isOutgoing;
   final ChannelMessageStatus status;
   final List<Repeat> repeats;
@@ -45,12 +51,13 @@ class ChannelMessage {
   final Uint8List pathBytes;
   final List<Uint8List> pathVariants;
   final int? channelIndex;
+  final String? region;
   final String messageId;
   final String? packetHash;
   final String? replyToMessageId;
   final String? replyToSenderName;
   final String? replyToText;
-  final Map<String, int> reactions;
+  final Map<String, List<String?>> reactions;
 
   ChannelMessage({
     this.senderKey,
@@ -62,6 +69,7 @@ class ChannelMessage {
     this.translationStatus = MessageTranslationStatus.none,
     this.translationModelId,
     required this.timestamp,
+    DateTime? receivedAt,
     required this.isOutgoing,
     this.status = ChannelMessageStatus.pending,
     this.repeats = const [],
@@ -71,15 +79,17 @@ class ChannelMessage {
     Uint8List? pathBytes,
     List<Uint8List>? pathVariants,
     this.channelIndex,
+    this.region,
     String? messageId,
     this.packetHash,
     this.replyToMessageId,
     this.replyToSenderName,
     this.replyToText,
-    Map<String, int>? reactions,
+    Map<String, List<String?>>? reactions,
   }) : messageId =
            messageId ??
            '${timestamp.millisecondsSinceEpoch}_${senderName.hashCode}_${text.hashCode}',
+       receivedAt = receivedAt ?? timestamp,
        reactions = reactions ?? {},
        pathBytes = pathBytes ?? Uint8List(0),
        pathVariants = _mergePathVariants(
@@ -90,6 +100,11 @@ class ChannelMessage {
   String? get senderKeyHex =>
       senderKey != null ? pubKeyToHex(senderKey!) : null;
 
+  /// True when the sender's clock put [timestamp] clearly ahead of the time
+  /// this device received the message.
+  bool get hasFutureTimestamp =>
+      timestamp.difference(receivedAt) > futureTimestampTolerance;
+
   ChannelMessage copyWith({
     ChannelMessageStatus? status,
     List<Repeat>? repeats,
@@ -98,6 +113,7 @@ class ChannelMessage {
     int? pathHashWidth,
     Uint8List? pathBytes,
     List<Uint8List>? pathVariants,
+    Object? region = _unset,
     String? packetHash,
     String? replyToMessageId,
     String? replyToSenderName,
@@ -107,7 +123,8 @@ class ChannelMessage {
     Object? translatedLanguageCode = _unset,
     MessageTranslationStatus? translationStatus,
     Object? translationModelId = _unset,
-    Map<String, int>? reactions,
+    Map<String, List<String?>>? reactions,
+    int? channelIndex,
   }) {
     return ChannelMessage(
       senderKey: senderKey,
@@ -127,6 +144,7 @@ class ChannelMessage {
           ? this.translationModelId
           : translationModelId as String?,
       timestamp: timestamp,
+      receivedAt: receivedAt,
       isOutgoing: isOutgoing,
       status: status ?? this.status,
       repeats: repeats ?? this.repeats,
@@ -135,7 +153,8 @@ class ChannelMessage {
       pathHashWidth: pathHashWidth ?? this.pathHashWidth,
       pathBytes: pathBytes ?? this.pathBytes,
       pathVariants: pathVariants ?? this.pathVariants,
-      channelIndex: channelIndex,
+      channelIndex: channelIndex ?? this.channelIndex,
+      region: region == _unset ? this.region : region as String?,
       messageId: messageId,
       packetHash: packetHash ?? this.packetHash,
       replyToMessageId: replyToMessageId ?? this.replyToMessageId,
@@ -157,7 +176,7 @@ class ChannelMessage {
         return null;
       }
 
-      int pathLen;
+      int? pathLen;
       int txtType;
       int? packetPathHashWidth;
       Uint8List pathBytes = Uint8List(0);
@@ -169,20 +188,24 @@ class ChannelMessage {
         reader.skipBytes(1); // Skip reserved byte
         channelIdx = reader.readByte();
         final pathByte = reader.readUInt8();
-        // pathByte packs: top 2 bits = hash width mode, low 6 bits = hop count
-        packetPathHashWidth = ((pathByte & 0xC0) >> 6) + 1;
-        final hopCount = pathByte & 0x3F;
-        pathLen = hopCount;
-        // If a path is present, read hopCount * width bytes
-        if (hasPath && hopCount > 0) {
-          final totalPathBytes = hopCount * packetPathHashWidth;
-          pathBytes = reader.readBytes(totalPathBytes);
+        // 0xFF = direct-routed; hop count is not reported.
+        if (pathByte != 0xFF) {
+          // pathByte packs: top 2 bits = hash width mode, low 6 bits = hop count
+          packetPathHashWidth = ((pathByte & 0xC0) >> 6) + 1;
+          final hopCount = pathByte & 0x3F;
+          pathLen = hopCount;
+          // If a path is present, read hopCount * width bytes
+          if (hasPath && hopCount > 0) {
+            final totalPathBytes = hopCount * packetPathHashWidth;
+            pathBytes = reader.readBytes(totalPathBytes);
+          }
         }
         // After consuming optional path bytes, read the text type byte.
         txtType = reader.readByte();
       } else {
         channelIdx = reader.readByte();
-        pathLen = reader.readInt8();
+        final pathByte = reader.readUInt8();
+        pathLen = pathByte == 0xFF ? null : pathByte & 0x3F;
         txtType = reader.readByte();
       }
       final timestampRaw = reader.readUInt32LE();
@@ -217,6 +240,7 @@ class ChannelMessage {
         senderName: senderName,
         text: decodedText,
         timestamp: DateTime.fromMillisecondsSinceEpoch(timestampRaw * 1000),
+        receivedAt: DateTime.now(),
         isOutgoing: false,
         status: ChannelMessageStatus.sent,
         pathLength: pathLen,
@@ -238,6 +262,8 @@ class ChannelMessage {
     String? originalText,
     String? translatedLanguageCode,
     String? translationModelId,
+    String? region,
+    ChannelMessage? replyTo,
   }) {
     return ChannelMessage(
       senderKey: null,
@@ -246,6 +272,9 @@ class ChannelMessage {
       originalText: originalText,
       translatedLanguageCode: translatedLanguageCode,
       translationModelId: translationModelId,
+      replyToMessageId: replyTo?.messageId,
+      replyToSenderName: replyTo?.senderName,
+      replyToText: replyTo?.text,
       timestamp: DateTime.now(),
       isOutgoing: true,
       status: ChannelMessageStatus.pending,
@@ -253,6 +282,7 @@ class ChannelMessage {
       pathBytes: Uint8List(0),
       pathVariants: const [],
       channelIndex: channelIndex,
+      region: region,
     );
   }
 
@@ -297,8 +327,37 @@ class ChannelMessage {
     );
   }
 
-  static ReactionInfo? parseReaction(String text) {
-    return ReactionHelper.parseReaction(text);
+  ReactionInfo? parseReaction() {
+    final reactionInfo = ReactionHelper.parseReaction(text);
+    reactionInfo?.senderName = senderName;
+    return reactionInfo;
+  }
+
+  String computeReactionHash() {
+    return ReactionHelper.computeReactionHash(
+      timestamp.millisecondsSinceEpoch ~/ 1000,
+      senderName,
+      text,
+    );
+  }
+
+  List<ReactionInfo> reactionList() {
+    final String hash = computeReactionHash();
+    List<ReactionInfo> reactionList = [];
+    for (final entry in reactions.entries) {
+      final emoji = entry.key;
+      for (final senderName in entry.value) {
+        reactionList.add(
+          ReactionInfo(
+            targetHash: hash, // won't be used for anything
+            emoji: emoji,
+            senderName: senderName,
+            hashType: HashType.ours, // also not used for anything
+          ),
+        );
+      }
+    }
+    return reactionList;
   }
 }
 

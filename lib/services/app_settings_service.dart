@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import '../models/app_settings.dart';
 import '../models/image_codec_support.dart';
 import '../models/translation_support.dart';
+
+export '../models/app_settings.dart' show ChannelNotificationMode;
 import '../storage/prefs_manager.dart';
 import '../utils/app_logger.dart';
 import '../helpers/cyr2lat.dart';
@@ -105,8 +107,16 @@ class AppSettingsService extends ChangeNotifier {
     await updateSettings(_settings.copyWith(mapShowGuessedLocations: value));
   }
 
+  Future<void> setMapClusterNodes(bool value) async {
+    await updateSettings(_settings.copyWith(mapClusterNodes: value));
+  }
+
   Future<void> setEnableMessageTracing(bool value) async {
     await updateSettings(_settings.copyWith(enableMessageTracing: value));
+  }
+
+  Future<void> setRegionOnHopsLine(bool value) async {
+    await updateSettings(_settings.copyWith(regionOnHopsLine: value));
   }
 
   Future<void> setMapCacheBounds(Map<String, double>? value) async {
@@ -206,6 +216,24 @@ class AppSettingsService extends ChangeNotifier {
     await updateSettings(_settings.copyWith(maxMessageRetries: value));
   }
 
+  Future<void> setChannelMinHopsEnabled(bool value) async {
+    await updateSettings(_settings.copyWith(channelMinHopsEnabled: value));
+  }
+
+  Future<void> setChannelMinHops(int value) async {
+    await updateSettings(_settings.copyWith(channelMinHops: value));
+  }
+
+  Future<void> setChannelMinHopsRetries(int value) async {
+    await updateSettings(_settings.copyWith(channelMinHopsRetries: value));
+  }
+
+  Future<void> setChannelMinHopsCountRepeaters(bool value) async {
+    await updateSettings(
+      _settings.copyWith(channelMinHopsCountRepeaters: value),
+    );
+  }
+
   Future<void> setThemeMode(String value) async {
     await updateSettings(_settings.copyWith(themeMode: value));
   }
@@ -222,6 +250,12 @@ class AppSettingsService extends ChangeNotifier {
 
   Future<void> setMapShowDiscoveryContacts(bool value) async {
     await updateSettings(_settings.copyWith(mapShowDiscoveryContacts: value));
+  }
+
+  Future<void> setEvictDiscoveredContactsEnabled(bool value) async {
+    await updateSettings(
+      _settings.copyWith(evictDiscoveredContactsEnabled: value),
+    );
   }
 
   Future<void> setBatteryChemistryForDevice(
@@ -254,19 +288,24 @@ class AppSettingsService extends ChangeNotifier {
     await updateSettings(_settings.copyWith(unitSystem: value));
   }
 
-  bool isChannelMuted(String channelName) {
-    return _settings.mutedChannels.contains(channelName);
+  ChannelNotificationMode getChannelNotificationMode(String channelName) {
+    return _settings.channelNotificationModes[channelName] ??
+        ChannelNotificationMode.all;
   }
 
-  Future<void> muteChannel(String channelName) async {
-    final updated = Set<String>.from(_settings.mutedChannels)..add(channelName);
-    await updateSettings(_settings.copyWith(mutedChannels: updated));
-  }
-
-  Future<void> unmuteChannel(String channelName) async {
-    final updated = Set<String>.from(_settings.mutedChannels)
-      ..remove(channelName);
-    await updateSettings(_settings.copyWith(mutedChannels: updated));
+  Future<void> setChannelNotificationMode(
+    String channelName,
+    ChannelNotificationMode mode,
+  ) async {
+    final updated = Map<String, ChannelNotificationMode>.from(
+      _settings.channelNotificationModes,
+    );
+    if (mode == ChannelNotificationMode.all) {
+      updated.remove(channelName);
+    } else {
+      updated[channelName] = mode;
+    }
+    await updateSettings(_settings.copyWith(channelNotificationModes: updated));
   }
 
   Future<void> setTcpServerAddress(String value) async {
@@ -279,6 +318,40 @@ class AppSettingsService extends ChangeNotifier {
 
   Future<void> setJumpToOldestUnread(bool value) async {
     await updateSettings(_settings.copyWith(jumpToOldestUnread: value));
+  }
+
+  Future<void> setNetworkMapUploadEnabled(bool value) async {
+    await updateSettings(_settings.copyWith(networkMapUploadEnabled: value));
+  }
+
+  Future<void> setNetworkMapPromptShown(bool value) async {
+    await updateSettings(_settings.copyWith(networkMapPromptShown: value));
+  }
+
+  Future<void> setLoadLinkImages(bool value) async {
+    await updateSettings(_settings.copyWith(loadLinkImages: value));
+  }
+
+  Future<void> setShowLinkImagesByDefault(bool value) async {
+    await updateSettings(_settings.copyWith(showLinkImagesByDefault: value));
+  }
+
+  Future<void> setIpfsImageSettings({
+    required String publicGateway,
+    required String uploadGateway,
+    required String uploadEndpoint,
+    required String uploadApiKey,
+  }) async {
+    final normalizedPublicGateway = normalizeIpfsGateway(publicGateway);
+    final normalizedUploadGateway = normalizeIpfsGateway(uploadGateway);
+    await updateSettings(
+      _settings.copyWith(
+        publicIpfsGateway: normalizedPublicGateway,
+        uploadIpfsGateway: normalizedUploadGateway,
+        uploadIpfsEndpoint: uploadEndpoint.trim(),
+        uploadIpfsApiKey: uploadApiKey.trim(),
+      ),
+    );
   }
 
   Future<void> setImageMessagesEnabled(bool value) async {
