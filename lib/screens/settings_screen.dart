@@ -805,12 +805,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (builderContext, setDialogState) => AlertDialog(
+          scrollable: true,
           title: Text(l10n.repeater_pathHashMode),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               DropdownButtonFormField<int>(
+                isExpanded: true,
                 initialValue: selectedMode,
                 decoration: InputDecoration(
                   labelText: l10n.repeater_pathHashMode,
@@ -819,15 +821,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 items: [
                   DropdownMenuItem(
                     value: 0,
-                    child: Text(l10n.repeater_pathHashModeOption0),
+                    child: Text(
+                      l10n.repeater_pathHashModeOption0,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   DropdownMenuItem(
                     value: 1,
-                    child: Text(l10n.repeater_pathHashModeOption1),
+                    child: Text(
+                      l10n.repeater_pathHashModeOption1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   DropdownMenuItem(
                     value: 2,
-                    child: Text(l10n.repeater_pathHashModeOption2),
+                    child: Text(
+                      l10n.repeater_pathHashModeOption2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
                 onChanged: (value) {

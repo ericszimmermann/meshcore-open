@@ -1418,56 +1418,58 @@ class AppSettingsScreen extends StatelessWidget {
   ) {
     showMeshSheet(
       context,
-      builder: (ctx) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          BottomSheetHeader(title: context.l10n.appSettings_mapTimeFilter),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-            child: Text(context.l10n.appSettings_showNodesDiscoveredWithin),
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_allTime,
-            selected: settingsService.settings.mapTimeFilterHours == 0,
-            onTap: () {
-              settingsService.setMapTimeFilterHours(0);
-              Navigator.pop(ctx);
-            },
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_lastHour,
-            selected: settingsService.settings.mapTimeFilterHours == 1,
-            onTap: () {
-              settingsService.setMapTimeFilterHours(1);
-              Navigator.pop(ctx);
-            },
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_last6Hours,
-            selected: settingsService.settings.mapTimeFilterHours == 6,
-            onTap: () {
-              settingsService.setMapTimeFilterHours(6);
-              Navigator.pop(ctx);
-            },
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_last24Hours,
-            selected: settingsService.settings.mapTimeFilterHours == 24,
-            onTap: () {
-              settingsService.setMapTimeFilterHours(24);
-              Navigator.pop(ctx);
-            },
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_lastWeek,
-            selected: settingsService.settings.mapTimeFilterHours == 168,
-            onTap: () {
-              settingsService.setMapTimeFilterHours(168);
-              Navigator.pop(ctx);
-            },
-          ),
-          SizedBox(height: MediaQuery.paddingOf(ctx).bottom + 8),
-        ],
+      builder: (ctx) => SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BottomSheetHeader(title: context.l10n.appSettings_mapTimeFilter),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+              child: Text(context.l10n.appSettings_showNodesDiscoveredWithin),
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_allTime,
+              selected: settingsService.settings.mapTimeFilterHours == 0,
+              onTap: () {
+                settingsService.setMapTimeFilterHours(0);
+                Navigator.pop(ctx);
+              },
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_lastHour,
+              selected: settingsService.settings.mapTimeFilterHours == 1,
+              onTap: () {
+                settingsService.setMapTimeFilterHours(1);
+                Navigator.pop(ctx);
+              },
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_last6Hours,
+              selected: settingsService.settings.mapTimeFilterHours == 6,
+              onTap: () {
+                settingsService.setMapTimeFilterHours(6);
+                Navigator.pop(ctx);
+              },
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_last24Hours,
+              selected: settingsService.settings.mapTimeFilterHours == 24,
+              onTap: () {
+                settingsService.setMapTimeFilterHours(24);
+                Navigator.pop(ctx);
+              },
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_lastWeek,
+              selected: settingsService.settings.mapTimeFilterHours == 168,
+              onTap: () {
+                settingsService.setMapTimeFilterHours(168);
+                Navigator.pop(ctx);
+              },
+            ),
+            SizedBox(height: MediaQuery.paddingOf(ctx).bottom + 8),
+          ],
+        ),
       ),
     );
   }
@@ -1478,29 +1480,32 @@ class AppSettingsScreen extends StatelessWidget {
   ) {
     showMeshSheet(
       context,
-      builder: (ctx) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          BottomSheetHeader(title: context.l10n.appSettings_unitsTitle),
-          MeshSheetOption(
-            label: context.l10n.appSettings_unitsMetric,
-            selected: settingsService.settings.unitSystem == UnitSystem.metric,
-            onTap: () {
-              settingsService.setUnitSystem(UnitSystem.metric);
-              Navigator.pop(ctx);
-            },
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_unitsImperial,
-            selected:
-                settingsService.settings.unitSystem == UnitSystem.imperial,
-            onTap: () {
-              settingsService.setUnitSystem(UnitSystem.imperial);
-              Navigator.pop(ctx);
-            },
-          ),
-          SizedBox(height: MediaQuery.paddingOf(ctx).bottom + 8),
-        ],
+      builder: (ctx) => SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BottomSheetHeader(title: context.l10n.appSettings_unitsTitle),
+            MeshSheetOption(
+              label: context.l10n.appSettings_unitsMetric,
+              selected:
+                  settingsService.settings.unitSystem == UnitSystem.metric,
+              onTap: () {
+                settingsService.setUnitSystem(UnitSystem.metric);
+                Navigator.pop(ctx);
+              },
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_unitsImperial,
+              selected:
+                  settingsService.settings.unitSystem == UnitSystem.imperial,
+              onTap: () {
+                settingsService.setUnitSystem(UnitSystem.imperial);
+                Navigator.pop(ctx);
+              },
+            ),
+            SizedBox(height: MediaQuery.paddingOf(ctx).bottom + 8),
+          ],
+        ),
       ),
     );
   }
@@ -1917,6 +1922,7 @@ class _MapApiKeyDialogState extends State<_MapApiKeyDialog> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return AlertDialog(
+      scrollable: true,
       title: Text(l10n.appSettings_stadiaApiKey),
       content: SizedBox(
         width: 420,
