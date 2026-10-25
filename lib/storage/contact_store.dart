@@ -92,8 +92,7 @@ class ContactStore {
       'rawPacket': contact.rawPacket != null
           ? base64Encode(contact.rawPacket!)
           : null,
-      'telemetryFixAdvertSeen':
-          contact.telemetryFixAdvertSeen?.millisecondsSinceEpoch,
+      'telemetryFixAt': contact.telemetryFixAt?.millisecondsSinceEpoch,
     };
   }
 
@@ -101,7 +100,7 @@ class ContactStore {
     final lastSeenMs = json['lastSeen'] as int? ?? 0;
     final lastMessageMs = json['lastMessageAt'] as int?;
     final lastModifiedMs = json['lastModified'] as int?;
-    final telemetryFixMs = json['telemetryFixAdvertSeen'] as int?;
+    final telemetryFixMs = json['telemetryFixAt'] as int?;
 
     final rawPathLength = json['pathLength'] as int? ?? -1;
     final rawPath = json['path'] != null
@@ -160,7 +159,7 @@ class ContactStore {
       rawPacket: json['rawPacket'] != null
           ? Uint8List.fromList(base64Decode(json['rawPacket'] as String))
           : null,
-      telemetryFixAdvertSeen: telemetryFixMs == null
+      telemetryFixAt: telemetryFixMs == null
           ? null
           : DateTime.fromMillisecondsSinceEpoch(telemetryFixMs),
     );

@@ -812,7 +812,8 @@ class MeshCoreConnector extends ChangeNotifier {
 
   /// Applies a GPS fix from a telemetry reply to the contact so the map and
   /// lists show where the node is now, not where its last advert put it.
-  /// [_mergeRefreshedContact] keeps this fix until a newer advert arrives.
+  /// [lastSeen] is left alone: it is the node's advert timestamp, which path
+  /// and flag writes send back to the radio.
   void updateContactLocationFromTelemetry(
     String contactKeyHex,
     double latitude,
@@ -820,13 +821,10 @@ class MeshCoreConnector extends ChangeNotifier {
   ) {
     final index = _contacts.indexWhere((c) => c.publicKeyHex == contactKeyHex);
     if (index < 0) return;
-    final existing = _contacts[index];
-    final updated = existing.copyWith(
+    final updated = _contacts[index].copyWith(
       latitude: latitude,
       longitude: longitude,
-      lastSeen: DateTime.now(),
-      telemetryFixAdvertSeen:
-          existing.telemetryFixAdvertSeen ?? existing.lastSeen,
+      telemetryFixAt: DateTime.now(),
     );
     if (!updated.hasLocation) return;
     _contacts[index] = updated;
@@ -834,10 +832,24 @@ class MeshCoreConnector extends ChangeNotifier {
     unawaited(_persistContacts());
   }
 
+  /// Carries [previous]'s telemetry fix onto [incoming], a record the radio
+  /// just returned, while it still holds the advert that fix superseded. A
+  /// newer advert (by the node's own clock) wins.
+  Contact? _withTelemetryFix(Contact previous, Contact incoming) {
+    final fixAt = previous.telemetryFixAt;
+    if (fixAt == null || incoming.lastSeen.isAfter(previous.lastSeen)) {
+      return null;
+    }
+    return incoming.copyWith(
+      latitude: previous.latitude,
+      longitude: previous.longitude,
+      telemetryFixAt: fixAt,
+    );
+  }
+
   /// Merges a contact record from the radio (contact list or advert) into the
-  /// one we already hold. The radio only knows the advert position, so a
-  /// telemetry fix stays until the node adverts again; timestamps are
-  /// compared only against the node's own advert clock.
+  /// one we already hold, keeping the user's path choice and any telemetry
+  /// fix still newer than the radio's advert.
   Contact _mergeRefreshedContact(
     Contact existing,
     Contact incoming, {
@@ -847,21 +859,7 @@ class MeshCoreConnector extends ChangeNotifier {
         existing.lastMessageAt.isAfter(incoming.lastMessageAt)
         ? existing.lastMessageAt
         : incoming.lastMessageAt;
-    final fixAdvertSeen = existing.telemetryFixAdvertSeen;
-    final keepTelemetryFix =
-        fixAdvertSeen != null && !incoming.lastSeen.isAfter(fixAdvertSeen);
-    if (keepTelemetryFix) {
-      return incoming.copyWith(
-        lastMessageAt: mergedLastMessageAt,
-        pathOverride: existing.pathOverride, // Preserve user's path choice
-        pathOverrideBytes: existing.pathOverrideBytes,
-        latitude: existing.latitude,
-        longitude: existing.longitude,
-        lastSeen: existing.lastSeen,
-        telemetryFixAdvertSeen: fixAdvertSeen,
-      );
-    }
-    return incoming.copyWith(
+    final base = incoming.copyWith(
       lastMessageAt: mergedLastMessageAt,
       pathOverride: existing.pathOverride, // Preserve user's path choice
       pathOverrideBytes: existing.pathOverrideBytes,
@@ -873,6 +871,19 @@ class MeshCoreConnector extends ChangeNotifier {
           : incoming.longitude,
       clearTelemetryFix: true,
     );
+    return _withTelemetryFix(existing, base) ?? base;
+  }
+
+  /// Telemetry fixes held across a full contact sync, which clears the list
+  /// before the radio resends it.
+  final Map<String, Contact> _telemetryFixesDuringSync = {};
+
+  void _stashTelemetryFixes() {
+    for (final c in _contacts) {
+      if (c.telemetryFixAt != null) {
+        _telemetryFixesDuringSync[c.publicKeyHex] = c;
+      }
+    }
   }
 
   String _batteryChemistryForDevice() {
@@ -4291,6 +4302,7 @@ class MeshCoreConnector extends ChangeNotifier {
     _contactSyncUsesSinceFilter = since != null;
     if (!preserveExisting) {
       _hasLoadedContacts = false;
+      _stashTelemetryFixes();
       _contacts.clear();
     }
     _armContactSyncWatchdog();
@@ -6086,6 +6098,7 @@ class MeshCoreConnector extends ChangeNotifier {
       case respCodeContactsStart:
         debugPrint('Got CONTACTS_START');
         if (!_preserveContactsOnRefresh) {
+          _stashTelemetryFixes();
           _contacts.clear();
         }
         _isLoadingContacts = true;
@@ -6161,6 +6174,7 @@ class MeshCoreConnector extends ChangeNotifier {
         }
         _hasLoadedContacts = true;
         _preserveContactsOnRefresh = false;
+        _telemetryFixesDuringSync.clear();
         _contactSyncUsesSinceFilter = false;
         unawaited(updateKnownDiscovered());
         notifyListeners();
@@ -6945,7 +6959,12 @@ class MeshCoreConnector extends ChangeNotifier {
           tag: 'Connector',
         );
       } else {
-        _contacts.add(contact);
+        // A full sync cleared the list; restore a telemetry fix it held.
+        final stashed = _telemetryFixesDuringSync.remove(contact.publicKeyHex);
+        _contacts.add(
+          (stashed == null ? null : _withTelemetryFix(stashed, contact)) ??
+              contact,
+        );
         appLogger.info(
           'Added new contact ${contact.name}: pathLen=${contact.pathLength}',
           tag: 'Connector',

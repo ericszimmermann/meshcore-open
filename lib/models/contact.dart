@@ -22,11 +22,11 @@ class Contact {
   final bool isActive;
   final Uint8List? rawPacket;
 
-  /// Set while [latitude]/[longitude]/[lastSeen] come from a telemetry reply
-  /// rather than an advert: the advert timestamp that fix superseded. A
-  /// radio refresh carrying that same advert keeps the fix; a newer advert
-  /// replaces it.
-  final DateTime? telemetryFixAdvertSeen;
+  /// When [latitude]/[longitude] came from a telemetry reply rather than the
+  /// advert, the phone time of that reply. [lastSeen] stays the node's advert
+  /// timestamp (it is written back to the radio), so a radio refresh carrying
+  /// the same advert keeps the fix and a newer advert replaces it.
+  final DateTime? telemetryFixAt;
 
   Contact({
     required this.publicKey,
@@ -45,7 +45,7 @@ class Contact {
     DateTime? lastMessageAt,
     this.isActive = true,
     this.rawPacket,
-    this.telemetryFixAdvertSeen,
+    this.telemetryFixAt,
   }) : lastMessageAt = lastMessageAt ?? lastSeen;
 
   /// Cached: it backs ==, hashCode and the per-frame contact lookups, and
@@ -92,6 +92,12 @@ class Contact {
         lon <= 180.0;
   }
 
+  /// The latest time we heard from the node: its advert or a telemetry fix.
+  DateTime get lastHeard {
+    final fixAt = telemetryFixAt;
+    return fixAt != null && fixAt.isAfter(lastSeen) ? fixAt : lastSeen;
+  }
+
   bool get isFavorite => (flags & contactFlagFavorite) != 0;
 
   Contact copyWith({
@@ -112,7 +118,7 @@ class Contact {
     DateTime? lastModified,
     bool? isActive,
     Uint8List? rawPacket,
-    DateTime? telemetryFixAdvertSeen,
+    DateTime? telemetryFixAt,
     bool clearTelemetryFix = false,
   }) {
     return Contact(
@@ -136,9 +142,9 @@ class Contact {
       lastModified: lastModified ?? this.lastModified,
       isActive: isActive ?? this.isActive,
       rawPacket: rawPacket ?? this.rawPacket,
-      telemetryFixAdvertSeen: clearTelemetryFix
+      telemetryFixAt: clearTelemetryFix
           ? null
-          : (telemetryFixAdvertSeen ?? this.telemetryFixAdvertSeen),
+          : (telemetryFixAt ?? this.telemetryFixAt),
     );
   }
 

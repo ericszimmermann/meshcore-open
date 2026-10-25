@@ -198,7 +198,7 @@ class _MapScreenState extends State<MapScreen> with DisconnectNavigationMixin {
       : MapPalette.markerShadow.withValues(alpha: 0.18);
 
   _NodeAge _ageOf(Contact contact) {
-    final d = DateTime.now().difference(contact.lastSeen);
+    final d = DateTime.now().difference(contact.lastHeard);
     if (d.inMinutes <= 60) return _NodeAge.online;
     if (d.inHours <= 24) return _NodeAge.recent;
     return _NodeAge.stale;
@@ -543,7 +543,7 @@ class _MapScreenState extends State<MapScreen> with DisconnectNavigationMixin {
         final filteredByTime = settings.mapTimeFilterHours == 0
             ? contacts
             : contacts.where((c) {
-                final hoursSinceLastSeen = now.difference(c.lastSeen).inHours;
+                final hoursSinceLastSeen = now.difference(c.lastHeard).inHours;
                 return hoursSinceLastSeen <= settings.mapTimeFilterHours;
               }).toList();
 
@@ -2121,7 +2121,7 @@ class _MapScreenState extends State<MapScreen> with DisconnectNavigationMixin {
             if (a.hasLocation != b.hasLocation) {
               return a.hasLocation ? -1 : 1;
             }
-            return b.lastSeen.compareTo(a.lastSeen);
+            return b.lastHeard.compareTo(a.lastHeard);
           });
     final results = matches.take(8).toList();
     return Container(
@@ -2469,7 +2469,7 @@ class _MapScreenState extends State<MapScreen> with DisconnectNavigationMixin {
                 children: [
                   _miniMeta(
                     context.l10n.map_lastSeen,
-                    formatNodeLastSeen(context.l10n, contact.lastSeen),
+                    formatNodeLastSeen(context.l10n, contact.lastHeard),
                   ),
                   _miniMeta(
                     context.l10n.map_path,
@@ -4054,7 +4054,7 @@ int _mapContactSignature(Contact contact) {
     _bytesSignature(contact.pathOverrideBytes),
     contact.latitude,
     contact.longitude,
-    contact.lastSeen.millisecondsSinceEpoch,
+    contact.lastHeard.millisecondsSinceEpoch,
     contact.lastMessageAt.millisecondsSinceEpoch,
     contact.isActive,
   );

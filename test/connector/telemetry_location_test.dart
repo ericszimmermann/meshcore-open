@@ -52,13 +52,43 @@ void main() {
     final fixed = connector.contacts.single;
     expect(fixed.latitude, 11.5);
     expect(fixed.longitude, 21.5);
-    expect(fixed.lastSeen.isAfter(DateTime(2024)), isTrue);
+    // lastSeen stays the advert time the radio holds (path and flag writes
+    // send it back); the fix only moves lastHeard.
+    final advertTime = DateTime.fromMillisecondsSinceEpoch(1700000000 * 1000);
+    expect(fixed.lastSeen, advertTime);
+    expect(fixed.lastHeard.isAfter(advertTime), isTrue);
 
     connector.handleFrameForTest(frame);
     final refreshed = connector.contacts.single;
     expect(refreshed.latitude, 11.5);
     expect(refreshed.longitude, 21.5);
-    expect(refreshed.lastSeen, fixed.lastSeen);
+    expect(refreshed.lastSeen, advertTime);
+    expect(refreshed.telemetryFixAt, fixed.telemetryFixAt);
+  });
+
+  test('telemetry fix survives a full contact sync', () {
+    final connector = MeshCoreConnector();
+    final frame = _contactFrame(
+      key,
+      advertTimestamp: 1700000000,
+      lat: 10,
+      lon: 20,
+    );
+    connector.handleFrameForTest(frame);
+    final keyHex = connector.contacts.single.publicKeyHex;
+    connector.updateContactLocationFromTelemetry(keyHex, 11.5, 21.5);
+
+    // A full sync clears the list on CONTACTS_START and the radio resends
+    // the same advert record.
+    connector.handleFrameForTest([respCodeContactsStart]);
+    expect(connector.contacts, isEmpty);
+    connector.handleFrameForTest(frame);
+    connector.handleFrameForTest([respCodeEndOfContacts]);
+
+    final contact = connector.contacts.single;
+    expect(contact.latitude, 11.5);
+    expect(contact.longitude, 21.5);
+    expect(contact.telemetryFixAt, isNotNull);
   });
 
   test('a newer advert replaces the telemetry fix', () {
@@ -75,7 +105,7 @@ void main() {
     final contact = connector.contacts.single;
     expect(contact.latitude, 12);
     expect(contact.longitude, 22);
-    expect(contact.telemetryFixAdvertSeen, isNull);
+    expect(contact.telemetryFixAt, isNull);
   });
 
   test('telemetryGpsFix skips missing and null-island fixes', () {

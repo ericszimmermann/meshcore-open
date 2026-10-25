@@ -41,12 +41,11 @@ IconData? contactTypeIcon(int type) {
 }
 
 /// The most recent activity for [contact]: for chat nodes this includes the
-/// last message, for other node types only the last advert.
+/// last message, for other node types only the last advert or telemetry fix.
 DateTime resolveContactLastSeen(Contact contact) {
-  if (contact.type != advTypeChat) return contact.lastSeen;
-  return contact.lastMessageAt.isAfter(contact.lastSeen)
-      ? contact.lastMessageAt
-      : contact.lastSeen;
+  final heard = contact.lastHeard;
+  if (contact.type != advTypeChat) return heard;
+  return contact.lastMessageAt.isAfter(heard) ? contact.lastMessageAt : heard;
 }
 
 /// Short relative "last seen" label ("now", "5 mins ago", "2 days ago").

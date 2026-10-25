@@ -262,7 +262,7 @@ void showNodeInfoSheet(
                       ),
                     NodeInfoRow(
                       label: l10n.map_lastSeen,
-                      value: formatNodeLastSeen(l10n, contact.lastSeen),
+                      value: formatNodeLastSeen(l10n, contact.lastHeard),
                     ),
                     NodeInfoRow(
                       label: l10n.map_publicKey,
