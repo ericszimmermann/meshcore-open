@@ -44,7 +44,9 @@ Future<TelemetryLocationResult> requestTelemetryLocation(
   Contact contact,
 ) async {
   final completer = Completer<List<Map<String, dynamic>>?>();
-  var awaitingSent = true;
+  // Armed just before our send: a background retry's RESP_CODE_SENT that
+  // lands while the path is being prepared must not be taken for ours.
+  var awaitingSent = false;
   int? tag;
   Timer? timeout;
   void finish(List<Map<String, dynamic>>? parsed) {
@@ -53,8 +55,6 @@ Future<TelemetryLocationResult> requestTelemetryLocation(
     completer.complete(parsed);
   }
 
-  // Guards the wait for the radio's send ack; the ack's trip time replaces it.
-  timeout = Timer(const Duration(seconds: 10), () => finish(null));
   final isChat = contact.type == advTypeChat;
   final subscription = connector.receivedFrames.listen((frame) {
     if (frame.isEmpty || completer.isCompleted) return;
@@ -92,6 +92,9 @@ Future<TelemetryLocationResult> requestTelemetryLocation(
   PathSelection? selection;
   try {
     selection = await connector.preparePathForContactSend(contact);
+    awaitingSent = true;
+    // Guards the wait for the radio's send ack; its trip time replaces this.
+    timeout = Timer(const Duration(seconds: 10), () => finish(null));
     await connector.sendFrame(
       isChat
           ? buildSendTelemetryReq(contact.publicKey)
