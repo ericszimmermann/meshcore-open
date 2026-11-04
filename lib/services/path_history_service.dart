@@ -1,607 +1,1861 @@
-import 'package:flutter/foundation.dart';
-import '../models/contact.dart';
-import '../models/path_history.dart';
-import '../models/path_selection.dart';
-import 'storage_service.dart';
+import 'dart:typed_data';
 
-class PathHistoryService extends ChangeNotifier {
-  final StorageService _storage;
-  final Map<String, ContactPathHistory> _cache = {};
-  final Map<String, int> _autoRotationIndex = {};
-  final Map<String, _FloodStats> _floodStats = {};
-  final Map<String, Future<void>> _pendingLoads = {};
+import 'package:flutter_test/flutter_test.dart';
+import 'package:meshcore_open/models/contact.dart';
+import 'package:meshcore_open/models/path_history.dart';
+import 'package:meshcore_open/models/path_selection.dart';
+import 'package:meshcore_open/services/path_history_service.dart';
+import 'package:meshcore_open/services/storage_service.dart';
 
-  // LRU cache eviction tracking
-  static const int _maxCachedContacts = 50;
-  final List<String> _cacheAccessOrder = [];
+// ---------------------------------------------------------------------------
+// Fake storage — no SharedPreferences dependency, all in-memory.
+// ---------------------------------------------------------------------------
+class FakeStorageService extends StorageService {
+  final Map<String, ContactPathHistory> _store = {};
 
-  static const int _maxHistoryEntries = 100;
-
-  int _version = 0;
-  int get version => _version;
-
-  PathHistoryService(this._storage);
-
-  void setDevicePublicKey(String publicKeyHex) {
-    _storage.setPublicKeyHex = publicKeyHex;
-    _cache.clear();
-    _cacheAccessOrder.clear();
-    _autoRotationIndex.clear();
-    _floodStats.clear();
-    _version++;
-    notifyListeners();
-  }
-
-  Future<void> initialize() async {
-    // Load cached path histories on startup if needed
-  }
-
-  void handlePathUpdated(Contact contact, {double initialWeight = 1.0}) {
-    if (contact.pathLength < 0 && contact.path.isEmpty) return;
-    final hopCount = contact.pathLength < 0
-        ? contact.path.length
-        : contact.pathLength;
-    _addPathRecord(
-      contactPubKeyHex: contact.publicKeyHex,
-      hopCount: hopCount,
-      tripTimeMs: 0,
-      wasFloodDiscovery: true,
-      pathBytes: contact.path,
-      successCount: 0,
-      failureCount: 0,
-      initialWeight: initialWeight,
-      timestamp: null,
-    );
-  }
-
-  void recordPathAttempt(String contactPubKeyHex, PathSelection selection) {
-    if (selection.useFlood) {
-      _updateFloodStats(contactPubKeyHex);
-      return;
-    }
-
-    _addPathRecord(
-      contactPubKeyHex: contactPubKeyHex,
-      hopCount: selection.hopCount,
-      tripTimeMs: 0,
-      wasFloodDiscovery: false,
-      pathBytes: selection.pathBytes,
-      successCount: 0,
-      failureCount: 0,
-      timestamp: null,
-    );
-  }
-
-  /// When a flood message is delivered, credit the contact's current device
-  /// path so that the route the ACK traveled back through gets a weight boost.
-  void recordFloodPathAttribution({
-    required String contactPubKeyHex,
-    required List<int> pathBytes,
-    required int hopCount,
-    int? tripTimeMs,
-    double successIncrement = 0.5,
-    double maxWeight = 5.0,
-  }) {
-    if (pathBytes.isEmpty || hopCount < 0) return;
-    if (!_cache.containsKey(contactPubKeyHex)) {
-      _ensureLoaded(contactPubKeyHex).then((_) {
-        if (!_cache.containsKey(contactPubKeyHex)) return;
-        recordFloodPathAttribution(
-          contactPubKeyHex: contactPubKeyHex,
-          pathBytes: pathBytes,
-          hopCount: hopCount,
-          tripTimeMs: tripTimeMs,
-          successIncrement: successIncrement,
-          maxWeight: maxWeight,
-        );
-      });
-      return;
-    }
-
-    final existing = _findPathRecord(contactPubKeyHex, pathBytes);
-    final successCount = (existing?.successCount ?? 0) + 1;
-    final failureCount = existing?.failureCount ?? 0;
-
-    final currentWeight = existing?.routeWeight ?? 1.0;
-    final newWeight = (currentWeight + successIncrement).clamp(0.0, maxWeight);
-
-    debugPrint(
-      'Flood path attribution: crediting path [${pathBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join(',')}] '
-      'for $contactPubKeyHex (weight $currentWeight → $newWeight)',
-    );
-
-    _addPathRecord(
-      contactPubKeyHex: contactPubKeyHex,
-      hopCount: hopCount,
-      tripTimeMs: tripTimeMs ?? existing?.tripTimeMs ?? 0,
-      wasFloodDiscovery: true,
-      pathBytes: pathBytes,
-      successCount: successCount,
-      failureCount: failureCount,
-      routeWeight: newWeight,
-      timestamp: DateTime.now(),
-    );
-  }
-
-  void recordPathResult(
+  @override
+  Future<void> savePathHistory(
     String contactPubKeyHex,
-    PathSelection selection, {
-    required bool success,
-    int? tripTimeMs,
-    double successIncrement = 0.5,
-    double failureDecrement = 0.5,
-    double maxWeight = 5.0,
-  }) {
-    if (selection.useFlood) {
-      final stats = _floodStats.putIfAbsent(
-        contactPubKeyHex,
-        () => _FloodStats(),
-      );
-      if (success) {
-        stats.successCount += 1;
-        if (tripTimeMs != null) stats.lastTripTimeMs = tripTimeMs;
-      } else {
-        stats.failureCount += 1;
-      }
-      stats.lastUsed = DateTime.now();
-      return;
-    }
-
-    if (!_cache.containsKey(contactPubKeyHex)) {
-      _ensureLoaded(contactPubKeyHex).then((_) {
-        if (!_cache.containsKey(contactPubKeyHex)) return;
-        recordPathResult(
-          contactPubKeyHex,
-          selection,
-          success: success,
-          tripTimeMs: tripTimeMs,
-          successIncrement: successIncrement,
-          failureDecrement: failureDecrement,
-          maxWeight: maxWeight,
-        );
-      });
-      return;
-    }
-
-    final existing = _findPathRecord(contactPubKeyHex, selection.pathBytes);
-    final successCount = (existing?.successCount ?? 0) + (success ? 1 : 0);
-    final failureCount = (existing?.failureCount ?? 0) + (success ? 0 : 1);
-
-    final currentWeight = existing?.routeWeight ?? 1.0;
-    double newWeight;
-    if (success) {
-      newWeight = (currentWeight + successIncrement).clamp(0.0, maxWeight);
-    } else {
-      newWeight = currentWeight - failureDecrement;
-      if (newWeight <= 0 && failureCount >= 3) {
-        removePathRecord(contactPubKeyHex, selection.pathBytes);
-        return;
-      }
-      // Keep the record with a small floor weight until we have enough evidence
-      newWeight = newWeight.clamp(0.1, maxWeight);
-    }
-
-    _addPathRecord(
-      contactPubKeyHex: contactPubKeyHex,
-      hopCount: selection.hopCount,
-      tripTimeMs: success ? (tripTimeMs ?? 0) : (existing?.tripTimeMs ?? 0),
-      wasFloodDiscovery: existing?.wasFloodDiscovery ?? false,
-      pathBytes: selection.pathBytes,
-      successCount: successCount,
-      failureCount: failureCount,
-      routeWeight: newWeight,
-      timestamp: success ? DateTime.now() : existing?.timestamp,
-    );
-  }
-
-  PathSelection selectPathForAttempt(
-    String contactPubKeyHex, {
-    required int attemptIndex,
-    required int maxRetries,
-    List<PathSelection> recentSelections = const [],
-  }) {
-    if (maxRetries <= 0 || attemptIndex >= maxRetries - 1) {
-      return const PathSelection(pathBytes: [], hopCount: -1, useFlood: true);
-    }
-
-    final ranked = _getRankedPaths(contactPubKeyHex);
-    if (ranked.isEmpty) {
-      return const PathSelection(pathBytes: [], hopCount: -1, useFlood: true);
-    }
-
-    _trackAccess(contactPubKeyHex);
-
-    final recentPaths = recentSelections
-        .where((selection) => !selection.useFlood)
-        .map((selection) => selection.pathBytes)
-        .toList();
-    final candidates = recentPaths.isEmpty
-        ? ranked
-        : ranked
-              .where(
-                (path) => !recentPaths.any(
-                  (recentPath) => _pathsEqual(path.pathBytes, recentPath),
-                ),
-              )
-              .toList();
-    final selected = candidates.isNotEmpty
-        ? (recentPaths.isEmpty
-              ? _selectRotatedCandidate(contactPubKeyHex, candidates)
-              : candidates.first)
-        : ranked.first;
-
-    return PathSelection(
-      pathBytes: selected.pathBytes,
-      hopCount: selected.hopCount,
-      useFlood: false,
-    );
-  }
-
-  PathRecord _selectRotatedCandidate(
-    String contactPubKeyHex,
-    List<PathRecord> candidates,
-  ) {
-    if (candidates.length <= 1) {
-      _autoRotationIndex[contactPubKeyHex] = 0;
-      return candidates.first;
-    }
-
-    final currentIndex = _autoRotationIndex[contactPubKeyHex] ?? 0;
-    final selectedIndex = currentIndex % candidates.length;
-    _autoRotationIndex[contactPubKeyHex] =
-        (selectedIndex + 1) % candidates.length;
-    return candidates[selectedIndex];
-  }
-
-  void _addPathRecord({
-    required String contactPubKeyHex,
-    required int hopCount,
-    required int tripTimeMs,
-    required bool wasFloodDiscovery,
-    required List<int> pathBytes,
-    required int successCount,
-    required int failureCount,
-    double? routeWeight,
-    double initialWeight = 1.0,
-    DateTime? timestamp,
-  }) {
-    void add() => _addPathRecordInternal(
-      contactPubKeyHex,
-      hopCount,
-      tripTimeMs,
-      wasFloodDiscovery,
-      pathBytes,
-      successCount,
-      failureCount,
-      routeWeight,
-      initialWeight,
-      timestamp,
-    );
-
-    if (_cache.containsKey(contactPubKeyHex)) {
-      add();
-    } else {
-      _ensureLoaded(contactPubKeyHex).then((_) => add());
-    }
-  }
-
-  Future<void> _ensureLoaded(String contactPubKeyHex) {
-    if (_cache.containsKey(contactPubKeyHex)) return Future.value();
-    return _pendingLoads[contactPubKeyHex] ??=
-        _loadHistoryFromStorage(contactPubKeyHex)
-            .then((loaded) {
-              _cache[contactPubKeyHex] ??=
-                  loaded ??
-                  ContactPathHistory(
-                    contactPubKeyHex: contactPubKeyHex,
-                    recentPaths: [],
-                  );
-              _trackAccess(contactPubKeyHex);
-              _evictIfNeeded();
-            })
-            .whenComplete(() {
-              _pendingLoads.remove(contactPubKeyHex);
-            });
-  }
-
-  void _addPathRecordInternal(
-    String contactPubKeyHex,
-    int hopCount,
-    int tripTimeMs,
-    bool wasFloodDiscovery,
-    List<int> pathBytes,
-    int successCount,
-    int failureCount,
-    double? routeWeight,
-    double initialWeight,
-    DateTime? timestamp,
-  ) {
-    var history = _cache[contactPubKeyHex];
-    if (history == null) return;
-    _version++;
-
-    final existing = _findPathRecord(contactPubKeyHex, pathBytes);
-    if (existing != null) {
-      successCount = successCount == 0 ? existing.successCount : successCount;
-      failureCount = failureCount == 0 ? existing.failureCount : failureCount;
-      if (tripTimeMs == 0) {
-        tripTimeMs = existing.tripTimeMs;
-      }
-      wasFloodDiscovery = existing.wasFloodDiscovery || wasFloodDiscovery;
-      timestamp ??= existing.timestamp;
-    }
-    routeWeight ??= existing?.routeWeight ?? initialWeight;
-
-    final newRecord = PathRecord(
-      hopCount: hopCount,
-      tripTimeMs: tripTimeMs,
-      timestamp: timestamp,
-      wasFloodDiscovery: wasFloodDiscovery,
-      pathBytes: pathBytes,
-      successCount: successCount,
-      failureCount: failureCount,
-      routeWeight: routeWeight,
-    );
-
-    final updatedPaths = List<PathRecord>.from(history.recentPaths);
-
-    updatedPaths.removeWhere((p) => _pathsEqual(p.pathBytes, pathBytes));
-
-    if (existing == null && updatedPaths.length >= _maxHistoryEntries) {
-      return;
-    }
-
-    updatedPaths.insert(0, newRecord);
-
-    final updatedHistory = ContactPathHistory(
-      contactPubKeyHex: contactPubKeyHex,
-      recentPaths: updatedPaths,
-    );
-
-    _cache[contactPubKeyHex] = updatedHistory;
-    _trackAccess(contactPubKeyHex);
-    _evictIfNeeded();
-    _storage.savePathHistory(contactPubKeyHex, updatedHistory);
-
-    notifyListeners();
-  }
-
-  /// Whether this contact's history is in the in-memory cache.
-  bool isCached(String contactPubKeyHex) =>
-      _cache.containsKey(contactPubKeyHex);
-
-  /// Paths already in memory, without loading from storage or changing the
-  /// cache order. For bulk readers that must not churn the 50-contact cache.
-  List<PathRecord> peekRecentPaths(String contactPubKeyHex) =>
-      _cache[contactPubKeyHex]?.recentPaths ?? const [];
-
-  /// Reads saved paths straight from storage without adding them to the
-  /// cache, evicting anything, or notifying listeners.
-  Future<List<PathRecord>> readStoredPaths(String contactPubKeyHex) async {
-    final cached = _cache[contactPubKeyHex];
-    if (cached != null) return cached.recentPaths;
-    final stored = await _loadHistoryFromStorage(contactPubKeyHex);
-    return stored?.recentPaths ?? const [];
-  }
-
-  List<PathRecord> getRecentPaths(String contactPubKeyHex) {
-    final history = _cache[contactPubKeyHex];
-    if (history != null) {
-      _trackAccess(contactPubKeyHex);
-      return history.recentPaths;
-    }
-
-    _ensureLoaded(contactPubKeyHex).then((_) {
-      if (_cache[contactPubKeyHex]?.recentPaths.isNotEmpty ?? false) {
-        _version++;
-        notifyListeners();
-      }
-    });
-
-    return [];
-  }
-
-  Future<ContactPathHistory?> _loadHistoryFromStorage(
-    String contactPubKeyHex,
+    ContactPathHistory history,
   ) async {
-    return await _storage.loadPathHistory(contactPubKeyHex);
+    _store[contactPubKeyHex] = history;
   }
 
-  PathRecord? getFastestPath(String contactPubKeyHex) {
-    final history = _cache[contactPubKeyHex];
-    if (history != null) {
-      _trackAccess(contactPubKeyHex);
-    }
-    return history?.fastest;
+  @override
+  Future<ContactPathHistory?> loadPathHistory(String contactPubKeyHex) async {
+    return _store[contactPubKeyHex];
   }
 
-  PathRecord? getMostRecentPath(String contactPubKeyHex) {
-    final history = _cache[contactPubKeyHex];
-    if (history != null) {
-      _trackAccess(contactPubKeyHex);
-    }
-    return history?.mostRecent;
-  }
-
-  ({
-    int successCount,
-    int failureCount,
-    int lastTripTimeMs,
-    DateTime? lastUsed,
-  })?
-  getFloodStats(String contactPubKeyHex) {
-    final stats = _floodStats[contactPubKeyHex];
-    if (stats == null) return null;
-    return (
-      successCount: stats.successCount,
-      failureCount: stats.failureCount,
-      lastTripTimeMs: stats.lastTripTimeMs,
-      lastUsed: stats.lastUsed,
-    );
-  }
-
+  @override
   Future<void> clearPathHistory(String contactPubKeyHex) async {
-    _cache.remove(contactPubKeyHex);
-    _cacheAccessOrder.remove(contactPubKeyHex);
-    _autoRotationIndex.remove(contactPubKeyHex);
-    _floodStats.remove(contactPubKeyHex);
-    await _storage.clearPathHistory(contactPubKeyHex);
-    _version++;
-    notifyListeners();
+    _store.remove(contactPubKeyHex);
   }
+}
 
-  Future<void> removePathRecord(
-    String contactPubKeyHex,
-    List<int> pathBytes,
-  ) async {
-    final history = _cache[contactPubKeyHex];
-    if (history == null) return;
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
-    final updatedPaths = List<PathRecord>.from(history.recentPaths)
-      ..removeWhere((p) => _pathsEqual(p.pathBytes, pathBytes));
-
-    _cache[contactPubKeyHex] = ContactPathHistory(
-      contactPubKeyHex: contactPubKeyHex,
-      recentPaths: updatedPaths,
-    );
-
-    await _storage.savePathHistory(contactPubKeyHex, _cache[contactPubKeyHex]!);
-    _version++;
-    notifyListeners();
+/// Build a minimal Contact with the given pubKeyHex, pathLength, and path.
+///
+/// [publicKeyHex] must be exactly 64 hex characters (32 bytes).
+Contact _makeContact({
+  required String publicKeyHex,
+  int pathLength = -1,
+  List<int> path = const [],
+}) {
+  assert(publicKeyHex.length == 64, 'publicKeyHex must be 64 chars');
+  final bytes = Uint8List(32);
+  for (int i = 0; i < 32; i++) {
+    bytes[i] = int.parse(publicKeyHex.substring(i * 2, i * 2 + 2), radix: 16);
   }
+  return Contact(
+    publicKey: bytes,
+    name: 'Test',
+    type: 1,
+    pathLength: pathLength,
+    path: Uint8List.fromList(path),
+    lastSeen: DateTime.now(),
+  );
+}
 
-  PathRecord? _findPathRecord(String contactPubKeyHex, List<int> pathBytes) {
-    final history = _cache[contactPubKeyHex];
-    if (history == null) return null;
-    for (final record in history.recentPaths) {
-      if (_pathsEqual(record.pathBytes, pathBytes)) {
-        return record;
-      }
-    }
-    return null;
-  }
+/// A 64-char hex string derived from a short tag (padded with zeros).
+String _hex(String tag) {
+  // Convert tag to hex-safe characters, then pad
+  final hexTag = tag.codeUnits
+      .map((c) => c.toRadixString(16).padLeft(2, '0'))
+      .join();
+  return hexTag.padLeft(64, '0');
+}
 
-  List<PathRecord> _getRankedPaths(String contactPubKeyHex) {
-    final history = _cache[contactPubKeyHex];
-    if (history == null) return [];
+/// Flush the microtask / async queue so that deferred storage loads complete.
+Future<void> _flush() async {
+  await Future<void>.delayed(Duration.zero);
+}
 
-    final ranked = List<PathRecord>.from(history.recentPaths)
-      ..removeWhere((p) => p.pathBytes.isEmpty);
-    final fastestTripMs = _getFastestKnownTripMs(ranked);
-    final highestRouteWeight = _getHighestKnownRouteWeight(ranked);
+/// Seed the service's cache for [pubKeyHex] by adding one path record and
+/// waiting for the async storage-load path to complete.
+///
+/// Call this before making synchronous assertions on a contact that has never
+/// been seen by the service.
+Future<void> _seed(
+  PathHistoryService svc,
+  String pubKeyHex, {
+  List<int> pathBytes = const [1],
+  int hopCount = 1,
+  double weight = 1.0,
+}) async {
+  final contact = _makeContact(
+    publicKeyHex: pubKeyHex,
+    pathLength: hopCount,
+    path: pathBytes,
+  );
+  svc.handlePathUpdated(contact, initialWeight: weight);
+  await _flush();
+}
 
-    ranked.sort((a, b) {
-      final scoreCompare =
-          _scorePathRecord(
-            b,
-            fastestTripMs: fastestTripMs,
-            highestRouteWeight: highestRouteWeight,
-          ).compareTo(
-            _scorePathRecord(
-              a,
-              fastestTripMs: fastestTripMs,
-              highestRouteWeight: highestRouteWeight,
-            ),
-          );
-      if (scoreCompare != 0) {
-        return scoreCompare;
-      }
-      if (a.routeWeight != b.routeWeight) {
-        return b.routeWeight.compareTo(a.routeWeight);
-      }
-      final aTrip = a.tripTimeMs == 0 ? 999999 : a.tripTimeMs;
-      final bTrip = b.tripTimeMs == 0 ? 999999 : b.tripTimeMs;
-      if (aTrip != bTrip) return aTrip.compareTo(bTrip);
-      final aTime = a.timestamp ?? DateTime.fromMillisecondsSinceEpoch(0);
-      final bTime = b.timestamp ?? DateTime.fromMillisecondsSinceEpoch(0);
-      return bTime.compareTo(aTime);
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+void main() {
+  late FakeStorageService storage;
+  late PathHistoryService svc;
+
+  setUp(() {
+    storage = FakeStorageService();
+    svc = PathHistoryService(storage);
+  });
+
+  group('path selection', () {
+    test('empty path history returns flood', () {
+      const pubKey =
+          '0000000000000000000000000000000000000000000000000000000000000001';
+      final selection = svc.selectPathForAttempt(
+        pubKey,
+        attemptIndex: 0,
+        maxRetries: 5,
+      );
+      expect(selection.useFlood, isTrue);
     });
 
-    return ranked;
-  }
+    test('returns flood when maxRetries == 0', () {
+      const pubKey =
+          '0000000000000000000000000000000000000000000000000000000000000001';
+      final selection = svc.selectPathForAttempt(
+        pubKey,
+        attemptIndex: 0,
+        maxRetries: 0,
+      );
+      expect(selection.useFlood, isTrue);
+    });
 
-  int? _getFastestKnownTripMs(List<PathRecord> paths) {
-    final knownTrips = paths
-        .where((path) => path.tripTimeMs > 0)
-        .map((path) => path.tripTimeMs)
-        .toList();
-    if (knownTrips.isEmpty) return null;
-    return knownTrips.reduce((a, b) => a < b ? a : b);
-  }
+    test('single known path is used for non-final attempts', () async {
+      final pubKey = _hex('aabb');
+      await _seed(svc, pubKey, pathBytes: [0x01, 0x02], hopCount: 2);
 
-  double _getHighestKnownRouteWeight(List<PathRecord> paths) {
-    if (paths.isEmpty) return 1.0;
-    final highestWeight = paths
-        .map((path) => path.routeWeight)
-        .reduce((a, b) => a > b ? a : b);
-    return highestWeight <= 0 ? 1.0 : highestWeight;
-  }
+      for (int i = 0; i < 4; i++) {
+        final selection = svc.selectPathForAttempt(
+          pubKey,
+          attemptIndex: i,
+          maxRetries: 5,
+        );
+        expect(
+          selection.useFlood,
+          isFalse,
+          reason: 'attempt $i should be path',
+        );
+        expect(selection.pathBytes, equals([0x01, 0x02]));
+      }
+    });
 
-  double _scorePathRecord(
-    PathRecord path, {
-    required int? fastestTripMs,
-    required double highestRouteWeight,
-  }) {
-    final totalAttempts = path.successCount + path.failureCount;
-    final reliability = (path.successCount + 1) / (totalAttempts + 2);
-    final latency = fastestTripMs == null || path.tripTimeMs <= 0
-        ? 0.6
-        : (fastestTripMs / path.tripTimeMs).clamp(0.0, 1.0);
-    final freshness = path.timestamp == null
-        ? 0.0
-        : 1.0 /
-              (1.0 +
-                  (DateTime.now().difference(path.timestamp!).inMinutes /
-                      60.0 /
-                      24.0));
-    final routeWeight = (path.routeWeight / highestRouteWeight).clamp(0.0, 1.0);
+    test('direct hops are preferred before other routes during auto rotation',
+        () async {
+      final pubKey = _hex('rot-direct');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 3.0);
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x10, 0x20], hopCount: 2, useFlood: false),
+        success: true,
+        successIncrement: 1.0,
+      );
+      await _flush();
 
-    return (reliability * 0.45) +
-        (latency * 0.25) +
-        (freshness * 0.1) +
-        (routeWeight * 0.2);
-  }
+      final first = svc.selectPathForAttempt(
+        pubKey,
+        attemptIndex: 0,
+        maxRetries: 5,
+      );
+      final second = svc.selectPathForAttempt(
+        pubKey,
+        attemptIndex: 1,
+        maxRetries: 5,
+        recentSelections: [first],
+      );
 
-  bool _pathsEqual(List<int> a, List<int> b) {
-    return listEquals(a, b);
-  }
+      expect(first.useFlood, isFalse);
+      expect(first.hopCount, equals(1));
+      expect(second.useFlood, isFalse);
+      expect(second.hopCount, equals(2));
+    });
 
-  void _updateFloodStats(String contactPubKeyHex) {
-    final stats = _floodStats.putIfAbsent(
-      contactPubKeyHex,
-      () => _FloodStats(),
+    test(
+      'retries avoid immediately repeating the same path when possible',
+      () async {
+        final pubKey = _hex('rot1');
+        await _seed(svc, pubKey, pathBytes: [0xAA], hopCount: 1, weight: 1.0);
+        svc.recordPathResult(
+          pubKey,
+          const PathSelection(pathBytes: [0xBB], hopCount: 1, useFlood: false),
+          success: true,
+          successIncrement: 0.0,
+        );
+        await _flush();
+
+        final first = svc.selectPathForAttempt(
+          pubKey,
+          attemptIndex: 0,
+          maxRetries: 5,
+        );
+        final second = svc.selectPathForAttempt(
+          pubKey,
+          attemptIndex: 1,
+          maxRetries: 5,
+          recentSelections: [first],
+        );
+
+        expect(first.useFlood, isFalse);
+        expect(second.useFlood, isFalse);
+        expect(second.pathBytes, isNot(equals(first.pathBytes)));
+      },
     );
-    stats.lastUsed = DateTime.now();
-  }
 
-  void _trackAccess(String contactPubKeyHex) {
-    _cacheAccessOrder.remove(contactPubKeyHex);
-    _cacheAccessOrder.add(contactPubKeyHex);
-  }
+    test(
+      'retries avoid the last two paths when a third option exists',
+      () async {
+        final pubKey = _hex('rot2');
+        await _seed(svc, pubKey, pathBytes: [0xA1], hopCount: 1, weight: 3.0);
+        svc.recordPathResult(
+          pubKey,
+          const PathSelection(pathBytes: [0xB2], hopCount: 1, useFlood: false),
+          success: true,
+          successIncrement: 1.0,
+        );
+        svc.recordPathResult(
+          pubKey,
+          const PathSelection(pathBytes: [0xC3], hopCount: 1, useFlood: false),
+          success: true,
+          successIncrement: 0.0,
+        );
+        await _flush();
 
-  void _evictIfNeeded() {
-    while (_cache.length > _maxCachedContacts && _cacheAccessOrder.isNotEmpty) {
-      final oldest = _cacheAccessOrder.removeAt(0);
-      _cache.remove(oldest);
-      _autoRotationIndex.remove(oldest);
-      _floodStats.remove(oldest);
-    }
-  }
+        final first = svc.selectPathForAttempt(
+          pubKey,
+          attemptIndex: 0,
+          maxRetries: 5,
+        );
+        final second = svc.selectPathForAttempt(
+          pubKey,
+          attemptIndex: 1,
+          maxRetries: 5,
+          recentSelections: [first],
+        );
+        final third = svc.selectPathForAttempt(
+          pubKey,
+          attemptIndex: 2,
+          maxRetries: 5,
+          recentSelections: [first, second],
+        );
 
-  void clearAllHistories() {
-    _cache.clear();
-    _cacheAccessOrder.clear();
-    _autoRotationIndex.clear();
-    _floodStats.clear();
-    _storage.clearAllPathHistories();
-    _version = 0;
-    notifyListeners();
-  }
+        final chosenPaths = [
+          first.pathBytes,
+          second.pathBytes,
+          third.pathBytes,
+        ];
+        expect(
+          chosenPaths
+              .map((path) => path.map((b) => b.toRadixString(16)).join(','))
+              .toSet()
+              .length,
+          equals(3),
+        );
+        expect(
+          chosenPaths,
+          everyElement(anyOf(equals([0xA1]), equals([0xB2]), equals([0xC3]))),
+        );
+      },
+    );
+
+    test('first-attempt selection rotates across ranked candidates', () async {
+      final pubKey = _hex('rot3');
+      await _seed(svc, pubKey, pathBytes: [0xA1], hopCount: 1, weight: 4.0);
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0xB2], hopCount: 1, useFlood: false),
+        success: true,
+        successIncrement: 1.0,
+      );
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0xC3], hopCount: 1, useFlood: false),
+        success: true,
+        successIncrement: 0.5,
+      );
+      await _flush();
+
+      final first = svc.selectPathForAttempt(
+        pubKey,
+        attemptIndex: 0,
+        maxRetries: 5,
+      );
+      final second = svc.selectPathForAttempt(
+        pubKey,
+        attemptIndex: 0,
+        maxRetries: 5,
+      );
+      final third = svc.selectPathForAttempt(
+        pubKey,
+        attemptIndex: 0,
+        maxRetries: 5,
+      );
+
+      expect(first.pathBytes, isNot(equals(second.pathBytes)));
+      expect(second.pathBytes, isNot(equals(third.pathBytes)));
+      expect(
+        [first.pathBytes, second.pathBytes, third.pathBytes]
+            .map((path) => path.map((b) => b.toRadixString(16)).join(','))
+            .toSet()
+            .length,
+        equals(3),
+      );
+    });
+
+    test('final attempt is always flood regardless of known paths', () async {
+      final pubKey = _hex('ef01');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1);
+
+      for (final retries in [1, 2, 5, 10]) {
+        final lastAttempt = svc.selectPathForAttempt(
+          pubKey,
+          attemptIndex: retries - 1,
+          maxRetries: retries,
+        );
+        expect(
+          lastAttempt.useFlood,
+          isTrue,
+          reason: 'maxRetries=$retries: last attempt must be flood',
+        );
+      }
+    });
+  });
+
+  group('path scoring', () {
+    test('higher reliability beats higher route weight', () async {
+      final pubKey = _hex('rank1');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 4.5);
+
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x01], hopCount: 1, useFlood: false),
+        success: false,
+        failureDecrement: 0.1,
+      );
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x01], hopCount: 1, useFlood: false),
+        success: false,
+        failureDecrement: 0.1,
+      );
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x02], hopCount: 1, useFlood: false),
+        success: true,
+        successIncrement: 0.0,
+      );
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x02], hopCount: 1, useFlood: false),
+        success: true,
+        successIncrement: 0.0,
+      );
+      await _flush();
+
+      final first = svc.selectPathForAttempt(
+        pubKey,
+        attemptIndex: 0,
+        maxRetries: 5,
+      );
+      expect(first.pathBytes, equals([0x02]));
+    });
+
+    test('lower latency wins when reliability is tied', () async {
+      final pubKey = _hex('rank2');
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x10], hopCount: 1, useFlood: false),
+        success: true,
+        tripTimeMs: 1200,
+        successIncrement: 0.0,
+      );
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x20], hopCount: 1, useFlood: false),
+        success: true,
+        tripTimeMs: 400,
+        successIncrement: 0.0,
+      );
+      await _flush();
+
+      final first = svc.selectPathForAttempt(
+        pubKey,
+        attemptIndex: 0,
+        maxRetries: 5,
+      );
+      expect(first.pathBytes, equals([0x20]));
+    });
+
+    test('fresher path wins when reliability and latency are tied', () async {
+      final pubKey = _hex('rank3');
+      final oldTimestamp = DateTime.now().subtract(const Duration(days: 10));
+      final newTimestamp = DateTime.now().subtract(const Duration(hours: 1));
+      storage._store[pubKey] = ContactPathHistory(
+        contactPubKeyHex: pubKey,
+        recentPaths: [
+          PathRecord(
+            hopCount: 1,
+            tripTimeMs: 900,
+            timestamp: oldTimestamp,
+            wasFloodDiscovery: false,
+            pathBytes: const [0x01],
+            successCount: 1,
+            failureCount: 0,
+            routeWeight: 1.0,
+          ),
+          PathRecord(
+            hopCount: 1,
+            tripTimeMs: 900,
+            timestamp: newTimestamp,
+            wasFloodDiscovery: false,
+            pathBytes: const [0x02],
+            successCount: 1,
+            failureCount: 0,
+            routeWeight: 1.0,
+          ),
+        ],
+      );
+      svc.getRecentPaths(pubKey);
+      await _flush();
+
+      final first = svc.selectPathForAttempt(
+        pubKey,
+        attemptIndex: 0,
+        maxRetries: 5,
+      );
+      expect(first.pathBytes, equals([0x02]));
+    });
+
+    test(
+      'higher route weight wins when other factors are effectively tied',
+      () async {
+        final pubKey = _hex('rank4');
+        final sharedTimestamp = DateTime.now().subtract(
+          const Duration(minutes: 30),
+        );
+        storage._store[pubKey] = ContactPathHistory(
+          contactPubKeyHex: pubKey,
+          recentPaths: [
+            PathRecord(
+              hopCount: 1,
+              tripTimeMs: 750,
+              timestamp: sharedTimestamp,
+              wasFloodDiscovery: false,
+              pathBytes: const [0x01],
+              successCount: 1,
+              failureCount: 0,
+              routeWeight: 4.0,
+            ),
+            PathRecord(
+              hopCount: 1,
+              tripTimeMs: 750,
+              timestamp: sharedTimestamp,
+              wasFloodDiscovery: false,
+              pathBytes: const [0x02],
+              successCount: 1,
+              failureCount: 0,
+              routeWeight: 1.0,
+            ),
+          ],
+        );
+        svc.getRecentPaths(pubKey);
+        await _flush();
+
+        final first = svc.selectPathForAttempt(
+          pubKey,
+          attemptIndex: 0,
+          maxRetries: 5,
+        );
+        expect(first.pathBytes, equals([0x01]));
+      },
+    );
+  });
+
+  // -------------------------------------------------------------------------
+  // Group 3: recordPathResult — weight adjustment
+  // -------------------------------------------------------------------------
+  group('recordPathResult weight adjustment', () {
+    test('success increments weight by successIncrement', () async {
+      final pubKey = _hex('w001');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 1.0);
+
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x01], hopCount: 1, useFlood: false),
+        success: true,
+        successIncrement: 0.5,
+      );
+      await _flush();
+
+      final paths = svc.getRecentPaths(pubKey);
+      expect(paths, isNotEmpty);
+      expect(paths.first.routeWeight, closeTo(1.5, 0.001));
+      expect(paths.first.timestamp, isNotNull);
+    });
+
+    test('attempts do not set timestamp before first success', () async {
+      final pubKey = _hex('w000');
+
+      svc.recordPathAttempt(
+        pubKey,
+        const PathSelection(pathBytes: [0x01], hopCount: 1, useFlood: false),
+      );
+      await _flush();
+
+      final paths = svc.getRecentPaths(pubKey);
+      expect(paths, isNotEmpty);
+      expect(paths.first.successCount, equals(0));
+      expect(paths.first.timestamp, isNull);
+    });
+
+    test('failure preserves the last success timestamp', () async {
+      final pubKey = _hex('w006');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 1.0);
+
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x01], hopCount: 1, useFlood: false),
+        success: true,
+        successIncrement: 0.0,
+      );
+      await _flush();
+      final successTimestamp = svc.getRecentPaths(pubKey).first.timestamp;
+
+      await Future<void>.delayed(const Duration(milliseconds: 5));
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x01], hopCount: 1, useFlood: false),
+        success: false,
+        failureDecrement: 0.1,
+      );
+      await _flush();
+
+      final paths = svc.getRecentPaths(pubKey);
+      expect(paths.first.timestamp, equals(successTimestamp));
+    });
+
+    test('success clamps at maxWeight', () async {
+      final pubKey = _hex('w002');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 4.8);
+
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x01], hopCount: 1, useFlood: false),
+        success: true,
+        successIncrement: 0.5,
+        maxWeight: 5.0,
+      );
+      await _flush();
+
+      final paths = svc.getRecentPaths(pubKey);
+      expect(paths.first.routeWeight, closeTo(5.0, 0.001));
+    });
+
+    test('failure decrements weight', () async {
+      final pubKey = _hex('w003');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 2.0);
+
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [0x01], hopCount: 1, useFlood: false),
+        success: false,
+        failureDecrement: 0.5,
+      );
+      await _flush();
+
+      final paths = svc.getRecentPaths(pubKey);
+      expect(paths.first.routeWeight, closeTo(1.5, 0.001));
+    });
+
+    test('failure to 0 removes the path', () async {
+      final pubKey = _hex('w004');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 0.3);
+
+      // The service requires failureCount >= 3 to remove a path
+      for (int i = 0; i < 3; i++) {
+        svc.recordPathResult(
+          pubKey,
+          const PathSelection(pathBytes: [0x01], hopCount: 1, useFlood: false),
+          success: false,
+          failureDecrement: 0.5, // 0.3 - 0.5 = -0.2 → remove
+        );
+      }
+      await _flush();
+
+      final paths = svc.getRecentPaths(pubKey);
+      expect(
+        paths.any((p) => p.pathBytes.length == 1 && p.pathBytes[0] == 0x01),
+        isFalse,
+        reason: 'path with weight <= 0 should have been removed',
+      );
+    });
+
+    test(
+      'flood result does not affect path records, updates floodStats',
+      () async {
+        final pubKey = _hex('w005');
+        await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 1.0);
+
+        final pathsBefore = svc.getRecentPaths(pubKey);
+        final weightBefore = pathsBefore.first.routeWeight;
+
+        svc.recordPathResult(
+          pubKey,
+          const PathSelection(pathBytes: [], hopCount: -1, useFlood: true),
+          success: true,
+          tripTimeMs: 1234,
+        );
+        await _flush();
+
+        // Path records should be unchanged.
+        final pathsAfter = svc.getRecentPaths(pubKey);
+        expect(pathsAfter.first.routeWeight, equals(weightBefore));
+
+        // Flood stats should be updated.
+        final stats = svc.getFloodStats(pubKey);
+        expect(stats, isNotNull);
+        expect(stats!.successCount, equals(1));
+        expect(stats.lastTripTimeMs, equals(1234));
+      },
+    );
+  });
+
+  // -------------------------------------------------------------------------
+  // Group 4: handlePathUpdated
+  // -------------------------------------------------------------------------
+  group('handlePathUpdated', () {
+    test(
+      'pathLength >= 0 with path bytes → records path using pathLength',
+      () async {
+        final pubKey = _hex('h001');
+        final contact = _makeContact(
+          publicKeyHex: pubKey,
+          pathLength: 3,
+          path: [0x01, 0x02, 0x03],
+        );
+
+        svc.handlePathUpdated(contact);
+        await _flush();
+
+        final paths = svc.getRecentPaths(pubKey);
+        expect(paths, isNotEmpty);
+        expect(paths.first.hopCount, equals(3));
+        expect(paths.first.pathBytes, equals([0x01, 0x02, 0x03]));
+      },
+    );
+
+    test(
+      'pathLength < 0 with path bytes → records path using path.length as hopCount',
+      () async {
+        final pubKey = _hex('h002');
+        final contact = _makeContact(
+          publicKeyHex: pubKey,
+          pathLength: -1, // flood indicator from firmware
+          path: [0xAA, 0xBB],
+        );
+
+        svc.handlePathUpdated(contact);
+        await _flush();
+
+        final paths = svc.getRecentPaths(pubKey);
+        expect(paths, isNotEmpty);
+        // hopCount should equal path.length (2), not pathLength (-1).
+        expect(paths.first.hopCount, equals(2));
+        expect(paths.first.pathBytes, equals([0xAA, 0xBB]));
+      },
+    );
+
+    test('pathLength < 0 with empty path → skipped (returns early)', () async {
+      final pubKey = _hex('h003');
+      final contact = _makeContact(
+        publicKeyHex: pubKey,
+        pathLength: -1,
+        path: [],
+      );
+
+      svc.handlePathUpdated(contact);
+      await _flush();
+
+      // Nothing should have been recorded.
+      final paths = svc.getRecentPaths(pubKey);
+      expect(paths, isEmpty);
+    });
+
+    test('initialWeight is applied to the new record', () async {
+      final pubKey = _hex('h004');
+      final contact = _makeContact(
+        publicKeyHex: pubKey,
+        pathLength: 1,
+        path: [0x55],
+      );
+
+      svc.handlePathUpdated(contact, initialWeight: 2.5);
+      await _flush();
+
+      final paths = svc.getRecentPaths(pubKey);
+      expect(paths.first.routeWeight, closeTo(2.5, 0.001));
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Group 5: recordFloodPathAttribution
+  // -------------------------------------------------------------------------
+  group('recordFloodPathAttribution', () {
+    test('credits existing path with success increment', () async {
+      final pubKey = _hex('fa01');
+      await _seed(
+        svc,
+        pubKey,
+        pathBytes: [0x01, 0x02],
+        hopCount: 2,
+        weight: 1.0,
+      );
+
+      svc.recordFloodPathAttribution(
+        contactPubKeyHex: pubKey,
+        pathBytes: [0x01, 0x02],
+        hopCount: 2,
+        tripTimeMs: 3000,
+        successIncrement: 0.5,
+        maxWeight: 5.0,
+      );
+      await _flush();
+
+      final paths = svc.getRecentPaths(pubKey);
+      final credited = paths.firstWhere(
+        (p) => p.pathBytes.length == 2 && p.pathBytes[0] == 0x01,
+      );
+      expect(credited.routeWeight, closeTo(1.5, 0.001));
+      expect(credited.successCount, equals(1));
+      expect(credited.tripTimeMs, equals(3000));
+    });
+
+    test('creates new path record when path is unknown', () async {
+      final pubKey = _hex('fa02');
+      // Seed with a different path so the cache is warm.
+      await _seed(svc, pubKey, pathBytes: [0xAA], hopCount: 1, weight: 1.0);
+
+      svc.recordFloodPathAttribution(
+        contactPubKeyHex: pubKey,
+        pathBytes: [0xBB, 0xCC],
+        hopCount: 2,
+        tripTimeMs: 2000,
+        successIncrement: 0.5,
+        maxWeight: 5.0,
+      );
+      await _flush();
+
+      final paths = svc.getRecentPaths(pubKey);
+      final newPath = paths.firstWhere(
+        (p) => p.pathBytes.length == 2 && p.pathBytes[0] == 0xBB,
+      );
+      // New path: weight = 1.0 (default) + 0.5 = 1.5
+      expect(newPath.routeWeight, closeTo(1.5, 0.001));
+      expect(newPath.successCount, equals(1));
+      expect(newPath.wasFloodDiscovery, isTrue);
+    });
+
+    test('clamps weight at maxWeight', () async {
+      final pubKey = _hex('fa03');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 4.8);
+
+      svc.recordFloodPathAttribution(
+        contactPubKeyHex: pubKey,
+        pathBytes: [0x01],
+        hopCount: 1,
+        successIncrement: 0.5,
+        maxWeight: 5.0,
+      );
+      await _flush();
+
+      final paths = svc.getRecentPaths(pubKey);
+      expect(paths.first.routeWeight, closeTo(5.0, 0.001));
+    });
+
+    test('ignores empty pathBytes', () async {
+      final pubKey = _hex('fa04');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 1.0);
+
+      final pathsBefore = svc.getRecentPaths(pubKey);
+      final weightBefore = pathsBefore.first.routeWeight;
+
+      svc.recordFloodPathAttribution(
+        contactPubKeyHex: pubKey,
+        pathBytes: [],
+        hopCount: 0,
+        successIncrement: 0.5,
+        maxWeight: 5.0,
+      );
+      await _flush();
+
+      // Existing path should be untouched.
+      final pathsAfter = svc.getRecentPaths(pubKey);
+      expect(pathsAfter.first.routeWeight, equals(weightBefore));
+    });
+
+    test('ignores negative hopCount (flood indicator)', () async {
+      final pubKey = _hex('fa05');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 1.0);
+
+      final pathsBefore = svc.getRecentPaths(pubKey);
+      final weightBefore = pathsBefore.first.routeWeight;
+
+      svc.recordFloodPathAttribution(
+        contactPubKeyHex: pubKey,
+        pathBytes: [0x01],
+        hopCount: -1,
+        successIncrement: 0.5,
+        maxWeight: 5.0,
+      );
+      await _flush();
+
+      final pathsAfter = svc.getRecentPaths(pubKey);
+      expect(pathsAfter.first.routeWeight, equals(weightBefore));
+    });
+
+    test('flood stats still recorded independently', () async {
+      final pubKey = _hex('fa06');
+      await _seed(svc, pubKey, pathBytes: [0x01], hopCount: 1, weight: 1.0);
+
+      // Record a flood success (this updates flood stats).
+      svc.recordPathResult(
+        pubKey,
+        const PathSelection(pathBytes: [], hopCount: -1, useFlood: true),
+        success: true,
+        tripTimeMs: 5000,
+      );
+
+      // Then attribute the flood success to a path.
+      svc.recordFloodPathAttribution(
+        contactPubKeyHex: pubKey,
+        pathBytes: [0x01],
+        hopCount: 1,
+        tripTimeMs: 5000,
+        successIncrement: 0.5,
+        maxWeight: 5.0,
+      );
+      await _flush();
+
+      // Both flood stats and path attribution should exist.
+      final stats = svc.getFloodStats(pubKey);
+      expect(stats, isNotNull);
+      expect(stats!.successCount, equals(1));
+
+      final paths = svc.getRecentPaths(pubKey);
+      expect(paths.first.routeWeight, closeTo(1.5, 0.001));
+    });
+  });
+
+  group('learned state is preserved', () {
+    const sel = PathSelection(pathBytes: [0x01], hopCount: 1, useFlood: false);
+
+    test('recordPathAttempt keeps the learned route weight', () async {
+      final pubKey = _hex('k001');
+      await _seed(svc, pubKey, pathBytes: [0x01], weight: 1.0);
+      svc.recordPathResult(pubKey, sel, success: true, successIncrement: 1.0);
+      await _flush();
+
+      svc.recordPathAttempt(pubKey, sel);
+      await _flush();
+
+      expect(svc.getRecentPaths(pubKey).first.routeWeight, closeTo(2.0, 1e-9));
+    });
+
+    test('handlePathUpdated keeps the learned route weight', () async {
+      final pubKey = _hex('k002');
+      await _seed(svc, pubKey, pathBytes: [0x01], weight: 3.0);
+
+      svc.handlePathUpdated(
+        _makeContact(publicKeyHex: pubKey, pathLength: 1, path: [0x01]),
+      );
+      await _flush();
+
+      expect(svc.getRecentPaths(pubKey).first.routeWeight, closeTo(3.0, 1e-9));
+    });
+
+    test('recordPathResult after eviction merges with stored counts', () async {
+      final pubKey = _hex('k003');
+      await _seed(svc, pubKey, pathBytes: [0x01], weight: 1.0);
+      for (var i = 0; i < 3; i++) {
+        svc.recordPathResult(pubKey, sel, success: true, successIncrement: 0.5);
+      }
+      await _flush();
+
+      final fresh = PathHistoryService(storage);
+      fresh.recordPathResult(pubKey, sel, success: true, successIncrement: 0.5);
+      await _flush();
+
+      final record = fresh.getRecentPaths(pubKey).first;
+      expect(record.successCount, equals(4));
+      expect(record.routeWeight, closeTo(3.0, 1e-9));
+    });
+
+    test('getRecentPaths load does not drop a concurrent add', () async {
+      final pubKey = _hex('k004');
+      await _seed(svc, pubKey, pathBytes: [0x01], weight: 1.0);
+
+      final fresh = PathHistoryService(storage);
+      fresh.getRecentPaths(pubKey);
+      fresh.handlePathUpdated(
+        _makeContact(publicKeyHex: pubKey, pathLength: 1, path: [0x02]),
+      );
+      await _flush();
+
+      final paths = fresh.getRecentPaths(pubKey).map((p) => p.pathBytes);
+      expect(
+        paths,
+        containsAll([
+          [0x01],
+          [0x02],
+        ]),
+      );
+    });
+  });
 }
 
-class _FloodStats {
-  int successCount = 0;
-  int failureCount = 0;
-  int lastTripTimeMs = 0;
-  DateTime? lastUsed;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
