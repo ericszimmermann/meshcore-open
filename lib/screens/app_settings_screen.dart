@@ -23,6 +23,7 @@ import '../widgets/sync_progress_overlay.dart';
 import '../widgets/translation_settings_section.dart';
 import '../helpers/snack_bar_builder.dart';
 import 'map_cache_screen.dart';
+import 'themes_screen.dart';
 
 class AppSettingsScreen extends StatelessWidget {
   /// Scrolls the image-message settings into view once, on first build.
@@ -44,92 +45,94 @@ class AppSettingsScreen extends StatelessWidget {
         centerTitle: true,
         bottom: const SyncProgressAppBarBottom(),
       ),
-      body: SafeArea(
-        top: false,
-        // Each card subscribes to only what it shows, so connector traffic
-        // and translation download ticks do not rebuild the whole list.
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(0, 8, 0, 24),
-          children: [
-            // APPEARANCE
-            SectionHeader(context.l10n.appSettings_appearance),
-            MeshCard(
-              padding: EdgeInsets.zero,
-              child: _settingsCard(_buildAppearanceContent),
-            ),
+      body: MeshSettingsTileTheme(
+        child: SafeArea(
+          top: false,
+          // Each card subscribes to only what it shows, so connector traffic
+          // and translation download ticks do not rebuild the whole list.
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 24),
+            children: [
+              // APPEARANCE
+              SectionHeader(context.l10n.appSettings_appearance),
+              MeshCard(
+                padding: EdgeInsets.zero,
+                child: _settingsCard(_buildAppearanceContent),
+              ),
 
-            // NOTIFICATIONS
-            SectionHeader(context.l10n.appSettings_notifications),
-            MeshCard(
-              padding: EdgeInsets.zero,
-              child: _settingsCard(_buildNotificationsContent),
-            ),
+              // NOTIFICATIONS
+              SectionHeader(context.l10n.appSettings_notifications),
+              MeshCard(
+                padding: EdgeInsets.zero,
+                child: _settingsCard(_buildNotificationsContent),
+              ),
 
-            // MESSAGING
-            SectionHeader(context.l10n.appSettings_messaging),
-            MeshCard(
-              padding: EdgeInsets.zero,
-              child: _settingsCard(_buildMessagingContent),
-            ),
+              // MESSAGING
+              SectionHeader(context.l10n.appSettings_messaging),
+              MeshCard(
+                padding: EdgeInsets.zero,
+                child: _settingsCard(_buildMessagingContent),
+              ),
 
-            // ROUTING
-            SectionHeader(context.l10n.appSettings_routingSection),
-            MeshCard(
-              padding: EdgeInsets.zero,
-              child: _settingsCard(_buildRoutingContent),
-            ),
+              // ROUTING
+              SectionHeader(context.l10n.appSettings_routingSection),
+              MeshCard(
+                padding: EdgeInsets.zero,
+                child: _settingsCard(_buildRoutingContent),
+              ),
 
-            // IMAGE MESSAGES
-            SectionHeader(context.l10n.appSettings_imageMessagesSection),
-            MeshCard(
-              padding: EdgeInsets.zero,
-              child: _settingsCard(_buildImageMessagesContent),
-            ),
+              // IMAGE MESSAGES
+              SectionHeader(context.l10n.appSettings_imageMessagesSection),
+              MeshCard(
+                padding: EdgeInsets.zero,
+                child: _settingsCard(_buildImageMessagesContent),
+              ),
 
-            // BATTERY
-            SectionHeader(context.l10n.appSettings_battery),
-            MeshCard(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-              child: _settingsCard(_buildBatteryContent),
-            ),
+              // BATTERY
+              SectionHeader(context.l10n.appSettings_battery),
+              MeshCard(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                child: _settingsCard(_buildBatteryContent),
+              ),
 
-            // MAP
-            SectionHeader(context.l10n.appSettings_mapDisplay),
-            MeshCard(
-              padding: EdgeInsets.zero,
-              child: _settingsCard(_buildMapContent),
-            ),
+              // MAP
+              SectionHeader(context.l10n.appSettings_mapDisplay),
+              MeshCard(
+                padding: EdgeInsets.zero,
+                child: _settingsCard(_buildMapContent),
+              ),
 
-            // NETWORK MAP
-            SectionHeader(context.l10n.networkMap_settingsSection),
-            const MeshCard(
-              padding: EdgeInsets.zero,
-              child: NetworkMapSettingsSection(),
-            ),
-
-            // TRANSLATION (non-web only)
-            if (!kIsWeb) ...[
-              SectionHeader(context.l10n.translation_title),
+              // NETWORK MAP
+              SectionHeader(context.l10n.networkMap_settingsSection),
               const MeshCard(
                 padding: EdgeInsets.zero,
-                child: TranslationSettingsSection(),
+                child: NetworkMapSettingsSection(),
+              ),
+
+              // TRANSLATION (non-web only)
+              if (!kIsWeb) ...[
+                SectionHeader(context.l10n.translation_title),
+                const MeshCard(
+                  padding: EdgeInsets.zero,
+                  child: TranslationSettingsSection(),
+                ),
+              ],
+
+              // CYR2LAT
+              SectionHeader(context.l10n.channels_cyr2latSettingsHeading),
+              MeshCard(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                child: _settingsCard(_buildCyr2LatContent),
+              ),
+
+              // DEBUG
+              SectionHeader(context.l10n.appSettings_debugCard),
+              MeshCard(
+                padding: EdgeInsets.zero,
+                child: _settingsCard(_buildDebugContent),
               ),
             ],
-
-            // CYR2LAT
-            SectionHeader(context.l10n.channels_cyr2latSettingsHeading),
-            MeshCard(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-              child: _settingsCard(_buildCyr2LatContent),
-            ),
-
-            // DEBUG
-            SectionHeader(context.l10n.appSettings_debugCard),
-            MeshCard(
-              padding: EdgeInsets.zero,
-              child: _settingsCard(_buildDebugContent),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -181,24 +184,65 @@ class AppSettingsScreen extends StatelessWidget {
                 segments: [
                   ButtonSegment(
                     value: 'system',
-                    label: Text(context.l10n.appSettings_themeSystem),
+                    label: MeshSegmentLabel(
+                      context.l10n.appSettings_themeSystem,
+                    ),
                   ),
                   ButtonSegment(
                     value: 'light',
-                    label: Text(context.l10n.appSettings_themeLight),
+                    label: MeshSegmentLabel(
+                      context.l10n.appSettings_themeLight,
+                    ),
                   ),
                   ButtonSegment(
                     value: 'dark',
-                    label: Text(context.l10n.appSettings_themeDark),
+                    label: MeshSegmentLabel(context.l10n.appSettings_themeDark),
                   ),
                 ],
-                selected: {settingsService.settings.themeMode},
+                // A custom theme sets its own brightness, so no stock mode
+                // is selected while one is active; picking a mode returns
+                // to the stock theme.
+                emptySelectionAllowed: true,
+                selected: settingsService.activeCustomTheme == null
+                    ? {settingsService.settings.themeMode}
+                    : const <String>{},
                 onSelectionChanged: (selection) {
+                  if (selection.isEmpty) return;
                   settingsService.setThemeMode(selection.first);
                 },
               ),
             ],
           ),
+        ),
+        const Divider(height: 1, indent: 16),
+        MeshNavTile(
+          icon: Icons.palette_outlined,
+          title: context.l10n.appSettings_colorTheme,
+          subtitle:
+              settingsService.activeCustomTheme?.name ??
+              context.l10n.themes_default,
+          trailing: settingsService.activeCustomTheme == null
+              ? null
+              : ThemeSwatch(
+                  background: settingsService.activeCustomTheme!.background,
+                  accent: settingsService.activeCustomTheme!.accent,
+                  size: 32,
+                ),
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const ThemesScreen())),
+        ),
+        const Divider(height: 1, indent: 16),
+        SwitchListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 4,
+          ),
+          secondary: const Icon(Icons.celebration_outlined, size: 24),
+          title: Text(context.l10n.appSettings_holidayAnimations),
+          subtitle: Text(context.l10n.appSettings_holidayAnimationsSubtitle),
+          value: settingsService.settings.holidayAnimationsEnabled,
+          onChanged: settingsService.setHolidayAnimationsEnabled,
         ),
         const Divider(height: 1, indent: 16),
         MeshNavTile(
@@ -410,6 +454,20 @@ class AppSettingsScreen extends StatelessWidget {
             horizontal: 16,
             vertical: 4,
           ),
+          secondary: const Icon(Icons.settings_remote_outlined, size: 24),
+          title: Text(context.l10n.appSettings_autoFetchRepeaterSettings),
+          subtitle: Text(
+            context.l10n.appSettings_autoFetchRepeaterSettingsSubtitle,
+          ),
+          value: settingsService.settings.autoFetchRepeaterSettings,
+          onChanged: settingsService.setAutoFetchRepeaterSettings,
+        ),
+        const Divider(height: 1, indent: 16),
+        SwitchListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 4,
+          ),
           secondary: const Icon(Icons.location_searching, size: 24),
           title: Text(context.l10n.appSettings_enableMessageTracing),
           subtitle: Text(context.l10n.appSettings_enableMessageTracingSubtitle),
@@ -476,116 +534,6 @@ class AppSettingsScreen extends StatelessWidget {
                     children: [
                       const Divider(height: 1),
                       ListTile(
-                        title: Text(context.l10n.appSettings_maxRouteWeight),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              context.l10n.appSettings_maxRouteWeightSubtitle,
-                            ),
-                            Slider(
-                              value: settingsService.settings.maxRouteWeight,
-                              min: 1,
-                              max: 10,
-                              divisions: 9,
-                              label: settingsService.settings.maxRouteWeight
-                                  .round()
-                                  .toString(),
-                              onChanged: (value) =>
-                                  settingsService.setMaxRouteWeight(value),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        title: Text(
-                          context.l10n.appSettings_initialRouteWeight,
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              context
-                                  .l10n
-                                  .appSettings_initialRouteWeightSubtitle,
-                            ),
-                            Slider(
-                              value:
-                                  settingsService.settings.initialRouteWeight,
-                              min: 0.5,
-                              max: 5.0,
-                              divisions: 9,
-                              label: settingsService.settings.initialRouteWeight
-                                  .toStringAsFixed(1),
-                              onChanged: (value) =>
-                                  settingsService.setInitialRouteWeight(value),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        title: Text(
-                          context.l10n.appSettings_routeWeightSuccessIncrement,
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              context
-                                  .l10n
-                                  .appSettings_routeWeightSuccessIncrementSubtitle,
-                            ),
-                            Slider(
-                              value: settingsService
-                                  .settings
-                                  .routeWeightSuccessIncrement,
-                              min: 0.1,
-                              max: 2.0,
-                              divisions: 19,
-                              label: settingsService
-                                  .settings
-                                  .routeWeightSuccessIncrement
-                                  .toStringAsFixed(1),
-                              onChanged: (value) => settingsService
-                                  .setRouteWeightSuccessIncrement(value),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        title: Text(
-                          context.l10n.appSettings_routeWeightFailureDecrement,
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              context
-                                  .l10n
-                                  .appSettings_routeWeightFailureDecrementSubtitle,
-                            ),
-                            Slider(
-                              value: settingsService
-                                  .settings
-                                  .routeWeightFailureDecrement,
-                              min: 0.1,
-                              max: 2.0,
-                              divisions: 19,
-                              label: settingsService
-                                  .settings
-                                  .routeWeightFailureDecrement
-                                  .toStringAsFixed(1),
-                              onChanged: (value) => settingsService
-                                  .setRouteWeightFailureDecrement(value),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
                         title: Text(context.l10n.appSettings_maxMessageRetries),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -608,6 +556,38 @@ class AppSettingsScreen extends StatelessWidget {
                             ),
                           ],
                         ),
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
+                        leading: const Icon(Icons.restart_alt, size: 24),
+                        title: Text(
+                          context.l10n.appSettings_resetRoutingToDefault,
+                        ),
+                        subtitle: Text(
+                          context
+                              .l10n
+                              .appSettings_resetRoutingToDefaultSubtitle,
+                        ),
+                        trailing: const Icon(
+                          Icons.keyboard_arrow_right,
+                          size: 18,
+                        ),
+                        onTap: () async {
+                          await settingsService.resetRoutingSettingsToDefault();
+                          if (context.mounted) {
+                            showDismissibleSnackBar(
+                              context,
+                              content: Text(
+                                context.l10n.appSettings_routingResetToDefault,
+                              ),
+                              duration: const Duration(seconds: 2),
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -858,7 +838,7 @@ class AppSettingsScreen extends StatelessWidget {
   ) {
     final textTheme = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    final alreadyHave = codec.availableModels.any((m) => m.id == spec.id);
+    final alreadyHave = spec.hasCompleteInstalledRecord(codec.availableModels);
     // downloadPresetModel throws StateError on a placeholder URL, deliberately,
     // so the button must not be offerable until the weights are published.
     final blocked = spec.urlsArePlaceholders;
@@ -917,7 +897,7 @@ class AppSettingsScreen extends StatelessWidget {
     final l10n = context.l10n;
     try {
       await codec.downloadPresetModel(spec);
-    } on Exception catch (error) {
+    } catch (error) {
       messenger.showSnackBar(
         SnackBar(
           content: Text(l10n.imageMessages_downloadFailedWithError('$error')),
@@ -1076,6 +1056,15 @@ class AppSettingsScreen extends StatelessWidget {
           subtitle: Text(context.l10n.appSettings_showOtherNodesSubtitle),
           value: settings.mapShowOtherNodes,
           onChanged: (value) => settingsService.setMapShowOtherNodes(value),
+        ),
+        const Divider(height: 1, indent: 16),
+        SwitchListTile(
+          contentPadding: tilePadding,
+          secondary: const Icon(Icons.polyline_outlined, size: 24),
+          title: Text(context.l10n.appSettings_showOnlineLinks),
+          subtitle: Text(context.l10n.appSettings_showOnlineLinksSubtitle),
+          value: settings.mapShowOnlineLinks,
+          onChanged: (value) => settingsService.setMapShowOnlineLinks(value),
         ),
         const Divider(height: 1, indent: 16),
         MeshNavTile(
@@ -1418,56 +1407,58 @@ class AppSettingsScreen extends StatelessWidget {
   ) {
     showMeshSheet(
       context,
-      builder: (ctx) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          BottomSheetHeader(title: context.l10n.appSettings_mapTimeFilter),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-            child: Text(context.l10n.appSettings_showNodesDiscoveredWithin),
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_allTime,
-            selected: settingsService.settings.mapTimeFilterHours == 0,
-            onTap: () {
-              settingsService.setMapTimeFilterHours(0);
-              Navigator.pop(ctx);
-            },
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_lastHour,
-            selected: settingsService.settings.mapTimeFilterHours == 1,
-            onTap: () {
-              settingsService.setMapTimeFilterHours(1);
-              Navigator.pop(ctx);
-            },
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_last6Hours,
-            selected: settingsService.settings.mapTimeFilterHours == 6,
-            onTap: () {
-              settingsService.setMapTimeFilterHours(6);
-              Navigator.pop(ctx);
-            },
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_last24Hours,
-            selected: settingsService.settings.mapTimeFilterHours == 24,
-            onTap: () {
-              settingsService.setMapTimeFilterHours(24);
-              Navigator.pop(ctx);
-            },
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_lastWeek,
-            selected: settingsService.settings.mapTimeFilterHours == 168,
-            onTap: () {
-              settingsService.setMapTimeFilterHours(168);
-              Navigator.pop(ctx);
-            },
-          ),
-          SizedBox(height: MediaQuery.paddingOf(ctx).bottom + 8),
-        ],
+      builder: (ctx) => SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BottomSheetHeader(title: context.l10n.appSettings_mapTimeFilter),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+              child: Text(context.l10n.appSettings_showNodesDiscoveredWithin),
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_allTime,
+              selected: settingsService.settings.mapTimeFilterHours == 0,
+              onTap: () {
+                settingsService.setMapTimeFilterHours(0);
+                Navigator.pop(ctx);
+              },
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_lastHour,
+              selected: settingsService.settings.mapTimeFilterHours == 1,
+              onTap: () {
+                settingsService.setMapTimeFilterHours(1);
+                Navigator.pop(ctx);
+              },
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_last6Hours,
+              selected: settingsService.settings.mapTimeFilterHours == 6,
+              onTap: () {
+                settingsService.setMapTimeFilterHours(6);
+                Navigator.pop(ctx);
+              },
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_last24Hours,
+              selected: settingsService.settings.mapTimeFilterHours == 24,
+              onTap: () {
+                settingsService.setMapTimeFilterHours(24);
+                Navigator.pop(ctx);
+              },
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_lastWeek,
+              selected: settingsService.settings.mapTimeFilterHours == 168,
+              onTap: () {
+                settingsService.setMapTimeFilterHours(168);
+                Navigator.pop(ctx);
+              },
+            ),
+            SizedBox(height: MediaQuery.paddingOf(ctx).bottom + 8),
+          ],
+        ),
       ),
     );
   }
@@ -1478,29 +1469,32 @@ class AppSettingsScreen extends StatelessWidget {
   ) {
     showMeshSheet(
       context,
-      builder: (ctx) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          BottomSheetHeader(title: context.l10n.appSettings_unitsTitle),
-          MeshSheetOption(
-            label: context.l10n.appSettings_unitsMetric,
-            selected: settingsService.settings.unitSystem == UnitSystem.metric,
-            onTap: () {
-              settingsService.setUnitSystem(UnitSystem.metric);
-              Navigator.pop(ctx);
-            },
-          ),
-          MeshSheetOption(
-            label: context.l10n.appSettings_unitsImperial,
-            selected:
-                settingsService.settings.unitSystem == UnitSystem.imperial,
-            onTap: () {
-              settingsService.setUnitSystem(UnitSystem.imperial);
-              Navigator.pop(ctx);
-            },
-          ),
-          SizedBox(height: MediaQuery.paddingOf(ctx).bottom + 8),
-        ],
+      builder: (ctx) => SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BottomSheetHeader(title: context.l10n.appSettings_unitsTitle),
+            MeshSheetOption(
+              label: context.l10n.appSettings_unitsMetric,
+              selected:
+                  settingsService.settings.unitSystem == UnitSystem.metric,
+              onTap: () {
+                settingsService.setUnitSystem(UnitSystem.metric);
+                Navigator.pop(ctx);
+              },
+            ),
+            MeshSheetOption(
+              label: context.l10n.appSettings_unitsImperial,
+              selected:
+                  settingsService.settings.unitSystem == UnitSystem.imperial,
+              onTap: () {
+                settingsService.setUnitSystem(UnitSystem.imperial);
+                Navigator.pop(ctx);
+              },
+            ),
+            SizedBox(height: MediaQuery.paddingOf(ctx).bottom + 8),
+          ],
+        ),
       ),
     );
   }
@@ -1627,17 +1621,10 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
                   value: 'deactivated',
                   child: Text(l10n.appSettings_ipfsGatewayDeactivated),
                 ),
-                DropdownMenuItem(
-                  value: 'ipfsio',
-                  child: Text(l10n.appSettings_ipfsGatewayIpfsIo),
-                ),
-                DropdownMenuItem(
-                  value: 'pinata',
-                  child: Text(l10n.appSettings_ipfsGatewayPinata),
-                ),
+                DropdownMenuItem(value: 'pinata', child: const Text('Pinata')),
                 DropdownMenuItem(
                   value: 'filebase',
-                  child: Text(l10n.appSettings_ipfsGatewayFilebase),
+                  child: const Text('Filebase'),
                 ),
                 DropdownMenuItem(
                   value: 'custom',
@@ -1668,13 +1655,10 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
                 labelText: l10n.appSettings_uploadIpfsProvider,
               ),
               items: [
-                DropdownMenuItem(
-                  value: 'pinata',
-                  child: Text(l10n.appSettings_ipfsGatewayPinata),
-                ),
+                DropdownMenuItem(value: 'pinata', child: const Text('Pinata')),
                 DropdownMenuItem(
                   value: 'filebase',
-                  child: Text(l10n.appSettings_ipfsGatewayFilebase),
+                  child: const Text('Filebase'),
                 ),
                 DropdownMenuItem(
                   value: 'custom',
@@ -1797,10 +1781,6 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
 
   String _gatewayPreset(String value) {
     if (value.isEmpty) return 'deactivated';
-    if (value == AppSettings.defaultPublicIpfsGateway ||
-        value == 'https://ipfs.io/ipfs') {
-      return 'ipfsio';
-    }
     if (value == 'https://gateway.pinata.cloud/ipfs/' ||
         value == 'https://gateway.pinata.cloud/ipfs') {
       return 'pinata';
@@ -1816,8 +1796,6 @@ class _IpfsImageLinksDialogState extends State<_IpfsImageLinksDialog> {
     switch (preset) {
       case 'deactivated':
         return '';
-      case 'ipfsio':
-        return AppSettings.defaultPublicIpfsGateway;
       case 'pinata':
         return 'https://gateway.pinata.cloud/ipfs/';
       case 'filebase':
@@ -1917,6 +1895,7 @@ class _MapApiKeyDialogState extends State<_MapApiKeyDialog> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return AlertDialog(
+      scrollable: true,
       title: Text(l10n.appSettings_stadiaApiKey),
       content: SizedBox(
         width: 420,

@@ -16,10 +16,14 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 9.5.0+19
+version: 99.0.3+29
 
 environment:
   sdk: ^3.9.2
+  # Everyone builds with this exact Flutter release; pub get refuses others.
+  # CI reads it via flutter-version-file. Keep scripts/appimage-tools.json in
+  # step when changing it.
+  flutter: 3.47.9
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -46,6 +50,9 @@ dependencies:
   ffi: ^2.1.3            # calloc.free for flserial's native I/O buffers
   provider: ^6.1.5+1
   shared_preferences: ^2.2.2
+  shared_preferences_platform_interface: ^2.4.2
+  sqflite: ^2.4.5
+  sqflite_common_ffi: ^2.4.0
   uuid: ^4.3.3
   flutter_map: ^8.3.2
   latlong2: ^0.9.1
@@ -60,6 +67,7 @@ dependencies:
   package_info_plus: ^10.2.2
   mobile_scanner: ^7.4.2  # QR/barcode scanning
   image_picker: ^1.1.2    # Pick photos to send as compressed mesh images
+  koni_jxl_flutter: ^0.1.4 # Chat background pictures stored as JPEG XL
   qr_flutter: ^4.1.0      # QR code generation
   url_launcher: ^6.3.0    # Launch URLs in system browser
   flutter_linkify: ^6.0.0 # Auto-detect and linkify URLs in text
@@ -89,6 +97,8 @@ dependencies:
 hooks:
   user_defines:
     llamadart:
+      # Translation uses llama.cpp. LiteRT-LM is unused and requires iOS 26.4.
+      llamadart_native_runtimes: [llama_cpp]
       llamadart_native_backends:
         platforms:
           android-arm64:
@@ -124,6 +134,10 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/fonts/
+    - assets/themes/halloween/
+    - assets/themes/thanksgiving/
+    - assets/themes/christmas/
+    - assets/themes/new_year/
 
   fonts:
     - family: Inter

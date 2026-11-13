@@ -1,3 +1,4 @@
+import 'custom_theme.dart';
 import 'image_codec_support.dart';
 import 'translation_support.dart';
 
@@ -94,12 +95,22 @@ class Cyr2LatProfile {
 class AppSettings {
   static const Object _unset = Object();
   static const String stadiaDemo = '51bd0381-4685-4666-bae8-48940f6d77c0';
-  static const String defaultPublicIpfsGateway = 'https://ipfs.io/ipfs/';
+  static const String defaultPublicIpfsGateway =
+      'https://ipfs.filebase.io/ipfs/';
+
+  // Routing algorithm default values
+  static const double defaultMaxRouteWeight = 5.0;
+  static const double defaultInitialRouteWeight = 3.0;
+  static const double defaultRouteWeightSuccessIncrement = 0.5;
+  static const double defaultRouteWeightFailureDecrement = 0.2;
+  static const int defaultMaxMessageRetries = 5;
 
   final bool clearPathOnMaxRetry;
   final bool mapShowRepeaters;
   final bool mapShowChatNodes;
   final bool mapShowOtherNodes;
+  final bool mapShowOnlineLinks;
+  final bool mapUseOnlineMapForPaths;
   final bool mapShowOverlaps;
   final double mapTimeFilterHours; // 0 = all time
   final bool mapKeyPrefixEnabled;
@@ -135,6 +146,25 @@ class AppSettings {
   /// different first-hop repeaters also satisfies the channel resend.
   final bool channelMinHopsCountRepeaters;
   final String themeMode;
+
+  /// Themes the user made. Built-in presets live in [CustomTheme.presets].
+  final List<CustomTheme> customThemes;
+
+  /// ID of the active custom or preset theme; null uses the stock theme with
+  /// [themeMode].
+  final String? activeThemeId;
+
+  /// Play a short animation for holiday greetings ("Happy Halloween", ...).
+  final bool holidayAnimationsEnabled;
+
+  /// Show each holiday's theme automatically in the days before it (see
+  /// `activeHolidayFor`), without changing [activeThemeId].
+  final bool holidayAutoSwitch;
+
+  /// Occurrence key (`ActiveHoliday.occurrenceKey`) of the holiday whose
+  /// automatic theme the user overrode by picking a theme themselves. Only
+  /// that occurrence is skipped; the next holiday switches again.
+  final String? holidayThemeDismissed;
   final String? languageOverride; // null = system default
   final bool appDebugLogEnabled;
   final Map<String, String> batteryChemistryByDeviceId;
@@ -146,6 +176,7 @@ class AppSettings {
   final String tcpServerAddress;
   final int tcpServerPort;
   final bool jumpToOldestUnread;
+  final bool autoFetchRepeaterSettings;
   final bool imageMessagesEnabled;
 
   /// Master switch for fetching images behind links in messages.
@@ -232,6 +263,8 @@ class AppSettings {
     this.mapShowRepeaters = true,
     this.mapShowChatNodes = true,
     this.mapShowOtherNodes = true,
+    this.mapShowOnlineLinks = true,
+    this.mapUseOnlineMapForPaths = false,
     this.mapShowOverlaps = false,
     this.mapTimeFilterHours = 168,
     this.mapKeyPrefixEnabled = false,
@@ -254,16 +287,21 @@ class AppSettings {
     this.autoSendZeroHopAdvertOnGpsUpdate = false,
     this.gpsIntervalSeconds = 900,
     this.autoRouteRotationEnabled = true,
-    this.maxRouteWeight = 5.0,
-    this.initialRouteWeight = 3.0,
-    this.routeWeightSuccessIncrement = 0.5,
-    this.routeWeightFailureDecrement = 0.2,
-    this.maxMessageRetries = 5,
+    this.maxRouteWeight = defaultMaxRouteWeight,
+    this.initialRouteWeight = defaultInitialRouteWeight,
+    this.routeWeightSuccessIncrement = defaultRouteWeightSuccessIncrement,
+    this.routeWeightFailureDecrement = defaultRouteWeightFailureDecrement,
+    this.maxMessageRetries = defaultMaxMessageRetries,
     this.channelMinHopsEnabled = false,
     this.channelMinHops = 2,
     this.channelMinHopsRetries = 1,
     this.channelMinHopsCountRepeaters = false,
     this.themeMode = 'system',
+    this.customThemes = const [],
+    this.activeThemeId,
+    this.holidayAnimationsEnabled = true,
+    this.holidayAutoSwitch = true,
+    this.holidayThemeDismissed,
     this.languageOverride,
     this.appDebugLogEnabled = false,
     Map<String, String>? batteryChemistryByDeviceId,
@@ -275,6 +313,7 @@ class AppSettings {
     this.tcpServerAddress = '',
     this.tcpServerPort = 0,
     this.jumpToOldestUnread = false,
+    this.autoFetchRepeaterSettings = false,
     this.networkMapUploadEnabled = false,
     this.networkMapPromptShown = false,
     this.loadLinkImages = true,
@@ -321,6 +360,8 @@ class AppSettings {
       'map_show_repeaters': mapShowRepeaters,
       'map_show_chat_nodes': mapShowChatNodes,
       'map_show_other_nodes': mapShowOtherNodes,
+      'map_show_online_links': mapShowOnlineLinks,
+      'map_use_online_map_for_paths': mapUseOnlineMapForPaths,
       'map_show_overlaps': mapShowOverlaps,
       'map_time_filter_hours': mapTimeFilterHours,
       'map_key_prefix_enabled': mapKeyPrefixEnabled,
@@ -354,6 +395,11 @@ class AppSettings {
       'channel_min_hops_retries': channelMinHopsRetries,
       'channel_min_hops_count_repeaters': channelMinHopsCountRepeaters,
       'theme_mode': themeMode,
+      'custom_themes': customThemes.map((t) => t.toJson()).toList(),
+      'active_theme_id': activeThemeId,
+      'holiday_animations_enabled': holidayAnimationsEnabled,
+      'holiday_auto_switch': holidayAutoSwitch,
+      'holiday_theme_dismissed': holidayThemeDismissed,
       'language_override': languageOverride,
       'app_debug_log_enabled': appDebugLogEnabled,
       'battery_chemistry_by_device_id': batteryChemistryByDeviceId,
@@ -372,6 +418,7 @@ class AppSettings {
       'tcp_server_address': tcpServerAddress,
       'tcp_server_port': tcpServerPort,
       'jump_to_oldest_unread': jumpToOldestUnread,
+      'auto_fetch_repeater_settings': autoFetchRepeaterSettings,
       'network_map_upload_enabled': networkMapUploadEnabled,
       'network_map_prompt_shown': networkMapPromptShown,
       'load_link_images': loadLinkImages,
@@ -447,6 +494,9 @@ class AppSettings {
       mapShowRepeaters: json['map_show_repeaters'] as bool? ?? true,
       mapShowChatNodes: json['map_show_chat_nodes'] as bool? ?? true,
       mapShowOtherNodes: json['map_show_other_nodes'] as bool? ?? true,
+      mapShowOnlineLinks: json['map_show_online_links'] as bool? ?? true,
+      mapUseOnlineMapForPaths:
+          json['map_use_online_map_for_paths'] as bool? ?? false,
       mapShowOverlaps: json['map_show_overlaps'] as bool? ?? false,
       mapTimeFilterHours:
           (json['map_time_filter_hours'] as num?)?.toDouble() ?? 168,
@@ -477,20 +527,38 @@ class AppSettings {
           (json['gps_interval_seconds'] as num?)?.toInt() ?? 900,
       autoRouteRotationEnabled:
           json['auto_route_rotation_enabled'] as bool? ?? true,
-      maxRouteWeight: (json['max_route_weight'] as num?)?.toDouble() ?? 5.0,
+      maxRouteWeight:
+          (json['max_route_weight'] as num?)?.toDouble() ??
+          defaultMaxRouteWeight,
       initialRouteWeight:
-          (json['initial_route_weight'] as num?)?.toDouble() ?? 3.0,
+          (json['initial_route_weight'] as num?)?.toDouble() ??
+          defaultInitialRouteWeight,
       routeWeightSuccessIncrement:
-          (json['route_weight_success_increment'] as num?)?.toDouble() ?? 0.5,
+          (json['route_weight_success_increment'] as num?)?.toDouble() ??
+          defaultRouteWeightSuccessIncrement,
       routeWeightFailureDecrement:
-          (json['route_weight_failure_decrement'] as num?)?.toDouble() ?? 0.2,
-      maxMessageRetries: json['max_message_retries'] as int? ?? 5,
+          (json['route_weight_failure_decrement'] as num?)?.toDouble() ??
+          defaultRouteWeightFailureDecrement,
+      maxMessageRetries:
+          json['max_message_retries'] as int? ?? defaultMaxMessageRetries,
       channelMinHopsEnabled: json['channel_min_hops_enabled'] as bool? ?? false,
       channelMinHops: json['channel_min_hops'] as int? ?? 2,
       channelMinHopsRetries: json['channel_min_hops_retries'] as int? ?? 1,
       channelMinHopsCountRepeaters:
           json['channel_min_hops_count_repeaters'] as bool? ?? false,
       themeMode: json['theme_mode'] as String? ?? 'system',
+      customThemes:
+          (json['custom_themes'] as List<dynamic>?)
+              ?.whereType<Map>()
+              .map((e) => CustomTheme.fromJson(Map<String, dynamic>.from(e)))
+              .where((t) => t.id.isNotEmpty)
+              .toList() ??
+          const [],
+      activeThemeId: json['active_theme_id'] as String?,
+      holidayAnimationsEnabled:
+          json['holiday_animations_enabled'] as bool? ?? true,
+      holidayAutoSwitch: json['holiday_auto_switch'] as bool? ?? true,
+      holidayThemeDismissed: json['holiday_theme_dismissed'] as String?,
       languageOverride: json['language_override'] as String?,
       appDebugLogEnabled: json['app_debug_log_enabled'] as bool? ?? false,
       batteryChemistryByDeviceId:
@@ -512,6 +580,8 @@ class AppSettings {
       tcpServerAddress: json['tcp_server_address'] as String? ?? '',
       tcpServerPort: json['tcp_server_port'] as int? ?? 0,
       jumpToOldestUnread: json['jump_to_oldest_unread'] as bool? ?? false,
+      autoFetchRepeaterSettings:
+          json['auto_fetch_repeater_settings'] as bool? ?? false,
       networkMapUploadEnabled:
           json['network_map_upload_enabled'] as bool? ?? false,
       networkMapPromptShown: json['network_map_prompt_shown'] as bool? ?? false,
@@ -600,6 +670,8 @@ class AppSettings {
     bool? mapShowRepeaters,
     bool? mapShowChatNodes,
     bool? mapShowOtherNodes,
+    bool? mapShowOnlineLinks,
+    bool? mapUseOnlineMapForPaths,
     bool? mapShowOverlaps,
     double? mapTimeFilterHours,
     bool? mapKeyPrefixEnabled,
@@ -632,6 +704,11 @@ class AppSettings {
     int? channelMinHopsRetries,
     bool? channelMinHopsCountRepeaters,
     String? themeMode,
+    List<CustomTheme>? customThemes,
+    Object? activeThemeId = _unset,
+    bool? holidayAnimationsEnabled,
+    bool? holidayAutoSwitch,
+    Object? holidayThemeDismissed = _unset,
     Object? languageOverride = _unset,
     bool? appDebugLogEnabled,
     Map<String, String>? batteryChemistryByDeviceId,
@@ -643,6 +720,7 @@ class AppSettings {
     String? tcpServerAddress,
     int? tcpServerPort,
     bool? jumpToOldestUnread,
+    bool? autoFetchRepeaterSettings,
     bool? networkMapUploadEnabled,
     bool? networkMapPromptShown,
     bool? loadLinkImages,
@@ -673,6 +751,9 @@ class AppSettings {
       mapShowRepeaters: mapShowRepeaters ?? this.mapShowRepeaters,
       mapShowChatNodes: mapShowChatNodes ?? this.mapShowChatNodes,
       mapShowOtherNodes: mapShowOtherNodes ?? this.mapShowOtherNodes,
+      mapShowOnlineLinks: mapShowOnlineLinks ?? this.mapShowOnlineLinks,
+      mapUseOnlineMapForPaths:
+          mapUseOnlineMapForPaths ?? this.mapUseOnlineMapForPaths,
       mapShowOverlaps: mapShowOverlaps ?? this.mapShowOverlaps,
       mapTimeFilterHours: mapTimeFilterHours ?? this.mapTimeFilterHours,
       mapKeyPrefixEnabled: mapKeyPrefixEnabled ?? this.mapKeyPrefixEnabled,
@@ -719,6 +800,16 @@ class AppSettings {
       channelMinHopsCountRepeaters:
           channelMinHopsCountRepeaters ?? this.channelMinHopsCountRepeaters,
       themeMode: themeMode ?? this.themeMode,
+      customThemes: customThemes ?? this.customThemes,
+      activeThemeId: activeThemeId == _unset
+          ? this.activeThemeId
+          : activeThemeId as String?,
+      holidayAnimationsEnabled:
+          holidayAnimationsEnabled ?? this.holidayAnimationsEnabled,
+      holidayAutoSwitch: holidayAutoSwitch ?? this.holidayAutoSwitch,
+      holidayThemeDismissed: holidayThemeDismissed == _unset
+          ? this.holidayThemeDismissed
+          : holidayThemeDismissed as String?,
       languageOverride: languageOverride == _unset
           ? this.languageOverride
           : languageOverride as String?,
@@ -737,6 +828,8 @@ class AppSettings {
       tcpServerAddress: tcpServerAddress ?? this.tcpServerAddress,
       tcpServerPort: tcpServerPort ?? this.tcpServerPort,
       jumpToOldestUnread: jumpToOldestUnread ?? this.jumpToOldestUnread,
+      autoFetchRepeaterSettings:
+          autoFetchRepeaterSettings ?? this.autoFetchRepeaterSettings,
       networkMapUploadEnabled:
           networkMapUploadEnabled ?? this.networkMapUploadEnabled,
       networkMapPromptShown:

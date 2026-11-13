@@ -4,6 +4,8 @@
 
 The Map feature is a full-featured node-location visualization and radio-planning tool built on OpenStreetMap tiles. It is one of the three primary views accessible from the QuickSwitchBar.
 
+The colors and markers below describe the standard theme. A custom, preset, or holiday theme recolors the map panels and accent, tints the tiles, and can replace the node and self-location markers; see [Themes](themes.md#map).
+
 ## How to Access
 
 - **QuickSwitchBar tab 2** (rightmost) from Contacts or Channels
@@ -79,10 +81,24 @@ In a mesh network, every message hops through one or more repeaters on its way t
 Standard pinch-to-zoom (range 2–18). Initial camera position is calculated from the statistical spread of all plotted points.
 
 ### Tap on a Node Marker
-Opens a dialog showing: type, path (hop chain), coordinates, last-seen time, and public key. Action buttons vary by type:
+Opens a card at the bottom of the map showing the node's status, type, last-seen time, path, node ID, and coordinates, with buttons to center on the node or close the card. Action buttons vary by type:
 - **Chat nodes**: "Open Chat"
 - **Repeaters**: "Manage Repeater"
-- **Rooms**: "Join Room"
+- **Rooms**: "Join Room" and "Manage Server"
+- **Chat nodes and sensors in your contacts**: "Update location" (see below)
+- **All nodes**: "Details" opens the full node info sheet
+
+### Update Location
+**Update location** asks the node for its telemetry. If the reply includes a GPS position, the marker moves there right away and the last-seen time updates; a snackbar confirms it. You can also refresh a node's position from its Telemetry screen: any telemetry reply with a GPS position updates the map the same way.
+
+The node decides whether to include its position:
+- **Companion radios** only include a position if they have a working GPS module and their owner allows location in telemetry, for everyone or only for favourites (**Settings → Privacy → Telemetry Location Mode**). A companion without GPS hardware never sends one, even if its adverts carry a manually set location. The app then says the node replied without a location.
+- **Sensors** include their position (if they have GPS) for any client they accept, including guests. A sensor only answers clients it knows, so you may need to log in to it first.
+- **Repeaters and rooms** only send their position to logged-in admins, so the button isn't shown for them. Their position normally comes from their adverts.
+
+If the node doesn't answer before the request times out, the app says there was no reply. The node has to be in your contacts (not only discovered) for the button to appear.
+
+A telemetry position stays on the map until the node sends a newer advert, which then replaces it. Refreshing or re-syncing the contact list from the radio keeps it.
 
 ### Long-Press on Empty Map Area
 Shows a bottom sheet with:
@@ -104,6 +120,7 @@ Shows node count and pin count. Tappable to expand a legend of all marker types.
 
 ### How to Access
 - From the main map's menu → **Path Trace** (build your own route, see below)
+- From the Contacts or map menu → **Path trace by hashes** (type the hops, see below)
 - From a contact's long-press menu → "Path Trace / Ping"
 - From a message's path view → radar icon
 
@@ -114,6 +131,14 @@ Shows node count and pin count. Tappable to expand a legend of all marker types.
 4. Tap **Run path trace**. Nothing is sent until you press this button.
 
 Returning from the result keeps your hops, mode and the last result (**View last result** reopens it without sending again). **Close** or the back button hides the panel without discarding the hops; reopening **Path Trace** during the same session resumes where you left off. The hops are dropped when you connect to a different radio.
+
+### Tracing by Typed Hashes
+Nodes without a location can't be tapped on the map, so **Path trace by hashes** (Contacts menu, map menu, or **Enter hashes** in the map's trace panel, which prefills the hops already picked) lets you type them instead:
+1. Enter the hop prefixes in order, e.g. `A1,B2,C3`. Commas, spaces, `>`, `→`, `-` or `/` separate hops; 2, 4 or 6 hex characters give 1-, 2- or 3-byte hops (all hops must be the same width). A continuous string is split by the radio's current path hash size.
+2. Each hop is listed with the known repeaters or rooms whose key starts with it, or "Unknown node".
+3. Choose **Round trip** or **As entered**, then tap **Run path trace**. The result opens on the path trace map; hops without a location are listed but not drawn. 3-byte hops are traced as 4-byte key prefixes, so they must belong to known contacts.
+
+The typed hops and mode are kept for the app session.
 
 ### What the User Sees
 A map with a polyline showing the route from your node through repeater hops to the target:
@@ -159,6 +184,15 @@ A full-screen map with a draggable bottom sheet containing:
 
 ## Offline Map Cache
 
+Linux and Windows keep the tile index in SQLite, so opening a large offline map
+does not load every tile's metadata into memory. Existing JSON indexes migrate
+automatically on first use; downloaded tile files and the cache limit are
+preserved. The old index is removed only after its replacement is committed.
+Unreadable records are skipped, and an index that contained any is kept beside
+the database with an `.unreadable` suffix instead of being deleted.
+The database and import marker are versioned, so a completed migration is not
+repeated and an older app does not downgrade a newer database.
+
 ### How to Access
 Settings → App Settings → Map Display → Offline Map Cache
 
@@ -201,6 +235,7 @@ The phone's own GPS is **never used**. All location data comes from the mesh:
 
 1. **Device self-location**: Read from firmware device-info response. Set manually in Settings → Location, or updated automatically if the device has a GPS module.
 2. **Remote node locations**: Extracted from advertisement packets received over the mesh. Encoded as integer lat/lon × 1,000,000.
+3. **Telemetry replies**: A GPS position in a node's telemetry (from **Update location** or the Telemetry screen) replaces its advert position until the node adverts again. Telemetry positions have about 11 m precision (Cayenne LPP).
 
 ## Regions and offline use
 

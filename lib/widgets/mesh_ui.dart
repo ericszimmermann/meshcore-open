@@ -1,17 +1,20 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import '../l10n/l10n.dart';
 import '../theme/mesh_theme.dart';
+import '../theme/theme_icons.dart';
 
 /// MeshCore shared design kit.
 ///
 /// Building blocks used across all screens so the app reads as one product:
 /// [SectionHeader], [MeshCard], [StatusChip], [StatTile], [AvatarCircle],
 /// [SignalBars], [RouteChip], [PulseDot], [BottomSheetHeader] +
-/// [showMeshSheet], [ErrorRetryCard], and [ListEntrance].
+/// [showMeshSheet], [ErrorRetryCard], [ListEntrance], [MeshSegmentLabel]
+/// and [MeshMenuItemRow].
 
 /// Small-caps mono section label, optionally with a trailing widget.
 class SectionHeader extends StatelessWidget {
@@ -106,6 +109,46 @@ class MeshCard extends StatelessWidget {
 }
 
 /// Tinted pill chip for statuses: a dot or icon plus a short label.
+/// Contrast ratio between two opaque colors (WCAG definition).
+double meshContrastRatio(Color a, Color b) {
+  final la = a.computeLuminance();
+  final lb = b.computeLuminance();
+  return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05);
+}
+
+/// [accent] darkened (on light backgrounds) or lightened (on dark ones) until
+/// it reaches [minContrast] against [background]. WCAG asks 4.5 for text and
+/// 3 for icons. Accents such as amber are bright enough for the dark theme but
+/// unreadable on their own pale tint in the light theme.
+Color readableAccent(
+  Color accent,
+  Color background, {
+  double minContrast = 4.5,
+}) {
+  if (meshContrastRatio(accent, background) >= minContrast) return accent;
+  final darken = background.computeLuminance() > 0.18;
+  final hsl = HSLColor.fromColor(accent);
+  for (var step = 1; step <= 20; step++) {
+    final lightness = (hsl.lightness + (darken ? -0.05 : 0.05) * step).clamp(
+      0.0,
+      1.0,
+    );
+    final candidate = hsl.withLightness(lightness).toColor();
+    if (meshContrastRatio(candidate, background) >= minContrast) {
+      return candidate;
+    }
+  }
+  return darken ? Colors.black : Colors.white;
+}
+
+/// The background of a [tint] alpha wash of [accent] drawn on a card.
+Color _tintedCardBackground(BuildContext context, Color accent, double tint) {
+  return Color.alphaBlend(
+    accent.withValues(alpha: tint),
+    Theme.of(context).colorScheme.surfaceContainerLow,
+  );
+}
+
 class StatusChip extends StatelessWidget {
   final String label;
   final Color color;
@@ -124,6 +167,11 @@ class StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The label uses the normal text color: colored text on a tint of the
+    // same color is hard to read. The icon or dot carries the color, adjusted
+    // to stay visible on the tint.
+    final background = _tintedCardBackground(context, color, 0.12);
+    final markColor = readableAccent(color, background, minContrast: 3);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(
@@ -135,9 +183,9 @@ class StatusChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null)
-            Icon(icon, size: fontSize + 2, color: color)
+            Icon(icon, size: fontSize + 2, color: markColor)
           else
-            PulseDot(color: color, size: 7, animate: pulse),
+            PulseDot(color: markColor, size: 7, animate: pulse),
           const SizedBox(width: 5),
           Flexible(
             child: Text(
@@ -147,7 +195,7 @@ class StatusChip extends StatelessWidget {
               style: MeshTheme.mono(
                 fontSize: fontSize,
                 fontWeight: FontWeight.w600,
-                color: color,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
@@ -197,7 +245,7 @@ class StatTile extends StatelessWidget {
                   label.toUpperCase(),
                   style: MeshTheme.accentLabel(
                     color: scheme.onSurfaceVariant,
-                    fontSize: 12,
+                    fontSize: 14,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -206,30 +254,26 @@ class StatTile extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 6),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: AlignmentDirectional.centerStart,
-            child: Text.rich(
-              TextSpan(
-                text: value,
-                style: MeshTheme.mono(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: scheme.onSurface,
-                ),
-                children: [
-                  if (unit != null)
-                    TextSpan(
-                      text: ' $unit',
-                      style: MeshTheme.mono(
-                        fontSize: 12,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                    ),
-                ],
+          Text.rich(
+            TextSpan(
+              text: value,
+              style: MeshTheme.mono(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: scheme.onSurface,
               ),
-              maxLines: 1,
+              children: [
+                if (unit != null)
+                  TextSpan(
+                    text: ' $unit',
+                    style: MeshTheme.mono(
+                      fontSize: 12,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+              ],
             ),
+            softWrap: true,
           ),
         ],
       ),
@@ -238,12 +282,14 @@ class StatTile extends StatelessWidget {
 }
 
 /// Initials avatar with a deterministic per-name hue, or a fixed [color]
-/// for node-type coloring. Optional [icon] replaces initials.
+/// for node-type coloring. Optional [icon] or themeable [iconSlot] replaces
+/// initials.
 class AvatarCircle extends StatelessWidget {
   final String name;
   final double size;
   final Color? color;
   final IconData? icon;
+  final ThemeIconSlot? iconSlot;
 
   const AvatarCircle({
     super.key,
@@ -251,6 +297,7 @@ class AvatarCircle extends StatelessWidget {
     this.size = 40,
     this.color,
     this.icon,
+    this.iconSlot,
   });
 
   static const _hues = [
@@ -274,6 +321,30 @@ class AvatarCircle extends StatelessWidget {
   Widget build(BuildContext context) {
     final accent = color ?? _colorFor(name);
     final initials = _initials(name);
+    final background = _tintedCardBackground(context, accent, 0.14);
+    // A theme picture (e.g. a holiday marker) fills the whole circle, the
+    // same as on the map, rather than sitting small inside the tint.
+    final picture = iconSlot == null
+        ? null
+        : themePictureOf(MeshIconTheme.of(context)[iconSlot!]);
+    if (picture != null) {
+      return SizedBox.square(
+        dimension: size,
+        child: ClipOval(
+          child: Image(
+            image: picture,
+            fit: BoxFit.cover,
+            gaplessPlayback: true,
+            filterQuality: FilterQuality.medium,
+            errorBuilder: (_, _, _) => Icon(
+              iconSlot!.icon,
+              size: size * 0.5,
+              color: readableAccent(accent, background, minContrast: 3),
+            ),
+          ),
+        ),
+      );
+    }
     return Container(
       width: size,
       height: size,
@@ -283,14 +354,24 @@ class AvatarCircle extends StatelessWidget {
         border: Border.all(color: accent.withValues(alpha: 0.4)),
       ),
       alignment: Alignment.center,
-      child: icon != null
-          ? Icon(icon, size: size * 0.5, color: accent)
+      child: iconSlot != null
+          ? ThemedIcon(
+              iconSlot!,
+              size: size * 0.55,
+              color: readableAccent(accent, background, minContrast: 3),
+            )
+          : icon != null
+          ? Icon(
+              icon,
+              size: size * 0.5,
+              color: readableAccent(accent, background, minContrast: 3),
+            )
           : Text(
               initials,
               style: MeshTheme.mono(
                 fontSize: size * 0.36,
                 fontWeight: FontWeight.w700,
-                color: accent,
+                color: readableAccent(accent, background),
               ),
             ),
     );
@@ -668,5 +749,312 @@ class _ListEntranceState extends State<ListEntrance>
         child: widget.child,
       ),
     );
+  }
+}
+
+/// Contents of a [PopupMenuItem]: a 20px icon, a 12px gap and a label that
+/// wraps to at most [maxLines] lines and then ends in an ellipsis, so long
+/// translations are never clipped at the menu edge.
+///
+/// Pass an [icon], or a [leading] widget for custom icons (sized 20). With
+/// neither, a 20px gap keeps the label aligned with rows that have one.
+/// [color] tints icon and label (e.g. red for a destructive action);
+/// [iconColor] tints only the icon. [selected] bolds the label, for menus
+/// that mark the current choice.
+class MeshMenuItemRow extends StatelessWidget {
+  final IconData? icon;
+  final Widget? leading;
+  final String label;
+  final Color? color;
+  final Color? iconColor;
+  final bool selected;
+  final int maxLines;
+
+  const MeshMenuItemRow({
+    super.key,
+    this.icon,
+    this.leading,
+    required this.label,
+    this.color,
+    this.iconColor,
+    this.selected = false,
+    this.maxLines = 2,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveIconColor = iconColor ?? color;
+    return Row(
+      children: [
+        IconTheme.merge(
+          data: IconThemeData(size: 20, color: effectiveIconColor),
+          child: SizedBox(
+            width: 20,
+            child:
+                leading ??
+                (icon == null
+                    ? null
+                    : Icon(icon, size: 20, color: effectiveIconColor)),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Flexible(
+          child: Text(
+            label,
+            maxLines: maxLines,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: color,
+              fontWeight: selected ? FontWeight.bold : null,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Label for a [ButtonSegment] that never breaks a word in the middle.
+///
+/// Uses the button's text style. If the label does not fit on one line it is
+/// scaled down, but not below [minFontSize] (before the user's text scale).
+/// Below that, a multi-word label wraps at word boundaries onto up to
+/// [maxLines] centred lines, shrunk just enough for its longest word to fit.
+/// A single word that still does not fit keeps shrinking on one line, as
+/// splitting or clipping it would be harder to read than smaller text.
+class MeshSegmentLabel extends LeafRenderObjectWidget {
+  final String text;
+  final double minFontSize;
+  final int maxLines;
+
+  const MeshSegmentLabel(
+    this.text, {
+    super.key,
+    this.minFontSize = 12,
+    this.maxLines = 2,
+  });
+
+  TextStyle _style(BuildContext context) {
+    final style = DefaultTextStyle.of(context).style;
+    return MediaQuery.boldTextOf(context)
+        ? style.merge(const TextStyle(fontWeight: FontWeight.bold))
+        : style;
+  }
+
+  @override
+  RenderObject createRenderObject(BuildContext context) {
+    return _RenderSegmentLabel(
+      text: text,
+      style: _style(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      textDirection: Directionality.of(context),
+      minFontSize: minFontSize,
+      maxLines: maxLines,
+    );
+  }
+
+  @override
+  void updateRenderObject(BuildContext context, RenderObject renderObject) {
+    (renderObject as _RenderSegmentLabel)
+      ..text = text
+      ..style = _style(context)
+      ..textScaler = MediaQuery.textScalerOf(context)
+      ..textDirection = Directionality.of(context)
+      ..minFontSize = minFontSize
+      ..maxLines = maxLines;
+  }
+}
+
+class _RenderSegmentLabel extends RenderBox {
+  _RenderSegmentLabel({
+    required String text,
+    required TextStyle style,
+    required TextScaler textScaler,
+    required TextDirection textDirection,
+    required double minFontSize,
+    required int maxLines,
+  }) : _text = text,
+       _style = style,
+       _textScaler = textScaler,
+       _textDirection = textDirection,
+       _minFontSize = minFontSize,
+       _maxLines = maxLines;
+
+  final TextPainter _painter = TextPainter(textAlign: TextAlign.center);
+
+  String _text;
+  set text(String value) {
+    if (value == _text) return;
+    _text = value;
+    markNeedsLayout();
+    markNeedsSemanticsUpdate();
+  }
+
+  TextStyle _style;
+  set style(TextStyle value) {
+    if (value == _style) return;
+    _style = value;
+    // Layout even for a colour-only change: the painter takes the new style
+    // (the selected or disabled colour) in _fit, not in paint.
+    markNeedsLayout();
+  }
+
+  @visibleForTesting
+  Color? get debugPaintedColor => _painter.text?.style?.color;
+
+  TextScaler _textScaler;
+  set textScaler(TextScaler value) {
+    if (value == _textScaler) return;
+    _textScaler = value;
+    markNeedsLayout();
+  }
+
+  TextDirection _textDirection;
+  set textDirection(TextDirection value) {
+    if (value == _textDirection) return;
+    _textDirection = value;
+    markNeedsLayout();
+    markNeedsSemanticsUpdate();
+  }
+
+  double _minFontSize;
+  set minFontSize(double value) {
+    if (value == _minFontSize) return;
+    _minFontSize = value;
+    markNeedsLayout();
+  }
+
+  int _maxLines;
+  set maxLines(int value) {
+    if (value == _maxLines) return;
+    _maxLines = value;
+    markNeedsLayout();
+  }
+
+  double get _fontSize => _style.fontSize ?? 14;
+
+  /// [_textScaler] further multiplied by [factor].
+  TextScaler _scaled(double factor) {
+    if (factor >= 1) return _textScaler;
+    return TextScaler.linear(_textScaler.scale(_fontSize) * factor / _fontSize);
+  }
+
+  double _lineWidth(TextPainter painter, String text, TextScaler scaler) {
+    painter
+      ..text = TextSpan(text: text, style: _style)
+      ..textDirection = _textDirection
+      ..textScaler = scaler
+      ..maxLines = 1
+      ..ellipsis = null
+      ..layout();
+    return painter.width;
+  }
+
+  /// Configures [painter] for [maxWidth] and lays it out.
+  void _fit(TextPainter painter, double maxWidth) {
+    final full = _lineWidth(painter, _text, _textScaler);
+    var factor = 1.0;
+    var lines = 1;
+    if (full > maxWidth) {
+      // A little slack: glyph metrics do not scale exactly linearly.
+      final fitFactor = maxWidth / full * 0.98;
+      final floor = math.min(1.0, _minFontSize / _fontSize);
+      final words = _text.trim().split(RegExp(r'\s+'));
+      if (fitFactor >= floor || words.length < 2) {
+        factor = fitFactor;
+      } else {
+        final longest = words
+            .map((w) => _lineWidth(painter, w, _textScaler))
+            .reduce(math.max);
+        factor = math.min(1.0, maxWidth / longest * 0.98);
+        lines = _maxLines;
+      }
+    }
+    painter
+      ..text = TextSpan(text: _text, style: _style)
+      ..textDirection = _textDirection
+      ..textScaler = _scaled(factor)
+      ..maxLines = lines
+      ..ellipsis = '\u2026'
+      ..layout(maxWidth: maxWidth);
+  }
+
+  double _intrinsicHeight(double width) {
+    final painter = TextPainter(textAlign: TextAlign.center);
+    _fit(painter, width);
+    final height = painter.height;
+    painter.dispose();
+    return height;
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) {
+    final painter = TextPainter();
+    final floor = math.min(1.0, _minFontSize / _fontSize);
+    final longest = _text
+        .trim()
+        .split(RegExp(r'\s+'))
+        .map((w) => _lineWidth(painter, w, _scaled(floor)))
+        .reduce(math.max);
+    painter.dispose();
+    return longest.ceilToDouble();
+  }
+
+  @override
+  double computeMaxIntrinsicWidth(double height) {
+    final painter = TextPainter();
+    final width = _lineWidth(painter, _text, _textScaler);
+    painter.dispose();
+    return width.ceilToDouble();
+  }
+
+  @override
+  double computeMinIntrinsicHeight(double width) => _intrinsicHeight(width);
+
+  @override
+  double computeMaxIntrinsicHeight(double width) => _intrinsicHeight(width);
+
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) {
+    final painter = TextPainter(textAlign: TextAlign.center);
+    _fit(painter, constraints.maxWidth);
+    final size = constraints.constrain(painter.size);
+    painter.dispose();
+    return size;
+  }
+
+  Offset get _paintOffset => Offset(
+    (size.width - _painter.width) / 2,
+    (size.height - _painter.height) / 2,
+  );
+
+  @override
+  void performLayout() {
+    _fit(_painter, constraints.maxWidth);
+    size = constraints.constrain(_painter.size);
+  }
+
+  @override
+  double? computeDistanceToActualBaseline(TextBaseline baseline) {
+    return _paintOffset.dy + _painter.computeDistanceToActualBaseline(baseline);
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    _painter.paint(context.canvas, offset + _paintOffset);
+  }
+
+  @override
+  void describeSemanticsConfiguration(SemanticsConfiguration config) {
+    super.describeSemanticsConfiguration(config);
+    config
+      ..label = _text
+      ..textDirection = _textDirection;
+  }
+
+  @override
+  void dispose() {
+    _painter.dispose();
+    super.dispose();
   }
 }

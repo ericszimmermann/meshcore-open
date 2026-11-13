@@ -43,6 +43,7 @@ See the [user documentation](documentation/README.md), [connection guide](docume
 - **Direct Messaging**: Private encrypted conversations with individual contacts
 - **Channels**: Public, hashtag, private, and community channels
 - **Mesh Images**: Send compressed images in channel chat with optional recovery packets ([guide](documentation/image-messages.md))
+- **Message Filter**: Hide spam and repeated channel messages with your own rules and on-device learning ([guide](documentation/message-filter.md))
 - **Regions**: Scope channel floods and reply using a message’s known region ([guide](documentation/regions.md))
 - **Translation**: Optional on-device incoming and pre-send translation
 - **Contact Management**: Organize contacts, track last seen times, and manage conversation history
@@ -85,7 +86,7 @@ See the [user documentation](documentation/README.md), [connection guide](docume
 
 ### Architecture
 
-- **Framework**: Flutter (web deployment pins 3.41.2); Dart SDK constraint `^3.9.2`
+- **Framework**: Flutter, pinned to an exact release in `pubspec.yaml` (`environment.flutter`); Dart SDK constraint `^3.9.2`
 - **State Management**: Provider pattern with ChangeNotifier
 - **BLE Protocol**: Nordic UART Service (NUS) over Bluetooth Low Energy
 - **Storage**: JSON in SharedPreferences for messages and contacts; files for models, images, and map caches
@@ -125,7 +126,7 @@ The matrix describes implemented functionality, not a guarantee that every featu
 
 ### Prerequisites
 
-- Flutter SDK; web deployment currently pins 3.41.2. The Dart SDK constraint is `^3.9.2` (see `pubspec.yaml`).
+- Flutter SDK at exactly the version in `pubspec.yaml` under `environment.flutter`. `flutter pub get` refuses any other version; run `flutter upgrade` or check out that release.
 - Android Studio / Xcode (for mobile development)
 - A MeshCore-compatible LoRa device
 
@@ -150,6 +151,138 @@ The matrix describes implemented functionality, not a guarantee that every featu
    flutter run
    ```
 
+### Linux AppImage
+
+`flutter build linux --release` produces the regular Flutter bundle and an
+AppImage on supported Linux architectures. The x86_64 artifact is
+`build/linux/x64/release/meshcore-open-x86_64.AppImage`; the ARM64 artifact is
+`build/linux/arm64/release/meshcore-open-aarch64.AppImage`. Debug and Profile
+builds do not produce AppImages.
+Both use Ubuntu 24.04 as the packaging baseline; older distributions are not
+guaranteed.
+
+For a bundle-only build, including other architectures:
+
+```bash
+MESHCORE_BUILD_APPIMAGE=0 flutter build linux --release
+```
+
+On Ubuntu 24.04, install the packaging prerequisites alongside Flutter's build
+dependencies:
+
+```bash
+sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev \
+   librsvg2-dev libgirepository1.0-dev libgtk-3-bin libgdk-pixbuf2.0-bin \
+   libgdk-pixbuf-2.0-dev dpkg-dev patchelf binutils curl jq file desktop-file-utils xdg-user-dirs libgpg-error0
+```
+
+The build automatically downloads checksum-verified architecture-matched
+linuxdeploy, its GTK plugin, appimagetool, and an AppImage runtime. Pins are in
+`scripts/appimage-tools.json`; the cache is under
+`${XDG_CACHE_HOME:-$HOME/.cache}/meshcore-open/appimage/`. Packaging can reuse
+valid cached tools offline, but Flutter dependencies and native-library
+downloads must also be available. A packaging failure fails the enabled build,
+without publishing a stale image as a new artifact.
+
+GitHub Actions builds ARM64 on a native `ubuntu-24.04-arm` runner. Flutter's
+Linux release SDK archive is x64-only, so that job bootstraps the pinned Flutter
+release from its source revision in `scripts/appimage-tools.json`. Flutter does not support x64-to-ARM64 Linux
+cross-builds; use an ARM64 Linux host to build the ARM64 bundle locally. The
+ARM64 AppImage is CI-built and hardware validation on a Raspberry Pi 5 is still
+needed for graphics, BLE, USB and inference behavior.
+
+Hosts with newer glibc than the pinned baseline (2.39 for Ubuntu 24.04),
+including Ubuntu 26.04 runners under `ubuntu-latest`, use the same isolated
+Ubuntu rebuild as Nix. A usable Podman or Docker engine is required on those
+hosts. Rootless Podman preserves your UID/GID with `--userns=keep-id`, so the
+container can write the host-owned output and cache directories. The original
+native bundle is retained. Custom targets, obfuscation and split-debug-info
+require a bundle-only build when container rebuilding is needed.
+
+The image includes Flutter assets, native plugins, ONNX Runtime and the
+transitive redistributable runtime libraries. Packaging audits every bundled
+ELF and fails if a portable dependency resolves from the build host instead of
+the AppDir. Host display-stack libraries (X11/XCB/Wayland) and graphics drivers
+remain external so they stay ABI-compatible with the system's EGL/GL driver.
+The image also relies on host glibc/the ELF loader, BlueZ services and USB
+permissions; downloaded inference models and user data are not included. The
+GTK packaging plugin uses X11, so Wayland sessions need XWayland. The host needs
+compatible graphics libraries (`libgl1`, `libegl1`, and `libgles2` on Ubuntu).
+Launch normally, or without
+FUSE by extracting:
+
+```bash
+./build/linux/x64/release/meshcore-open-x86_64.AppImage --appimage-extract-and-run
+```
+
+### Linux with Nix
+
+Enter the development shell from the repository root:
+
+```bash
+nix develop
+flutter --version
+pkg-config --exists gtk+-3.0 glib-2.0 gio-2.0 sysprof-capture-4
+flutter pub get
+flutter build linux --debug
+flutter build linux --profile
+```
+
+The shell does not provide Flutter, because `pubspec.yaml` pins an exact
+release that nixpkgs may not package yet. Put that Flutter SDK on PATH before
+entering the shell; the shell warns when it is missing or the wrong version.
+The Linux shell provides wrapped Clang
+compilers, native headers and libraries, and Sysprof capture development files.
+Android SDK warnings do not prevent Linux builds.
+
+Release AppImage builds inside `nix develop` require a usable Podman or Docker
+engine on the host. The install hook automatically rebuilds in a pinned Ubuntu
+container to avoid shipping Nix store dependencies, while keeping the native
+Nix bundle intact. The first build downloads a container image and Flutter SDK;
+later builds reuse the image and dependency caches. No privileged package
+installation is performed on the host. The container uses the SDK pin in
+`scripts/appimage-tools.json` and the current source tree, including local
+changes and the resolved `pubspec.lock`. Custom Dart defines and build
+name/number are forwarded; custom targets, obfuscation and split-debug-info
+require a bundle-only build. Use `MESHCORE_BUILD_APPIMAGE=0` to opt out when no
+container engine is available. On NixOS, use the distribution's `appimage-run`
+support when needed to launch downloaded AppImages.
+
+If an SDK or toolchain update leaves CMake using an old compiler or install
+prefix, remove the affected generated cache, for example
+`rm -f build/linux/x64/profile/CMakeCache.txt`, and rebuild. If widget tests
+report that `ink_sparkle.frag` cannot be decoded after an SDK update, remove
+the generated `build/unit_test_assets` directory and rerun `flutter test`.
+
+Launch the profile bundle from a graphical session (replace `x64` with `arm64`
+on ARM Linux):
+
+```bash
+build/linux/x64/profile/bundle/meshcore_open
+```
+
+To record with Sysprof, launch the app through the recorder and press Ctrl+C
+when finished. Use a new capture filename for each recording:
+
+```bash
+sysprof-cli meshcore.syscap -- build/linux/x64/profile/bundle/meshcore_open
+sysprof meshcore.syscap
+```
+
+CPU stack sampling requires host support for kernel perf events and appropriate
+permissions, potentially through the Sysprof system service and polkit. The Nix
+shell supplies tools and libraries, not system services or permission changes.
+If Sysprof reports `Permission denied` opening perf events, ask the host
+administrator to configure profiling access. A file being created does not
+prove CPU samples were recorded; check the recording diagnostics and contents.
+For an unprivileged capture smoke test only, use
+`sysprof-cli --no-sysprofd --no-perf smoke.syscap -- build/linux/x64/profile/bundle/meshcore_open`;
+this intentionally excludes CPU stack sampling.
+
+To update the package pin, run `nix flake update nixpkgs`, review the lockfile
+diff, and repeat both Linux builds, analysis, and tests before committing it.
+Keep the updated lockfile with the shell configuration for reproducibility.
+
 ### Web (self-host)
 
 Use a Chromium browser. Device APIs are origin-gated, so serve the build over HTTPS.
@@ -173,6 +306,17 @@ flutter build apk --release
 ```bash
 flutter build ios --release
 ```
+
+**GitHub Releases:**
+
+Pushing a release tag (`BETA-*`, `PRE-BETA-*`, `Alpha*`, `RELEASE-*`, or
+`v*`) runs CI and attaches both Linux AppImages to that tag's GitHub Release:
+
+- `meshcore-open-<version>-linux-x86_64.AppImage`
+- `meshcore-open-<version>-linux-aarch64.AppImage`
+
+If the tag has no release yet, CI creates one with generated notes. Re-running
+the workflow replaces the existing Linux assets.
 
 ## Project Structure
 
@@ -227,7 +371,7 @@ Messages are transmitted as binary frames using a custom protocol optimized for 
 ### App Settings
 
 - **Theme**: System default, light, or dark mode
-- **Language**: Use one of 18 languages (English, Chinese, French, Spanish, Portuguese, German, Dutch, Polish, Swedish, Italian, Slovak, Slovenian, Bulgarian, Russian, Ukrainian, Hungarian, Japanese, Korean)
+- **Language**: Use one of 19 languages (English, Chinese, French, Spanish, Portuguese, German, Dutch, Polish, Swedish, Italian, Slovak, Czech, Slovenian, Bulgarian, Russian, Ukrainian, Hungarian, Japanese, Korean)
 - **Notifications**: Configurable for messages, channels, and node advertisements; per-channel muting; reply, mark-as-read, and mute actions on Android notifications and watches (reply and mark-as-read in Android Auto when built with `--android-project-arg=androidAuto=true`)
 - **Battery Chemistry**: Support for NMC, LiFePO4, LiPo, and LiPo HV battery types
 - **Message Retry**: Automatic retry with configurable path clearing

@@ -13,6 +13,7 @@ import '../models/community.dart';
 import '../storage/community_store.dart';
 import '../theme/mesh_theme.dart';
 import '../utils/channel_qr.dart';
+import '../utils/radio_guard.dart';
 import '../widgets/adaptive_app_bar_title.dart';
 import '../widgets/mesh_ui.dart';
 import '../widgets/qr_scanner_widget.dart';
@@ -89,7 +90,7 @@ class _CommunityQrScannerScreenState extends State<CommunityQrScannerScreen> {
     });
 
     final connector = context.read<MeshCoreConnector>();
-    _communityStore.setPublicKeyHex = connector.selfPublicKeyHex;
+    _communityStore.setPublicKeyHex = connector.storageKeyHex;
     // Set when this screen is about to pop: keep the spinner up so the camera
     // doesn't restart on a closing route and detect the code again.
     var leaving = false;
@@ -168,61 +169,63 @@ class _CommunityQrScannerScreenState extends State<CommunityQrScannerScreen> {
       context,
       builder: (sheetContext) {
         final sheetScheme = Theme.of(sheetContext).colorScheme;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            BottomSheetHeader(title: context.l10n.channels_joinChannelTitle),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
-              child: Text(
-                context.l10n.channels_joinChannelConfirm(name),
-                style: TextStyle(color: sheetScheme.onSurfaceVariant),
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              BottomSheetHeader(title: context.l10n.channels_joinChannelTitle),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
+                child: Text(
+                  context.l10n.channels_joinChannelConfirm(name),
+                  style: TextStyle(color: sheetScheme.onSurfaceVariant),
+                ),
               ),
-            ),
-            MeshCard(
-              child: Row(
-                children: [
-                  AvatarCircle(
-                    name: name,
-                    icon: Icons.lock,
-                    color: MeshPalette.blue,
-                    size: 44,
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Text(
-                      name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
+              MeshCard(
+                child: Row(
+                  children: [
+                    AvatarCircle(
+                      name: name,
+                      icon: Icons.lock,
+                      color: MeshPalette.blue,
+                      size: 44,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(sheetContext, false),
-                      child: Text(context.l10n.common_cancel),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(sheetContext, false),
+                        child: Text(context.l10n.common_cancel),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: () => Navigator.pop(sheetContext, true),
-                      child: Text(context.l10n.common_add),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.pop(sheetContext, true),
+                        child: Text(context.l10n.common_add),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -271,61 +274,63 @@ class _CommunityQrScannerScreenState extends State<CommunityQrScannerScreen> {
       context,
       builder: (sheetContext) {
         final sheetScheme = Theme.of(sheetContext).colorScheme;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            BottomSheetHeader(title: context.l10n.community_alreadyMember),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
-              child: Text(
-                context.l10n.community_alreadyMemberMessage(community.name),
-                style: TextStyle(color: sheetScheme.onSurfaceVariant),
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              BottomSheetHeader(title: context.l10n.community_alreadyMember),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
+                child: Text(
+                  context.l10n.community_alreadyMemberMessage(community.name),
+                  style: TextStyle(color: sheetScheme.onSurfaceVariant),
+                ),
               ),
-            ),
-            MeshCard(
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.groups,
-                    color: MeshPalette.magenta,
-                    size: 32,
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          community.name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
-                        Text(
-                          context.l10n.community_shortId(
-                            community.shortCommunityId,
-                          ),
-                          style: MeshTheme.mono(
-                            fontSize: 13,
-                            color: sheetScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
+              MeshCard(
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.groups,
+                      color: MeshPalette.magenta,
+                      size: 32,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            community.name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          Text(
+                            context.l10n.community_shortId(
+                              community.shortCommunityId,
+                            ),
+                            style: MeshTheme.mono(
+                              fontSize: 13,
+                              color: sheetScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              child: FilledButton(
-                onPressed: () => Navigator.pop(sheetContext, true),
-                child: Text(context.l10n.common_ok),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(sheetContext, true),
+                  child: Text(context.l10n.common_ok),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -348,93 +353,95 @@ class _CommunityQrScannerScreenState extends State<CommunityQrScannerScreen> {
       builder: (sheetContext) => StatefulBuilder(
         builder: (sheetContext, setSheetState) {
           final joinScheme = Theme.of(sheetContext).colorScheme;
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              BottomSheetHeader(title: context.l10n.community_joinTitle),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
-                child: Text(
-                  context.l10n.community_joinConfirmation(community.name),
-                  style: TextStyle(color: joinScheme.onSurfaceVariant),
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                BottomSheetHeader(title: context.l10n.community_joinTitle),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
+                  child: Text(
+                    context.l10n.community_joinConfirmation(community.name),
+                    style: TextStyle(color: joinScheme.onSurfaceVariant),
+                  ),
                 ),
-              ),
-              MeshCard(
-                child: Row(
-                  children: [
-                    AvatarCircle(
-                      name: community.name,
-                      icon: Icons.groups,
-                      color: MeshPalette.magenta,
-                      size: 44,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            community.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Text(
-                            context.l10n.community_shortId(
-                              community.shortCommunityId,
-                            ),
-                            style: MeshTheme.mono(
-                              fontSize: 13,
-                              color: joinScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
+                MeshCard(
+                  child: Row(
+                    children: [
+                      AvatarCircle(
+                        name: community.name,
+                        icon: Icons.groups,
+                        color: MeshPalette.magenta,
+                        size: 44,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              community.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                            Text(
+                              context.l10n.community_shortId(
+                                community.shortCommunityId,
+                              ),
+                              style: MeshTheme.mono(
+                                fontSize: 13,
+                                color: joinScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              CheckboxListTile(
-                value: addPublicChannel,
-                onChanged: (value) {
-                  setSheetState(() {
-                    addPublicChannel = value ?? true;
-                  });
-                },
-                title: Text(context.l10n.community_addPublicChannel),
-                subtitle: Text(context.l10n.community_addPublicChannelHint),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          completer.complete(false);
-                          Navigator.pop(sheetContext);
-                        },
-                        child: Text(context.l10n.common_cancel),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: FilledButton(
-                        onPressed: () {
-                          completer.complete(true);
-                          Navigator.pop(sheetContext);
-                        },
-                        child: Text(context.l10n.community_join),
-                      ),
-                    ),
-                  ],
+                CheckboxListTile(
+                  value: addPublicChannel,
+                  onChanged: (value) {
+                    setSheetState(() {
+                      addPublicChannel = value ?? true;
+                    });
+                  },
+                  title: Text(context.l10n.community_addPublicChannel),
+                  subtitle: Text(context.l10n.community_addPublicChannelHint),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            completer.complete(false);
+                            Navigator.pop(sheetContext);
+                          },
+                          child: Text(context.l10n.common_cancel),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () {
+                            completer.complete(true);
+                            Navigator.pop(sheetContext);
+                          },
+                          child: Text(context.l10n.community_join),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),
@@ -462,9 +469,10 @@ class _CommunityQrScannerScreenState extends State<CommunityQrScannerScreen> {
     Community community,
     bool addPublicChannel,
   ) async {
+    if (!ensureRadioConnected(context)) return false;
     // Save community to local storage
     final connector = context.read<MeshCoreConnector>();
-    _communityStore.setPublicKeyHex = connector.selfPublicKeyHex;
+    _communityStore.setPublicKeyHex = connector.storageKeyHex;
     await _communityStore.addCommunity(community);
 
     // Optionally add the community public channel to the device. Only trust

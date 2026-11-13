@@ -6,7 +6,9 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_map/flutter_map.dart';
 
 import '../models/app_settings.dart';
+import '../theme/mesh_theme.dart';
 import 'app_settings_service.dart';
+import 'map_tile_cache_repository.dart';
 
 enum MapRasterSourcePreset {
   osmAuto('osm_auto'),
@@ -346,6 +348,7 @@ class MapTileCacheService extends ChangeNotifier {
                cacheKey,
                stalePeriod: const Duration(days: 365),
                maxNrOfCacheObjects: 200000,
+               repo: createMapTileCacheRepository(cacheKey),
              ),
            ) {
     tileProvider = CachedNetworkTileProvider(cacheManager: this.cacheManager);
@@ -506,6 +509,19 @@ class MapTileCacheService extends ChangeNotifier {
       layer = ColorFiltered(colorFilter: filter, child: layer);
     }
 
+    // Custom themes wash their background color over the tiles so the map
+    // matches the rest of the app. Kept light so roads and labels stay clear.
+    final tint = MeshMapTheme.of(context).tileTint;
+    if (tint != null) {
+      layer = ColorFiltered(
+        colorFilter: ColorFilter.mode(
+          tint.withValues(alpha: MeshMapTheme.tileTintStrength),
+          BlendMode.srcATop,
+        ),
+        child: layer,
+      );
+    }
+
     if (opacity < 1) {
       layer = Opacity(opacity: opacity, child: layer);
     }
@@ -520,19 +536,23 @@ class MapTileCacheService extends ChangeNotifier {
   Future<CachedTileInventory> getCachedTileInventory() async {
     final repo = _concreteCacheManager.config.repo;
     await repo.open();
-    final objects = await repo.getAllObjects();
-    final tiles = <CachedTileInfo>[];
-    int totalBytes = 0;
+    try {
+      final objects = await repo.getAllObjects();
+      final tiles = <CachedTileInfo>[];
+      int totalBytes = 0;
 
-    for (final object in objects) {
-      totalBytes += object.length ?? 0;
-      final tile = _parseCachedTile(object);
-      if (tile != null) {
-        tiles.add(tile);
+      for (final object in objects) {
+        totalBytes += object.length ?? 0;
+        final tile = _parseCachedTile(object);
+        if (tile != null) {
+          tiles.add(tile);
+        }
       }
-    }
 
-    return CachedTileInventory(tiles: tiles, totalBytes: totalBytes);
+      return CachedTileInventory(tiles: tiles, totalBytes: totalBytes);
+    } finally {
+      await repo.close();
+    }
   }
 
   List<CachedTileInfo> filterTilesForActiveSource(

@@ -17,7 +17,7 @@ MeshCore Open is an open-source Flutter client for MeshCore LoRa mesh networking
 4. [Chat & Messaging](chat-and-messaging.md) - Direct messages, location sharing, message status, reactions, and retries
 5. [Channels](channels.md) - Broadcast channels, communities, channel chat, and auto-resend
 6. [Map & Location](map-and-location.md) - Node map, shared pins, path tracing, line-of-sight, and offline caching
-7. [Settings](settings.md) - Device settings, app settings, radio configuration, and exports
+7. [Settings](settings.md) - Device settings, app settings, radio configuration, backup/restore, and exports
 8. [Notifications](notifications.md) - System notifications, replies from watches and Android Auto, unread badges, and notification preferences
 9. [Repeater Management](repeater-management.md) - Repeater hub, status, CLI, telemetry, and neighbors
 10. [Additional Features](additional-features.md) - GIF picker, localization, debug logs, SMAZ compression, and more
@@ -29,6 +29,11 @@ MeshCore Open is an open-source Flutter client for MeshCore LoRa mesh networking
 16. [Troubleshooting](troubleshooting.md) - BLE, USB, browser, and firmware issues
 17. [Review Mode](review-mode.md) - Simulated radio and reviewer instructions for Google Play and App Store review
 18. [Network Map](network-map.md) - Online repeater map, adding and managing repeaters from it, opt-in uploads, and hiding a repeater
+19. [Themes](themes.md) - Color themes, custom icons and map markers, chat backgrounds, automatic holiday themes, and holiday message animations
+20. [Message Filter](message-filter.md) - Hide spam and repeated channel messages with your own rules, automatic checks, and learning from Spam taps, all on the device
+21. [UI Design Reference](design.md) - Contributor reference: theme, typography, spacing, shared widgets, sheets vs dialogs vs pages, states, and localization rules for UI changes
+22. [Offline Mode](offline-mode.md) - Read-only view of the last radio's contacts, channels and messages while no radio is connected, and the Connect sheet
+23. [Performance Profiling](performance-profiling.md) - Contributor reference: frame and memory baselines, HTTP capture retention, and resetting diagnostic recordings
 
 ## App Overview
 
@@ -44,6 +49,7 @@ MeshCore Open connects to MeshCore LoRa mesh radios over BLE, USB, or TCP. Once 
 - **Configure radio settings** including frequency, power, bandwidth, and spreading factor
 - **Cache offline maps** for use without internet connectivity
 - **Analyze line-of-sight** between nodes with terrain elevation profiles
+- **Filter spam** in channels with your own rules and automatic on-device checks
 - **Use Android Auto** to hear new messages and reply by voice while driving (Android)
 
 ## What needs internet?

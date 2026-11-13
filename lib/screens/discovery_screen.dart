@@ -22,6 +22,7 @@ import '../widgets/list_filter_widget.dart';
 import '../widgets/mesh_ui.dart';
 import '../widgets/node_scan_sheet.dart';
 import '../helpers/snack_bar_builder.dart';
+import '../utils/radio_guard.dart';
 
 class DiscoveryScreen extends StatefulWidget {
   const DiscoveryScreen({super.key});
@@ -57,6 +58,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final connector = context.watch<MeshCoreConnector>();
+    final readOnly = isRadioReadOnly(connector);
 
     final discoveredContacts = connector.discoveredContacts;
     final filteredAndSorted = _filterAndSortContacts(
@@ -96,36 +98,30 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
             itemBuilder: (context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
                 value: 'export',
-                child: Row(
-                  children: [
-                    const Icon(Icons.upload_file),
-                    const SizedBox(width: 8),
-                    Text(l10n.discoveredContacts_export),
-                  ],
+                enabled: !readOnly,
+                child: MeshMenuItemRow(
+                  icon: Icons.upload_file,
+                  label: l10n.discoveredContacts_export,
                 ),
               ),
               PopupMenuItem<String>(
                 value: 'import',
-                child: Row(
-                  children: [
-                    const Icon(Icons.download),
-                    const SizedBox(width: 8),
-                    Text(l10n.discoveredContacts_import),
-                  ],
+                enabled: !readOnly,
+                child: MeshMenuItemRow(
+                  icon: Icons.download,
+                  label: l10n.discoveredContacts_import,
                 ),
               ),
               const PopupMenuDivider(),
               PopupMenuItem<String>(
                 value: 'delete_all',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.delete,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(context.l10n.discoveredContacts_deleteContactAll),
-                  ],
+                enabled: !readOnly,
+                child: MeshMenuItemRow(
+                  icon: Icons.delete,
+                  label: context.l10n.discoveredContacts_deleteContactAll,
+                  iconColor: readOnly
+                      ? null
+                      : Theme.of(context).colorScheme.error,
                 ),
               ),
             ],
@@ -195,7 +191,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
               name: contact.name,
               size: 42,
               color: isChat ? null : contactTypeColor(contact.type),
-              icon: contactTypeIcon(contact.type),
+              iconSlot: contactTypeIconSlot(contact.type),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -203,35 +199,30 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Name + type chip
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          contact.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      StatusChip(
-                        label: contact.typeLabel(context.l10n).toUpperCase(),
-                        color: contactTypeColor(contact.type),
-                        icon: contactTypeIcon(contact.type),
-                      ),
-                    ],
+                  // The name gets the full width; a type chip beside it
+                  // squeezed it to nothing on narrow screens or large text.
+                  // The avatar icon already shows the type.
+                  Text(
+                    // Nodes can advertise without a name; show the key
+                    // prefix rather than a blank title.
+                    contact.name.isNotEmpty
+                        ? contact.name
+                        : contact.publicKeyHex.substring(0, 8),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                    ),
                   ),
                   const SizedBox(height: 3),
-                  // Short pub key
+                  // Type and short pub key
                   Row(
                     children: [
                       Expanded(
                         child: Text(
-                          contact.shortPubKeyHex,
+                          '${contact.typeLabel(context.l10n)} · '
+                          '${contact.shortPubKeyHex}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: MeshTheme.mono(
@@ -288,7 +279,9 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
             IconButton(
               tooltip: context.l10n.discoveredContacts_addContact,
               icon: const Icon(Icons.person_add_alt_1),
-              onPressed: () => _addContact(context, contact, connector),
+              onPressed: isRadioReadOnly(connector)
+                  ? null
+                  : () => _addContact(context, contact, connector),
             ),
           ],
         ),
@@ -301,6 +294,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
     Contact contact,
     MeshCoreConnector connector,
   ) async {
+    if (!ensureRadioConnected(context)) return;
     try {
       final imported = await connector.importDiscoveredContact(contact);
       if (!context.mounted) return;
@@ -345,25 +339,28 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
       builder: (sheetContext) {
         final l10n = context.l10n;
         return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              BottomSheetHeader(
-                title: contact.name,
-                subtitle: contact.typeLabel(l10n),
-              ),
-              ListTile(
-                leading: const Icon(Icons.copy),
-                title: Text(l10n.discoveredContacts_copyContact),
-                onTap: () => Navigator.of(sheetContext).pop('copy_contact'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete),
-                title: Text(l10n.discoveredContacts_deleteContact),
-                onTap: () => Navigator.of(sheetContext).pop('delete_contact'),
-              ),
-              const SizedBox(height: 8),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                BottomSheetHeader(
+                  title: contact.name,
+                  subtitle: contact.typeLabel(l10n),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.copy),
+                  title: Text(l10n.discoveredContacts_copyContact),
+                  onTap: () => Navigator.of(sheetContext).pop('copy_contact'),
+                ),
+                ListTile(
+                  enabled: !isRadioReadOnly(connector),
+                  leading: const Icon(Icons.delete),
+                  title: Text(l10n.discoveredContacts_deleteContact),
+                  onTap: () => Navigator.of(sheetContext).pop('delete_contact'),
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
           ),
         );
       },

@@ -95,6 +95,14 @@ class MessageRetryService extends ChangeNotifier {
   final Map<String, Message> _pendingMessages = {};
   final Map<String, Contact> _pendingContacts = {};
   final Map<String, List<PathSelection>> _attemptPathHistory = {};
+
+  /// Route failures of each pending message, held back until its fate is
+  /// known: if any attempt is acknowledged the contact was reachable and the
+  /// routes that timed out really failed; if nothing ever gets through the
+  /// contact was probably just offline, and blaming its routes would wreck a
+  /// good history.
+  final Map<String, List<({int attempt, PathSelection selection})>>
+  _deferredRouteFailures = {};
   final Map<String, List<AckHashMapping>> _ackHashToMessageId = {};
   final Map<String, List<int>> _expectedAckHashes = {};
   final List<_AckHistoryEntry> _ackHistory = [];
@@ -618,6 +626,7 @@ class MessageRetryService extends ChangeNotifier {
     _pendingMessages.remove(messageId);
     _pendingContacts.remove(messageId);
     _attemptPathHistory.remove(messageId);
+    _deferredRouteFailures.remove(messageId);
     _timeoutTimers.remove(messageId);
     _resolvedMessages.remove(messageId);
     // Cancellation (and other cleanup paths) must release the active in-flight
@@ -653,13 +662,10 @@ class MessageRetryService extends ChangeNotifier {
       final backoffMs = 1000 * (1 << message.retryCount);
 
       if (selection != null) {
-        _recordPathResultFromMessage(
-          contact.publicKeyHex,
-          message,
-          selection,
-          false,
-          null,
-        );
+        _deferredRouteFailures.putIfAbsent(messageId, () => []).add((
+          attempt: message.retryCount,
+          selection: selection,
+        ));
       }
 
       final updatedMessage = message.copyWith(
@@ -690,13 +696,19 @@ class MessageRetryService extends ChangeNotifier {
         config!.clearContactPath!(contact);
       }
 
-      _recordPathResultFromMessage(
-        contact.publicKeyHex,
-        message,
-        selection,
-        false,
-        null,
-      );
+      // Nothing got through on any route: treat the contact as unreachable
+      // and leave its routes' records alone. Only flood stats count the miss.
+      // The held failures stay until the grace-period cleanup below, so a
+      // late ACK still blames the routes that really failed.
+      if (selection != null && selection.useFlood) {
+        _recordPathResultFromMessage(
+          contact.publicKeyHex,
+          message,
+          selection,
+          false,
+          null,
+        );
+      }
 
       config?.updateMessage(failedMessage);
 
@@ -828,12 +840,29 @@ class MessageRetryService extends ChangeNotifier {
       );
 
       final wasAlreadyResolved = _resolvedMessages.contains(matchedMessageId);
+      final deferredFailures =
+          _deferredRouteFailures.remove(matchedMessageId) ?? const [];
 
       _cleanupMessage(matchedMessageId);
 
       config?.updateMessage(deliveredMessage);
 
       if (contact != null) {
+        // The contact was reachable, so earlier attempts that timed out
+        // really failed — except the attempt this (possibly late) ACK is for.
+        // Without knowing which attempt was acknowledged, blame nothing.
+        if (!ambiguousPath && matchedAttemptIndex != null) {
+          for (final failure in deferredFailures) {
+            if (failure.attempt == ackedAttempt) continue;
+            _recordPathResultFromMessage(
+              contact.publicKeyHex,
+              message,
+              failure.selection,
+              false,
+              null,
+            );
+          }
+        }
         if (!ambiguousPath) {
           _recordPathResultFromMessage(
             contact.publicKeyHex,
@@ -843,9 +872,12 @@ class MessageRetryService extends ChangeNotifier {
             tripTimeMs,
           );
         }
+        // Learn from the attempt this ACK belongs to, not the latest one: a
+        // late ACK for a direct attempt can land after a retry went flood.
         if (config?.onDeliveryObserved != null &&
             tripTimeMs > 0 &&
-            message.pathLength != null) {
+            selection != null &&
+            !ambiguousPath) {
           final outboundTextForObserved =
               config!.prepareContactOutboundText?.call(contact, message.text) ??
               message.text;
@@ -854,7 +886,7 @@ class MessageRetryService extends ChangeNotifier {
               .length;
           config.onDeliveryObserved!(
             contact.publicKeyHex,
-            message.pathLength!,
+            selection.useFlood ? -1 : selection.hopCount,
             messageBytesForObserved,
             tripTimeMs,
           );
@@ -945,6 +977,7 @@ class MessageRetryService extends ChangeNotifier {
     _pendingMessages.clear();
     _pendingContacts.clear();
     _attemptPathHistory.clear();
+    _deferredRouteFailures.clear();
     _expectedAckHashes.clear();
     _ackHistory.clear();
     _ackHashToMessageId.clear();

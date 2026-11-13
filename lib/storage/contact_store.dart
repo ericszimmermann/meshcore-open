@@ -24,16 +24,7 @@ class ContactStore {
     String? jsonString = prefs.getString(keyFor);
     if ((jsonString == null || jsonString.isEmpty) &&
         canMigrateLegacyKeys(publicKeyHex)) {
-      // Attempt migration from legacy unscoped key on first load
-      final legacyJsonString = prefs.getString(_keyPrefix);
-      prefs.remove(_keyPrefix);
-      if (legacyJsonString != null && legacyJsonString.isNotEmpty) {
-        appLogger.info(
-          'Migrating contacts from legacy key $_keyPrefix to scoped key $keyFor',
-        );
-        await prefs.setString(keyFor, legacyJsonString);
-        jsonString = legacyJsonString;
-      }
+      jsonString = await migrateLegacyStringPreference(_keyPrefix, keyFor);
     }
     if (jsonString == null || jsonString.isEmpty) {
       jsonString = prefs.getString(keyFor);
@@ -92,6 +83,7 @@ class ContactStore {
       'rawPacket': contact.rawPacket != null
           ? base64Encode(contact.rawPacket!)
           : null,
+      'telemetryFixAt': contact.telemetryFixAt?.millisecondsSinceEpoch,
     };
   }
 
@@ -99,6 +91,7 @@ class ContactStore {
     final lastSeenMs = json['lastSeen'] as int? ?? 0;
     final lastMessageMs = json['lastMessageAt'] as int?;
     final lastModifiedMs = json['lastModified'] as int?;
+    final telemetryFixMs = json['telemetryFixAt'] as int?;
 
     final rawPathLength = json['pathLength'] as int? ?? -1;
     final rawPath = json['path'] != null
@@ -157,6 +150,9 @@ class ContactStore {
       rawPacket: json['rawPacket'] != null
           ? Uint8List.fromList(base64Decode(json['rawPacket'] as String))
           : null,
+      telemetryFixAt: telemetryFixMs == null
+          ? null
+          : DateTime.fromMillisecondsSinceEpoch(telemetryFixMs),
     );
   }
 }

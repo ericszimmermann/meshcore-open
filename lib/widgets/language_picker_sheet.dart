@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
@@ -18,11 +20,13 @@ final List<(String?, String Function(AppLocalizations))> appLanguageOptions = [
   ('pl', (l) => l.appSettings_languagePl),
   ('sl', (l) => l.appSettings_languageSl),
   ('pt', (l) => l.appSettings_languagePt),
+  ('pt_PT', (l) => l.appSettings_languagePtPt),
   ('it', (l) => l.appSettings_languageIt),
   ('zh', (l) => l.appSettings_languageZh),
   ('sv', (l) => l.appSettings_languageSv),
   ('nl', (l) => l.appSettings_languageNl),
   ('sk', (l) => l.appSettings_languageSk),
+  ('cs', (l) => l.appSettings_languageCs),
   ('bg', (l) => l.appSettings_languageBg),
   ('ru', (l) => l.appSettings_languageRu),
   ('uk', (l) => l.appSettings_languageUk),
@@ -55,7 +59,8 @@ void showLanguagePickerSheet(
       children: [
         BottomSheetHeader(title: l10n.appSettings_language),
         SizedBox(
-          height: 400,
+          // Capped so the sheet still fits short screens and landscape.
+          height: math.min(400, MediaQuery.sizeOf(ctx).height * 0.6),
           child: ListView(
             children: [
               for (final (code, label) in appLanguageOptions)

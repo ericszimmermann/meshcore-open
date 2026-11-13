@@ -5,10 +5,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'l10n/app_localizations.dart';
+import 'l10n/locale_tag.dart';
 import 'package:provider/provider.dart';
 
 import 'review_mode/review_mode_storage.dart';
 import 'screens/chrome_required_screen.dart';
+import 'screens/channels_screen.dart';
 import 'utils/platform_info.dart';
 
 import 'connector/meshcore_connector.dart';
@@ -20,11 +22,14 @@ import 'services/image_codec_service.dart';
 import 'services/image_codec_settings_store.dart';
 import 'services/received_image_blob_store_factory.dart';
 import 'services/received_image_store.dart';
+import 'services/scroll_capture_service.dart';
 import 'services/storage_service.dart';
+import 'services/message_filter/message_filter_service.dart';
 import 'services/message_retry_service.dart';
 import 'services/path_history_service.dart';
 import 'services/app_settings_service.dart';
 import 'services/network_map/network_map_upload_service.dart';
+import 'services/notification_navigator.dart';
 import 'services/notification_service.dart';
 import 'services/ble_debug_log_service.dart';
 import 'services/app_debug_log_service.dart';
@@ -33,8 +38,10 @@ import 'services/map_tile_cache_service.dart';
 import 'services/chat_text_scale_service.dart';
 import 'services/translation_service.dart';
 import 'services/ui_view_state_service.dart';
+import 'services/chat_background_service.dart';
 import 'services/timeout_prediction_service.dart';
 import 'storage/prefs_manager.dart';
+import 'storage/history_store.dart';
 import 'theme/mesh_theme.dart';
 import 'utils/app_logger.dart';
 import 'widgets/image_send_codec_binding.dart';
@@ -56,10 +63,13 @@ void main() async {
   // this mode before Android 10, where the old layout remains.
   if (PlatformInfo.isAndroid) {
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // Android's scrolling screenshot ("Capture more") for Flutter lists.
+    ScrollCaptureService.initialize();
   }
 
   // Initialize SharedPreferences cache
   await PrefsManager.initialize();
+  await HistoryStore.initialize();
 
   // Initialize services
   final storage = StorageService();
@@ -77,14 +87,20 @@ void main() async {
   final translationService = TranslationService(appSettingsService);
   final uiViewStateService = UiViewStateService();
   final timeoutPredictionService = TimeoutPredictionService(storage);
+  final messageFilterService = MessageFilterService();
 
   // Load settings before anything reads them. The image stack below takes its
   // model registry and its "process automatically" default straight off
   // `appSettingsService.settings`, so this cannot stay where it used to be
   // (after the constructions) without those two starting out wrong.
   await appSettingsService.loadSettings();
+  // Re-check the automatic holiday theme when the date changes.
+  appSettingsService.startDateWatch();
   // Undo a review-mode session the app was killed in before it could exit.
   await endReviewModeSession(appSettingsService);
+  final chatBackgroundService = ChatBackgroundService(appSettingsService);
+  // Drop pictures left behind by removed backgrounds or abandoned edits.
+  unawaited(chatBackgroundService.collectGarbage());
 
   // ---- image messages (AEIC over GRP_DATA) --------------------------------
   // The codec owns the ONNX decoder; the store owns received-image state and
@@ -162,6 +178,7 @@ void main() async {
   await receivedImageStore.load();
   await uiViewStateService.initialize();
   await timeoutPredictionService.initialize();
+  await messageFilterService.load();
 
   // Wire up connector with services
   connector.initialize(
@@ -176,6 +193,7 @@ void main() async {
     imageCodecService: imageCodecService,
     imageTransport: imageTransport,
     receivedImageStore: receivedImageStore,
+    messageFilterService: messageFilterService,
     // ImageStreamReassembler.addChunk already forwards every outcome to the
     // store together with the channel index (which ImageChunkOutcome itself
     // does not carry), so onImageChunk would be a second, channel-blind path.
@@ -187,9 +205,7 @@ void main() async {
     settings: appSettingsService,
   );
 
-  await connector.loadContactCache();
-  await connector.loadCachedChannels();
-  await connector.loadUnreadState();
+  await connector.restoreLastRadio();
 
   runApp(
     MeshCoreApp(
@@ -209,6 +225,8 @@ void main() async {
       receivedImageStore: receivedImageStore,
       imageReassembler: imageReassembler,
       networkMapUploadService: networkMapUploadService,
+      chatBackgroundService: chatBackgroundService,
+      messageFilterService: messageFilterService,
     ),
   );
 }
@@ -354,6 +372,8 @@ class MeshCoreApp extends StatefulWidget {
   final ReceivedImageStore receivedImageStore;
   final ImageStreamReassembler imageReassembler;
   final NetworkMapUploadService networkMapUploadService;
+  final ChatBackgroundService chatBackgroundService;
+  final MessageFilterService messageFilterService;
 
   const MeshCoreApp({
     super.key,
@@ -373,6 +393,8 @@ class MeshCoreApp extends StatefulWidget {
     required this.receivedImageStore,
     required this.imageReassembler,
     required this.networkMapUploadService,
+    required this.chatBackgroundService,
+    required this.messageFilterService,
   });
 
   @override
@@ -388,11 +410,27 @@ const Duration _kImageSweepInterval = Duration(seconds: 5);
 
 class _MeshCoreAppState extends State<MeshCoreApp> with WidgetsBindingObserver {
   Timer? _imageSweepTimer;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  late final NotificationNavigator _notificationNavigator =
+      NotificationNavigator(
+        navigatorKey: _navigatorKey,
+        connector: widget.connector,
+        notifications: NotificationService(),
+      );
+
+  // Chosen once: the settings Consumer below rebuilds MaterialApp, and a new
+  // home there would replace the route the user is on.
+  late final Widget _home = (PlatformInfo.isWeb && !PlatformInfo.isChrome)
+      ? const ChromeRequiredScreen()
+      : widget.connector.hasRadioData
+      ? const ChannelsScreen()
+      : const ScannerScreen();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _notificationNavigator.attach();
     _imageSweepTimer = Timer.periodic(
       _kImageSweepInterval,
       (_) => widget.imageReassembler.evictExpired(),
@@ -401,6 +439,7 @@ class _MeshCoreAppState extends State<MeshCoreApp> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _notificationNavigator.dispose();
     _imageSweepTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -465,10 +504,14 @@ class _MeshCoreAppState extends State<MeshCoreApp> with WidgetsBindingObserver {
         ChangeNotifierProvider.value(value: widget.imageCodecService),
         ChangeNotifierProvider.value(value: widget.receivedImageStore),
         ChangeNotifierProvider.value(value: widget.networkMapUploadService),
+        ChangeNotifierProvider.value(value: widget.chatBackgroundService),
+        ChangeNotifierProvider.value(value: widget.messageFilterService),
       ],
       child: Consumer<AppSettingsService>(
         builder: (context, settingsService, child) {
+          final customTheme = settingsService.activeCustomTheme;
           return MaterialApp(
+            navigatorKey: _navigatorKey,
             title: 'MeshCore Open',
             debugShowCheckedModeBanner: false,
             localizationsDelegates: const [
@@ -481,11 +524,15 @@ class _MeshCoreAppState extends State<MeshCoreApp> with WidgetsBindingObserver {
             locale: _localeFromSetting(
               settingsService.settings.languageOverride,
             ),
-            theme: MeshTheme.light(),
-            darkTheme: MeshTheme.dark(),
-            themeMode: _themeModeFromSetting(
-              settingsService.settings.themeMode,
-            ),
+            theme: customTheme != null
+                ? MeshTheme.fromCustom(customTheme)
+                : MeshTheme.light(),
+            darkTheme: customTheme != null
+                ? MeshTheme.fromCustom(customTheme)
+                : MeshTheme.dark(),
+            themeMode: customTheme != null
+                ? (customTheme.isDark ? ThemeMode.dark : ThemeMode.light)
+                : _themeModeFromSetting(settingsService.settings.themeMode),
             builder: (context, child) {
               // Update notification service with resolved locale
               final locale = Localizations.localeOf(context);
@@ -495,9 +542,7 @@ class _MeshCoreAppState extends State<MeshCoreApp> with WidgetsBindingObserver {
                 child: child ?? const SizedBox.shrink(),
               );
             },
-            home: (PlatformInfo.isWeb && !PlatformInfo.isChrome)
-                ? const ChromeRequiredScreen()
-                : const ScannerScreen(),
+            home: _home,
           );
         },
       ),
@@ -538,6 +583,6 @@ class _MeshCoreAppState extends State<MeshCoreApp> with WidgetsBindingObserver {
 
   Locale? _localeFromSetting(String? languageCode) {
     if (languageCode == null) return null;
-    return Locale(languageCode);
+    return localeFromTag(languageCode);
   }
 }
