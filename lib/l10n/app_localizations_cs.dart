@@ -799,6 +799,13 @@ class AppLocalizationsCs extends AppLocalizations {
       'Nastavení aplikace: při změně polohy GPS automaticky oznámí novou polohu pouze uzlům v okolí (vyžaduje Polohu v advertu).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood => 'Send Auto Self Advert As Flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'When enabled, automated self adverts are sent as flood instead of zero-hop.';
+
+  @override
   String get settings_multiAck => 'Multi-ACK';
 
   @override
@@ -1575,6 +1582,13 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get appSettings_showOnlineLinksSubtitle =>
       'Zobrazit spojnice mezi uzly z online mapy';
+
+  @override
+  String get appSettings_useOnlineMapForPaths => 'Use Online Map for Paths';
+
+  @override
+  String get appSettings_useOnlineMapForPathsSubtitle =>
+      'Use repeater locations from the online map when reconstructing message paths';
 
   @override
   String get appSettings_timeFilter => 'Časový filtr';
@@ -4830,6 +4844,10 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get channelPath_noHopDetails =>
       'Podrobnosti o skocích nejsou pro tento paket k dispozici.';
+
+  @override
+  String get channelPath_loadingOnlineMap =>
+      'Loading repeater locations from the online map...';
 
   @override
   String get channelPath_messageDetails => 'Podrobnosti zprávy';

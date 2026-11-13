@@ -752,6 +752,13 @@ class AppLocalizationsZh extends AppLocalizations {
       '当 GPS 位置变化时，发送零跳广播（需要在广播中包含位置）。';
 
   @override
+  String get settings_autoSelfAdvertAsFlood => '将自动自我广告作为 flood 发送';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      '启用后，自动自我广告将以 flood 而不是 zero-hop 发送。';
+
+  @override
   String get settings_multiAck => '多重ACK';
 
   @override
@@ -1475,6 +1482,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get appSettings_showOnlineLinksSubtitle => '显示在线地图中节点之间的连接线';
+
+  @override
+  String get appSettings_useOnlineMapForPaths => 'Use Online Map for Paths';
+
+  @override
+  String get appSettings_useOnlineMapForPathsSubtitle =>
+      'Use repeater locations from the online map when reconstructing message paths';
 
   @override
   String get appSettings_timeFilter => '时间过滤器';
@@ -4508,6 +4522,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get channelPath_noHopDetails => '此数据包未提供详细信息';
+
+  @override
+  String get channelPath_loadingOnlineMap =>
+      'Loading repeater locations from the online map...';
 
   @override
   String get channelPath_messageDetails => '消息详情';

@@ -796,6 +796,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'App setting: when your GPS position changes, automatically advertise your new location to nearby nodes only (requires Advert Location).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood => 'Send Auto Self Advert As Flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'When enabled, automated self adverts are sent as flood instead of zero-hop.';
+
+  @override
   String get settings_multiAck => 'Multi-ACKs';
 
   @override
@@ -1558,6 +1565,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get appSettings_showOnlineLinksSubtitle =>
       'Display connection lines between nodes from the online map';
+
+  @override
+  String get appSettings_useOnlineMapForPaths => 'Use Online Map for Paths';
+
+  @override
+  String get appSettings_useOnlineMapForPathsSubtitle =>
+      'Use repeater locations from the online map when reconstructing message paths';
 
   @override
   String get appSettings_timeFilter => 'Time Filter';
@@ -4785,6 +4799,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get channelPath_noHopDetails =>
       'Hop details are not provided for this packet.';
+
+  @override
+  String get channelPath_loadingOnlineMap =>
+      'Loading repeater locations from the online map...';
 
   @override
   String get channelPath_messageDetails => 'Message Details';

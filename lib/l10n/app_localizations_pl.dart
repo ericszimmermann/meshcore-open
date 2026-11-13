@@ -816,6 +816,14 @@ class AppLocalizationsPl extends AppLocalizations {
       'Gdy lokalizacja GPS się zmieni, wyślij ogłoszenie zero-hop (wymaga lokalizacji w ogłoszeniu).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Wysyłaj automatyczne własne ogłoszenia jako flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Gdy włączone, automatyczne własne ogłoszenia są wysyłane jako flood zamiast zero-hop.';
+
+  @override
   String get settings_multiAck => 'Wielokrotne potwierdzenia odbioru';
 
   @override
@@ -1589,6 +1597,13 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get appSettings_showOnlineLinksSubtitle =>
       'Wyświetlaj linie połączeń między węzłami z mapy online';
+
+  @override
+  String get appSettings_useOnlineMapForPaths => 'Use Online Map for Paths';
+
+  @override
+  String get appSettings_useOnlineMapForPathsSubtitle =>
+      'Use repeater locations from the online map when reconstructing message paths';
 
   @override
   String get appSettings_timeFilter => 'Filtrowanie Czasu';
@@ -4883,6 +4898,10 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get channelPath_noHopDetails =>
       'Szczegóły dotyczące tego pakietu nie zostały podane.';
+
+  @override
+  String get channelPath_loadingOnlineMap =>
+      'Loading repeater locations from the online map...';
 
   @override
   String get channelPath_messageDetails => 'Szczegóły wiadomości';

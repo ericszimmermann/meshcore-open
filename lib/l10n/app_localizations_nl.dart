@@ -807,6 +807,14 @@ class AppLocalizationsNl extends AppLocalizations {
       'Wanneer de GPS-locatie verandert, een zero-hop-advert verzenden (vereist locatie in advert).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Automatische zelfadvertentie als flood verzenden';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Indien ingeschakeld, worden geautomatiseerde zelfadvertenties als flood verzonden in plaats van zero-hop.';
+
+  @override
   String get settings_multiAck => 'Multi-ACKs';
 
   @override
@@ -1575,6 +1583,13 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get appSettings_showOnlineLinksSubtitle =>
       'Verbindingslijnen tussen nodes van de online kaart tonen';
+
+  @override
+  String get appSettings_useOnlineMapForPaths => 'Use Online Map for Paths';
+
+  @override
+  String get appSettings_useOnlineMapForPathsSubtitle =>
+      'Use repeater locations from the online map when reconstructing message paths';
 
   @override
   String get appSettings_timeFilter => 'Filter op tijd';
@@ -4828,6 +4843,10 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get channelPath_noHopDetails =>
       'Voor dit pakket zijn geen hopdetails beschikbaar.';
+
+  @override
+  String get channelPath_loadingOnlineMap =>
+      'Loading repeater locations from the online map...';
 
   @override
   String get channelPath_messageDetails => 'Details Bericht';

@@ -813,6 +813,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Wenn sich der GPS-Standort ändert, eine Zero-Hop-Ankündigung senden (erfordert Standort in der Ankündigung).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Automatische Ankündigung als Flood senden';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Wenn aktiviert, werden automatisierte Ankündigungen als Flood statt als Zero-Hop gesendet.';
+
+  @override
   String get settings_multiAck => 'Mehrfach-ACKs';
 
   @override
@@ -1588,6 +1596,13 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get appSettings_showOnlineLinksSubtitle =>
       'Verbindungslinien zwischen Knoten aus der Online-Karte anzeigen';
+
+  @override
+  String get appSettings_useOnlineMapForPaths => 'Use Online Map for Paths';
+
+  @override
+  String get appSettings_useOnlineMapForPathsSubtitle =>
+      'Use repeater locations from the online map when reconstructing message paths';
 
   @override
   String get appSettings_timeFilter => 'Zeitfilter';
@@ -4861,6 +4876,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get channelPath_noHopDetails =>
       'Die Detailangaben für dieses Paket sind nicht verfügbar.';
+
+  @override
+  String get channelPath_loadingOnlineMap =>
+      'Loading repeater locations from the online map...';
 
   @override
   String get channelPath_messageDetails => 'Nachrichtendetails';

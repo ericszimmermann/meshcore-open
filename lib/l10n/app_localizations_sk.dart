@@ -802,6 +802,14 @@ class AppLocalizationsSk extends AppLocalizations {
       'Keď sa GPS poloha zmení, odoslať zero-hop inzerát (vyžaduje polohu v inzeráte).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Posielať automatické vlastné reklamy ako flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Ak je povolené, automatické vlastné reklamy sa odosielajú ako flood namiesto zero-hop.';
+
+  @override
   String get settings_multiAck => 'Viaceré ACK';
 
   @override
@@ -1574,6 +1582,13 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get appSettings_showOnlineLinksSubtitle =>
       'Zobrazí spojovacie čiary medzi uzlami z online mapy';
+
+  @override
+  String get appSettings_useOnlineMapForPaths => 'Use Online Map for Paths';
+
+  @override
+  String get appSettings_useOnlineMapForPathsSubtitle =>
+      'Use repeater locations from the online map when reconstructing message paths';
 
   @override
   String get appSettings_timeFilter => 'Časový filter';
@@ -4846,6 +4861,10 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get channelPath_noHopDetails =>
       'Podrobnosti o balíčku zatiaľ nie sú dostupné.';
+
+  @override
+  String get channelPath_loadingOnlineMap =>
+      'Loading repeater locations from the online map...';
 
   @override
   String get channelPath_messageDetails => 'Podrobnosti o zprávach';

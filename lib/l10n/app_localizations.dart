@@ -1537,6 +1537,18 @@ abstract class AppLocalizations {
   /// **'App setting: when your GPS position changes, automatically advertise your new location to nearby nodes only (requires Advert Location).'**
   String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle;
 
+  /// No description provided for @settings_autoSelfAdvertAsFlood.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Auto Self Advert As Flood'**
+  String get settings_autoSelfAdvertAsFlood;
+
+  /// No description provided for @settings_autoSelfAdvertAsFloodSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When enabled, automated self adverts are sent as flood instead of zero-hop.'**
+  String get settings_autoSelfAdvertAsFloodSubtitle;
+
   /// No description provided for @settings_multiAck.
   ///
   /// In en, this message translates to:
@@ -2874,6 +2886,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Display connection lines between nodes from the online map'**
   String get appSettings_showOnlineLinksSubtitle;
+
+  /// No description provided for @appSettings_useOnlineMapForPaths.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Online Map for Paths'**
+  String get appSettings_useOnlineMapForPaths;
+
+  /// No description provided for @appSettings_useOnlineMapForPathsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use repeater locations from the online map when reconstructing message paths'**
+  String get appSettings_useOnlineMapForPathsSubtitle;
 
   /// No description provided for @appSettings_timeFilter.
   ///
@@ -8332,6 +8356,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hop details are not provided for this packet.'**
   String get channelPath_noHopDetails;
+
+  /// No description provided for @channelPath_loadingOnlineMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading repeater locations from the online map...'**
+  String get channelPath_loadingOnlineMap;
 
   /// No description provided for @channelPath_messageDetails.
   ///

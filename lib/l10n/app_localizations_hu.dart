@@ -807,6 +807,14 @@ class AppLocalizationsHu extends AppLocalizations {
       'Ha a GPS-helyzet megváltozik, küldjön zero-hop hirdetést (a hirdetésben helymegadás szükséges).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Automatikus saját hirdetés küldése floodként';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Ha engedélyezve van, az automatikus saját hirdetések floodként kerülnek küldésre zero-hop helyett.';
+
+  @override
   String get settings_multiAck => 'Multi-ACK';
 
   @override
@@ -1577,6 +1585,13 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get appSettings_showOnlineLinksSubtitle =>
       'A csomópontok közötti kapcsolatvonalak megjelenítése az online térképről';
+
+  @override
+  String get appSettings_useOnlineMapForPaths => 'Use Online Map for Paths';
+
+  @override
+  String get appSettings_useOnlineMapForPathsSubtitle =>
+      'Use repeater locations from the online map when reconstructing message paths';
 
   @override
   String get appSettings_timeFilter => 'Időszűrő';
@@ -4850,6 +4865,10 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get channelPath_noHopDetails =>
       'Ennél a csomagnál az ugrásrészletek nincsenek megadva.';
+
+  @override
+  String get channelPath_loadingOnlineMap =>
+      'Loading repeater locations from the online map...';
 
   @override
   String get channelPath_messageDetails => 'Üzenet részletei';
