@@ -1,117 +1,364 @@
 {
   "bg": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "cs": [
+    "backupRestore_bookmarks",
     "settings_autoSelfAdvertAsFlood",
     "settings_autoSelfAdvertAsFloodSubtitle",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "de": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "es": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "fr": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "hu": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "it": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "ja": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "ko": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "nl": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "pl": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "pt": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "pt_PT": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "ru": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "sk": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "sl": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "sv": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "uk": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ],
 
   "zh": [
+    "backupRestore_bookmarks",
     "appSettings_useOnlineMapForPaths",
     "appSettings_useOnlineMapForPathsSubtitle",
-    "channelPath_loadingOnlineMap"
+    "chat_bookmark",
+    "chat_removeBookmark",
+    "chat_showBookmarks",
+    "bookmarks_title",
+    "bookmarks_empty",
+    "bookmarks_channel",
+    "bookmarks_contact",
+    "bookmarks_remove",
+    "channelPath_loadingOnlineMap",
+    "settings_exportBookmarks",
+    "settings_exportBookmarksSubtitle",
+    "settings_exportBookmarksSuccess",
+    "settings_exportBookmarksNoBookmarks"
   ]
 }
