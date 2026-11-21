@@ -1543,6 +1543,18 @@ abstract class AppLocalizations {
   /// **'App setting: when your GPS position changes, automatically advertise your new location to nearby nodes only (requires Advert Location).'**
   String get settings_autoZeroHopAdvertOnGpsUpdateSubtitle;
 
+  /// No description provided for @settings_autoSelfAdvertAsFlood.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Auto Self Advert As Flood'**
+  String get settings_autoSelfAdvertAsFlood;
+
+  /// No description provided for @settings_autoSelfAdvertAsFloodSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When enabled, automated self adverts are sent as flood instead of zero-hop.'**
+  String get settings_autoSelfAdvertAsFloodSubtitle;
+
   /// No description provided for @settings_multiAck.
   ///
   /// In en, this message translates to:
@@ -2977,6 +2989,18 @@ abstract class AppLocalizations {
   /// **'Display connection lines between nodes from the online map'**
   String get appSettings_showOnlineLinksSubtitle;
 
+  /// No description provided for @appSettings_useOnlineMapForPaths.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Online Map for Paths'**
+  String get appSettings_useOnlineMapForPaths;
+
+  /// No description provided for @appSettings_useOnlineMapForPathsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use repeater locations from the online map when reconstructing message paths'**
+  String get appSettings_useOnlineMapForPathsSubtitle;
+
   /// No description provided for @appSettings_timeFilter.
   ///
   /// In en, this message translates to:
@@ -3384,6 +3408,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No members'**
   String get contacts_noMembers;
+
+  /// No description provided for @contacts_groupCurrentMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Current members ({count})'**
+  String contacts_groupCurrentMembers(int count);
+
+  /// No description provided for @contacts_groupAddContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Add contacts'**
+  String get contacts_groupAddContacts;
+
+  /// No description provided for @contacts_groupRemoveMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from group'**
+  String contacts_groupRemoveMember(String name);
+
+  /// No description provided for @contacts_groupAddMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Add {name} to group'**
+  String contacts_groupAddMember(String name);
 
   /// No description provided for @contacts_lastSeenNow.
   ///
@@ -8483,6 +8531,12 @@ abstract class AppLocalizations {
   /// **'Hop details are not provided for this packet.'**
   String get channelPath_noHopDetails;
 
+  /// No description provided for @channelPath_loadingOnlineMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading repeater locations from the online map...'**
+  String get channelPath_loadingOnlineMap;
+
   /// No description provided for @channelPath_messageDetails.
   ///
   /// In en, this message translates to:
@@ -12867,6 +12921,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SMAZ compressed'**
   String get messageMeta_smazCompressed;
+
+  /// No description provided for @addContact_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Contact'**
+  String get addContact_title;
+
+  /// No description provided for @addContact_infoBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'If you know the public key of someone you want to contact, you can add them manually without waiting for them to advert.'**
+  String get addContact_infoBanner;
+
+  /// No description provided for @addContact_contactType.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Type'**
+  String get addContact_contactType;
+
+  /// No description provided for @addContact_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get addContact_name;
+
+  /// No description provided for @addContact_nameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a name'**
+  String get addContact_nameRequired;
+
+  /// No description provided for @addContact_publicKeyHex.
+  ///
+  /// In en, this message translates to:
+  /// **'Public Key (hex)'**
+  String get addContact_publicKeyHex;
+
+  /// No description provided for @addContact_publicKeyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a public key'**
+  String get addContact_publicKeyRequired;
+
+  /// No description provided for @addContact_publicKeyInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Public key must be 64 hex characters (32 bytes)'**
+  String get addContact_publicKeyInvalid;
+
+  /// No description provided for @addContact_clipboardKeyLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Public key filled in. Choose a contact type, enter a name, and tap save.'**
+  String get addContact_clipboardKeyLoaded;
+
+  /// No description provided for @addContact_fromDiscovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Add from Discovered Contacts'**
+  String get addContact_fromDiscovered;
+
+  /// No description provided for @addContact_saveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add contact.'**
+  String get addContact_saveFailed;
 }
 
 class _AppLocalizationsDelegate

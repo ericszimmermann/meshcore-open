@@ -814,6 +814,14 @@ class AppLocalizationsIt extends AppLocalizations {
       'Quando la posizione GPS cambia, invia un annuncio zero-hop (richiede la posizione nell\'annuncio).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Invia auto-annuncio personale come flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Se abilitato, gli auto-annunci automatizzati vengono inviati come flood invece che zero-hop.';
+
+  @override
   String get settings_multiAck => 'ACK multipli';
 
   @override
@@ -1651,6 +1659,13 @@ class AppLocalizationsIt extends AppLocalizations {
       'Mostra le linee di collegamento tra i nodi della mappa online';
 
   @override
+  String get appSettings_useOnlineMapForPaths => 'Use Online Map for Paths';
+
+  @override
+  String get appSettings_useOnlineMapForPathsSubtitle =>
+      'Use repeater locations from the online map when reconstructing message paths';
+
+  @override
   String get appSettings_timeFilter => 'Filtro Temporale';
 
   @override
@@ -1891,6 +1906,24 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get contacts_noMembers => 'Nessun membro';
+
+  @override
+  String contacts_groupCurrentMembers(int count) {
+    return 'Current members ($count)';
+  }
+
+  @override
+  String get contacts_groupAddContacts => 'Add contacts';
+
+  @override
+  String contacts_groupRemoveMember(String name) {
+    return 'Remove $name from group';
+  }
+
+  @override
+  String contacts_groupAddMember(String name) {
+    return 'Add $name to group';
+  }
 
   @override
   String get contacts_lastSeenNow => 'Poco fa';
@@ -4943,6 +4976,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'I dettagli relativi a questo pacchetto non sono forniti.';
 
   @override
+  String get channelPath_loadingOnlineMap =>
+      'Loading repeater locations from the online map...';
+
+  @override
   String get channelPath_messageDetails => 'Dettagli messaggio';
 
   @override
@@ -7729,4 +7766,40 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get messageMeta_smazCompressed => 'SMAZ compressed';
+
+  @override
+  String get addContact_title => 'Add Contact';
+
+  @override
+  String get addContact_infoBanner =>
+      'If you know the public key of someone you want to contact, you can add them manually without waiting for them to advert.';
+
+  @override
+  String get addContact_contactType => 'Contact Type';
+
+  @override
+  String get addContact_name => 'Name';
+
+  @override
+  String get addContact_nameRequired => 'Please enter a name';
+
+  @override
+  String get addContact_publicKeyHex => 'Public Key (hex)';
+
+  @override
+  String get addContact_publicKeyRequired => 'Please enter a public key';
+
+  @override
+  String get addContact_publicKeyInvalid =>
+      'Public key must be 64 hex characters (32 bytes)';
+
+  @override
+  String get addContact_clipboardKeyLoaded =>
+      'Public key filled in. Choose a contact type, enter a name, and tap save.';
+
+  @override
+  String get addContact_fromDiscovered => 'Add from Discovered Contacts';
+
+  @override
+  String get addContact_saveFailed => 'Failed to add contact.';
 }

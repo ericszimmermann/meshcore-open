@@ -804,6 +804,14 @@ class AppLocalizationsSk extends AppLocalizations {
       'Keď sa GPS poloha zmení, odoslať zero-hop inzerát (vyžaduje polohu v inzeráte).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood =>
+      'Posielať automatické vlastné reklamy ako flood';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      'Ak je povolené, automatické vlastné reklamy sa odosielajú ako flood namiesto zero-hop.';
+
+  @override
   String get settings_multiAck => 'Viaceré ACK';
 
   @override
@@ -1642,6 +1650,13 @@ class AppLocalizationsSk extends AppLocalizations {
       'Zobrazí spojovacie čiary medzi uzlami z online mapy';
 
   @override
+  String get appSettings_useOnlineMapForPaths => 'Use Online Map for Paths';
+
+  @override
+  String get appSettings_useOnlineMapForPathsSubtitle =>
+      'Use repeater locations from the online map when reconstructing message paths';
+
+  @override
   String get appSettings_timeFilter => 'Časový filter';
 
   @override
@@ -1883,6 +1898,24 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get contacts_noMembers => 'Žiadni členovia';
+
+  @override
+  String contacts_groupCurrentMembers(int count) {
+    return 'Current members ($count)';
+  }
+
+  @override
+  String get contacts_groupAddContacts => 'Add contacts';
+
+  @override
+  String contacts_groupRemoveMember(String name) {
+    return 'Remove $name from group';
+  }
+
+  @override
+  String contacts_groupAddMember(String name) {
+    return 'Add $name to group';
+  }
 
   @override
   String get contacts_lastSeenNow => 'nedávno';
@@ -4938,6 +4971,10 @@ class AppLocalizationsSk extends AppLocalizations {
       'Podrobnosti o balíčku zatiaľ nie sú dostupné.';
 
   @override
+  String get channelPath_loadingOnlineMap =>
+      'Loading repeater locations from the online map...';
+
+  @override
   String get channelPath_messageDetails => 'Podrobnosti o zprávach';
 
   @override
@@ -7708,4 +7745,40 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get messageMeta_smazCompressed => 'SMAZ compressed';
+
+  @override
+  String get addContact_title => 'Add Contact';
+
+  @override
+  String get addContact_infoBanner =>
+      'If you know the public key of someone you want to contact, you can add them manually without waiting for them to advert.';
+
+  @override
+  String get addContact_contactType => 'Contact Type';
+
+  @override
+  String get addContact_name => 'Name';
+
+  @override
+  String get addContact_nameRequired => 'Please enter a name';
+
+  @override
+  String get addContact_publicKeyHex => 'Public Key (hex)';
+
+  @override
+  String get addContact_publicKeyRequired => 'Please enter a public key';
+
+  @override
+  String get addContact_publicKeyInvalid =>
+      'Public key must be 64 hex characters (32 bytes)';
+
+  @override
+  String get addContact_clipboardKeyLoaded =>
+      'Public key filled in. Choose a contact type, enter a name, and tap save.';
+
+  @override
+  String get addContact_fromDiscovered => 'Add from Discovered Contacts';
+
+  @override
+  String get addContact_saveFailed => 'Failed to add contact.';
 }

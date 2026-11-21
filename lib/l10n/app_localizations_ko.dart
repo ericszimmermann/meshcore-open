@@ -771,6 +771,13 @@ class AppLocalizationsKo extends AppLocalizations {
       'GPS 위치가 변경되면 제로 홉 어드버트를 전송합니다(어드버트에 위치 포함 필요).';
 
   @override
+  String get settings_autoSelfAdvertAsFlood => '자동 자체 광고를 flood로 전송';
+
+  @override
+  String get settings_autoSelfAdvertAsFloodSubtitle =>
+      '활성화되면 자동 자체 광고가 zero-hop 대신 flood로 전송됩니다.';
+
+  @override
   String get settings_multiAck => '다중 ACK';
 
   @override
@@ -1568,6 +1575,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appSettings_showOnlineLinksSubtitle => '온라인 지도에 있는 노드 간 연결선을 표시';
 
   @override
+  String get appSettings_useOnlineMapForPaths => 'Use Online Map for Paths';
+
+  @override
+  String get appSettings_useOnlineMapForPathsSubtitle =>
+      'Use repeater locations from the online map when reconstructing message paths';
+
+  @override
   String get appSettings_timeFilter => '시간 필터';
 
   @override
@@ -1801,6 +1815,24 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get contacts_noMembers => '회원 없음';
+
+  @override
+  String contacts_groupCurrentMembers(int count) {
+    return 'Current members ($count)';
+  }
+
+  @override
+  String get contacts_groupAddContacts => 'Add contacts';
+
+  @override
+  String contacts_groupRemoveMember(String name) {
+    return 'Remove $name from group';
+  }
+
+  @override
+  String contacts_groupAddMember(String name) {
+    return 'Add $name to group';
+  }
 
   @override
   String get contacts_lastSeenNow => '최근';
@@ -4716,6 +4748,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get channelPath_noHopDetails => '이 패키지에 대한 자세한 정보는 제공되지 않습니다.';
 
   @override
+  String get channelPath_loadingOnlineMap =>
+      'Loading repeater locations from the online map...';
+
+  @override
   String get channelPath_messageDetails => '메시지 세부 정보';
 
   @override
@@ -7383,4 +7419,40 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get messageMeta_smazCompressed => 'SMAZ compressed';
+
+  @override
+  String get addContact_title => 'Add Contact';
+
+  @override
+  String get addContact_infoBanner =>
+      'If you know the public key of someone you want to contact, you can add them manually without waiting for them to advert.';
+
+  @override
+  String get addContact_contactType => 'Contact Type';
+
+  @override
+  String get addContact_name => 'Name';
+
+  @override
+  String get addContact_nameRequired => 'Please enter a name';
+
+  @override
+  String get addContact_publicKeyHex => 'Public Key (hex)';
+
+  @override
+  String get addContact_publicKeyRequired => 'Please enter a public key';
+
+  @override
+  String get addContact_publicKeyInvalid =>
+      'Public key must be 64 hex characters (32 bytes)';
+
+  @override
+  String get addContact_clipboardKeyLoaded =>
+      'Public key filled in. Choose a contact type, enter a name, and tap save.';
+
+  @override
+  String get addContact_fromDiscovered => 'Add from Discovered Contacts';
+
+  @override
+  String get addContact_saveFailed => 'Failed to add contact.';
 }
